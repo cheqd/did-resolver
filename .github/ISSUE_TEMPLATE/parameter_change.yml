@@ -1,0 +1,70 @@
+name: Parameter Change
+description: Propose a Parameter Change
+title: "[Parameter Change]: "
+labels: ["Parameter Change", "Proposal"]
+assignees:
+  - Alex Tweeddale
+body:
+- type: textarea
+  id: summary
+  attributes:
+    label: Summary
+    description: A short (~150 word) description of the Proposal you want to make. 
+                 Provide a simplified and layman-accessible explanation of the Proposal in plain English to have the best chance of gaining community interest and having it accepted.
+  validations:
+    required: true
+- type: dropdown
+  id: parameter-name
+  attributes:
+    label: Parameter Name
+    description: Please select the parameter you wish to change
+    options: 
+    - Minimum Deposit
+    - Max Deposit Period
+    - Voting Period
+    - Inflation rate
+    - Inflation max
+    - Inflation min
+    - Inflation rate change
+    - Bonded token goal
+    - Quorum
+    - Threshold
+    - Veto
+    - Unbonding Period
+    - Community tax percentage
+    - Base Proposal reward
+    - Bonus Proposal reward
+  validations:
+    required: true
+- type: input
+  id: previous
+  attributes:
+    label: Current Parameter Value
+    description: What is the current parameter value that you want to change?
+    placeholder: $8000 CHEQ
+    value: 
+  validations:
+    required: true
+- type: input
+  id: new
+  attributes:
+    label: New Parameter Value
+    description: What is the parameter value that you want to change to?
+    placeholder: $10,000 CHEQ
+    value: 
+  validations:
+    required: true
+- type: textarea
+  id: rationale
+  attributes:
+    label: Rationale
+    description: Please explain in full why you would like to make this parameter change and how it would benefit the cheqd community.
+    render: shell
+- type: checkboxes
+  id: terms
+  attributes:
+    label: Code of Conduct
+    description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/cheqd/.github/blob/main/CODE_OF_CONDUCT.md)
+    options:
+    - label: I agree to follow this project's Code of Conduct
+      required: true

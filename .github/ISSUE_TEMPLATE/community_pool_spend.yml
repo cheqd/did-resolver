@@ -1,0 +1,77 @@
+name: Community Pool Spend Proposal
+description: Propose that the Community Pool is spent
+title: "[Community Pool Spend]: "
+labels: ["Community Pool", "Proposal"]
+assignees:
+  - Alex Tweeddale
+body:
+- type: textarea
+  id: summary
+  attributes:
+    label: Summary
+    description: A short (~150 word) description of the Proposal you want to make. 
+                 Provide a simplified and layman-accessible explanation of the Proposal in plain English to have the best chance of gaining community interest and having it accepted.
+  validations:
+    required: true
+- type: textarea
+  id: rationale
+  attributes:
+    label: Description
+    description: A longer <500 description of what you want the community pool to be spent on, making direct references to where you want to make changes from, using links.
+    placeholder: I want to donate the community pool to X initiative because they support X.
+  validations:
+    required: false
+- type: input
+  id: link
+  attributes:
+    label: Proposed Recipient
+    description: Please link to the initiatve, organisation, or other entity which it is proposed to donate the Community Pool to.
+    placeholder: (Insert link)
+    value: 
+  validations:
+    required: false
+- type: input
+  id: value
+  attributes:
+    label: Proposed Spend Value
+    description: Please enter the amount of $CHEQ you propose to be donated to the recipient.
+    placeholder: 100,000 $CHEQ
+    value: 
+  validations:
+    required: true
+- type: markdown
+  attributes:
+    value: "## Note"
+- type: markdown
+  attributes:
+    value: |
+      At cheqd, we would like to ensure that there to be many positive consequences of the spend, to benefit an alturistic cause, such as the environment, humanitarian work or low income countries.
+- type: textarea
+  id: positive
+  attributes:
+    label: Positive Consequences
+    description: This section should describe the resulting and predicted positive consequences, after applying the decision.
+    placeholder: (Insert positive consequences here)
+    render: shell
+- type: textarea
+  id: negative
+  attributes:
+    label: Negative Consequences
+    description: This section should describe the resulting and predicted negative consequences, after applying the decision.
+    placeholder: (Insert negative consequences here)
+    render: shell
+- type: textarea
+  id: neutral
+  attributes:
+    label: Neutral Consequences
+    description: This section should describe the resulting and predicted neutral consequences, after applying the decision.
+    placeholder: (Insert neutral consequences here)
+    render: shell
+- type: checkboxes
+  id: terms
+  attributes:
+    label: Code of Conduct
+    description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/cheqd/.github/blob/main/CODE_OF_CONDUCT.md)
+    options:
+    - label: I agree to follow this project's Code of Conduct
+      required: true

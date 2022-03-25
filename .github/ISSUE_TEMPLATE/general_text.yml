@@ -1,0 +1,59 @@
+name: General Text
+description: This is a text-based proposal which can be used for general purposes
+title: "[General Text-based Change]: "
+labels: ["General Change", "Proposal"]
+assignees:
+  - Alex Tweeddale
+body:
+- type: textarea
+  id: summary
+  attributes:
+    label: Summary
+    description: A short (~150 word) description of the Proposal you want to make. Provide a simplified and layman-accessible explanation of the Proposal in plain English to have the best chance of gaining community interest and having it accepted.
+  validations:
+    required: true
+- type: input
+  id: previous
+  attributes:
+    label: Link of where change is needed
+    description: Please provide a link to the documentation or place where you would like to make the change
+    placeholder: https://docs.cheqd.io/governance
+    value: 
+  validations:
+    required: False
+- type: textarea
+  id: rationale
+  attributes:
+    label: Rationale
+    description: A longer <500 description of the changes you want to make, making direct references to where you want to make changes from, using links.
+    placeholder: I want to change the cheqd Proposal Template because it misses a section on X. 
+    render: shell
+- type: textarea
+  id: positive
+  attributes:
+    label: Positive Consequences
+    description: This section should describe the resulting and predicted positive consequences, after applying the decision.
+    placeholder: A new Governance template including X would be beneficial for the community and would make X easier to see.
+    render: shell
+- type: textarea
+  id: negative
+  attributes:
+    label: Negative Consequences
+    description: This section should describe the resulting and predicted negative consequences, after applying the decision.
+    placeholder: No notable or predicted negative consequences
+    render: shell
+- type: textarea
+  id: neutral
+  attributes:
+    label: Neutral Consequences
+    description: This section should describe the resulting and predicted neutral consequences, after applying the decision.
+    placeholder: No notable or predicted neutral consequences
+    render: shell
+- type: checkboxes
+  id: terms
+  attributes:
+    label: Code of Conduct
+    description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/cheqd/.github/blob/main/CODE_OF_CONDUCT.md)
+    options:
+    - label: I agree to follow this project's Code of Conduct
+      required: true
