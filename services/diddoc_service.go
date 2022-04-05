@@ -1,8 +1,11 @@
 package services
 
 import (
+
 	// jsonpb Marshaller is deprecated, but is needed because there's only one way to proto
 	// marshal in combination with our proto generator version
+	"encoding/json"
+
 	"github.com/cheqd/cheqd-did-resolver/types"
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	"github.com/golang/protobuf/jsonpb" //nolint
@@ -12,16 +15,40 @@ import (
 type DIDDocService struct {
 }
 
-func (DIDDocService) Marshall(protoObject proto.Message) (string, error) {
+const (
+	verificationMethod = "verificationMethod"
+	publicKeyJwk       = "publicKeyJwk"
+)
+
+func (DIDDocService) MarshallProto(protoObject proto.Message) (string, error) {
 	var m jsonpb.Marshaler
-	JsonObject, err := m.MarshalToString(protoObject)
+	jsonObject, err := m.MarshalToString(protoObject)
 	if err != nil {
 		return "", err
 	}
-	return JsonObject, nil
+	return jsonObject, nil
 }
 
-func (DIDDocService) PrepareJWKPubkey(protoObject proto.Message) (string, error) {
+func (ds DIDDocService) MarshallDID(didDoc cheqd.Did) (string, error) {
+	jsonDID, err := ds.MarshallProto(&didDoc)
+	if err != nil {
+		return "", err
+	}
+	var mapDID map[string]interface{}
+	json.Unmarshal([]byte(jsonDID), &mapDID)
+
+	formatedVerificationMethod, err := ds.prepareJWKPubkey(didDoc)
+	if err != nil {
+		return "", err
+	}
+
+	mapDID[verificationMethod] = formatedVerificationMethod
+
+	result, err := json.Marshal(mapDID)
+	if err != nil {
+		return "", err
+	}
+	return string(result), nil
 }
 
 func (DIDDocService) GetResolutionDIDMetadata(contentType string, errorType string) types.ResolutionMetadata {
@@ -38,4 +65,34 @@ func (DIDDocService) GetDIDMetadata(contentType string, errorType string) cheqd.
 
 func (DIDDocService) GetDIDFragment(DIDDoc cheqd.Did) string {
 	return ""
+}
+
+func (ds DIDDocService) prepareJWKPubkey(didDoc cheqd.Did) ([]map[string]interface{}, error) {
+	verMethodList := []map[string]interface{}{}
+	for _, value := range didDoc.GetVerificationMethod() {
+		methodJson, err := ds.protoToMap(value)
+		if err != nil {
+			return nil, err
+		}
+		if len(value.PublicKeyJwk) > 0 {
+			keyJson, err := cheqd.PubKeyJWKToJson(value.PublicKeyJwk)
+			if err != nil {
+				return nil, err
+			}
+			methodJson[publicKeyJwk] = keyJson
+		}
+		verMethodList = append(verMethodList, methodJson)
+
+	}
+	return verMethodList, nil
+}
+
+func (ds DIDDocService) protoToMap(protoObject proto.Message) (map[string]interface{}, error) {
+	jsonObj, err := ds.MarshallProto(protoObject)
+	if err != nil {
+		return nil, err
+	}
+	var mapObj map[string]interface{}
+	json.Unmarshal([]byte(jsonObj), &mapObj)
+	return mapObj, err
 }

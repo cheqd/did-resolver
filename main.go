@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/cheqd/cheqd-did-resolver/services"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
@@ -11,6 +12,9 @@ import (
 )
 
 func main() {
+	//setup
+	requestService := services.NewRequestService()
+
 	// Echo instance
 	e := echo.New()
 
@@ -27,7 +31,12 @@ func main() {
 		//	return c.JSON(http.StatusBadRequest, map[string]string{})
 		//}
 		accept := strings.Split(c.Request().Header.Get("accept"), ";")[0]
-		return c.String(http.StatusOK, accept+did)
+		resolutionOption := map[string]string{"Accept": accept}
+		responseBody := requestService.ProcessDIDRequest(did, resolutionOption)
+		if err != nil {
+
+		}
+		return c.String(http.StatusOK, responseBody)
 		//opt := resolver.ResolutionOption{Accept: accept}
 		//rr := resolver.ResolveRepresentation(conn, did, opt)
 		//

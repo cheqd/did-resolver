@@ -28,7 +28,7 @@ type ResolutionMetadata struct {
 }
 
 type DidResolution struct {
-	Document           cheqd.Did          `json:"didDocument,omitempty"`
+	Did                cheqd.Did          `json:"didDocument,omitempty"`
 	Metadata           cheqd.Metadata     `json:"didDocumentMetadata,omitempty"`
 	ResolutionMetadata ResolutionMetadata `json:"didResolutionMetadata,omitempty"`
 }
