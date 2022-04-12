@@ -14,31 +14,33 @@ type RequestService struct {
 	didDocService DIDDocService
 }
 
-func NewRequestService() RequestService {
+func NewRequestService(ledgerService LedgerService) RequestService {
 	return RequestService{
-		ledgerService: LedgerService{},
+		ledgerService: ledgerService,
 		didDocService: DIDDocService{},
 	}
 }
 
-func (rs RequestService) ProcessDIDRequest(did string, params map[string]string) string {
+func (rs RequestService) ProcessDIDRequest(did string, params map[string]string) (string, string) {
 	didResolution := rs.resolve(did, types.ResolutionOption{Accept: params["Accept"]})
 	resolutionMetadata, err1 := json.Marshal(didResolution.ResolutionMetadata)
 	didDoc, err2 := rs.didDocService.MarshallDID(didResolution.Did)
 	metadata, err3 := rs.didDocService.MarshallProto(&didResolution.Metadata)
 
 	if err1 != nil || err2 != nil || err3 != nil {
-		resolutionMetadata := types.NewResolutionMetadata(resolutionOptions.Accept,
+		resolutionMetadataProto := types.NewResolutionMetadata(params["Accept"],
 			types.ResolutionRepresentationNotSupported)
-		resolutionMetadataJson, _ := json.Marshal(didResolution.ResolutionMetadata)
-		return createJsonResolution("null", "null", string(resolutionMetadataJson))
+		resolutionMetadataJson, _ := json.Marshal(resolutionMetadataProto)
+		return createJsonResolution("null", "null", string(resolutionMetadataJson)),
+			resolutionMetadataProto.ResolutionError
 	}
 
-	if didResolution.ResolutionMetadata.ResolutionError != nil {
-		return createJsonResolution("null", "null", string(resolutionMetadata))
+	if didResolution.ResolutionMetadata.ResolutionError != "" {
+		return createJsonResolution("null", "null", string(resolutionMetadata)),
+			didResolution.ResolutionMetadata.ResolutionError
 	}
 
-	return createJsonResolution(didDoc, metadata, string(resolutionMetadata))
+	return createJsonResolution(didDoc, metadata, string(resolutionMetadata)), ""
 
 }
 
@@ -46,10 +48,9 @@ func (rs RequestService) ProcessDIDRequest(did string, params map[string]string)
 func (rs RequestService) resolve(did string, resolutionOptions types.ResolutionOption) types.DidResolution {
 	didDoc, metadata, err := rs.ledgerService.QueryDIDDoc(did)
 	didResolutionMetadata := types.NewResolutionMetadata(resolutionOptions.Accept, "")
-	result := types.DidResolution{didDoc, metadata, didResolutionMetadata}
 	if err != nil {
 		didResolutionMetadata.ResolutionError = types.ResolutionNotFound
-		return types.DidResolution{nil, nil, didResolutionMetadata}
+		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}
 	}
 	return types.DidResolution{didDoc, metadata, didResolutionMetadata}
 }
@@ -63,7 +64,7 @@ func (rs RequestService) resolve(did string, resolutionOptions types.ResolutionO
 // 	return dereferencingMetadata, contentStream, contentMetadata
 // }
 
-func createJsonResolution(didDoc string, metadata string, resolutionMetadata string) {
+func createJsonResolution(didDoc string, metadata string, resolutionMetadata string) string {
 	return fmt.Sprintf("{\"didDocument\" : %s,\"didDocumentMetadata\" : %s,\"didResolutionMetadata\" : %s}",
-		didDoc, metadata, resolutionMetadata), ""
+		didDoc, metadata, resolutionMetadata)
 }

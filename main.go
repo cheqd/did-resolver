@@ -2,25 +2,42 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/cheqd/cheqd-did-resolver/services"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"gopkg.in/yaml.v2"
 
 	//"net/url"
 	"strings"
 )
 
-func main() {
-	//setup
-	requestService := services.NewRequestService()
+type Config struct {
+	Networks map[string]string `yaml:"networks"`
+}
 
+func main() {
 	// Echo instance
 	e := echo.New()
 
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+
+	//setup
+	e.StdLogger.Println("get config")
+	config, err := getConfig("config.yml")
+	e.StdLogger.Println(config)
+	if err != nil {
+		e.Logger.Fatal(err)
+	}
+	ledgerService := services.NewLedgerService()
+	for network, url := range config.Networks {
+		e.StdLogger.Println(network)
+		ledgerService.RegisterLedger(network, url)
+	}
+	requestService := services.NewRequestService(ledgerService)
 
 	// Routes
 	e.GET("/identifier/:did", func(c echo.Context) error {
@@ -32,11 +49,13 @@ func main() {
 		//}
 		accept := strings.Split(c.Request().Header.Get("accept"), ";")[0]
 		resolutionOption := map[string]string{"Accept": accept}
-		responseBody := requestService.ProcessDIDRequest(did, resolutionOption)
-		if err != nil {
-
+		e.StdLogger.Println("get did")
+		responseBody, err := requestService.ProcessDIDRequest(did, resolutionOption)
+		status := http.StatusOK
+		if err != "" {
+			status = http.StatusBadRequest
 		}
-		return c.String(http.StatusOK, responseBody)
+		return c.String(status, responseBody)
 		//opt := resolver.ResolutionOption{Accept: accept}
 		//rr := resolver.ResolveRepresentation(conn, did, opt)
 		//
@@ -57,7 +76,19 @@ func main() {
 	e.Logger.Fatal(e.Start(":1313"))
 }
 
-// Handler
-func hello(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
+func getConfig(configFileName string) (Config, error) {
+	f, err := os.Open(configFileName)
+	if err != nil {
+		return Config{}, err
+	}
+	defer f.Close()
+
+	var cfg Config
+	decoder := yaml.NewDecoder(f)
+	err = decoder.Decode(&cfg)
+	if err != nil {
+		return Config{}, err
+	}
+
+	return cfg, nil
 }
