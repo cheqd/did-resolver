@@ -63,16 +63,13 @@ func openGRPCConnection(addr string) (conn *grpc.ClientConn, err error) {
 		grpc.WithInsecure(),
 		grpc.WithBlock(),
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	ctx, cancel = context.WithDeadline(ctx, <-time.After(5*time.Second))
+	// TODO: move to application setup
+	// TODO: move timeouts to a config
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
-	// if cancel != nil {
-	// 	cancel()
-	// 	println("openGRPCConnection: cancel")
-	// 	return nil, errors.New("gRPC connection haven't opened")
-	// }
+
 	conn, err = grpc.DialContext(ctx, addr, opts...)
+
 	if err != nil {
 		println("openGRPCConnection: context failed")
 		println(err.Error())

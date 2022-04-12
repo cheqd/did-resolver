@@ -53,9 +53,10 @@ func main() {
 		responseBody, err := requestService.ProcessDIDRequest(did, resolutionOption)
 		status := http.StatusOK
 		if err != "" {
+			// todo: defined a correct status
 			status = http.StatusBadRequest
 		}
-		return c.String(status, responseBody)
+		return c.JSONBlob(status, []byte(responseBody))
 		//opt := resolver.ResolutionOption{Accept: accept}
 		//rr := resolver.ResolveRepresentation(conn, did, opt)
 		//

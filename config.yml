@@ -1,3 +1,4 @@
 networks: 
-    mainnet: https://rpc.cheqd.net:443
-    testnet: https://api.testnet.cheqd.network:443
+    mainnet: rpc.cheqd.net:443
+    testnet: 127.0.0.1:9090
+    # testnet: api.testnet.cheqd.network:443

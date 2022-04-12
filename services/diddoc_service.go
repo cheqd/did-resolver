@@ -75,11 +75,7 @@ func (ds DIDDocService) prepareJWKPubkey(didDoc cheqd.Did) ([]map[string]interfa
 			return nil, err
 		}
 		if len(value.PublicKeyJwk) > 0 {
-			keyJson, err := cheqd.PubKeyJWKToJson(value.PublicKeyJwk)
-			if err != nil {
-				return nil, err
-			}
-			methodJson[publicKeyJwk] = keyJson
+			methodJson[publicKeyJwk] = cheqd.PubKeyJWKToMap(value.PublicKeyJwk)
 		}
 		verMethodList = append(verMethodList, methodJson)
 
