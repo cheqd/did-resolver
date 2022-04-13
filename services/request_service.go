@@ -28,7 +28,7 @@ func (rs RequestService) ProcessDIDRequest(did string, params map[string]string)
 	metadata, err3 := rs.didDocService.MarshallProto(&didResolution.Metadata)
 
 	if err1 != nil || err2 != nil || err3 != nil {
-		resolutionMetadataProto := types.NewResolutionMetadata(params["Accept"],
+		resolutionMetadataProto := types.NewResolutionMetadata(did, params["Accept"],
 			types.ResolutionRepresentationNotSupported)
 		resolutionMetadataJson, _ := json.Marshal(resolutionMetadataProto)
 		return createJsonResolution("null", "null", string(resolutionMetadataJson)),
@@ -47,10 +47,13 @@ func (rs RequestService) ProcessDIDRequest(did string, params map[string]string)
 // https://w3c-ccg.github.io/did-resolution/#resolving
 func (rs RequestService) resolve(did string, resolutionOptions types.ResolutionOption) types.DidResolution {
 	didDoc, metadata, err := rs.ledgerService.QueryDIDDoc(did)
-	didResolutionMetadata := types.NewResolutionMetadata(resolutionOptions.Accept, "")
+	didResolutionMetadata := types.NewResolutionMetadata(did, resolutionOptions.Accept, "")
 	if err != nil {
 		didResolutionMetadata.ResolutionError = types.ResolutionNotFound
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}
+	}
+	if didResolutionMetadata.ContentType == types.ResolutionDIDJSONLDType {
+		didDoc.Context = append(didDoc.Context, types.DIDSchemaJSONLD)
 	}
 	return types.DidResolution{didDoc, metadata, didResolutionMetadata}
 }

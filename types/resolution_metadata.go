@@ -1,6 +1,7 @@
 package types
 
 import (
+	"strings"
 	"time"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
@@ -13,8 +14,13 @@ const (
 )
 
 const (
-	ResolutionJSONType   = "application/json"
-	ResolutionJSONLDType = "application/ld+json"
+	ResolutionDIDJSONType   = "application/did+json"
+	ResolutionDIDJSONLDType = "application/did+ld+json"
+	ResolutionJSONLDType    = "application/ld+json"
+)
+
+const (
+	DIDSchemaJSONLD = "https://ww.w3.org/ns/did/v1"
 )
 
 type ResolutionOption struct {
@@ -22,9 +28,16 @@ type ResolutionOption struct {
 }
 
 type ResolutionMetadata struct {
-	ContentType     string `json:"contentType,omitempty"`
-	ResolutionError string `json:"error,omitempty"`
-	Retrieved       string `json:"retrieved,omitempty"`
+	ContentType     string        `json:"contentType,omitempty"`
+	ResolutionError string        `json:"error,omitempty"`
+	Retrieved       string        `json:"retrieved,omitempty"`
+	DidProperties   DidProperties `json:"did,omitempty"`
+}
+
+type DidProperties struct {
+	DidString        string `json:"didString,omitempty"`
+	MethodSpecificId string `json:"methodSpecificId,omitempty"`
+	Method           string `json:"method,omitempty"`
 }
 
 type DidResolution struct {
@@ -33,10 +46,15 @@ type DidResolution struct {
 	ResolutionMetadata ResolutionMetadata `json:"didResolutionMetadata,omitempty"`
 }
 
-func NewResolutionMetadata(contentType string, resolutionError string) ResolutionMetadata {
+func NewResolutionMetadata(did string, contentType string, resolutionError string) ResolutionMetadata {
 	return ResolutionMetadata{
-		contentType,
-		resolutionError,
-		time.Now().UTC().Format(time.RFC3339),
+		ContentType:     contentType,
+		ResolutionError: resolutionError,
+		Retrieved:       time.Now().UTC().Format(time.RFC3339),
+		DidProperties: DidProperties{
+			DidString:        did,
+			MethodSpecificId: strings.SplitN(did, ":", 4)[3],
+			Method:           "cheqd",
+		},
 	}
 }

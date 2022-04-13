@@ -6,7 +6,6 @@ import (
 	// marshal in combination with our proto generator version
 	"encoding/json"
 
-	"github.com/cheqd/cheqd-did-resolver/types"
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	"github.com/golang/protobuf/jsonpb" //nolint
 	"github.com/golang/protobuf/proto"
@@ -18,6 +17,7 @@ type DIDDocService struct {
 const (
 	verificationMethod = "verificationMethod"
 	publicKeyJwk       = "publicKeyJwk"
+	didContext         = "context"
 )
 
 func (DIDDocService) MarshallProto(protoObject proto.Message) (string, error) {
@@ -37,12 +37,18 @@ func (ds DIDDocService) MarshallDID(didDoc cheqd.Did) (string, error) {
 	var mapDID map[string]interface{}
 	json.Unmarshal([]byte(jsonDID), &mapDID)
 
+	// VerKey changes
 	formatedVerificationMethod, err := ds.prepareJWKPubkey(didDoc)
 	if err != nil {
 		return "", err
 	}
-
 	mapDID[verificationMethod] = formatedVerificationMethod
+
+	// Context changes
+	if val, ok := mapDID[didContext]; ok {
+		mapDID["@"+didContext] = val
+		delete(mapDID, didContext)
+	}
 
 	result, err := json.Marshal(mapDID)
 	if err != nil {
@@ -51,19 +57,8 @@ func (ds DIDDocService) MarshallDID(didDoc cheqd.Did) (string, error) {
 	return string(result), nil
 }
 
-func (DIDDocService) GetResolutionDIDMetadata(contentType string, errorType string) types.ResolutionMetadata {
-	return types.ResolutionMetadata{}
-}
-
-func (DIDDocService) GetDID(contentType string, errorType string) cheqd.Did {
-	return cheqd.Did{}
-}
-
-func (DIDDocService) GetDIDMetadata(contentType string, errorType string) cheqd.Metadata {
-	return cheqd.Metadata{}
-}
-
 func (DIDDocService) GetDIDFragment(DIDDoc cheqd.Did) string {
+	//TODO: implement for dereferencing
 	return ""
 }
 
