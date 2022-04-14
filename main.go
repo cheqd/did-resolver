@@ -19,7 +19,7 @@ type Config struct {
 }
 
 func main() {
-	didResolutionPath := flag.String("path", "/1.0/identifier/:did", "URL path with DID resolution endpoint")
+	didResolutionPath := flag.String("path", "/1.0/identifiers/:did", "URL path with DID resolution endpoint")
 	didResolutionPort := flag.String("port", ":1313", "The endpoint port with DID resolution")
 	flag.Parse()
 
@@ -47,11 +47,6 @@ func main() {
 	// Routes
 	e.GET(*didResolutionPath, func(c echo.Context) error {
 		did := c.Param("did")
-		// decode the paramater
-		// did, err := url.QueryUnescape(did1)
-		//if err != nil {
-		//	return c.JSON(http.StatusBadRequest, map[string]string{})
-		//}
 		accept := strings.Split(c.Request().Header.Get("accept"), ";")[0]
 		if strings.Contains(accept, types.ResolutionJSONLDType) {
 			accept = types.ResolutionDIDJSONLDType
@@ -66,14 +61,8 @@ func main() {
 			// todo: defined a correct status
 			status = http.StatusBadRequest
 		}
+		c.Response().Header().Set(echo.HeaderContentType, accept)
 		return c.JSONBlob(status, []byte(responseBody))
-
-		//
-		//// track the resolution
-		//atomic.AddUint64(&rt.resolves, 1)
-		//c.Response().Header().Set(echo.HeaderContentType, didLDJson)
-		//
-		//return c.JSON(http.StatusOK, rr)
 	})
 
 	// Start server
