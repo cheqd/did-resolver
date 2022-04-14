@@ -9,14 +9,14 @@ jobs:
 
   call-lint:
     name: "Lint"
-    uses: cheqd/cheqd-did-resolver/.github/workflows/markdown-lint.yml@main
+    uses: ./.github/workflows/markdown-lint.yml
 
-#  call-build:
-#    name: "Build"
-#    needs: call-lint
-#    uses: cheqd/cheqd-did-resolver/.github/workflows/build.yml@main
+  call-build:
+    name: "Build"
+    needs: call-lint
+    uses: ./.github/workflows/build.yml
 
   call-test:
     name: "Tests"
     needs: call-build
-    uses: cheqd/cheqd-did-resolver/.github/workflows/test.yml@main
+    uses: ./.github/workflows/test.yml
