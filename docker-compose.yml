@@ -1,0 +1,32 @@
+version: '3.7'
+
+
+services:
+  did_resolver:
+    build:
+      dockerfile: Dockerfile
+    user: root
+    configs:
+      - source: config
+        target: /root/config.yml
+    expose:
+      - 1313
+    env_file:
+      - docker-compose.env
+#    profiles:
+#      - resolver
+
+  redirect:
+    image: morbz/docker-web-redirect
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      - VIRTUAL_HOST=localhost:80
+      - REDIRECT_TARGET=http://localhost:1313
+#    profiles:
+#      - driver
+
+configs:
+  config:
+    file: config.yml
