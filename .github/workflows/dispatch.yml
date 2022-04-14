@@ -1,4 +1,4 @@
-name: Run for ${{ github.ref }} branch
+name: "Workflow Dispatch"
 on: push
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
