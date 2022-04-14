@@ -6,9 +6,6 @@ import (
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	"github.com/stretchr/testify/require"
-	// jsonpb Marshaller is deprecated, but is needed because there's only one way to proto
-	// marshal in combination with our proto generator version
-	//nolint
 )
 
 func TestMarshallDID(t *testing.T) {

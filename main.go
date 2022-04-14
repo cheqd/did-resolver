@@ -1,15 +1,16 @@
 package main
 
 import (
+	"flag"
 	"net/http"
 	"os"
 
 	"github.com/cheqd/cheqd-did-resolver/services"
+	"github.com/cheqd/cheqd-did-resolver/types"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gopkg.in/yaml.v2"
 
-	//"net/url"
 	"strings"
 )
 
@@ -18,6 +19,10 @@ type Config struct {
 }
 
 func main() {
+	didResolutionPath := flag.String("path", "/1.0/identifier/:did", "URL path with DID resolution endpoint")
+	didResolutionPort := flag.String("port", ":1313", "The endpoint port with DID resolution")
+	flag.Parse()
+
 	// Echo instance
 	e := echo.New()
 
@@ -40,7 +45,7 @@ func main() {
 	requestService := services.NewRequestService(ledgerService)
 
 	// Routes
-	e.GET("/identifier/:did", func(c echo.Context) error {
+	e.GET(*didResolutionPath, func(c echo.Context) error {
 		did := c.Param("did")
 		// decode the paramater
 		// did, err := url.QueryUnescape(did1)
@@ -48,6 +53,11 @@ func main() {
 		//	return c.JSON(http.StatusBadRequest, map[string]string{})
 		//}
 		accept := strings.Split(c.Request().Header.Get("accept"), ";")[0]
+		if strings.Contains(accept, types.ResolutionJSONLDType) {
+			accept = types.ResolutionDIDJSONLDType
+		} else {
+			accept = types.ResolutionDIDJSONType
+		}
 		resolutionOption := map[string]string{"Accept": accept}
 		e.StdLogger.Println("get did")
 		responseBody, err := requestService.ProcessDIDRequest(did, resolutionOption)
@@ -57,14 +67,7 @@ func main() {
 			status = http.StatusBadRequest
 		}
 		return c.JSONBlob(status, []byte(responseBody))
-		//opt := resolver.ResolutionOption{Accept: accept}
-		//rr := resolver.ResolveRepresentation(conn, did, opt)
-		//
-		//// add universal resolver specific data:
-		//rr.ResolutionMetadata.DidProperties = map[string]string{
-		//	"method":           "cosmos",
-		//	"methodSpecificId": strings.TrimPrefix(rr.Document.Id, DidPrefix),
-		//}
+
 		//
 		//// track the resolution
 		//atomic.AddUint64(&rt.resolves, 1)
@@ -74,7 +77,7 @@ func main() {
 	})
 
 	// Start server
-	e.Logger.Fatal(e.Start(":1313"))
+	e.Logger.Fatal(e.Start(*didResolutionPort))
 }
 
 func getConfig(configFileName string) (Config, error) {
