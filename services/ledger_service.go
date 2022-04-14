@@ -34,7 +34,10 @@ func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, erro
 	defer conn.Close()
 
 	didDocResponse, err := qc.Did(context.Background(), &cheqd.QueryGetDidRequest{Id: did})
-
+	if err != nil {
+		return cheqd.Did{}, cheqd.Metadata{}, err
+	}
+	println("QueryDIDDoc: received response")
 	println(didDocResponse)
 	return *didDocResponse.Did, *didDocResponse.Metadata, err
 }
