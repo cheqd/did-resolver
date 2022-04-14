@@ -11,10 +11,10 @@ jobs:
     name: "Lint"
     uses: cheqd/cheqd-did-resolver/.github/workflows/markdown-lint.yml@main
 
-  call-build:
-    name: "Build"
-    needs: call-lint
-    uses: cheqd/cheqd-did-resolver/.github/workflows/build.yml@main
+#  call-build:
+#    name: "Build"
+#    needs: call-lint
+#    uses: cheqd/cheqd-did-resolver/.github/workflows/build.yml@main
 
   call-test:
     name: "Tests"
