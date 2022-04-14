@@ -12,7 +12,6 @@ COPY go.mod .
 COPY go.sum .
 COPY main.go .
 
-RUN ls -la
 # Make did-resolver binary
 RUN go build -o did-resolver main.go
 
