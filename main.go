@@ -1,27 +1,26 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/cheqd/cheqd-did-resolver/services"
 	"github.com/cheqd/cheqd-did-resolver/types"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"gopkg.in/yaml.v2"
+	"github.com/spf13/viper"
 
 	"strings"
 )
 
-type Config struct {
-	Networks map[string]string `yaml:"networks"`
-}
-
 func main() {
-	didResolutionPath := flag.String("path", "/1.0/identifiers/:did", "URL path with DID resolution endpoint")
-	didResolutionPort := flag.String("port", ":1313", "The endpoint port with DID resolution")
-	flag.Parse()
+	viper.SetConfigFile("config.yaml")
+	err := viper.ReadInConfig()
+	if err != nil { // Handle errors reading the config file
+		panic(fmt.Errorf("Fatal error config file: %w \n", err))
+	}
+	didResolutionPath := viper.GetString("path")
+	didResolutionListener := viper.GetString("listener")
 
 	// Echo instance
 	e := echo.New()
@@ -31,21 +30,16 @@ func main() {
 	e.Use(middleware.Recover())
 
 	//setup
-	e.StdLogger.Println("get config")
-	config, err := getConfig("config.yml")
-	e.StdLogger.Println(config)
-	if err != nil {
-		e.Logger.Fatal(err)
-	}
+	networks := viper.GetStringMapString("networks")
 	ledgerService := services.NewLedgerService()
-	for network, url := range config.Networks {
+	for network, url := range networks {
 		e.StdLogger.Println(network)
 		ledgerService.RegisterLedger(network, url)
 	}
 	requestService := services.NewRequestService(ledgerService)
 
 	// Routes
-	e.GET(*didResolutionPath, func(c echo.Context) error {
+	e.GET(didResolutionPath, func(c echo.Context) error {
 		did := c.Param("did")
 		accept := strings.Split(c.Request().Header.Get("accept"), ";")[0]
 		if strings.Contains(accept, types.ResolutionJSONLDType) {
@@ -53,35 +47,14 @@ func main() {
 		} else {
 			accept = types.ResolutionDIDJSONType
 		}
-		resolutionOption := map[string]string{"Accept": accept}
 		e.StdLogger.Println("get did")
-		responseBody, err := requestService.ProcessDIDRequest(did, resolutionOption)
-		status := http.StatusOK
-		if err != "" {
-			// todo: defined a correct status
-			status = http.StatusBadRequest
+		responseBody, err := requestService.ProcessDIDRequest(did, types.ResolutionOption{Accept: accept})
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 		c.Response().Header().Set(echo.HeaderContentType, accept)
-		return c.JSONBlob(status, []byte(responseBody))
+		return c.JSONBlob(http.StatusOK, []byte(responseBody))
 	})
 
-	// Start server
-	e.Logger.Fatal(e.Start(*didResolutionPort))
-}
-
-func getConfig(configFileName string) (Config, error) {
-	f, err := os.Open(configFileName)
-	if err != nil {
-		return Config{}, err
-	}
-	defer f.Close()
-
-	var cfg Config
-	decoder := yaml.NewDecoder(f)
-	err = decoder.Decode(&cfg)
-	if err != nil {
-		return Config{}, err
-	}
-
-	return cfg, nil
+	e.Logger.Fatal(e.Start(didResolutionListener))
 }

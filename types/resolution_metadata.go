@@ -1,16 +1,16 @@
 package types
 
 import (
-	"strings"
 	"time"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
+	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
 )
 
 const (
-	ResolutionInvalidDID                 = "invalidDid"
-	ResolutionNotFound                   = "notFound"
-	ResolutionRepresentationNotSupported = "representationNotSupported"
+	ResolutionInvalidDID         = "invalidDid"
+	ResolutionNotFound           = "notFound"
+	ResolutionMethodNotSupported = "methodNotSupported"
 )
 
 const (
@@ -47,14 +47,15 @@ type DidResolution struct {
 }
 
 func NewResolutionMetadata(did string, contentType string, resolutionError string) ResolutionMetadata {
+	method, _, id, _ := cheqdUtils.TrySplitDID(did)
 	return ResolutionMetadata{
 		ContentType:     contentType,
 		ResolutionError: resolutionError,
 		Retrieved:       time.Now().UTC().Format(time.RFC3339),
 		DidProperties: DidProperties{
 			DidString:        did,
-			MethodSpecificId: strings.SplitN(did, ":", 4)[3],
-			Method:           "cheqd",
+			MethodSpecificId: id,
+			Method:           method,
 		},
 	}
 }

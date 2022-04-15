@@ -7,6 +7,8 @@ import (
 	"fmt"
 
 	"github.com/cheqd/cheqd-did-resolver/types"
+	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
+	"github.com/spf13/viper"
 )
 
 type RequestService struct {
@@ -21,41 +23,63 @@ func NewRequestService(ledgerService LedgerService) RequestService {
 	}
 }
 
-func (rs RequestService) ProcessDIDRequest(did string, params map[string]string) (string, string) {
-	didResolution := rs.resolve(did, types.ResolutionOption{Accept: params["Accept"]})
-	resolutionMetadata, err1 := json.Marshal(didResolution.ResolutionMetadata)
-	didDoc, err2 := rs.didDocService.MarshallDID(didResolution.Did)
-	metadata, err3 := rs.didDocService.MarshallProto(&didResolution.Metadata)
+func (rs RequestService) ProcessDIDRequest(did string, resolutionOptions types.ResolutionOption) (string, error) {
 
-	if err1 != nil || err2 != nil || err3 != nil {
-		resolutionMetadataProto := types.NewResolutionMetadata(did, params["Accept"],
-			types.ResolutionRepresentationNotSupported)
-		resolutionMetadataJson, _ := json.Marshal(resolutionMetadataProto)
-		return createJsonResolution("null", "null", string(resolutionMetadataJson)),
-			resolutionMetadataProto.ResolutionError
+	didResolution, err := rs.resolve(did, types.ResolutionOption{resolutionOptions.Accept})
+	if err != nil {
+		return "", err
+	}
+
+	resolutionMetadata, err := json.Marshal(didResolution.ResolutionMetadata)
+	if err != nil {
+		return "", err
+	}
+
+	didDoc, err := rs.didDocService.MarshallDID(didResolution.Did)
+	if err != nil {
+		return "", err
+	}
+
+	metadata, err := rs.didDocService.MarshallProto(&didResolution.Metadata)
+	if err != nil {
+		return "", err
 	}
 
 	if didResolution.ResolutionMetadata.ResolutionError != "" {
-		return createJsonResolution("null", "null", string(resolutionMetadata)),
-			didResolution.ResolutionMetadata.ResolutionError
+		didDoc, metadata = "", ""
 	}
 
-	return createJsonResolution(didDoc, metadata, string(resolutionMetadata)), ""
+	return createJsonResolution(didDoc, metadata, string(resolutionMetadata)), nil
 
 }
 
 // https://w3c-ccg.github.io/did-resolution/#resolving
-func (rs RequestService) resolve(did string, resolutionOptions types.ResolutionOption) types.DidResolution {
-	didDoc, metadata, err := rs.ledgerService.QueryDIDDoc(did)
+func (rs RequestService) resolve(did string, resolutionOptions types.ResolutionOption) (types.DidResolution, error) {
+
 	didResolutionMetadata := types.NewResolutionMetadata(did, resolutionOptions.Accept, "")
+
+	method := viper.GetString("method")
+	if !cheqdUtils.IsValidDID(did, method, rs.ledgerService.GetNamespaces()) {
+		if didMethod, _, _, _ := cheqdUtils.TrySplitDID(did); didMethod != method {
+			didResolutionMetadata.ResolutionError = types.ResolutionMethodNotSupported
+		} else {
+			didResolutionMetadata.ResolutionError = types.ResolutionInvalidDID
+		}
+		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
+	}
+
+	didDoc, metadata, isFound, err := rs.ledgerService.QueryDIDDoc(did)
 	if err != nil {
+		return types.DidResolution{}, err
+	}
+	if !isFound {
 		didResolutionMetadata.ResolutionError = types.ResolutionNotFound
-		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}
+		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
 	}
 	if didResolutionMetadata.ContentType == types.ResolutionDIDJSONLDType {
 		didDoc.Context = append(didDoc.Context, types.DIDSchemaJSONLD)
 	}
-	return types.DidResolution{didDoc, metadata, didResolutionMetadata}
+	return types.DidResolution{didDoc, metadata, didResolutionMetadata}, nil
 }
 
 // https://w3c-ccg.github.io/did-resolution/#dereferencing
@@ -68,6 +92,12 @@ func (rs RequestService) resolve(did string, resolutionOptions types.ResolutionO
 // }
 
 func createJsonResolution(didDoc string, metadata string, resolutionMetadata string) string {
+	if didDoc == "" {
+		didDoc = "null"
+	}
+	if metadata == "" {
+		metadata = "[]"
+	}
 	return fmt.Sprintf("{\"didDocument\" : %s,\"didDocumentMetadata\" : %s,\"didResolutionMetadata\" : %s}",
 		didDoc, metadata, resolutionMetadata)
 }
