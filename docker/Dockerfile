@@ -4,13 +4,13 @@
 
 FROM golang:1.17.8-buster as builder
 
-WORKDIR /
+WORKDIR /root
 
-COPY types /types
-COPY services /services
-COPY go.mod /
-COPY go.sum /
-COPY main.go /main.go
+COPY types ./types
+COPY services ./services
+COPY go.mod .
+COPY go.sum .
+COPY main.go .
 
 # Make did-resolver binary
 RUN go build -o did-resolver main.go
@@ -24,12 +24,10 @@ LABEL org.opencontainers.image.description "Cheqd DID-Resolver runner"
 LABEL org.opencontainers.image.source "https://github.com/cheqd/cheqd-did-resolver"
 
 # Copy compiled did-resolver binary from Stage 1
-COPY --from=builder /did-resolver /bin
+COPY --from=builder /root/did-resolver /bin
 
 # Copy base config.yml
 WORKDIR /root
-COPY config.yml /root
 
-#
 EXPOSE 1313
 ENTRYPOINT ["did-resolver"]

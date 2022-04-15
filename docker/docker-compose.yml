@@ -4,16 +4,15 @@ version: '3.7'
 services:
   did_resolver:
     build:
-      dockerfile: Dockerfile
-    user: root
+      dockerfile: docker/Dockerfile
+      context: ../
     configs:
       - source: config
         target: /root/config.yml
     expose:
-      - ${RESOLVER_PORT:-1313}
-      - 9090
+      - ${RESOLVER_PORT}
     ports:
-      - "${RESOLVER_PORT:-1313}:${RESOLVER_PORT:-1313}"
+      - "${RESOLVER_PORT}:${RESOLVER_PORT}"
     profiles:
       - resolver
 
@@ -21,13 +20,13 @@ services:
     image: morbz/docker-web-redirect
     restart: always
     ports:
-      - "${REDIRECTED_PORT:-80}:${REDIRECTED_PORT:-80}"
+      - "${REDIRECTED_PORT}:${REDIRECTED_PORT}"
     environment:
-      - VIRTUAL_HOST=localhost:80
-      - REDIRECT_TARGET=${CHEQD_RESOLVER_PATH:-http://localhost:1313}
+      - VIRTUAL_HOST={LOCAL_REDIRECT_FROM}
+      - REDIRECT_TARGET=${EXTERNAL_REDIRECT_TO}
     profiles:
       - driver
 
 configs:
   config:
-    file: config.yml
+    file: ../config.yml

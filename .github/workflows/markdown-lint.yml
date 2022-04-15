@@ -1,6 +1,7 @@
 name: Markdown quality control
 
-on: 
+on:
+  workflow_call:
   push:
     paths:
     - '**.md'
