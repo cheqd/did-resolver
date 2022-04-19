@@ -14,7 +14,7 @@ jobs:
         with:
           go-version: '1.17'
 
-      - name: Run Golang unit tests
+      - name: Run Golang build
         run: go build main.go
 
   try-docker-build:

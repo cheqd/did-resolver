@@ -31,9 +31,11 @@ func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool
 	conn, err := openGRPCConnection(serverAddr)
 
 	if err != nil {
+		println("QueryDIDDoc: failed connection")
 		isFound = false
 		return cheqd.Did{}, cheqd.Metadata{}, isFound, err
 	}
+	println("QueryDIDDoc: successful connection")
 
 	qc := cheqd.NewQueryClient(conn)
 	defer conn.Close()

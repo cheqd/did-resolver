@@ -8,13 +8,13 @@ services:
       context: ../
     configs:
       - source: config
-        target: /root/config.yml
+        target: ${CHEQD_RESOLVER_HOME_DIR}/config.yml
     expose:
       - ${RESOLVER_PORT}
     ports:
       - "${RESOLVER_PORT}:${RESOLVER_PORT}"
     profiles:
-      - resolver
+      - full
 
   redirect:
     image: morbz/docker-web-redirect
@@ -25,7 +25,7 @@ services:
       - VIRTUAL_HOST={LOCAL_REDIRECT_FROM}
       - REDIRECT_TARGET=${EXTERNAL_REDIRECT_TO}
     profiles:
-      - driver
+      - light
 
 configs:
   config:
