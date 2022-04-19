@@ -59,13 +59,16 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 	didResolutionMetadata := types.NewResolutionMetadata(did, resolutionOptions.Accept, "")
 
 	method := viper.GetString("method")
-	if !cheqdUtils.IsValidDID(did, "", rs.ledgerService.GetNamespaces()) {
-		if didMethod, _, _, _ := cheqdUtils.TrySplitDID(did); didMethod != method {
-			didResolutionMetadata.ResolutionError = types.ResolutionMethodNotSupported
-		} else {
-			didResolutionMetadata.ResolutionError = types.ResolutionInvalidDID
-		}
+
+	if didMethod, _, _, _ := cheqdUtils.TrySplitDID(did); didMethod != method {
+		didResolutionMetadata.ResolutionError = types.ResolutionMethodNotSupported
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
+	}
+
+	if !cheqdUtils.IsValidDID(did, "", rs.ledgerService.GetNamespaces()) {
+		didResolutionMetadata.ResolutionError = types.ResolutionInvalidDID
+		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
+
 	}
 
 	didDoc, metadata, isFound, err := rs.ledgerService.QueryDIDDoc(did)

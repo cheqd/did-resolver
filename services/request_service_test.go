@@ -33,7 +33,7 @@ func (ls MockLedgerService) GetNamespaces() []string {
 	return []string{"testnet", "mainnet"}
 }
 
-func TestProcessDIDRequest(t *testing.T) {
+func TestResolve(t *testing.T) {
 	viper.SetConfigFile("../config.yaml")
 	viper.ReadInConfig()
 	validIdentifier := "N22KY2Dyvmuu2Pyy"
@@ -75,7 +75,7 @@ func TestProcessDIDRequest(t *testing.T) {
 		},
 		{
 			name:             "invalid DID",
-			ledgerService:    NewMockLedgerService(validDIDDoc, validMetadata),
+			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}),
 			resolutionType:   types.ResolutionDIDJSONLDType,
 			identifier:       "oooooo0000OOOO_invalid_did",
 			method:           validMethod,
@@ -85,7 +85,7 @@ func TestProcessDIDRequest(t *testing.T) {
 		},
 		{
 			name:             "invalid method",
-			ledgerService:    NewMockLedgerService(validDIDDoc, validMetadata),
+			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}),
 			resolutionType:   types.ResolutionDIDJSONLDType,
 			identifier:       validIdentifier,
 			method:           "not_supported_method",
