@@ -12,11 +12,11 @@ import (
 )
 
 type RequestService struct {
-	ledgerService LedgerService
+	ledgerService LedgerServiceI
 	didDocService DIDDocService
 }
 
-func NewRequestService(ledgerService LedgerService) RequestService {
+func NewRequestService(ledgerService LedgerServiceI) RequestService {
 	return RequestService{
 		ledgerService: ledgerService,
 		didDocService: DIDDocService{},
@@ -25,7 +25,7 @@ func NewRequestService(ledgerService LedgerService) RequestService {
 
 func (rs RequestService) ProcessDIDRequest(did string, resolutionOptions types.ResolutionOption) (string, error) {
 
-	didResolution, err := rs.resolve(did, types.ResolutionOption{resolutionOptions.Accept})
+	didResolution, err := rs.Resolve(did, types.ResolutionOption{resolutionOptions.Accept})
 	if err != nil {
 		return "", err
 	}
@@ -54,7 +54,7 @@ func (rs RequestService) ProcessDIDRequest(did string, resolutionOptions types.R
 }
 
 // https://w3c-ccg.github.io/did-resolution/#resolving
-func (rs RequestService) resolve(did string, resolutionOptions types.ResolutionOption) (types.DidResolution, error) {
+func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionOption) (types.DidResolution, error) {
 
 	didResolutionMetadata := types.NewResolutionMetadata(did, resolutionOptions.Accept, "")
 

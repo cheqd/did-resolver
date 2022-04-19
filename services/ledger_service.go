@@ -10,6 +10,10 @@ import (
 	"google.golang.org/grpc"
 )
 
+type LedgerServiceI interface {
+	QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool, error)
+	GetNamespaces() []string
+}
 type LedgerService struct {
 	ledgers map[string]string // namespace -> url
 }

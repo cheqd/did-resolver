@@ -7,10 +7,12 @@ import (
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
 )
 
+type ResolutionError string
+
 const (
-	ResolutionInvalidDID         = "invalidDid"
-	ResolutionNotFound           = "notFound"
-	ResolutionMethodNotSupported = "methodNotSupported"
+	ResolutionInvalidDID         ResolutionError = "invalidDid"
+	ResolutionNotFound           ResolutionError = "notFound"
+	ResolutionMethodNotSupported ResolutionError = "methodNotSupported"
 )
 
 const (
@@ -28,10 +30,10 @@ type ResolutionOption struct {
 }
 
 type ResolutionMetadata struct {
-	ContentType     string        `json:"contentType,omitempty"`
-	ResolutionError string        `json:"error,omitempty"`
-	Retrieved       string        `json:"retrieved,omitempty"`
-	DidProperties   DidProperties `json:"did,omitempty"`
+	ContentType     string          `json:"contentType,omitempty"`
+	ResolutionError ResolutionError `json:"error,omitempty"`
+	Retrieved       string          `json:"retrieved,omitempty"`
+	DidProperties   DidProperties   `json:"did,omitempty"`
 }
 
 type DidProperties struct {
@@ -46,7 +48,7 @@ type DidResolution struct {
 	ResolutionMetadata ResolutionMetadata `json:"didResolutionMetadata,omitempty"`
 }
 
-func NewResolutionMetadata(did string, contentType string, resolutionError string) ResolutionMetadata {
+func NewResolutionMetadata(did string, contentType string, resolutionError ResolutionError) ResolutionMetadata {
 	method, _, id, _ := cheqdUtils.TrySplitDID(did)
 	return ResolutionMetadata{
 		ContentType:     contentType,
