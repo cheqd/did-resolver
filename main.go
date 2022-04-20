@@ -20,7 +20,7 @@ func main() {
 	viper.SetConfigFile(".env")
 	err2 := viper.ReadInConfig()
 	if err1 != nil && err2 != nil { // Handle errors reading the config file
-		panic(fmt.Errorf("Fatal error config file: %w \n Fatal error config file: %w\n", err1, err2))
+		panic(fmt.Errorf("Fatal error config file: %s \n Fatal error config file: %s\n", err1.Error(), err2.Error()))
 	}
 
 	viper.AutomaticEnv()
