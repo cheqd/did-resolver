@@ -1,0 +1,9 @@
+method: cheqd
+listener: 0.0.0.0:1313
+path: "/1.0/identifiers/:did"
+ledgerTimeout: 5s
+loglevel: debug
+
+networks: 
+    mainnet: rpc.cheqd.net:443
+    testnet: 159.89.208.88:443

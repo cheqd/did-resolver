@@ -1,0 +1,32 @@
+version: '3.7'
+
+
+services:
+  did_resolver:
+    build:
+      dockerfile: docker/Dockerfile
+      context: ../
+    configs:
+      - source: config
+        target: ${CHEQD_RESOLVER_HOME_DIR}/config.yaml
+    expose:
+      - ${RESOLVER_PORT}
+    ports:
+      - "${RESOLVER_PORT}:${RESOLVER_PORT}"
+    profiles:
+      - full
+
+  redirect:
+    image: morbz/docker-web-redirect
+    restart: always
+    ports:
+      - "${REDIRECTED_PORT}:${REDIRECTED_PORT}"
+    environment:
+      - VIRTUAL_HOST={LOCAL_REDIRECT_FROM}
+      - REDIRECT_TARGET=${EXTERNAL_REDIRECT_TO}
+    profiles:
+      - light
+
+configs:
+  config:
+    file: ../config.yaml
