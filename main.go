@@ -46,7 +46,8 @@ func main() {
 
 	// Routes
 	e.GET(didResolutionPath, func(c echo.Context) error {
-		did := c.Param("did")
+		didUrl := c.Param("did")
+		fmt.Println(didUrl)
 		accept := strings.Split(c.Request().Header.Get("accept"), ";")[0]
 		var acceptOption types.ContentType
 		if strings.Contains(accept, string(types.JSONLD)) {
@@ -55,11 +56,11 @@ func main() {
 			acceptOption = types.DIDJSON
 		}
 		e.StdLogger.Println("get did")
-		responseBody, err := requestService.ProcessDIDRequest(did, types.ResolutionOption{Accept: acceptOption})
+		responseBody, err := requestService.ProcessDIDRequest(didUrl, types.ResolutionOption{Accept: acceptOption})
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
-		c.Response().Header().Set(echo.HeaderContentType, accept)
+		c.Response().Header().Set(string(acceptOption), accept)
 		return c.JSONBlob(http.StatusOK, []byte(responseBody))
 	})
 
