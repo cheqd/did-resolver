@@ -46,8 +46,8 @@ func main() {
 
 	// Routes
 	e.GET(didResolutionPath, func(c echo.Context) error {
-		didUrl := c.Param("did")
-		fmt.Println(didUrl)
+		didUrl := c.Request().URL.String()
+		fmt.Println(c.Request().URL.String())
 		accept := strings.Split(c.Request().Header.Get("accept"), ";")[0]
 		var acceptOption types.ContentType
 		if strings.Contains(accept, string(types.JSONLD)) {

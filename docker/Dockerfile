@@ -38,5 +38,6 @@ COPY --from=builder /root /bin
 WORKDIR ${CHEQD_RESOLVER_HOME_DIR}
 
 USER cheqd-resolver
+COPY config.yaml ${CHEQD_RESOLVER_HOME_DIR}
 EXPOSE 1313
 ENTRYPOINT ["cheqd-did-resolver"]

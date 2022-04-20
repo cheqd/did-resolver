@@ -67,7 +67,7 @@ func (rs RequestService) prepareResolutionResult(did string, resolutionOptions t
 }
 
 func (rs RequestService) prepareDereferencingResult(did string, dereferencingOptions types.DereferencingOption) (string, error) {
-
+	fmt.Println("Dereference")
 	didDereferencing, err := rs.Dereference(did, dereferencingOptions)
 	if err != nil {
 		return "", err
@@ -78,6 +78,10 @@ func (rs RequestService) prepareDereferencingResult(did string, dereferencingOpt
 		return "", err
 	}
 
+	if didDereferencing.DereferencingMetadata.ResolutionError != "" {
+		return createJsonDereferencing("", "", string(resolutionMetadata)), nil
+	}
+
 	contentStream, err := rs.didDocService.MarshallContentStream(didDereferencing.ContentStream, dereferencingOptions.Accept)
 	if err != nil {
 		return "", err
@@ -86,10 +90,6 @@ func (rs RequestService) prepareDereferencingResult(did string, dereferencingOpt
 	metadata, err := rs.didDocService.MarshallProto(&didDereferencing.Metadata)
 	if err != nil {
 		return "", err
-	}
-
-	if didDereferencing.DereferencingMetadata.ResolutionError != "" {
-		contentStream, metadata = "", ""
 	}
 
 	return createJsonDereferencing(contentStream, metadata, string(resolutionMetadata)), nil
@@ -130,13 +130,16 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 // https://w3c-ccg.github.io/did-resolution/#dereferencing
 func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.DereferencingOption) (types.DidDereferencing, error) {
 	did, path, query, fragmentId, err := cheqdUtils.TrySplitDIDUrl(didUrl)
-	if err != nil || !cheqdUtils.IsValidDIDUrl(didUrl, "", []string{}) {
-		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.ResolutionInvalidDID)
+	fmt.Println(did, path, query, fragmentId)
+
+	// TODO: implement
+	if path != "" || query != "" {
+		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingNotSupported)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
 
-	if path != "" || query != "" {
-		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingNotSupported)
+	if err != nil || !cheqdUtils.IsValidDIDUrl(didUrl, "", []string{}) {
+		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingInvalidDIDUrl)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
 

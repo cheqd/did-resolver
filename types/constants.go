@@ -11,7 +11,7 @@ const (
 const (
 	DereferencingInvalidDIDUrl    ErrorType = "invalidDidUrl"
 	DereferencingFragmentNotFound ErrorType = "FragmentNotFound"
-	DereferencingNotSupported     ErrorType = "UrlNotSupported"
+	DereferencingNotSupported     ErrorType = "NotSupportedUrl"
 )
 
 type ContentType string
