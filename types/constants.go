@@ -1,11 +1,17 @@
 package types
 
-type ResolutionError string
+type ErrorType string
 
 const (
-	ResolutionInvalidDID         ResolutionError = "invalidDid"
-	ResolutionNotFound           ResolutionError = "notFound"
-	ResolutionMethodNotSupported ResolutionError = "methodNotSupported"
+	ResolutionInvalidDID         ErrorType = "invalidDid"
+	ResolutionNotFound           ErrorType = "notFound"
+	ResolutionMethodNotSupported ErrorType = "methodNotSupported"
+)
+
+const (
+	DereferencingInvalidDIDUrl    ErrorType = "invalidDidUrl"
+	DereferencingFragmentNotFound ErrorType = "FragmentNotFound"
+	DereferencingNotSupported     ErrorType = "UrlNotSupported"
 )
 
 type ContentType string

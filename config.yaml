@@ -1,6 +1,6 @@
 method: cheqd
-listener: 0.0.0.0:1313
-path: "/1.0/identifiers/:did"
+listener: :1313
+resolverPath: "/1.0/identifiers/:did"
 ledgerTimeout: 5s
 loglevel: debug
 

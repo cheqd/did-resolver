@@ -22,7 +22,7 @@ func main() {
 	if err != nil { // Handle errors reading the config file
 		panic(fmt.Errorf("Fatal error config file: %w \n", err))
 	}
-	didResolutionPath := viper.GetString("path")
+	didResolutionPath := viper.GetString("resolverPath")
 	didResolutionListener := viper.GetString("listener")
 
 	// Echo instance
@@ -32,8 +32,11 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
+	fmt.Println(didResolutionPath)
+
 	//setup
 	networks := viper.GetStringMapString("networks")
+	fmt.Println(networks)
 	ledgerService := services.NewLedgerService()
 	for network, url := range networks {
 		e.StdLogger.Println(network)

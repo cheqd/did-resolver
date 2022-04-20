@@ -46,12 +46,12 @@ func TestResolve(t *testing.T) {
 	subtests := []struct {
 		name             string
 		ledgerService    MockLedgerService
-		resolutionType   string
+		resolutionType   types.ContentType
 		identifier       string
 		method           string
 		expectedDID      cheqd.Did
 		expectedMetadata cheqd.Metadata
-		expectedError    types.ResolutionError
+		expectedError    types.ErrorType
 	}{
 		{
 			name:             "successful resolution",

@@ -23,9 +23,23 @@ func NewRequestService(ledgerService LedgerServiceI) RequestService {
 	}
 }
 
-func (rs RequestService) ProcessDIDRequest(did string, resolutionOptions types.ResolutionOption) (string, error) {
+func (rs RequestService) IsDidUrl(didUrl string) bool {
+	_, path, query, fragmentId, err := cheqdUtils.TrySplitDIDUrl(didUrl)
+	return err == nil && (path != "" || query != "" || fragmentId != "")
+}
 
-	didResolution, err := rs.Resolve(did, types.ResolutionOption{resolutionOptions.Accept})
+func (rs RequestService) ProcessDIDRequest(didUrl string, resolutionOptions types.ResolutionOption) (string, error) {
+	if rs.IsDidUrl(didUrl) {
+		return rs.prepareDereferencingResult(didUrl, types.DereferencingOption(resolutionOptions))
+	} else {
+		return rs.prepareResolutionResult(didUrl, resolutionOptions)
+	}
+
+}
+
+func (rs RequestService) prepareResolutionResult(did string, resolutionOptions types.ResolutionOption) (string, error) {
+
+	didResolution, err := rs.Resolve(did, resolutionOptions)
 	if err != nil {
 		return "", err
 	}
@@ -50,7 +64,35 @@ func (rs RequestService) ProcessDIDRequest(did string, resolutionOptions types.R
 	}
 
 	return createJsonResolution(didDoc, metadata, string(resolutionMetadata)), nil
+}
 
+func (rs RequestService) prepareDereferencingResult(did string, dereferencingOptions types.DereferencingOption) (string, error) {
+
+	didDereferencing, err := rs.Dereference(did, dereferencingOptions)
+	if err != nil {
+		return "", err
+	}
+
+	resolutionMetadata, err := json.Marshal(didDereferencing.DereferencingMetadata)
+	if err != nil {
+		return "", err
+	}
+
+	contentStream, err := rs.didDocService.MarshallContentStream(didDereferencing.ContentStream, dereferencingOptions.Accept)
+	if err != nil {
+		return "", err
+	}
+
+	metadata, err := rs.didDocService.MarshallProto(&didDereferencing.Metadata)
+	if err != nil {
+		return "", err
+	}
+
+	if didDereferencing.DereferencingMetadata.ResolutionError != "" {
+		contentStream, metadata = "", ""
+	}
+
+	return createJsonDereferencing(contentStream, metadata, string(resolutionMetadata)), nil
 }
 
 // https://w3c-ccg.github.io/did-resolution/#resolving
@@ -86,14 +128,35 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 }
 
 // https://w3c-ccg.github.io/did-resolution/#dereferencing
-func (rs RequestService) dereference(didUrl string, dereferenceOptions types.DereferencingOption) (types.DidDereferencing, error) {
+func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.DereferencingOption) (types.DidDereferencing, error) {
+	did, path, query, fragmentId, err := cheqdUtils.TrySplitDIDUrl(didUrl)
+	if err != nil || !cheqdUtils.IsValidDIDUrl(didUrl, "", []string{}) {
+		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.ResolutionInvalidDID)
+		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
+	}
+
+	if path != "" || query != "" {
+		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingNotSupported)
+		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
+	}
+
 	didResolution, err := rs.Resolve(did, types.ResolutionOption(dereferenceOptions))
 	if err != nil {
-		didResolutionMetadata = ResolutionErr(ResolutionNotFound)
+		return types.DidDereferencing{}, err
 	}
 	dereferencingMetadata := types.DereferencingMetadata(didResolution.ResolutionMetadata)
+	if dereferencingMetadata.ResolutionError != "" {
+		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
+	}
+
+	contentStream := rs.didDocService.GetDIDFragment(fragmentId, didResolution.Did)
+	if contentStream == nil {
+		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingFragmentNotFound)
+		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
+	}
+
 	contentMetadata := didResolution.Metadata
-	return types.DidDereferencing{contentStream, dereferencingMetadata, contentMetadata}, nil
+	return types.DidDereferencing{contentStream, contentMetadata, dereferencingMetadata}, nil
 }
 
 func createJsonResolution(didDoc string, metadata string, resolutionMetadata string) string {
@@ -105,4 +168,15 @@ func createJsonResolution(didDoc string, metadata string, resolutionMetadata str
 	}
 	return fmt.Sprintf("{\"didDocument\" : %s,\"didDocumentMetadata\" : %s,\"didResolutionMetadata\" : %s}",
 		didDoc, metadata, resolutionMetadata)
+}
+
+func createJsonDereferencing(contentStream string, metadata string, dereferencingMetadata string) string {
+	if contentStream == "" {
+		contentStream = "null"
+	}
+	if metadata == "" {
+		metadata = "[]"
+	}
+	return fmt.Sprintf("{\"contentStream\" : %s,\"contentMetadata\" : %s,\"dereferencingMetadata\" : %s}",
+		contentStream, metadata, dereferencingMetadata)
 }

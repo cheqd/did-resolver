@@ -27,7 +27,7 @@ func NewLedgerService() LedgerService {
 func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool, error) {
 	isFound := true
 	serverAddr := ls.ledgers[getNamespace(did)]
-	println(serverAddr)
+	println(ls.ledgers)
 	conn, err := openGRPCConnection(serverAddr)
 
 	if err != nil {
