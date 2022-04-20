@@ -15,13 +15,16 @@ import (
 
 func main() {
 	viper.SetConfigFile("config.yaml")
-	viper.SetConfigType("env")
+	err1 := viper.ReadInConfig()
+
+	viper.SetConfigFile(".env")
+	err2 := viper.ReadInConfig()
+	if err1 != nil && err2 != nil { // Handle errors reading the config file
+		panic(fmt.Errorf("Fatal error config file: %s \n Fatal error config file: %s\n", err1.Error(), err2.Error()))
+	}
+
 	viper.AutomaticEnv()
 
-	err := viper.ReadInConfig()
-	if err != nil { // Handle errors reading the config file
-		panic(fmt.Errorf("Fatal error config file: %w \n", err))
-	}
 	didResolutionPath := viper.GetString("resolverPath")
 	didResolutionListener := viper.GetString("listener")
 
@@ -32,11 +35,8 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	fmt.Println(didResolutionPath)
-
 	//setup
 	networks := viper.GetStringMapString("networks")
-	fmt.Println(networks)
 	ledgerService := services.NewLedgerService()
 	for network, url := range networks {
 		e.StdLogger.Println(network)
