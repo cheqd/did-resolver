@@ -34,7 +34,7 @@ RUN groupadd --system --gid $GID cheqd-resolver \
 # Copy compiled cheqd-did-resolver binary from Stage 1
 COPY --from=builder /root /bin
 
-# Copy base config.yml
+# Copy base config.yaml
 WORKDIR ${CHEQD_RESOLVER_HOME_DIR}
 
 USER cheqd-resolver

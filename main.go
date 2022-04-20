@@ -15,20 +15,16 @@ import (
 
 func main() {
 	viper.SetConfigFile("config.yaml")
-	err := viper.ReadInConfig()
-	if err != nil { // Handle errors reading the config file
-		panic(fmt.Errorf("Fatal error config file: %w \n", err))
-	}
-	
+	err1 := viper.ReadInConfig()
+
 	viper.SetConfigFile(".env")
-	err = viper.ReadInConfig()
-	if err != nil { // Handle errors reading the config file
-		panic(fmt.Errorf("Fatal error config file: %w \n", err))
+	err2 := viper.ReadInConfig()
+	if err1 != nil && err2 != nil { // Handle errors reading the config file
+		panic(fmt.Errorf("Fatal error config file: %w \n Fatal error config file: %w\n", err1, err2))
 	}
-	
+
 	viper.AutomaticEnv()
 
-	
 	didResolutionPath := viper.GetString("path")
 	didResolutionListener := viper.GetString("listener")
 

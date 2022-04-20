@@ -8,7 +8,7 @@ services:
       context: ../
     configs:
       - source: config
-        target: ${CHEQD_RESOLVER_HOME_DIR}/config.yml
+        target: ${CHEQD_RESOLVER_HOME_DIR}/config.yaml
     expose:
       - ${RESOLVER_PORT}
     ports:
@@ -29,4 +29,4 @@ services:
 
 configs:
   config:
-    file: ../config.yml
+    file: ../config.yaml
