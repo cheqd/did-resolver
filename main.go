@@ -45,13 +45,14 @@ func main() {
 	e.GET(didResolutionPath, func(c echo.Context) error {
 		did := c.Param("did")
 		accept := strings.Split(c.Request().Header.Get("accept"), ";")[0]
-		if strings.Contains(accept, types.ResolutionJSONLDType) {
-			accept = types.ResolutionDIDJSONLDType
+		var acceptOption types.ContentType
+		if strings.Contains(accept, string(types.JSONLD)) {
+			acceptOption = types.DIDJSONLD
 		} else {
-			accept = types.ResolutionDIDJSONType
+			acceptOption = types.DIDJSON
 		}
 		e.StdLogger.Println("get did")
-		responseBody, err := requestService.ProcessDIDRequest(did, types.ResolutionOption{Accept: accept})
+		responseBody, err := requestService.ProcessDIDRequest(did, types.ResolutionOption{Accept: acceptOption})
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}

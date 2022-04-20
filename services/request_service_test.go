@@ -56,7 +56,7 @@ func TestResolve(t *testing.T) {
 		{
 			name:             "successful resolution",
 			ledgerService:    NewMockLedgerService(validDIDDoc, validMetadata),
-			resolutionType:   types.ResolutionDIDJSONLDType,
+			resolutionType:   types.DIDJSONLD,
 			identifier:       validIdentifier,
 			method:           validMethod,
 			expectedDID:      validDIDDoc,
@@ -66,7 +66,7 @@ func TestResolve(t *testing.T) {
 		{
 			name:             "DID not found",
 			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}),
-			resolutionType:   types.ResolutionDIDJSONLDType,
+			resolutionType:   types.DIDJSONLD,
 			identifier:       validIdentifier,
 			method:           validMethod,
 			expectedDID:      cheqd.Did{},
@@ -76,7 +76,7 @@ func TestResolve(t *testing.T) {
 		{
 			name:             "invalid DID",
 			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}),
-			resolutionType:   types.ResolutionDIDJSONLDType,
+			resolutionType:   types.DIDJSONLD,
 			identifier:       "oooooo0000OOOO_invalid_did",
 			method:           validMethod,
 			expectedDID:      cheqd.Did{},
@@ -86,7 +86,7 @@ func TestResolve(t *testing.T) {
 		{
 			name:             "invalid method",
 			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}),
-			resolutionType:   types.ResolutionDIDJSONLDType,
+			resolutionType:   types.DIDJSONLD,
 			identifier:       validIdentifier,
 			method:           "not_supported_method",
 			expectedDID:      cheqd.Did{},
@@ -104,7 +104,7 @@ func TestResolve(t *testing.T) {
 				MethodSpecificId: subtest.identifier,
 				Method:           subtest.method,
 			}
-			if (subtest.resolutionType == types.ResolutionDIDJSONLDType || subtest.resolutionType == types.ResolutionJSONLDType) && subtest.expectedError == "" {
+			if (subtest.resolutionType == types.DIDJSONLD || subtest.resolutionType == types.JSONLD) && subtest.expectedError == "" {
 				subtest.expectedDID.Context = []string{types.DIDSchemaJSONLD}
 			}
 

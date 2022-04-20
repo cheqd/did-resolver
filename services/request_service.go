@@ -79,20 +79,22 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 		didResolutionMetadata.ResolutionError = types.ResolutionNotFound
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
 	}
-	if didResolutionMetadata.ContentType == types.ResolutionDIDJSONLDType {
+	if didResolutionMetadata.ContentType == types.DIDJSONLD {
 		didDoc.Context = append(didDoc.Context, types.DIDSchemaJSONLD)
 	}
 	return types.DidResolution{didDoc, metadata, didResolutionMetadata}, nil
 }
 
 // https://w3c-ccg.github.io/did-resolution/#dereferencing
-// func (RequestService) dereference(didUrl string, dereferenceOptions map[string]string) (string, string, string) {
-// 	did, metadata, err := LedgerService.QueryDIDDoc()
-// 	if err != nil {
-// 		didResolutionMetadata = ResolutionErr(ResolutionNotFound)
-// 	}
-// 	return dereferencingMetadata, contentStream, contentMetadata
-// }
+func (rs RequestService) dereference(didUrl string, dereferenceOptions types.DereferencingOption) (types.DidDereferencing, error) {
+	didResolution, err := rs.Resolve(did, types.ResolutionOption(dereferenceOptions))
+	if err != nil {
+		didResolutionMetadata = ResolutionErr(ResolutionNotFound)
+	}
+	dereferencingMetadata := types.DereferencingMetadata(didResolution.ResolutionMetadata)
+	contentMetadata := didResolution.Metadata
+	return types.DidDereferencing{contentStream, dereferencingMetadata, contentMetadata}, nil
+}
 
 func createJsonResolution(didDoc string, metadata string, resolutionMetadata string) string {
 	if didDoc == "" {
