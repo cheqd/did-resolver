@@ -3,9 +3,10 @@ package services
 import (
 	"context"
 	"errors"
-
+	"fmt"
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 )
@@ -25,46 +26,42 @@ func NewLedgerService() LedgerService {
 }
 
 func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool, error) {
-	isFound := true
-	serverAddr := ls.ledgers[getNamespace(did)]
-	println(ls.ledgers)
-	conn, err := openGRPCConnection(serverAddr)
-
-	if err != nil {
-		println("QueryDIDDoc: failed connection")
-		isFound = false
-		return cheqd.Did{}, cheqd.Metadata{}, isFound, err
+	_, namespace, _, _ := cheqdUtils.TrySplitDID(did)
+	serverAddr, namespaceFound := ls.ledgers[namespace]
+	if !namespaceFound {
+		return cheqd.Did{}, cheqd.Metadata{}, false, fmt.Errorf("namespace not suported: %s", namespace)
 	}
-	println("QueryDIDDoc: successful connection")
 
-	qc := cheqd.NewQueryClient(conn)
+	log.Info().Msgf("Connecting to the ledger: %s", serverAddr)
+	conn, err := openGRPCConnection(serverAddr)
+	if err != nil {
+		log.Error().Err(err).Msg("QueryDIDDoc: failed connection")
+		return cheqd.Did{}, cheqd.Metadata{}, false, err
+	}
 	defer conn.Close()
 
-	didDocResponse, err := qc.Did(context.Background(), &cheqd.QueryGetDidRequest{Id: did})
+	log.Info().Msgf("Querying did doc: %s", did)
+	client := cheqd.NewQueryClient(conn)
+	didDocResponse, err := client.Did(context.Background(), &cheqd.QueryGetDidRequest{Id: did})
 	if err != nil {
-		isFound = false
-		return cheqd.Did{}, cheqd.Metadata{}, isFound, nil
+		return cheqd.Did{}, cheqd.Metadata{}, false, nil
 	}
-	println("QueryDIDDoc: received response")
-	println(didDocResponse)
-	return *didDocResponse.Did, *didDocResponse.Metadata, isFound, err
+
+	return *didDocResponse.Did, *didDocResponse.Metadata, true, err
 }
 
 func (ls *LedgerService) RegisterLedger(namespace string, url string) error {
-	println("RegisterLedger")
-
 	if namespace == "" {
-		println("Namespace cannot be empty")
-		return errors.New("Namespace cannot be empty")
+		err := errors.New("namespace cannot be empty")
+		log.Error().Err(err).Msg("RegisterLedger: failed")
+		return err
 	}
+
 	if url == "" {
-		println("Ledger node url cannot be empty")
-		return errors.New("Ledger node url cannot be empty")
+		return errors.New("ledger node url cannot be empty")
 	}
+
 	ls.ledgers[namespace] = url
-
-	println("RegisterLedger end")
-
 	return nil
 }
 
@@ -79,17 +76,12 @@ func openGRPCConnection(addr string) (conn *grpc.ClientConn, err error) {
 	conn, err = grpc.DialContext(ctx, addr, opts...)
 
 	if err != nil {
-		println("openGRPCConnection: context failed")
-		println(err.Error())
+		log.Error().Err(err).Msgf("openGRPCConnection: context failed")
 		return nil, err
 	}
-	println("openGRPCConnection: opened")
-	return conn, nil
-}
 
-func getNamespace(did string) string {
-	_, namespace, _, _ := cheqdUtils.TrySplitDID(did)
-	return namespace
+	log.Info().Msg("openGRPCConnection: opened")
+	return conn, nil
 }
 
 func (ls LedgerService) GetNamespaces() []string {

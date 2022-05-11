@@ -1,0 +1,95 @@
+package cmd
+
+import (
+	"github.com/cheqd/cheqd-did-resolver/services"
+	"github.com/cheqd/cheqd-did-resolver/types"
+	"github.com/cheqd/cheqd-did-resolver/utils"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"github.com/spf13/cobra"
+	"net/http"
+	"strings"
+)
+
+func getServeCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "serve",
+		Short: "Runs resolver as a web server",
+		Run: func(cmd *cobra.Command, args []string) {
+			serve()
+		},
+	}
+}
+
+func serve() {
+	log.Info().Msg("Loading configuration")
+	config, err := utils.LoadConfig()
+	if err != nil {
+		panic(err)
+	}
+
+	log.Info().Msgf("Configuration: %s", config.MustMarshalJson())
+
+	log.Info().Msgf("Setting log level: %s", config.LogLevel)
+	level, err := zerolog.ParseLevel(config.LogLevel)
+	if err != nil {
+		panic(err)
+	}
+	zerolog.SetGlobalLevel(level)
+
+	// Echo instance
+	e := echo.New()
+
+	// Middleware
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+
+	// Services
+	ledgerService := services.NewLedgerService()
+
+	networks := strings.Split(config.Resolver.Networks, ";")
+	for _, network := range networks {
+		args := strings.Split(network, "=")
+		name, url := args[0], args[1]
+
+		log.Info().Msgf("Registering network. Name: %s, url: %s.", name, url)
+		err := ledgerService.RegisterLedger(name, url)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	requestService := services.NewRequestService(config.Resolver.Method, ledgerService)
+
+	// Routes
+	e.GET(config.Api.ResolverPath, func(c echo.Context) error {
+		didUrl := c.Param("did")
+		log.Debug().Msgf("DID: %s", didUrl)
+
+		accept := strings.Split(c.Request().Header.Get(echo.HeaderAccept), ";")[0]
+		log.Trace().Msgf("Accept: %s", accept)
+
+		var requestedContentType types.ContentType
+		if strings.Contains(accept, string(types.JSONLD)) {
+			requestedContentType = types.DIDJSONLD
+		} else {
+			requestedContentType = types.DIDJSON
+		}
+		log.Debug().Msgf("Requested content type: %s", requestedContentType)
+
+		responseBody, err := requestService.ProcessDIDRequest(didUrl, types.ResolutionOption{Accept: requestedContentType})
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
+
+		log.Debug().Msgf("Response body: %s", responseBody)
+
+		c.Response().Header().Set(echo.HeaderContentType, accept)
+		return c.JSONBlob(http.StatusOK, []byte(responseBody))
+	})
+
+	log.Info().Msg("Starting listener")
+	log.Fatal().Err(e.Start(config.Api.Listener))
+}

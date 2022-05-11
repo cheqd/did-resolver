@@ -6,7 +6,6 @@ import (
 
 	"github.com/cheqd/cheqd-did-resolver/types"
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
-	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 )
 
@@ -34,10 +33,8 @@ func (ls MockLedgerService) GetNamespaces() []string {
 }
 
 func TestResolve(t *testing.T) {
-	viper.SetConfigFile("../config.yaml")
-	viper.ReadInConfig()
 	validIdentifier := "N22KY2Dyvmuu2Pyy"
-	validMethod := viper.GetString("method")
+	validMethod := "cheqd"
 	validDIDDoc := cheqd.Did{
 		Id: "did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue",
 	}
@@ -97,7 +94,7 @@ func TestResolve(t *testing.T) {
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
-			requestService := NewRequestService(subtest.ledgerService)
+			requestService := NewRequestService("cheqd", subtest.ledgerService)
 			id := "did:" + subtest.method + ":testnet:" + subtest.identifier
 			expectedDIDProperties := types.DidProperties{
 				DidString:        id,

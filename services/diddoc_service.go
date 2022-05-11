@@ -38,7 +38,7 @@ func (ds DIDDocService) MarshallDID(didDoc cheqd.Did) (string, error) {
 	}
 
 	// VerKey changes
-	formatedVerificationMethod, err := ds.MarshallVerificatonMethod(didDoc.VerificationMethod)
+	formatedVerificationMethod, err := ds.MarshallVerificationMethod(didDoc.VerificationMethod)
 	if err != nil {
 		return "", err
 	}
@@ -109,8 +109,8 @@ func (ds DIDDocService) prepareJWKPubkey(verificationMethod *cheqd.VerificationM
 	return methodJson, nil
 }
 
-func (ds DIDDocService) MarshallVerificatonMethod(verificationMethod []*cheqd.VerificationMethod) ([]map[string]interface{}, error) {
-	verMethodList := []map[string]interface{}{}
+func (ds DIDDocService) MarshallVerificationMethod(verificationMethod []*cheqd.VerificationMethod) ([]map[string]interface{}, error) {
+	var verMethodList []map[string]interface{}
 	for _, value := range verificationMethod {
 		methodJson, err := ds.prepareJWKPubkey(value)
 		if err != nil {
@@ -127,6 +127,11 @@ func (ds DIDDocService) protoToMap(protoObject protoiface.MessageV1) (map[string
 		return nil, err
 	}
 	var mapObj map[string]interface{}
-	json.Unmarshal([]byte(jsonObj), &mapObj)
+
+	err = json.Unmarshal([]byte(jsonObj), &mapObj)
+	if err != nil {
+		return nil, err
+	}
+
 	return mapObj, err
 }

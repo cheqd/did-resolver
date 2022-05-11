@@ -23,5 +23,5 @@ const (
 )
 
 const (
-	DIDSchemaJSONLD = "https://ww.w3.org/ns/did/v1"
+	DIDSchemaJSONLD = "https://www.w3.org/ns/did/v1"
 )
