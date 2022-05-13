@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cheqd/cheqd-did-resolver/types"
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
+	"github.com/cheqd/did-resolver/types"
 	"github.com/stretchr/testify/require"
 )
 

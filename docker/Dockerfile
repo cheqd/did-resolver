@@ -23,7 +23,7 @@ RUN go build -o cheqd-did-resolver main.go
 FROM ubuntu:focal AS runner
 
 LABEL org.opencontainers.image.description="Cheqd DID-Resolver runner"
-LABEL org.opencontainers.image.source="https://github.com/cheqd/cheqd-did-resolver"
+LABEL org.opencontainers.image.source="https://github.com/cheqd/did-resolver"
 
 
 # Set user details

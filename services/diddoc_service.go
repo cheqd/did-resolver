@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/cheqd/cheqd-did-resolver/types"
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
+	"github.com/cheqd/did-resolver/types"
 	"github.com/golang/protobuf/jsonpb" //nolint
 	"google.golang.org/protobuf/runtime/protoiface"
 )

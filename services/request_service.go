@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"github.com/rs/zerolog/log"
 
-	"github.com/cheqd/cheqd-did-resolver/types"
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
+	"github.com/cheqd/did-resolver/types"
 )
 
 type RequestService struct {

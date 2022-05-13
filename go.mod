@@ -1,4 +1,4 @@
-module github.com/cheqd/cheqd-did-resolver
+module github.com/cheqd/did-resolver
 
 go 1.17
 

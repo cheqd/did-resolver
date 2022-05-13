@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/cheqd/cheqd-did-resolver/cmd"
+	"github.com/cheqd/did-resolver/cmd"
 )
 
 func main() {

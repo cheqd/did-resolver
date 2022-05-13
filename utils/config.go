@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"github.com/cheqd/cheqd-did-resolver/types"
+	"github.com/cheqd/did-resolver/types"
 	"github.com/spf13/viper"
 	"strings"
 )

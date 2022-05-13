@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/cheqd/cheqd-did-resolver/utils"
+	"github.com/cheqd/did-resolver/utils"
 	"github.com/spf13/cobra"
 )
 

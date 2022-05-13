@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"github.com/cheqd/cheqd-did-resolver/services"
-	"github.com/cheqd/cheqd-did-resolver/types"
-	"github.com/cheqd/cheqd-did-resolver/utils"
+	"github.com/cheqd/did-resolver/services"
+	"github.com/cheqd/did-resolver/types"
+	"github.com/cheqd/did-resolver/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/rs/zerolog"
