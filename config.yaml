@@ -1,9 +1,12 @@
-method: cheqd
-listener: 0.0.0.0:1313
-resolverPath: "/1.0/identifiers/:did"
-ledgerTimeout: 5s
-loglevel: debug
+ledger:
+  networks: "mainnet=rpc.cheqd.net:443;testnet=159.89.208.88:443"
+  timeout: "5s"
 
-networks: 
-    mainnet: rpc.cheqd.net:443
-    testnet: 159.89.208.88:443
+resolver:
+  method: "cheqd"
+
+api:
+  listener: "0.0.0.0:1313"
+  resolverPath: "/1.0/identifiers/:did"
+
+logLevel: "debug"

@@ -4,20 +4,21 @@ import (
 	// jsonpb Marshaller is deprecated, but is needed because there's only one way to proto
 	// marshal in combination with our proto generator version
 	"encoding/json"
-	"fmt"
+	"github.com/rs/zerolog/log"
 
-	"github.com/cheqd/cheqd-did-resolver/types"
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
-	"github.com/spf13/viper"
+	"github.com/cheqd/did-resolver/types"
 )
 
 type RequestService struct {
+	didMethod     string
 	ledgerService LedgerServiceI
 	didDocService DIDDocService
 }
 
-func NewRequestService(ledgerService LedgerServiceI) RequestService {
+func NewRequestService(didMethod string, ledgerService LedgerServiceI) RequestService {
 	return RequestService{
+		didMethod:     didMethod,
 		ledgerService: ledgerService,
 		didDocService: DIDDocService{},
 	}
@@ -30,11 +31,12 @@ func (rs RequestService) IsDidUrl(didUrl string) bool {
 
 func (rs RequestService) ProcessDIDRequest(didUrl string, resolutionOptions types.ResolutionOption) (string, error) {
 	if rs.IsDidUrl(didUrl) {
+		log.Trace().Msgf("Dereferencing %s", didUrl)
 		return rs.prepareDereferencingResult(didUrl, types.DereferencingOption(resolutionOptions))
 	} else {
+		log.Trace().Msgf("Resolving %s", didUrl)
 		return rs.prepareResolutionResult(didUrl, resolutionOptions)
 	}
-
 }
 
 func (rs RequestService) prepareResolutionResult(did string, resolutionOptions types.ResolutionOption) (string, error) {
@@ -63,11 +65,12 @@ func (rs RequestService) prepareResolutionResult(did string, resolutionOptions t
 		didDoc, metadata = "", ""
 	}
 
-	return createJsonResolution(didDoc, metadata, string(resolutionMetadata)), nil
+	return createJsonResolution(didDoc, metadata, string(resolutionMetadata))
 }
 
 func (rs RequestService) prepareDereferencingResult(did string, dereferencingOptions types.DereferencingOption) (string, error) {
-	fmt.Println("Dereference")
+	log.Info().Msgf("Dereferencing %s", did)
+
 	didDereferencing, err := rs.Dereference(did, dereferencingOptions)
 	if err != nil {
 		return "", err
@@ -79,7 +82,7 @@ func (rs RequestService) prepareDereferencingResult(did string, dereferencingOpt
 	}
 
 	if didDereferencing.DereferencingMetadata.ResolutionError != "" {
-		return createJsonDereferencing("", "", string(resolutionMetadata)), nil
+		return createJsonDereferencing("", "", string(resolutionMetadata))
 	}
 
 	contentStream, err := rs.didDocService.MarshallContentStream(didDereferencing.ContentStream, dereferencingOptions.Accept)
@@ -92,7 +95,7 @@ func (rs RequestService) prepareDereferencingResult(did string, dereferencingOpt
 		return "", err
 	}
 
-	return createJsonDereferencing(contentStream, metadata, string(resolutionMetadata)), nil
+	return createJsonDereferencing(contentStream, metadata, string(resolutionMetadata))
 }
 
 // https://w3c-ccg.github.io/did-resolution/#resolving
@@ -100,9 +103,7 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 
 	didResolutionMetadata := types.NewResolutionMetadata(did, resolutionOptions.Accept, "")
 
-	method := viper.GetString("method")
-
-	if didMethod, _, _, _ := cheqdUtils.TrySplitDID(did); didMethod != method {
+	if didMethod, _, _, _ := cheqdUtils.TrySplitDID(did); didMethod != rs.didMethod {
 		didResolutionMetadata.ResolutionError = types.ResolutionMethodNotSupported
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
 	}
@@ -117,10 +118,12 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 	if err != nil {
 		return types.DidResolution{}, err
 	}
+
 	if !isFound {
 		didResolutionMetadata.ResolutionError = types.ResolutionNotFound
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
 	}
+
 	if didResolutionMetadata.ContentType == types.DIDJSONLD {
 		didDoc.Context = append(didDoc.Context, types.DIDSchemaJSONLD)
 	}
@@ -130,7 +133,7 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 // https://w3c-ccg.github.io/did-resolution/#dereferencing
 func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.DereferencingOption) (types.DidDereferencing, error) {
 	did, path, query, fragmentId, err := cheqdUtils.TrySplitDIDUrl(didUrl)
-	fmt.Println(did, path, query, fragmentId)
+	log.Info().Msgf("did: %s, path: %s, query: %s, fragmentId: %s", did, path, query, fragmentId)
 
 	// TODO: implement
 	if path != "" || query != "" {
@@ -162,24 +165,58 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 	return types.DidDereferencing{contentStream, contentMetadata, dereferencingMetadata}, nil
 }
 
-func createJsonResolution(didDoc string, metadata string, resolutionMetadata string) string {
+func createJsonResolution(didDoc string, metadata string, resolutionMetadata string) (string, error) {
 	if didDoc == "" {
 		didDoc = "null"
 	}
+
 	if metadata == "" {
 		metadata = "[]"
 	}
-	return fmt.Sprintf("{\"didDocument\" : %s,\"didDocumentMetadata\" : %s,\"didResolutionMetadata\" : %s}",
-		didDoc, metadata, resolutionMetadata)
+
+	response := struct {
+		DidDocument           json.RawMessage `json:"didDocument"`
+		DidDocumentMetadata   json.RawMessage `json:"didDocumentMetadata"`
+		DidResolutionMetadata json.RawMessage `json:"didResolutionMetadata"`
+	}{
+		DidDocument:           json.RawMessage(didDoc),
+		DidDocumentMetadata:   json.RawMessage(metadata),
+		DidResolutionMetadata: json.RawMessage(resolutionMetadata),
+	}
+
+	respJson, err := json.Marshal(&response)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to marshal response")
+		return "", err
+	}
+
+	return string(respJson), nil
 }
 
-func createJsonDereferencing(contentStream string, metadata string, dereferencingMetadata string) string {
+func createJsonDereferencing(contentStream string, metadata string, dereferencingMetadata string) (string, error) {
 	if contentStream == "" {
 		contentStream = "null"
 	}
+
 	if metadata == "" {
 		metadata = "[]"
 	}
-	return fmt.Sprintf("{\"contentStream\" : %s,\"contentMetadata\" : %s,\"dereferencingMetadata\" : %s}",
-		contentStream, metadata, dereferencingMetadata)
+
+	response := struct {
+		ContentStream         json.RawMessage `json:"contentStream"`
+		ContentMetadata       json.RawMessage `json:"contentMetadata"`
+		DereferencingMetadata json.RawMessage `json:"dereferencingMetadata"`
+	}{
+		ContentStream:         json.RawMessage(contentStream),
+		ContentMetadata:       json.RawMessage(metadata),
+		DereferencingMetadata: json.RawMessage(dereferencingMetadata),
+	}
+
+	respJson, err := json.Marshal(&response)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to marshal response")
+		return "", err
+	}
+
+	return string(respJson), nil
 }
