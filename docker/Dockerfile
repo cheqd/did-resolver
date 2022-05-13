@@ -9,6 +9,7 @@ WORKDIR /root
 COPY types ./types
 COPY services ./services
 COPY cmd ./cmd
+COPY utils ./utils
 COPY go.mod .
 COPY go.sum .
 COPY main.go .
