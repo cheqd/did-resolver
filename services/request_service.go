@@ -175,13 +175,13 @@ func createJsonResolution(didDoc string, metadata string, resolutionMetadata str
 	}
 
 	response := struct {
-		didDocument json.RawMessage
-		didDocumentMetadata json.RawMessage
-		didResolutionMetadata json.RawMessage
+		DidDocument           json.RawMessage `json:"didDocument"`
+		DidDocumentMetadata   json.RawMessage `json:"didDocumentMetadata"`
+		DidResolutionMetadata json.RawMessage `json:"didResolutionMetadata"`
 	}{
-		didDocument: json.RawMessage(didDoc),
-		didDocumentMetadata: json.RawMessage(metadata),
-		didResolutionMetadata: json.RawMessage(resolutionMetadata),
+		DidDocument:           json.RawMessage(didDoc),
+		DidDocumentMetadata:   json.RawMessage(metadata),
+		DidResolutionMetadata: json.RawMessage(resolutionMetadata),
 	}
 
 	respJson, err := json.Marshal(&response)
@@ -203,13 +203,13 @@ func createJsonDereferencing(contentStream string, metadata string, dereferencin
 	}
 
 	response := struct {
-		contentStream json.RawMessage
-		contentMetadata      json.RawMessage
-		dereferencingMetadata json.RawMessage
+		ContentStream         json.RawMessage `json:"contentStream"`
+		ContentMetadata       json.RawMessage `json:"contentMetadata"`
+		DereferencingMetadata json.RawMessage `json:"dereferencingMetadata"`
 	}{
-		contentStream: json.RawMessage(contentStream),
-		contentMetadata: json.RawMessage(metadata),
-		dereferencingMetadata: json.RawMessage(dereferencingMetadata),
+		ContentStream:         json.RawMessage(contentStream),
+		ContentMetadata:       json.RawMessage(metadata),
+		DereferencingMetadata: json.RawMessage(dereferencingMetadata),
 	}
 
 	respJson, err := json.Marshal(&response)

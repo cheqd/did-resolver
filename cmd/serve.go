@@ -47,9 +47,9 @@ func serve() {
 	e.Use(middleware.Recover())
 
 	// Services
-	ledgerService := services.NewLedgerService()
+	ledgerService := services.NewLedgerService(config.Ledger.Timeout)
 
-	networks := strings.Split(config.Resolver.Networks, ";")
+	networks := strings.Split(config.Ledger.Networks, ";")
 	for _, network := range networks {
 		args := strings.Split(network, "=")
 		name, url := args[0], args[1]
@@ -86,7 +86,7 @@ func serve() {
 
 		log.Debug().Msgf("Response body: %s", responseBody)
 
-		c.Response().Header().Set(echo.HeaderContentType, accept)
+		c.Response().Header().Set(echo.HeaderContentType, string(requestedContentType))
 		return c.JSONBlob(http.StatusOK, []byte(responseBody))
 	})
 

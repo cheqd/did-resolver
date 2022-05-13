@@ -7,8 +7,9 @@ import (
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/viper"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"time"
 )
 
 type LedgerServiceI interface {
@@ -16,11 +17,14 @@ type LedgerServiceI interface {
 	GetNamespaces() []string
 }
 type LedgerService struct {
-	ledgers map[string]string // namespace -> url
+	ledgers           map[string]string // namespace -> url
+	connectionTimeout time.Duration
 }
 
-func NewLedgerService() LedgerService {
-	ls := LedgerService{}
+func NewLedgerService(connectionTimeout time.Duration) LedgerService {
+	ls := LedgerService{
+		connectionTimeout: connectionTimeout,
+	}
 	ls.ledgers = make(map[string]string)
 	return ls
 }
@@ -33,12 +37,19 @@ func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool
 	}
 
 	log.Info().Msgf("Connecting to the ledger: %s", serverAddr)
-	conn, err := openGRPCConnection(serverAddr)
+	conn, err := ls.openGRPCConnection(serverAddr)
 	if err != nil {
 		log.Error().Err(err).Msg("QueryDIDDoc: failed connection")
 		return cheqd.Did{}, cheqd.Metadata{}, false, err
 	}
-	defer conn.Close()
+
+	defer func(conn *grpc.ClientConn) {
+		err := conn.Close()
+		if err != nil {
+			log.Panic().Err(err).Msg("QueryDIDDoc: failed to close connection")
+			panic(err)
+		}
+	}(conn)
 
 	log.Info().Msgf("Querying did doc: %s", did)
 	client := cheqd.NewQueryClient(conn)
@@ -65,12 +76,12 @@ func (ls *LedgerService) RegisterLedger(namespace string, url string) error {
 	return nil
 }
 
-func openGRPCConnection(addr string) (conn *grpc.ClientConn, err error) {
+func (ls LedgerService) openGRPCConnection(addr string) (conn *grpc.ClientConn, err error) {
 	opts := []grpc.DialOption{
-		grpc.WithInsecure(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithBlock(),
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), viper.GetDuration("ledgerTimeout"))
+	ctx, cancel := context.WithTimeout(context.Background(), ls.connectionTimeout)
 	defer cancel()
 
 	conn, err = grpc.DialContext(ctx, addr, opts...)

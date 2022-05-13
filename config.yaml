@@ -1,7 +1,9 @@
+ledger:
+  networks: "mainnet=rpc.cheqd.net:443;testnet=159.89.208.88:443"
+  timeout: "5s"
+
 resolver:
   method: "cheqd"
-  networks: "mainnet=rpc.cheqd.net:443;testnet=159.89.208.88:443"
-  ledgerTimeout: "5s"
 
 api:
   listener: "0.0.0.0:1313"

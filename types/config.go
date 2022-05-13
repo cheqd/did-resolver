@@ -3,19 +3,24 @@ package types
 import (
 	"encoding/json"
 	"gopkg.in/yaml.v3"
+	"time"
 )
 
 type Config struct {
+	Ledger   LedgerConfig
 	Resolver ResolverConfig
 	Api      ApiConfig
 
 	LogLevel string
 }
 
+type LedgerConfig struct {
+	Networks string
+	Timeout  time.Duration
+}
+
 type ResolverConfig struct {
-	Method        string
-	Networks      string
-	LedgerTimeout string
+	Method string
 }
 
 type ApiConfig struct {
@@ -23,7 +28,7 @@ type ApiConfig struct {
 	ResolverPath string
 }
 
-func(c *Config) MarshalYaml() (string, error) {
+func (c *Config) MarshalYaml() (string, error) {
 	bytes, err := yaml.Marshal(c)
 	return string(bytes), err
 }
@@ -37,7 +42,7 @@ func (c *Config) MustMarshalYaml() string {
 	return res
 }
 
-func(c *Config) MarshalJson() (string, error) {
+func (c *Config) MarshalJson() (string, error) {
 	bytes, err := json.Marshal(c)
 	return string(bytes), err
 }
