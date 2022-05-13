@@ -33,7 +33,7 @@ func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool
 	_, namespace, _, _ := cheqdUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[namespace]
 	if !namespaceFound {
-		return cheqd.Did{}, cheqd.Metadata{}, false, fmt.Errorf("namespace not suported: %s", namespace)
+		return cheqd.Did{}, cheqd.Metadata{}, false, fmt.Errorf("namespace not supported: %s", namespace)
 	}
 
 	log.Info().Msgf("Connecting to the ledger: %s", serverAddr)
