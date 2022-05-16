@@ -99,7 +99,7 @@ func (ls LedgerService) openGRPCConnection(addr string) (conn *grpc.ClientConn, 
 
 func (ls LedgerService) GetNamespaces() []string {
 	keys := make([]string, 0, len(ls.ledgers))
-	for k, _ := range ls.ledgers {
+	for k := range ls.ledgers {
 		keys = append(keys, k)
 	}
 	return keys

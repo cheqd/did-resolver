@@ -4,6 +4,7 @@ import (
 	// jsonpb Marshaller is deprecated, but is needed because there's only one way to proto
 	// marshal in combination with our proto generator version
 	"encoding/json"
+
 	"github.com/rs/zerolog/log"
 
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
@@ -127,7 +128,7 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 	if didResolutionMetadata.ContentType == types.DIDJSONLD {
 		didDoc.Context = append(didDoc.Context, types.DIDSchemaJSONLD)
 	}
-	return types.DidResolution{didDoc, metadata, didResolutionMetadata}, nil
+	return types.DidResolution{Did: didDoc, Metadata: metadata, ResolutionMetadata: didResolutionMetadata}, nil
 }
 
 // https://w3c-ccg.github.io/did-resolution/#dereferencing
@@ -162,7 +163,7 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 	}
 
 	contentMetadata := didResolution.Metadata
-	return types.DidDereferencing{contentStream, contentMetadata, dereferencingMetadata}, nil
+	return types.DidDereferencing{ContentStream: contentStream, Metadata: contentMetadata, DereferencingMetadata: dereferencingMetadata}, nil
 }
 
 func createJsonResolution(didDoc string, metadata string, resolutionMetadata string) (string, error) {
