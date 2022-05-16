@@ -36,7 +36,7 @@ func TestResolve(t *testing.T) {
 	validIdentifier := "N22KY2Dyvmuu2Pyy"
 	validMethod := "cheqd"
 	validDIDDoc := cheqd.Did{
-		Id: "did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue",
+		Id: "did:cheqd:mainnet:MTMxDQKMTMxDQKMT",
 	}
 	validMetadata := cheqd.Metadata{VersionId: "test_version_id", Deactivated: false}
 

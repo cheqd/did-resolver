@@ -1,5 +1,5 @@
 ledger:
-  networks: "mainnet=rpc.cheqd.net:443;testnet=159.89.208.88:443"
+  networks: "mainnet=grpc.seed1.ap.cheqd.net:9090;testnet=159.89.208.88:443"
   timeout: "5s"
 
 resolver:
@@ -9,4 +9,4 @@ api:
   listener: "0.0.0.0:1313"
   resolverPath: "/1.0/identifiers/:did"
 
-logLevel: "debug"
+logLevel: "warn"

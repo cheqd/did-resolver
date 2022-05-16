@@ -4,18 +4,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"time"
 )
 
 type LedgerServiceI interface {
 	QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool, error)
 	GetNamespaces() []string
 }
+
 type LedgerService struct {
 	ledgers           map[string]string // namespace -> url
 	connectionTimeout time.Duration
