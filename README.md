@@ -1,3 +1,3 @@
-# .github
+# did:cheqd DID Resolver
 
-Default community health files for cheqd repositories
+STATUS: In development
