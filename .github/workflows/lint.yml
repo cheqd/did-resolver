@@ -82,6 +82,5 @@ jobs:
         VALIDATE_TERRAFORM_TFLINT: false
         VALIDATE_TERRAGRUNT: false
         VALIDATE_TSX: false
-        VALIDATE_TYPESCRIPT_ES: false
         VALIDATE_XML: true
         VALIDATE_YAML: true
