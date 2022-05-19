@@ -74,13 +74,8 @@ jobs:
         VALIDATE_DOCKERFILE_HADOLINT: true
         DOCKERFILE_HADOLINT_FILE_NAME: '../linters/.hadolint.yml'
         VALIDATE_GITHUB_ACTIONS: true
-        VALIDATE_JAVASCRIPT_ES: false
         VALIDATE_JSON: true
         VALIDATE_MARKDOWN: true
         VALIDATE_OPENAPI: true
-        VALIDATE_PYTHON_PYLINT: false
-        VALIDATE_TERRAFORM_TFLINT: false
-        VALIDATE_TERRAGRUNT: false
-        VALIDATE_TSX: false
         VALIDATE_XML: true
         VALIDATE_YAML: true
