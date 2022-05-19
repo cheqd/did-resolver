@@ -41,5 +41,4 @@ func TestQueryDIDDoc(t *testing.T) {
 			require.EqualValues(t, subtest.expectedError, err)
 		})
 	}
-
 }

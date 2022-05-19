@@ -2,9 +2,10 @@ package utils
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/cheqd/did-resolver/types"
 	"github.com/spf13/viper"
-	"strings"
 )
 
 func LoadConfig() (types.Config, error) {

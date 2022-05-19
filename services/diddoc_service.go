@@ -13,8 +13,7 @@ import (
 	"google.golang.org/protobuf/runtime/protoiface"
 )
 
-type DIDDocService struct {
-}
+type DIDDocService struct{}
 
 const (
 	verificationMethod = "verificationMethod"

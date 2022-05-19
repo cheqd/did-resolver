@@ -2,8 +2,9 @@ package types
 
 import (
 	"encoding/json"
-	"gopkg.in/yaml.v3"
 	"time"
+
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {

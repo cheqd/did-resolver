@@ -41,7 +41,6 @@ func (rs RequestService) ProcessDIDRequest(didUrl string, resolutionOptions type
 }
 
 func (rs RequestService) prepareResolutionResult(did string, resolutionOptions types.ResolutionOption) (string, error) {
-
 	didResolution, err := rs.Resolve(did, resolutionOptions)
 	if err != nil {
 		return "", err
@@ -101,7 +100,6 @@ func (rs RequestService) prepareDereferencingResult(did string, dereferencingOpt
 
 // https://w3c-ccg.github.io/did-resolution/#resolving
 func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionOption) (types.DidResolution, error) {
-
 	didResolutionMetadata := types.NewResolutionMetadata(did, resolutionOptions.Accept, "")
 
 	if didMethod, _, _, _ := cheqdUtils.TrySplitDID(did); didMethod != rs.didMethod {

@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"net/http"
+	"strings"
+
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
@@ -9,8 +12,6 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"net/http"
-	"strings"
 )
 
 func getServeCmd() *cobra.Command {

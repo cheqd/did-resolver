@@ -28,6 +28,7 @@ func (ls MockLedgerService) QueryDIDDoc(string) (cheqd.Did, cheqd.Metadata, bool
 	}
 	return ls.Did, ls.Metadata, isFound, nil
 }
+
 func (ls MockLedgerService) GetNamespaces() []string {
 	return []string{"testnet", "mainnet"}
 }
@@ -117,5 +118,4 @@ func TestResolve(t *testing.T) {
 			require.Empty(t, err)
 		})
 	}
-
 }
