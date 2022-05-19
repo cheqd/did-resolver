@@ -9,7 +9,7 @@ jobs:
 
   call-lint:
     name: "Lint"
-    uses: ./.github/workflows/markdown-lint.yml
+    uses: ./.github/workflows/lint.yml
 
   call-build:
     name: "Build"

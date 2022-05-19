@@ -5,7 +5,7 @@ on:
 jobs:
 
   check-building:
-    name: "Check binary building"
+    name: "Check binary build"
     runs-on: ubuntu-latest
 
     steps:
@@ -18,7 +18,7 @@ jobs:
         run: go build main.go
 
   try-docker-build:
-    name: "Check docker building"
+    name: "Check docker build"
     runs-on: ubuntu-latest
 
     steps:

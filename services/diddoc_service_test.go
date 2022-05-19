@@ -22,9 +22,9 @@ func TestMarshallDID(t *testing.T) {
 		Type:       "JsonWebKey2020",
 		Controller: "did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue",
 		PublicKeyJwk: []*cheqd.KeyValuePair{
-			{"kty", "OKP"},
-			{"crv", "Ed25519"},
-			{"x", "VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ"},
+			{Key: "kty", Value: "OKP"},
+			{Key: "crv", Value: "Ed25519"},
+			{Key: "x", Value: "VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ"},
 		},
 	}
 	didDoc := cheqd.Did{

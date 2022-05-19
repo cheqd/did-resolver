@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cheqd/cheqd-did-resolver/types"
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
-	"github.com/spf13/viper"
+	"github.com/cheqd/did-resolver/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -29,34 +28,33 @@ func (ls MockLedgerService) QueryDIDDoc(string) (cheqd.Did, cheqd.Metadata, bool
 	}
 	return ls.Did, ls.Metadata, isFound, nil
 }
+
 func (ls MockLedgerService) GetNamespaces() []string {
 	return []string{"testnet", "mainnet"}
 }
 
 func TestResolve(t *testing.T) {
-	viper.SetConfigFile("../config.yaml")
-	viper.ReadInConfig()
 	validIdentifier := "N22KY2Dyvmuu2Pyy"
-	validMethod := viper.GetString("method")
+	validMethod := "cheqd"
 	validDIDDoc := cheqd.Did{
-		Id: "did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue",
+		Id: "did:cheqd:mainnet:MTMxDQKMTMxDQKMT",
 	}
 	validMetadata := cheqd.Metadata{VersionId: "test_version_id", Deactivated: false}
 
 	subtests := []struct {
 		name             string
 		ledgerService    MockLedgerService
-		resolutionType   string
+		resolutionType   types.ContentType
 		identifier       string
 		method           string
 		expectedDID      cheqd.Did
 		expectedMetadata cheqd.Metadata
-		expectedError    types.ResolutionError
+		expectedError    types.ErrorType
 	}{
 		{
 			name:             "successful resolution",
 			ledgerService:    NewMockLedgerService(validDIDDoc, validMetadata),
-			resolutionType:   types.ResolutionDIDJSONLDType,
+			resolutionType:   types.DIDJSONLD,
 			identifier:       validIdentifier,
 			method:           validMethod,
 			expectedDID:      validDIDDoc,
@@ -66,7 +64,7 @@ func TestResolve(t *testing.T) {
 		{
 			name:             "DID not found",
 			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}),
-			resolutionType:   types.ResolutionDIDJSONLDType,
+			resolutionType:   types.DIDJSONLD,
 			identifier:       validIdentifier,
 			method:           validMethod,
 			expectedDID:      cheqd.Did{},
@@ -76,7 +74,7 @@ func TestResolve(t *testing.T) {
 		{
 			name:             "invalid DID",
 			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}),
-			resolutionType:   types.ResolutionDIDJSONLDType,
+			resolutionType:   types.DIDJSONLD,
 			identifier:       "oooooo0000OOOO_invalid_did",
 			method:           validMethod,
 			expectedDID:      cheqd.Did{},
@@ -86,7 +84,7 @@ func TestResolve(t *testing.T) {
 		{
 			name:             "invalid method",
 			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}),
-			resolutionType:   types.ResolutionDIDJSONLDType,
+			resolutionType:   types.DIDJSONLD,
 			identifier:       validIdentifier,
 			method:           "not_supported_method",
 			expectedDID:      cheqd.Did{},
@@ -97,14 +95,14 @@ func TestResolve(t *testing.T) {
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
-			requestService := NewRequestService(subtest.ledgerService)
+			requestService := NewRequestService("cheqd", subtest.ledgerService)
 			id := "did:" + subtest.method + ":testnet:" + subtest.identifier
 			expectedDIDProperties := types.DidProperties{
 				DidString:        id,
 				MethodSpecificId: subtest.identifier,
 				Method:           subtest.method,
 			}
-			if (subtest.resolutionType == types.ResolutionDIDJSONLDType || subtest.resolutionType == types.ResolutionJSONLDType) && subtest.expectedError == "" {
+			if (subtest.resolutionType == types.DIDJSONLD || subtest.resolutionType == types.JSONLD) && subtest.expectedError == "" {
 				subtest.expectedDID.Context = []string{types.DIDSchemaJSONLD}
 			}
 
@@ -120,5 +118,4 @@ func TestResolve(t *testing.T) {
 			require.Empty(t, err)
 		})
 	}
-
 }
