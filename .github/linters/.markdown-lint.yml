@@ -95,7 +95,7 @@ MD034: true
 
 # Horizontal rule style <https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md#md035>
 MD035:
-  style: '---'
+  style: 'consistent'
 
 # Emphasis used instead of a heading <https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md#md036>
 MD036: true
