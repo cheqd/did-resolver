@@ -5,8 +5,9 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	"google.golang.org/grpc/credentials"
 	"time"
+
+	"google.golang.org/grpc/credentials"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"

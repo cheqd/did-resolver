@@ -33,7 +33,7 @@ func TestQueryDIDDoc(t *testing.T) {
 			timeout, err := time.ParseDuration("5s")
 			require.NoError(t, err)
 
-			ledgerService := NewLedgerService(timeout)
+			ledgerService := NewLedgerService(timeout, false)
 			didDoc, metadata, isFound, err := ledgerService.QueryDIDDoc("fake did")
 			require.EqualValues(t, subtest.expectedDID, didDoc)
 			require.EqualValues(t, subtest.expectedMetadata, metadata)
