@@ -8,6 +8,3 @@ builds:
     goarch:
       - amd64
       - arm64
-dockers:
-  - image_templates: ["ghcr.io/cheqd/did-resolver:{{ .Version }}"]
-    dockerfile: docker/Dockerfile

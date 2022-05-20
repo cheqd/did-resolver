@@ -33,6 +33,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Download resolver Docker image
+        uses: actions/download-artifact@v3
+        with:
+          name: cheqd-did-resolver.tar
+
+      - name: Load resolver Docker image
+        run: docker load -i cheqd-did-resolver.tar
+
+      - name: Push cheqd-node image
+        run: |
+          docker tag cheqd-did-resolver ghcr.io/${{ github.repository }}:${{ env.RELEASE_VERSION }}
+          docker tag cheqd-did-resolver ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:${{ env.RELEASE_VERSION }}
+          docker push ghcr.io/${{ github.repository }}:latest
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
@@ -41,23 +56,6 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-#      - name: Download resolver Docker image
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: cheqd-did-resolver.tar
-#
-#      - name: Load resolver Docker image
-#        run: docker load -i cheqd-did-resolver.tar
-#
-
-#
-#      - name: Push cheqd-node image
-#        run: |
-#          docker tag cheqd-did-resolver ghcr.io/${{ github.repository }}:${{ env.RELEASE_VERSION }}
-#          docker tag cheqd-did-resolver ghcr.io/${{ github.repository }}:latest
-#          docker push ghcr.io/${{ github.repository }}:${{ env.RELEASE_VERSION }}
-#          docker push ghcr.io/${{ github.repository }}:latest
 
 #      - uses: "marvinpinto/action-automatic-releases@latest"
 #        with:
