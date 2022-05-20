@@ -1,5 +1,6 @@
 ledger:
-  networks: "mainnet=grpc.seed1.ap.cheqd.net:9090;testnet=159.89.208.88:443"
+  networks: "mainnet=grpc.cheqd.net:443;testnet=grpc.cheqd.network:443"
+  useTls: true
   timeout: "5s"
 
 resolver:

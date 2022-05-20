@@ -18,6 +18,7 @@ type Config struct {
 type LedgerConfig struct {
 	Networks string
 	Timeout  time.Duration
+	UseTls   bool
 }
 
 type ResolverConfig struct {
