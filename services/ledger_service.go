@@ -2,8 +2,10 @@ package services
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
+	"google.golang.org/grpc/credentials"
 	"time"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
@@ -21,11 +23,13 @@ type LedgerServiceI interface {
 type LedgerService struct {
 	ledgers           map[string]string // namespace -> url
 	connectionTimeout time.Duration
+	useTls            bool
 }
 
-func NewLedgerService(connectionTimeout time.Duration) LedgerService {
+func NewLedgerService(connectionTimeout time.Duration, useTls bool) LedgerService {
 	ls := LedgerService{
 		connectionTimeout: connectionTimeout,
+		useTls:            useTls,
 	}
 	ls.ledgers = make(map[string]string)
 	return ls
@@ -83,6 +87,13 @@ func (ls LedgerService) openGRPCConnection(addr string) (conn *grpc.ClientConn, 
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithBlock(),
 	}
+
+	if ls.useTls {
+		opts = append(opts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})))
+	} else {
+		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), ls.connectionTimeout)
 	defer cancel()
 

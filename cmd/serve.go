@@ -48,7 +48,7 @@ func serve() {
 	e.Use(middleware.Recover())
 
 	// Services
-	ledgerService := services.NewLedgerService(config.Ledger.Timeout)
+	ledgerService := services.NewLedgerService(config.Ledger.Timeout, config.Ledger.UseTls)
 
 	networks := strings.Split(config.Ledger.Networks, ";")
 	for _, network := range networks {
