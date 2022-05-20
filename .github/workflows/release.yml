@@ -36,6 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RELEASE_VERSION: ${{ inputs.VERSION }}
+      REGISTRY: ghcr.io
 
     steps:
       - name: Download resolver Docker image
