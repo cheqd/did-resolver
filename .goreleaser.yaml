@@ -1,0 +1,13 @@
+project_name: example
+builds:
+  - env: [CGO_ENABLED=0]
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+dockers:
+  - image_templates: ["ghcr.io/cheqd/did-resolver:{{ .Version }}"]
+    dockerfile: docker/Dockerfile
