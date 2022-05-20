@@ -40,8 +40,8 @@ jobs:
 
       - name: Load resolver Docker image
         run: |
-        docker load -i cheqd-did-resolver.tar
-        rm cheqd-did-resolver.tar
+          docker load -i cheqd-did-resolver.tar
+          rm cheqd-did-resolver.tar
 
       - name: Push cheqd-node image
         run: |
