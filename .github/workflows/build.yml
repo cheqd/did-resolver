@@ -26,4 +26,13 @@ jobs:
 
       - name: Check docker building
         working-directory: .
-        run: docker build -f docker/Dockerfile .
+        run: docker build -f docker/Dockerfile -t cheqd-did-resolver .
+
+      - name: Save cheqd-did-resolver Docker image
+        run: docker save -o cheqd-did-resolver.tar cheqd-did-resolver
+
+      - name: Store cheqd-did-resolver artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: cheqd-did-resolver.tar
+          path: cheqd-did-resolver.tar
