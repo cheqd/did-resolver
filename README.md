@@ -5,20 +5,42 @@ cheqd DID resovler offers multiple implementations for resolving cheqd DIDs, acc
 
 This resolver aims to make it easy for third parties to resolve cheqd DIDs, using either a full DID resolver, a proxy DID resolver or through the [Universal Resolver](https://dev.uniresolver.io/).
 
+## Example DIDs
+```
+  did:cheqd:mainnet:1g7d92hf83h67fh6
+  did:cheqd:testnet:1g7d92hf83h67fh6
+```
+
 ## 🧑‍💻🛠 Developer Guide
 
-### Full DID Resolver
+## Full DID Resolver
 
 Todo
 
+## Proxy DID Resolver
 
-### Proxy DID Resolver
+Todo
+
+## Universal Resolver
+
+The Universal Resolver wraps an API around a number of co-located Docker containers running DID-method-specific drivers.
+
+### Build and Run (Docker)
 
 Todo
 
-### Universal Resolver
+### Driver Environment Variables
+
+The driver recognizes the following environment variables:
 
 Todo
+
+### Driver Metadata
+
+The driver returns the following metadata in addition to a DID document:
+
+Todo
+
 
 ## 🙋 Find us elsewhere
 
