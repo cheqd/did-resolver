@@ -6,6 +6,8 @@ services:
     build:
       dockerfile: docker/Dockerfile
       context: ../
+      args:
+        - HOME=${CHEQD_RESOLVER_HOME_DIR}
     configs:
       - source: config
         target: ${CHEQD_RESOLVER_HOME_DIR}/config.yaml
@@ -13,6 +15,7 @@ services:
       - ${RESOLVER_PORT}
     ports:
       - "${RESOLVER_PORT}:${RESOLVER_PORT}"
+      - "443:443"
     profiles:
       - full
 
