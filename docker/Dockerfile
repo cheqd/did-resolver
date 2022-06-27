@@ -26,6 +26,10 @@ FROM ubuntu:focal AS runner
 LABEL org.opencontainers.image.description="Cheqd DID-Resolver runner"
 LABEL org.opencontainers.image.source="https://github.com/cheqd/did-resolver"
 
+# Install certificates
+RUN apt update && apt -y --no-install-recommends install \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set user details
 ARG UID=1000
