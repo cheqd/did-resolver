@@ -9,6 +9,8 @@ import (
 
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
 	"github.com/cheqd/did-resolver/types"
+	"github.com/cheqd/did-resolver/utils"
+	"google.golang.org/protobuf/runtime/protoiface"
 )
 
 type RequestService struct {
@@ -135,7 +137,7 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 	log.Info().Msgf("did: %s, path: %s, query: %s, fragmentId: %s", did, path, query, fragmentId)
 
 	// TODO: implement
-	if path != "" || query != "" {
+	if query != "" {
 		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingNotSupported)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
@@ -153,14 +155,27 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 	if dereferencingMetadata.ResolutionError != "" {
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
+	var protoiface.MessageV1 contentStream
+	var protoiface.MessageV1 contentMetadata
+	if path != "" {
+		resourceId := utils.GetResourceId(path)
+		// Only `resource` path is supported
+		if resourceId == "" {
+			dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingNotSupported)
+			return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
+		}
+		contentStream = rs.didDocService.GetResource(collectionId, resourceId)
 
-	contentStream := rs.didDocService.GetDIDFragment(fragmentId, didResolution.Did)
+	} else if fragmentId != "" {
+		contentStream = rs.didDocService.GetDIDFragment(fragmentId, didResolution.Did)
+		contentMetadata = didResolution.Metadata
+	}
+
 	if contentStream == nil {
-		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingFragmentNotFound)
+		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingNotFound)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
 
-	contentMetadata := didResolution.Metadata
 	return types.DidDereferencing{ContentStream: contentStream, Metadata: contentMetadata, DereferencingMetadata: dereferencingMetadata}, nil
 }
 

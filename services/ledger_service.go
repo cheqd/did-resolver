@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
+	resource "github.com/cheqd/cheqd-node/x/resource/types"
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
@@ -43,11 +44,51 @@ func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool
 		return cheqd.Did{}, cheqd.Metadata{}, false, fmt.Errorf("namespace not supported: %s", namespace)
 	}
 
-	log.Info().Msgf("Connecting to the ledger: %s", serverAddr)
-	conn, err := ls.openGRPCConnection(serverAddr)
+	conn, err := ls.openConnection(serverAddr); 
 	if err != nil {
 		log.Error().Err(err).Msg("QueryDIDDoc: failed connection")
 		return cheqd.Did{}, cheqd.Metadata{}, false, err
+	}
+
+	log.Info().Msgf("Querying did doc: %s", did)
+	client := cheqd.NewQueryClient(conn)
+	didDocResponse, err := client.Did(context.Background(), &cheqd.QueryGetDidRequest{Id: did})
+	if err != nil {
+		return cheqd.Did{}, cheqd.Metadata{}, false, nil
+	}
+
+	return *didDocResponse.Did, *didDocResponse.Metadata, true, err
+}
+
+func (ls LedgerService) QueryResource(collectionDid string, resourceId string) (resource.Resource, bool, error) {
+	collectionId, namespace, _, _ := cheqdUtils.TrySplitDID(collectionDid)
+	serverAddr, namespaceFound := ls.ledgers[namespace]
+	if !namespaceFound {
+		return cheqd.Did{}, false, fmt.Errorf("namespace not supported: %s", namespace)
+	}
+
+	conn, err := ls.openConnection(serverAddr); 
+	if err != nil {
+		log.Error().Err(err).Msg("QueryResource: failed connection")
+		return resource.Resource{}, false, err
+	}
+
+	log.Info().Msgf("Querying did resource: %s, %s", collectionDid, resourceId)
+
+	client := resource.NewQueryClient(conn)
+	resourceResponse, err := client.Resource(context.Background(), &resource.QueryGetResourceRequest{CollectionId: collectionId, Id: resourceId})
+	if err != nil {
+		return resource.Resource{}, false, nil
+	}
+
+	return *resourceResponse.Resource, true, err
+}
+
+func (ls LedgerService) openConnection(serverAddr string) (*grpc.ClientConn, error) {
+	log.Info().Msgf("Connecting to the ledger: %s", serverAddr)
+	conn, err := ls.openGRPCConnection(serverAddr)
+	if err != nil {
+		return nil, err
 	}
 
 	defer func(conn *grpc.ClientConn) {
@@ -58,14 +99,7 @@ func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool
 		}
 	}(conn)
 
-	log.Info().Msgf("Querying did doc: %s", did)
-	client := cheqd.NewQueryClient(conn)
-	didDocResponse, err := client.Did(context.Background(), &cheqd.QueryGetDidRequest{Id: did})
-	if err != nil {
-		return cheqd.Did{}, cheqd.Metadata{}, false, nil
-	}
-
-	return *didDocResponse.Did, *didDocResponse.Metadata, true, err
+	return conn, nil
 }
 
 func (ls *LedgerService) RegisterLedger(namespace string, url string) error {

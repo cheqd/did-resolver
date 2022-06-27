@@ -9,9 +9,9 @@ const (
 )
 
 const (
-	DereferencingInvalidDIDUrl    ErrorType = "invalidDidUrl"
-	DereferencingFragmentNotFound ErrorType = "FragmentNotFound"
-	DereferencingNotSupported     ErrorType = "NotSupportedUrl"
+	DereferencingInvalidDIDUrl ErrorType = "invalidDidUrl"
+	DereferencingNotFound      ErrorType = "NotFound"
+	DereferencingNotSupported  ErrorType = "NotSupportedUrl"
 )
 
 type ContentType string
