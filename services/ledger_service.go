@@ -10,8 +10,8 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
-	resource "github.com/cheqd/cheqd-node/x/resource/types"
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
+	resource "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -19,6 +19,7 @@ import (
 
 type LedgerServiceI interface {
 	QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool, error)
+	QueryResource(collectionDid string, resourceId string) (resource.Resource, bool, error)
 	GetNamespaces() []string
 }
 
@@ -44,7 +45,7 @@ func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool
 		return cheqd.Did{}, cheqd.Metadata{}, false, fmt.Errorf("namespace not supported: %s", namespace)
 	}
 
-	conn, err := ls.openConnection(serverAddr); 
+	conn, err := ls.openGRPCConnection(serverAddr)
 	if err != nil {
 		log.Error().Err(err).Msg("QueryDIDDoc: failed connection")
 		return cheqd.Did{}, cheqd.Metadata{}, false, err
@@ -64,10 +65,10 @@ func (ls LedgerService) QueryResource(collectionDid string, resourceId string) (
 	collectionId, namespace, _, _ := cheqdUtils.TrySplitDID(collectionDid)
 	serverAddr, namespaceFound := ls.ledgers[namespace]
 	if !namespaceFound {
-		return cheqd.Did{}, false, fmt.Errorf("namespace not supported: %s", namespace)
+		return resource.Resource{}, false, fmt.Errorf("namespace not supported: %s", namespace)
 	}
 
-	conn, err := ls.openConnection(serverAddr); 
+	conn, err := ls.openGRPCConnection(serverAddr)
 	if err != nil {
 		log.Error().Err(err).Msg("QueryResource: failed connection")
 		return resource.Resource{}, false, err
@@ -82,24 +83,6 @@ func (ls LedgerService) QueryResource(collectionDid string, resourceId string) (
 	}
 
 	return *resourceResponse.Resource, true, err
-}
-
-func (ls LedgerService) openConnection(serverAddr string) (*grpc.ClientConn, error) {
-	log.Info().Msgf("Connecting to the ledger: %s", serverAddr)
-	conn, err := ls.openGRPCConnection(serverAddr)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func(conn *grpc.ClientConn) {
-		err := conn.Close()
-		if err != nil {
-			log.Panic().Err(err).Msg("QueryDIDDoc: failed to close connection")
-			panic(err)
-		}
-	}(conn)
-
-	return conn, nil
 }
 
 func (ls *LedgerService) RegisterLedger(namespace string, url string) error {
@@ -138,6 +121,14 @@ func (ls LedgerService) openGRPCConnection(addr string) (conn *grpc.ClientConn, 
 		log.Error().Err(err).Msgf("openGRPCConnection: context failed")
 		return nil, err
 	}
+
+	defer func(conn *grpc.ClientConn) {
+		err := conn.Close()
+		if err != nil {
+			log.Panic().Err(err).Msg("QueryDIDDoc: failed to close connection")
+			panic(err)
+		}
+	}(conn)
 
 	log.Info().Msg("openGRPCConnection: opened")
 	return conn, nil

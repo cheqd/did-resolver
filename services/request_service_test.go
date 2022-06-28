@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
+	resource "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/stretchr/testify/require"
 )
@@ -12,12 +13,14 @@ import (
 type MockLedgerService struct {
 	Did      cheqd.Did
 	Metadata cheqd.Metadata
+	Resource resource.Resource
 }
 
-func NewMockLedgerService(did cheqd.Did, metadata cheqd.Metadata) MockLedgerService {
+func NewMockLedgerService(did cheqd.Did, metadata cheqd.Metadata, resource resource.Resource) MockLedgerService {
 	return MockLedgerService{
 		Did:      did,
 		Metadata: metadata,
+		Resource: resource,
 	}
 }
 
@@ -27,6 +30,14 @@ func (ls MockLedgerService) QueryDIDDoc(string) (cheqd.Did, cheqd.Metadata, bool
 		isFound = false
 	}
 	return ls.Did, ls.Metadata, isFound, nil
+}
+
+func (ls MockLedgerService) QueryResource(collectionDid string, resourceId string) (resource.Resource, bool, error) {
+	isFound := true
+	if ls.Resource.Header == nil {
+		isFound = false
+	}
+	return ls.Resource, isFound, nil
 }
 
 func (ls MockLedgerService) GetNamespaces() []string {
@@ -53,7 +64,7 @@ func TestResolve(t *testing.T) {
 	}{
 		{
 			name:             "successful resolution",
-			ledgerService:    NewMockLedgerService(validDIDDoc, validMetadata),
+			ledgerService:    NewMockLedgerService(validDIDDoc, validMetadata, resource.Resource{}),
 			resolutionType:   types.DIDJSONLD,
 			identifier:       validIdentifier,
 			method:           validMethod,
@@ -63,7 +74,7 @@ func TestResolve(t *testing.T) {
 		},
 		{
 			name:             "DID not found",
-			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}),
+			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
 			resolutionType:   types.DIDJSONLD,
 			identifier:       validIdentifier,
 			method:           validMethod,
@@ -73,7 +84,7 @@ func TestResolve(t *testing.T) {
 		},
 		{
 			name:             "invalid DID",
-			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}),
+			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
 			resolutionType:   types.DIDJSONLD,
 			identifier:       "oooooo0000OOOO_invalid_did",
 			method:           validMethod,
@@ -83,7 +94,7 @@ func TestResolve(t *testing.T) {
 		},
 		{
 			name:             "invalid method",
-			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}),
+			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
 			resolutionType:   types.DIDJSONLD,
 			identifier:       validIdentifier,
 			method:           "not_supported_method",
