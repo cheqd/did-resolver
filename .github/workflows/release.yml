@@ -43,12 +43,41 @@ jobs:
           docker load -i cheqd-did-resolver.tar
           rm cheqd-did-resolver.tar
 
-      - name: Push cheqd-node image
+      - name: Push did-resolver image
         run: |
           docker tag cheqd-did-resolver ghcr.io/${{ github.repository }}:${{ env.RELEASE_VERSION }}
           docker tag cheqd-did-resolver ghcr.io/${{ github.repository }}:latest
+          docker tag registry.digitalocean.com/cheqd/${{ github.repository }}:${{ env.RELEASE_VERSION }}
+          docker tag registry.digitalocean.com/cheqd/${{ github.repository }}:latest
           docker push ghcr.io/${{ github.repository }}:${{ env.RELEASE_VERSION }}
           docker push ghcr.io/${{ github.repository }}:latest
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: push image to digitalocean
+        run: |
+          doctl registry login
+          docker push registry.digitalocean.com/cheqd/${{ github.repository }}:${{ env.RELEASE_VERSION }}
+          docker push registry.digitalocean.com/cheqd/${{ github.repository }}:latest
+
+      - name: DigitalOcean App Platform deployment
+        uses: digitalocean/app_action@v1.1.3
+        with:
+          app_name: ${{ github.repository }}
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          images: '[
+              {
+                "name": "did-resolver",
+                 "image":{
+                  "registry_type": "DOCR",
+                  "repository": "${{ github.repository }}",
+                  "tag": "${{ env.RELEASE_VERSION }}"
+                },
+              }
+            ]'
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
