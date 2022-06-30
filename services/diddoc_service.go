@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
+	resource "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/golang/protobuf/jsonpb" //nolint
 	"google.golang.org/protobuf/runtime/protoiface"
@@ -59,10 +60,27 @@ func (ds DIDDocService) MarshallDID(didDoc cheqd.Did) (string, error) {
 func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1, contentType types.ContentType) (string, error) {
 	var mapContent map[string]interface{}
 	var err error
+	var context types.ContentType
+	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
+		context = types.DIDSchemaJSONLD
+	}
 
 	// VerKey changes, marshal
 	if verificationMethod, ok := contentStream.(*cheqd.VerificationMethod); ok {
 		mapContent, err = ds.prepareJWKPubkey(verificationMethod)
+	// Resource changes, marshal
+	} else if resource, ok := contentStream.(*resource.Resource); ok {
+		dResource := types.DereferencedResource{
+			Context: []string{string(context)},
+			ResourceHeader: *resource.Header,
+			Data: resource.Data,
+		}
+		jsonResource, err := json.Marshal(dResource)
+		if err != nil {
+			return "", err
+		}
+		return string(jsonResource), nil
+
 	} else {
 		mapContent, err = ds.protoToMap(contentStream)
 	}
@@ -71,8 +89,8 @@ func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1
 	}
 
 	// Context changes
-	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
-		mapContent["@"+didContext] = types.DIDSchemaJSONLD
+	if context != "" {
+		mapContent["@"+didContext] = context
 	}
 
 	result, err := json.Marshal(mapContent)
@@ -91,6 +109,7 @@ func (DIDDocService) GetDIDFragment(fragmentId string, didDoc cheqd.Did) protoif
 	for _, service := range didDoc.Service {
 		if strings.Contains(service.Id, fragmentId) {
 			return service
+
 		}
 	}
 

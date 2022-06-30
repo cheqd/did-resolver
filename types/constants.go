@@ -10,8 +10,8 @@ const (
 
 const (
 	DereferencingInvalidDIDUrl ErrorType = "invalidDidUrl"
-	DereferencingNotFound      ErrorType = "NotFound"
-	DereferencingNotSupported  ErrorType = "NotSupportedUrl"
+	DereferencingNotFound      ErrorType = "notFound"
+	DereferencingNotSupported  ErrorType = "urlNotSupported"
 )
 
 type ContentType string
