@@ -181,7 +181,7 @@ func TestResolve(t *testing.T) {
 		t.Run(subtest.name, func(t *testing.T) {
 			requestService := NewRequestService("cheqd", subtest.ledgerService)
 			id := "did:" + subtest.method + ":" + subtest.namespace + ":" + subtest.identifier
-			expectedDIDProperties := types.DidProperties{}
+			var expectedDIDProperties types.DidProperties
 			expectedDIDProperties = types.DidProperties{
 				DidString:        id,
 				MethodSpecificId: subtest.identifier,
