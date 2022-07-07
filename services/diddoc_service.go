@@ -69,41 +69,39 @@ func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1
 		context = types.DIDSchemaJSONLD
 	}
 
-	// VerKey changes, marshal
-	if verificationMethod, ok := contentStream.(*cheqd.VerificationMethod); ok {
-		mapContent, err = ds.prepareJWKPubkey(verificationMethod)
-	} else if didDoc, ok := contentStream.(*cheqd.Did); ok {
-		didDoc.Context = []string{string(context)}
-		jsonDid, err := ds.MarshallDID(*didDoc)
+	switch contentStream := contentStream.(type) {
+	case *cheqd.VerificationMethod:
+		mapContent, err = ds.prepareJWKPubkey(contentStream)
+	case *cheqd.Did:
+		contentStream.Context = []string{string(context)}
+		jsonDid, err := ds.MarshallDID(*contentStream)
 		if err != nil {
 			return "", err
 		}
 		return string(jsonDid), nil
-		// Resource changes, marshal
-	} else if resource, ok := contentStream.(*resource.Resource); ok {
+	case *resource.Resource:
 		dResource := types.DereferencedResource{
 			Context:           []string{string(context)},
-			CollectionId:      resource.Header.CollectionId,
-			Id:                resource.Header.Id,
-			Name:              resource.Header.Name,
-			ResourceType:      resource.Header.ResourceType,
-			MediaType:         resource.Header.MediaType,
-			Created:           resource.Header.Created,
-			Checksum:          resource.Header.Checksum,
-			PreviousVersionId: resource.Header.PreviousVersionId,
-			NextVersionId:     resource.Header.NextVersionId,
-			Data:              resource.Data,
+			CollectionId:      contentStream.Header.CollectionId,
+			Id:                contentStream.Header.Id,
+			Name:              contentStream.Header.Name,
+			ResourceType:      contentStream.Header.ResourceType,
+			MediaType:         contentStream.Header.MediaType,
+			Created:           contentStream.Header.Created,
+			Checksum:          contentStream.Header.Checksum,
+			PreviousVersionId: contentStream.Header.PreviousVersionId,
+			NextVersionId:     contentStream.Header.NextVersionId,
+			Data:              contentStream.Data,
 		}
 		jsonResource, err := json.Marshal(dResource)
-
 		if err != nil {
 			return "", err
 		}
 		return string(jsonResource), nil
-
-	} else {
+	default:
 		mapContent, err = ds.protoToMap(contentStream)
 	}
+
 	if err != nil {
 		return "", err
 	}
@@ -132,7 +130,6 @@ func (DIDDocService) GetDIDFragment(fragmentId string, didDoc cheqd.Did) protoif
 	for _, service := range didDoc.Service {
 		if strings.Contains(service.Id, fragmentId) {
 			return service
-
 		}
 	}
 
@@ -173,7 +170,7 @@ func (ds DIDDocService) protoToMap(protoObject protoiface.MessageV1) (orderedmap
 		return *mapObj, err
 	}
 
-	//var mapObj map[string]interface{}
+	// var mapObj map[string]interface{}
 
 	err = json.Unmarshal([]byte(jsonObj), &mapObj)
 	if err != nil {

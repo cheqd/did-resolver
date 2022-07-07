@@ -11,7 +11,7 @@ type DereferencingOption ResolutionOption
 type DereferencingMetadata ResolutionMetadata
 
 type DidDereferencing struct {
-	ContentStream         json.RawMessage  `json:"contentStream,omitempty"`
+	ContentStream         json.RawMessage       `json:"contentStream,omitempty"`
 	Metadata              cheqd.Metadata        `json:"contentMetadata,omitempty"`
 	DereferencingMetadata DereferencingMetadata `json:"dereferencingMetadata,omitempty"`
 }

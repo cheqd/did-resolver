@@ -88,7 +88,6 @@ func (rs RequestService) prepareDereferencingResult(did string, dereferencingOpt
 		return createJsonDereferencing(nil, "", string(dereferencingMetadata))
 	}
 
-
 	metadata, err := rs.didDocService.MarshallProto(&didDereferencing.Metadata)
 	if err != nil {
 		return "", err
@@ -148,7 +147,6 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 	var didDereferencing types.DidDereferencing
 	if path != "" {
 		didDereferencing, err = rs.dereferencePrimary(path, did, didUrl, dereferenceOptions)
-
 	} else {
 		didDereferencing, err = rs.dereferenceSecondary(did, fragmentId, didUrl, dereferenceOptions)
 	}
@@ -216,7 +214,6 @@ func (rs RequestService) dereferenceSecondary(did string, fragmentId string, did
 	contentStream := json.RawMessage(jsonFragment)
 
 	return types.DidDereferencing{ContentStream: contentStream, Metadata: didResolution.Metadata, DereferencingMetadata: dereferencingMetadata}, nil
-
 }
 
 func createJsonResolution(didDoc string, metadata string, resolutionMetadata string) (string, error) {
