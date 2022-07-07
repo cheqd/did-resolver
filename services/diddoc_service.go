@@ -169,9 +169,7 @@ func (ds DIDDocService) protoToMap(protoObject protoiface.MessageV1) (orderedmap
 	if err != nil {
 		return *mapObj, err
 	}
-
-	// var mapObj map[string]interface{}
-
+	
 	err = json.Unmarshal([]byte(jsonObj), &mapObj)
 	if err != nil {
 		return *mapObj, err
