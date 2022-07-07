@@ -11,6 +11,7 @@ import (
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/golang/protobuf/jsonpb" //nolint
+	"github.com/iancoleman/orderedmap"
 	"google.golang.org/protobuf/runtime/protoiface"
 )
 
@@ -42,12 +43,15 @@ func (ds DIDDocService) MarshallDID(didDoc cheqd.Did) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	mapDID[verificationMethod] = formatedVerificationMethod
+	mapDID.Set(verificationMethod, json.RawMessage(formatedVerificationMethod))
 
 	// Context changes
-	if val, ok := mapDID[didContext]; ok {
-		mapDID["@"+didContext] = val
-		delete(mapDID, didContext)
+	if val, ok := mapDID.Get(didContext); ok {
+		mapDID.Set("@"+didContext, val)
+		mapDID.Delete(didContext)
+		mapDID.Sort(func(a *orderedmap.Pair, b *orderedmap.Pair) bool {
+			return a.Key() == "@"+didContext
+		})
 	}
 
 	result, err := json.Marshal(mapDID)
@@ -58,7 +62,7 @@ func (ds DIDDocService) MarshallDID(didDoc cheqd.Did) (string, error) {
 }
 
 func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1, contentType types.ContentType) (string, error) {
-	var mapContent map[string]interface{}
+	var mapContent orderedmap.OrderedMap
 	var err error
 	var context types.ContentType
 	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
@@ -68,14 +72,30 @@ func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1
 	// VerKey changes, marshal
 	if verificationMethod, ok := contentStream.(*cheqd.VerificationMethod); ok {
 		mapContent, err = ds.prepareJWKPubkey(verificationMethod)
-	// Resource changes, marshal
+	} else if didDoc, ok := contentStream.(*cheqd.Did); ok {
+		didDoc.Context = []string{string(context)}
+		jsonDid, err := ds.MarshallDID(*didDoc)
+		if err != nil {
+			return "", err
+		}
+		return string(jsonDid), nil
+		// Resource changes, marshal
 	} else if resource, ok := contentStream.(*resource.Resource); ok {
 		dResource := types.DereferencedResource{
-			Context: []string{string(context)},
-			ResourceHeader: *resource.Header,
-			Data: resource.Data,
+			Context:           []string{string(context)},
+			CollectionId:      resource.Header.CollectionId,
+			Id:                resource.Header.Id,
+			Name:              resource.Header.Name,
+			ResourceType:      resource.Header.ResourceType,
+			MediaType:         resource.Header.MediaType,
+			Created:           resource.Header.Created,
+			Checksum:          resource.Header.Checksum,
+			PreviousVersionId: resource.Header.PreviousVersionId,
+			NextVersionId:     resource.Header.NextVersionId,
+			Data:              resource.Data,
 		}
 		jsonResource, err := json.Marshal(dResource)
+
 		if err != nil {
 			return "", err
 		}
@@ -90,7 +110,10 @@ func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1
 
 	// Context changes
 	if context != "" {
-		mapContent["@"+didContext] = context
+		mapContent.Set("@"+didContext, context)
+		mapContent.Sort(func(a *orderedmap.Pair, b *orderedmap.Pair) bool {
+			return a.Key() == "@"+didContext
+		})
 	}
 
 	result, err := json.Marshal(mapContent)
@@ -116,40 +139,46 @@ func (DIDDocService) GetDIDFragment(fragmentId string, didDoc cheqd.Did) protoif
 	return nil
 }
 
-func (ds DIDDocService) prepareJWKPubkey(verificationMethod *cheqd.VerificationMethod) (map[string]interface{}, error) {
+func (ds DIDDocService) prepareJWKPubkey(verificationMethod *cheqd.VerificationMethod) (orderedmap.OrderedMap, error) {
 	methodJson, err := ds.protoToMap(verificationMethod)
 	if err != nil {
-		return nil, err
+		return *orderedmap.New(), err
 	}
 	if len(verificationMethod.PublicKeyJwk) > 0 {
-		methodJson[publicKeyJwk] = cheqd.PubKeyJWKToMap(verificationMethod.PublicKeyJwk)
+		jsonKey, err := cheqd.PubKeyJWKToJson(verificationMethod.PublicKeyJwk)
+		if err != nil {
+			return *orderedmap.New(), err
+		}
+		methodJson.Set(publicKeyJwk, json.RawMessage(jsonKey))
 	}
 	return methodJson, nil
 }
 
-func (ds DIDDocService) MarshallVerificationMethod(verificationMethod []*cheqd.VerificationMethod) ([]map[string]interface{}, error) {
-	var verMethodList []map[string]interface{}
+func (ds DIDDocService) MarshallVerificationMethod(verificationMethod []*cheqd.VerificationMethod) ([]byte, error) {
+	var verMethodList []orderedmap.OrderedMap
 	for _, value := range verificationMethod {
 		methodJson, err := ds.prepareJWKPubkey(value)
 		if err != nil {
-			return nil, err
+			return []byte{}, err
 		}
 		verMethodList = append(verMethodList, methodJson)
 	}
-	return verMethodList, nil
+	return json.Marshal(verMethodList)
 }
 
-func (ds DIDDocService) protoToMap(protoObject protoiface.MessageV1) (map[string]interface{}, error) {
+func (ds DIDDocService) protoToMap(protoObject protoiface.MessageV1) (orderedmap.OrderedMap, error) {
+	mapObj := orderedmap.New()
 	jsonObj, err := ds.MarshallProto(protoObject)
 	if err != nil {
-		return nil, err
+		return *mapObj, err
 	}
-	var mapObj map[string]interface{}
+
+	//var mapObj map[string]interface{}
 
 	err = json.Unmarshal([]byte(jsonObj), &mapObj)
 	if err != nil {
-		return nil, err
+		return *mapObj, err
 	}
 
-	return mapObj, err
+	return *mapObj, err
 }

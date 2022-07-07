@@ -79,13 +79,13 @@ func (rs RequestService) prepareDereferencingResult(did string, dereferencingOpt
 		return "", err
 	}
 
-	resolutionMetadata, err := json.Marshal(didDereferencing.DereferencingMetadata)
+	dereferencingMetadata, err := json.Marshal(didDereferencing.DereferencingMetadata)
 	if err != nil {
 		return "", err
 	}
 
 	if didDereferencing.DereferencingMetadata.ResolutionError != "" {
-		return createJsonDereferencing(nil, "", string(resolutionMetadata))
+		return createJsonDereferencing(nil, "", string(dereferencingMetadata))
 	}
 
 
@@ -94,7 +94,7 @@ func (rs RequestService) prepareDereferencingResult(did string, dereferencingOpt
 		return "", err
 	}
 
-	return createJsonDereferencing(didDereferencing.ContentStream, metadata, string(resolutionMetadata))
+	return createJsonDereferencing(didDereferencing.ContentStream, metadata, string(dereferencingMetadata))
 }
 
 // https://w3c-ccg.github.io/did-resolution/#resolving
