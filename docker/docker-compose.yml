@@ -15,7 +15,6 @@ services:
       - ${RESOLVER_PORT}
     ports:
       - "${RESOLVER_PORT}:${RESOLVER_PORT}"
-      - "443:443"
     profiles:
       - full
 
