@@ -4,6 +4,7 @@ import (
 	// jsonpb Marshaller is deprecated, but is needed because there's only one way to proto
 	// marshal in combination with our proto generator version
 	"encoding/json"
+	"fmt"
 
 	"github.com/rs/zerolog/log"
 
@@ -123,8 +124,12 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
 	}
 
-	if didResolutionMetadata.ContentType == types.DIDJSONLD {
+	if didResolutionMetadata.ContentType == types.DIDJSONLD || didResolutionMetadata.ContentType == types.JSONLD {
 		didDoc.Context = append(didDoc.Context, types.DIDSchemaJSONLD)
+	} else if didResolutionMetadata.ContentType == types.DIDJSON {
+		didDoc.Context = []string{}
+	} else {
+		return types.DidResolution{}, fmt.Errorf("content type %s is not supported", didResolutionMetadata.ContentType)
 	}
 	return types.DidResolution{Did: didDoc, Metadata: metadata, ResolutionMetadata: didResolutionMetadata}, nil
 }

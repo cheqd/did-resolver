@@ -72,11 +72,9 @@ func serve() {
 		accept := strings.Split(c.Request().Header.Get(echo.HeaderAccept), ";")[0]
 		log.Trace().Msgf("Accept: %s", accept)
 
-		var requestedContentType types.ContentType
-		if strings.Contains(accept, string(types.JSONLD)) {
+		requestedContentType := types.ContentType(accept)
+		if accept == "*/*" {
 			requestedContentType = types.DIDJSONLD
-		} else {
-			requestedContentType = types.DIDJSON
 		}
 		log.Debug().Msgf("Requested content type: %s", requestedContentType)
 
