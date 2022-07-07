@@ -40,7 +40,7 @@ func NewResolutionMetadata(didUrl string, contentType ContentType, resolutionErr
 			MethodSpecificId: id,
 			Method:           method,
 		}
-	}
+	} 
 	return ResolutionMetadata{
 		ContentType:     contentType,
 		ResolutionError: resolutionError,

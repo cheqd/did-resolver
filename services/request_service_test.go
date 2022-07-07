@@ -108,6 +108,7 @@ func (ls MockLedgerService) GetNamespaces() []string {
 }
 
 func TestResolve(t *testing.T) {
+	validDIDDoc := validDIDDoc()
 	subtests := []struct {
 		name             string
 		ledgerService    MockLedgerService
@@ -121,12 +122,12 @@ func TestResolve(t *testing.T) {
 	}{
 		{
 			name:             "successful resolution",
-			ledgerService:    NewMockLedgerService(validDIDDoc(), validMetadata(), resource.Resource{}),
+			ledgerService:    NewMockLedgerService(validDIDDoc, validMetadata(), resource.Resource{}),
 			resolutionType:   types.DIDJSONLD,
 			identifier:       validIdentifier,
 			method:           validMethod,
 			namespace:        validNamespace,
-			expectedDID:      validDIDDoc(),
+			expectedDID:      validDIDDoc,
 			expectedMetadata: validMetadata(),
 			expectedError:    "",
 		},
@@ -181,12 +182,10 @@ func TestResolve(t *testing.T) {
 			requestService := NewRequestService("cheqd", subtest.ledgerService)
 			id := "did:" + subtest.method + ":" + subtest.namespace + ":" + subtest.identifier
 			expectedDIDProperties := types.DidProperties{}
-			if subtest.expectedError == "" {
-				expectedDIDProperties = types.DidProperties{
-					DidString:        id,
-					MethodSpecificId: subtest.identifier,
-					Method:           subtest.method,
-				}
+			expectedDIDProperties = types.DidProperties{
+				DidString:        id,
+				MethodSpecificId: subtest.identifier,
+				Method:           subtest.method,
 			}
 			if (subtest.resolutionType == types.DIDJSONLD || subtest.resolutionType == types.JSONLD) && subtest.expectedError == "" {
 				subtest.expectedDID.Context = []string{types.DIDSchemaJSONLD}
@@ -299,7 +298,7 @@ func TestDereferencing(t *testing.T) {
 			name:              "resource not found",
 			ledgerService:     NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
 			dereferencingType: types.DIDJSONLD,
-			didUrl:            validDid + "/resource/unknownID",
+			didUrl:            validDid + "/resource/00000000-0000-0000-0000-000000000000",
 			expectedMetadata:  cheqd.Metadata{},
 			expectedError:     types.DereferencingNotFound,
 		},
@@ -308,10 +307,13 @@ func TestDereferencing(t *testing.T) {
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
 			requestService := NewRequestService("cheqd", subtest.ledgerService)
-			expectedDIDProperties := types.DidProperties{
-				DidString:        validDid,
-				MethodSpecificId: validIdentifier,
-				Method:           validMethod,
+			var expectedDIDProperties types.DidProperties
+			if subtest.expectedError != types.DereferencingInvalidDIDUrl {
+				expectedDIDProperties = types.DidProperties{
+					DidString:        validDid,
+					MethodSpecificId: validIdentifier,
+					Method:           validMethod,
+				}
 			}
 
 			fmt.Println(" dereferencingResult   " + subtest.didUrl)
