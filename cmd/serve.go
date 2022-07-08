@@ -75,6 +75,8 @@ func serve() {
 		requestedContentType := types.ContentType(accept)
 		if accept == "*/*" {
 			requestedContentType = types.DIDJSONLD
+		} else if strings.Contains(accept, string(types.HTML)) {
+			requestedContentType = types.HTML
 		}
 		log.Debug().Msgf("Requested content type: %s", requestedContentType)
 
