@@ -34,7 +34,7 @@ jobs:
 
       - name: Setup full resolver Docker
         working-directory: ./docker
-        run: docker compose --profile full up
+        run: docker compose --profile full up -d
 
       - name: Setup Python environment
         working-directory: ./tests/pytest
