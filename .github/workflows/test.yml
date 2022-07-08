@@ -34,8 +34,7 @@ jobs:
 
       - name: Setup full resolver Docker
         working-directory: ./docker
-        run: |
-          docker compose --profile full up
+        run: docker compose --profile full up
 
       - name: Setup Python environment
         working-directory: ./tests/pytest
@@ -48,4 +47,4 @@ jobs:
         working-directory: ./tests/pytest
         run: |
           set -euo pipefail
-          pytest -v -rP *.py
+          pytest -v -rP ./*.py
