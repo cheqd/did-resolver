@@ -43,12 +43,11 @@ func (rs RequestService) ProcessDIDRequest(didUrl string, resolutionOptions type
 	}
 
 	if resolutionOptions.Accept == types.HTML {
-		return "<!DOCTYPE html><html><body><h1>Cheqd DID Resolver</h1><pre id=\"r\"></pre><script> var data = " + 
-		result+ ";document.getElementById(\"r\").innerHTML = JSON.stringify(data, null, 4);" +
-		"</script></body></html>", err
+		return "<!DOCTYPE html><html><body><h1>Cheqd DID Resolver</h1><pre id=\"r\"></pre><script> var data = " +
+			result + ";document.getElementById(\"r\").innerHTML = JSON.stringify(data, null, 4);" +
+			"</script></body></html>", err
 	}
 	return result, err
-
 }
 
 func (rs RequestService) prepareResolutionResult(did string, resolutionOptions types.ResolutionOption) (string, error) {

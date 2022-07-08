@@ -20,7 +20,7 @@ const (
 	DIDJSON   ContentType = "application/did+json"
 	DIDJSONLD ContentType = "application/did+ld+json"
 	JSONLD    ContentType = "application/ld+json"
-	HTML    ContentType = "text/html"
+	HTML      ContentType = "text/html"
 )
 
 const (
