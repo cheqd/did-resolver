@@ -38,14 +38,14 @@ jobs:
           docker compose --profile full up
 
       - name: Setup Python environment
-        working-directory: ./tests/e2e-pytest
+        working-directory: ./tests/pytest
         run: |
           set -euo pipefail
           pip3 install -r requirements.txt >> /dev/null
           sudo chmod -R 775 /home/runner/
 
       - name: Run tests
-        working-directory: ./tests/e2e-pytest
+        working-directory: ./tests/pytest
         run: |
           set -euo pipefail
           pytest -v -rP *.py
