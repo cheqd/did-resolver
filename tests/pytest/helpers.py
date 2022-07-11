@@ -17,6 +17,11 @@ MAINNET_FRAGMENT = MAINNET_DID + "#key1"
 FAKE_MAINNET_DID = "did:cheqd:mainnet:zFWM1mKVGGU2gHYuLAQcTJfZBebqBpGf"
 FAKE_MAINNET_FRAGMENT = MAINNET_DID + "#fake_key"
 
+DIDJSON = "application/did+json"
+DIDLDJSON = "application/did+ld+json"
+LDJSON = "application/ld+json"
+HTML = "text/html"
+
 
 IMPLICIT_TIMEOUT = 40
 ENCODING = "utf-8"
@@ -28,11 +33,6 @@ def run(command, params, expected_output):
     cli.logfile = sys.stdout
     cli.expect(expected_output)
     return cli
-
-
-def run_interaction(cli, input_string, expected_output):
-    cli.sendline(input_string)
-    cli.expect(expected_output)
 
 
 def json_loads(s_to_load: str) -> dict:
