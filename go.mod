@@ -3,10 +3,11 @@ module github.com/cheqd/did-resolver
 go 1.17
 
 require (
-	github.com/cheqd/cheqd-node v0.5.1-0.20220627144535-1085dc183d85
+	github.com/cheqd/cheqd-node v0.6.0
+	github.com/iancoleman/orderedmap v0.2.0
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/rs/zerolog v1.23.0
-	github.com/spf13/cobra v1.4.0
+	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.11.0
 	github.com/stretchr/testify v1.7.1
 	google.golang.org/grpc v1.46.2
@@ -46,7 +47,6 @@ require (
 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/iancoleman/orderedmap v0.2.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jmhodges/levigo v1.0.0 // indirect
 	github.com/lestrrat-go/backoff/v2 v2.0.8 // indirect
