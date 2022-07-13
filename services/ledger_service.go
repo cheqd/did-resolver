@@ -71,8 +71,8 @@ func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool
 	return *didDocResponse.Did, *didDocResponse.Metadata, true, err
 }
 
-func (ls LedgerService) QueryResource(collectionDid string, resourceId string) (resource.Resource, bool, error) {
-	collectionId, namespace, _, _ := cheqdUtils.TrySplitDID(collectionDid)
+func (ls LedgerService) QueryResource(did string, resourceId string) (resource.Resource, bool, error) {
+	collectionId, namespace, _, _ := cheqdUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[namespace]
 	if !namespaceFound {
 		return resource.Resource{}, false, fmt.Errorf("namespace not supported: %s", namespace)
@@ -94,7 +94,7 @@ func (ls LedgerService) QueryResource(collectionDid string, resourceId string) (
 		return resource.Resource{}, false, err
 	}
 
-	log.Info().Msgf("Querying did resource: %s, %s", collectionDid, resourceId)
+	log.Info().Msgf("Querying did resource: %s, %s", did, resourceId)
 
 	client := resource.NewQueryClient(conn)
 	resourceResponse, err := client.Resource(context.Background(), &resource.QueryGetResourceRequest{CollectionId: collectionId, Id: resourceId})
