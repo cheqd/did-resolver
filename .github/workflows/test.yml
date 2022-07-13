@@ -16,3 +16,35 @@ jobs:
 
       - name: Run Golang unit tests
         run: go test -v ./...
+
+  python-integration-tests:
+    name: "Python integration tests"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download node Docker image
+        uses: actions/download-artifact@v3
+        with:
+          name: cheqd-did-resolver.tar
+
+      - name: Load node Docker image
+        run: docker load -i cheqd-did-resolver.tar
+
+      - name: Setup full resolver Docker
+        working-directory: ./docker
+        run: docker compose --profile full up -d
+
+      - name: Setup Python environment
+        working-directory: ./tests/pytest
+        run: |
+          set -euo pipefail
+          pip3 install -r requirements.txt >> /dev/null
+          sudo chmod -R 775 /home/runner/
+
+      - name: Run tests
+        working-directory: ./tests/pytest
+        run: |
+          set -euo pipefail
+          pytest -v -rP ./*.py
