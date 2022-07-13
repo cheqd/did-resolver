@@ -95,7 +95,7 @@ func (ls MockLedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, 
 	return ls.Did, ls.Metadata, isFound, nil
 }
 
-func (ls MockLedgerService) QueryResource(collectionDid string, resourceId string) (resource.Resource, bool, error) {
+func (ls MockLedgerService) QueryResource(did string, resourceId string) (resource.Resource, bool, error) {
 	isFound := true
 	if ls.Resource.Header == nil {
 		isFound = false

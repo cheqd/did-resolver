@@ -163,7 +163,7 @@ func (rs RequestService) dereferencePrimary(path string, did string, didUrl stri
 		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingNotSupported)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
-	
+
 	resource, isFound, err := rs.ledgerService.QueryResource(did, resourceId)
 	if err != nil {
 		return types.DidDereferencing{}, err
