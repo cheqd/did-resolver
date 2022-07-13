@@ -46,20 +46,12 @@ func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool
 	}
 
 	conn, err := ls.openGRPCConnection(serverAddr)
-	defer func(conn *grpc.ClientConn) {
-		if conn == nil {
-			return
-		}
-		err := conn.Close()
-		if err != nil {
-			log.Panic().Err(err).Msg("QueryDIDDoc: failed to close connection")
-			panic(err)
-		}
-	}(conn)
 	if err != nil {
 		log.Error().Err(err).Msg("QueryDIDDoc: failed connection")
 		return cheqd.Did{}, cheqd.Metadata{}, false, err
 	}
+
+	defer mustCloseGRPCConnection(conn)
 
 	log.Info().Msgf("Querying did doc: %s", did)
 	client := cheqd.NewQueryClient(conn)
@@ -79,20 +71,12 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (resource.R
 	}
 
 	conn, err := ls.openGRPCConnection(serverAddr)
-	defer func(conn *grpc.ClientConn) {
-		if conn == nil {
-			return
-		}
-		err := conn.Close()
-		if err != nil {
-			log.Panic().Err(err).Msg("QueryResource: failed to close connection")
-			panic(err)
-		}
-	}(conn)
 	if err != nil {
 		log.Error().Err(err).Msg("QueryResource: failed connection")
 		return resource.Resource{}, false, err
 	}
+
+	defer mustCloseGRPCConnection(conn)
 
 	log.Info().Msgf("Querying did resource: %s, %s", did, resourceId)
 
@@ -144,6 +128,17 @@ func (ls LedgerService) openGRPCConnection(addr string) (conn *grpc.ClientConn, 
 
 	log.Info().Msg("openGRPCConnection: opened")
 	return conn, nil
+}
+
+func mustCloseGRPCConnection(conn *grpc.ClientConn) {
+	if conn == nil {
+		return
+	}
+	err := conn.Close()
+	if err != nil {
+		log.Panic().Err(err).Msg("QueryDIDDoc: failed to close connection")
+		panic(err)
+	}
 }
 
 func (ls LedgerService) GetNamespaces() []string {
