@@ -40,16 +40,16 @@ def test_resolution(did_url, expected_output):
 @pytest.mark.parametrize(
     "accept, expected_header, expected_body",
     [
-        (LDJSON, LDJSON, r"(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"
-                         r"(.*?)didResolutionMetadata(.*?)application/ld\+json"),
-        (DIDLDJSON, DIDLDJSON, "(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"
-                               "(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"),
-        ("", DIDLDJSON, "(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"
-                        "(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"),
-        (DIDJSON, DIDJSON, r"(.*?)didDocument(.*?)(?!`@context`)(.*?)didDocumentMetadata"
-                           r"(.*?)didResolutionMetadata(.*?)application/did\+json"),
-        (HTML + ",application/xhtml+xml", HTML, fr"(.*?)didDocument(.*?)(?!`@context`)(.*?)didDocumentMetadata"
-                                                fr"(.*?)didResolutionMetadata(.*?){HTML}"),
+        (LDJSON, LDJSON, r"(.*?)didResolutionMetadata(.*?)application/ld\+json"
+                         r"(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
+        (DIDLDJSON, DIDLDJSON, "(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"
+                               "(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
+        ("", DIDLDJSON, "(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"
+                        "(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
+        (DIDJSON, DIDJSON, r"(.*?)didResolutionMetadata(.*?)application/did\+json"
+                           r"(.*?)didDocument(.*?)(?!`@context`)(.*?)didDocumentMetadata"),
+        (HTML + ",application/xhtml+xml", HTML, fr"(.*?)didResolutionMetadata(.*?){HTML}"
+                                                fr"(.*?)didDocument(.*?)(?!`@context`)(.*?)didDocumentMetadata"),
     ]
 )
 def test_resolution_content_type(accept, expected_header, expected_body):
