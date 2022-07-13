@@ -186,8 +186,10 @@ func TestResolve(t *testing.T) {
 				MethodSpecificId: subtest.identifier,
 				Method:           subtest.method,
 			}
-			if (subtest.resolutionType == types.DIDJSONLD || subtest.resolutionType == types.JSONLD) && subtest.expectedError == "" {
+			if (subtest.resolutionType == "" || subtest.resolutionType == types.DIDJSONLD) && subtest.expectedError == "" {
 				subtest.expectedDID.Context = []string{types.DIDSchemaJSONLD}
+			} else {
+				subtest.expectedDID.Context = nil
 			}
 
 			resolutionResult, err := requestService.Resolve(id, types.ResolutionOption{Accept: subtest.resolutionType})
