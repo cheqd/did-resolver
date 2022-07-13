@@ -22,7 +22,6 @@ DIDLDJSON = "application/did+ld+json"
 LDJSON = "application/ld+json"
 HTML = "text/html"
 
-
 IMPLICIT_TIMEOUT = 40
 ENCODING = "utf-8"
 READ_BUFFER = 60000
