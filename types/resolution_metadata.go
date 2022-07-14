@@ -30,16 +30,21 @@ type DidResolution struct {
 	ResolutionMetadata ResolutionMetadata `json:"didResolutionMetadata,omitempty"`
 }
 
-func NewResolutionMetadata(did string, contentType ContentType, resolutionError ErrorType) ResolutionMetadata {
-	method, _, id, _ := cheqdUtils.TrySplitDID(did)
+func NewResolutionMetadata(didUrl string, contentType ContentType, resolutionError ErrorType) ResolutionMetadata {
+	did, _, _, _, err1 := cheqdUtils.TrySplitDIDUrl(didUrl)
+	method, _, id, err2 := cheqdUtils.TrySplitDID(did)
+	var didProperties DidProperties
+	if err1 == nil && err2 == nil {
+		didProperties = DidProperties{
+			DidString:        did,
+			MethodSpecificId: id,
+			Method:           method,
+		}
+	}
 	return ResolutionMetadata{
 		ContentType:     contentType,
 		ResolutionError: resolutionError,
 		Retrieved:       time.Now().UTC().Format(time.RFC3339),
-		DidProperties: DidProperties{
-			DidString:        did,
-			MethodSpecificId: id,
-			Method:           method,
-		},
+		DidProperties:   didProperties,
 	}
 }

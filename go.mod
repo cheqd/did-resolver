@@ -3,15 +3,16 @@ module github.com/cheqd/did-resolver
 go 1.17
 
 require (
-	github.com/cheqd/cheqd-node v0.5.0
+	github.com/cheqd/cheqd-node v0.6.0
+	github.com/iancoleman/orderedmap v0.2.0
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/rs/zerolog v1.23.0
-	github.com/spf13/cobra v1.2.1
+	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.11.0
 	github.com/stretchr/testify v1.7.1
-	google.golang.org/grpc v1.45.0
+	google.golang.org/grpc v1.46.2
 	google.golang.org/protobuf v1.28.0
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -25,7 +26,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/confio/ics23/go v0.7.0 // indirect
 	github.com/cosmos/btcutil v1.0.4 // indirect
-	github.com/cosmos/cosmos-sdk v0.45.1 // indirect
+	github.com/cosmos/cosmos-sdk v0.45.5 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.0-20210816181553-5444fa50b93d // indirect
 	github.com/dgraph-io/badger/v2 v2.2007.2 // indirect
@@ -40,6 +41,7 @@ require (
 	github.com/goccy/go-json v0.9.4 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/google/btree v1.0.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/gtank/merlin v0.1.1 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
@@ -67,9 +69,9 @@ require (
 	github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/prometheus/client_golang v1.11.0 // indirect
+	github.com/prometheus/client_golang v1.12.1 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
-	github.com/prometheus/common v0.30.0 // indirect
+	github.com/prometheus/common v0.32.1 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
 	github.com/sasha-s/go-deadlock v0.2.1-0.20190427202633-1595213edefa // indirect
 	github.com/spf13/afero v1.8.2 // indirect
@@ -80,10 +82,10 @@ require (
 	github.com/syndtr/goleveldb v1.0.1-0.20200815110645-5c35d600f0ca // indirect
 	github.com/tecbot/gorocksdb v0.0.0-20191217155057-f0fad39f321c // indirect
 	github.com/tendermint/go-amino v0.16.0 // indirect
-	github.com/tendermint/tendermint v0.34.15 // indirect
+	github.com/tendermint/tendermint v0.34.19 // indirect
 	github.com/tendermint/tm-db v0.6.6 // indirect
 	go.etcd.io/bbolt v1.3.6 // indirect
-	google.golang.org/genproto v0.0.0-20220407144326-9054f6ed7bac // indirect
+	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

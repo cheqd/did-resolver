@@ -33,11 +33,10 @@ func TestMarshallDID(t *testing.T) {
 		VerificationMethod: []*cheqd.VerificationMethod{&verificationMethod1, &verificationMethod2},
 	}
 
-	expectedDID := "{\"@context\":[\"test\"],\"id\":\"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue\",\"verificationMethod\":[{\"controller\":\"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue\",\"id\":\"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue#verkey\",\"publicKeyMultibase\":\"zAKJP3f7BD6W4iWEQ9jwndVTCBq8ua2Utt8EEjJ6Vxsf\",\"type\":\"Ed25519VerificationKey2020\"},{\"controller\":\"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue\",\"id\":\"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue#verkey\",\"publicKeyJwk\":{\"crv\":\"Ed25519\",\"kty\":\"OKP\",\"x\":\"VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ\"},\"type\":\"JsonWebKey2020\"}]}"
-
+	expectedDID := "{\"@context\":[\"test\"],\"id\":\"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue\",\"verificationMethod\":[{\"id\":\"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue#verkey\",\"type\":\"Ed25519VerificationKey2020\",\"controller\":\"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue\",\"publicKeyMultibase\":\"zAKJP3f7BD6W4iWEQ9jwndVTCBq8ua2Utt8EEjJ6Vxsf\"},{\"id\":\"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue#verkey\",\"type\":\"JsonWebKey2020\",\"controller\":\"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue\",\"publicKeyJwk\":{\"crv\":\"Ed25519\",\"kty\":\"OKP\",\"x\":\"VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ\"}}]}"
 	jsonDID, err := didDocService.MarshallDID(didDoc)
 
 	fmt.Println(jsonDID)
-	require.EqualValues(t, jsonDID, expectedDID)
+	require.EqualValues(t, expectedDID, jsonDID)
 	require.Empty(t, err)
 }

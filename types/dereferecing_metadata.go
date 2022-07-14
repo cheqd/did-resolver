@@ -1,18 +1,17 @@
 package types
 
 import (
+	"encoding/json"
+
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
-	"google.golang.org/protobuf/runtime/protoiface"
 )
 
 type DereferencingOption ResolutionOption
 
 type DereferencingMetadata ResolutionMetadata
 
-type ContentStream protoiface.MessageV1
-
 type DidDereferencing struct {
-	ContentStream         protoiface.MessageV1  `json:"contentStream,omitempty"`
+	ContentStream         json.RawMessage       `json:"contentStream,omitempty"`
 	Metadata              cheqd.Metadata        `json:"contentMetadata,omitempty"`
 	DereferencingMetadata DereferencingMetadata `json:"dereferencingMetadata,omitempty"`
 }
