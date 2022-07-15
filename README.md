@@ -118,7 +118,7 @@ for having an opportunity to make a localhost requests
 curl -X GET http://localhost:8080/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
 ```
 
-with [this kind]((#response-example)) of responses redirected from https://resolver.cheqd.net
+with [this kind](#response-example) of responses redirected from `https://resolver.cheqd.net`
 
 [More about light DID Resolver](https://github.com/cheqd/identity-docs/blob/main/tutorials/resolver/using-light-cheqd-did-resolver.md)
 
