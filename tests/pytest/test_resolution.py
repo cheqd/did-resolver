@@ -5,7 +5,7 @@ import requests
 
 from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRAGMENT, \
     FAKE_TESTNET_DID, FAKE_MAINNET_DID, FAKE_TESTNET_FRAGMENT, FAKE_MAINNET_FRAGMENT, RESOLVER_URL, PATH, \
-    LDJSON, DIDJSON, DIDLDJSON, HTML, FAKE_TESTNET_RESOURCE
+    LDJSON, DIDJSON, DIDLDJSON, HTML, FAKE_TESTNET_RESOURCE, LDJSONProfile
 
 
 @pytest.mark.parametrize(
@@ -40,11 +40,14 @@ def test_resolution(did_url, expected_output):
 @pytest.mark.parametrize(
     "accept, expected_header, expected_body",
     [
-        (LDJSON, LDJSON, r"(.*?)didResolutionMetadata(.*?)application/ld\+json"
-                         r"(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
-        (DIDLDJSON, DIDLDJSON, "(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"
+        (LDJSONProfile, LDJSONProfile,
+         r"(.*?)didResolutionMetadata(.*?)application/ld\+json"
+         r"(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
+        (LDJSON, DIDLDJSON, r"(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"
+                            r"(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
+        (DIDLDJSON, DIDLDJSON, r"(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"
                                "(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
-        ("", DIDLDJSON, "(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"
+        ("", DIDLDJSON, r"(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"
                         "(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
         (DIDJSON, DIDJSON, r"(.*?)didResolutionMetadata(.*?)application/did\+json"
                            r"(.*?)didDocument(.*?)(?!`@context`)(.*?)didDocumentMetadata"),

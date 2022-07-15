@@ -5,6 +5,7 @@ import (
 	// marshal in combination with our proto generator version
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/rs/zerolog/log"
 
@@ -130,7 +131,7 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
 	}
 
-	if didResolutionMetadata.ContentType == types.DIDJSONLD || didResolutionMetadata.ContentType == types.JSONLD {
+	if didResolutionMetadata.ContentType == types.DIDJSONLD || strings.Contains(string(didResolutionMetadata.ContentType), string(types.JSONLD)) {
 		didDoc.Context = append(didDoc.Context, types.DIDSchemaJSONLD)
 	} else if didResolutionMetadata.ContentType == types.DIDJSON || didResolutionMetadata.ContentType == types.HTML {
 		didDoc.Context = []string{}

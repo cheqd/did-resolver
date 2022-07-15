@@ -69,11 +69,15 @@ func serve() {
 		didUrl := c.Param("did")
 		log.Debug().Msgf("DID: %s", didUrl)
 
-		accept := strings.Split(c.Request().Header.Get(echo.HeaderAccept), ";")[0]
+		acceptSettings := strings.Split(c.Request().Header.Get(echo.HeaderAccept), ";")
+		accept := acceptSettings[0]
+		if len(acceptSettings) > 1 && strings.Contains(acceptSettings[1], "profile=") {
+			accept += ";" + acceptSettings[1]
+		}
 		log.Trace().Msgf("Accept: %s", accept)
 
 		requestedContentType := types.ContentType(accept)
-		if accept == "*/*" {
+		if accept == "*/*" || accept == string(types.JSONLD) {
 			requestedContentType = types.DIDJSONLD
 		} else if strings.Contains(accept, string(types.HTML)) {
 			requestedContentType = types.HTML

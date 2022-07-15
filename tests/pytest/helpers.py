@@ -21,6 +21,7 @@ FAKE_MAINNET_FRAGMENT = MAINNET_DID + "#fake_key"
 DIDJSON = "application/did+json"
 DIDLDJSON = "application/did+ld+json"
 LDJSON = "application/ld+json"
+LDJSONProfile = LDJSON + ";profile=\"https://w3id.org/did-resolution\""
 HTML = "text/html"
 
 IMPLICIT_TIMEOUT = 40
