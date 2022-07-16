@@ -20,7 +20,7 @@ import (
 type LedgerServiceI interface {
 	QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool, error)
 	QueryResource(collectionDid string, resourceId string) (resource.Resource, bool, error)
-	QueryCollectionResources(did string) ([]resource.ResourceHeader, error)
+	QueryCollectionResources(did string) ([]*resource.ResourceHeader, error)
 	GetNamespaces() []string
 }
 
