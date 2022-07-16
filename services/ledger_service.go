@@ -20,6 +20,7 @@ import (
 type LedgerServiceI interface {
 	QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool, error)
 	QueryResource(collectionDid string, resourceId string) (resource.Resource, bool, error)
+	QueryCollectionResources(did string) ([]resource.ResourceHeader, error)
 	GetNamespaces() []string
 }
 
@@ -83,6 +84,30 @@ func (ls LedgerService) QueryResource(collectionDid string, resourceId string) (
 	}
 
 	return *resourceResponse.Resource, true, err
+}
+
+func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, error) {
+	_, namespace, _, _ := cheqdUtils.TrySplitDID(did)
+	serverAddr, namespaceFound := ls.ledgers[namespace]
+	if !namespaceFound {
+		return []*resource.ResourceHeader{}, fmt.Errorf("namespace not supported: %s", namespace)
+	}
+
+	conn, err := ls.openGRPCConnection(serverAddr)
+	if err != nil {
+		log.Error().Err(err).Msg("QueryResource: failed connection")
+		return []*resource.ResourceHeader{}, err
+	}
+
+	log.Info().Msgf("Querying did resource: %s", did)
+
+	client := resource.NewQueryClient(conn)
+	resourceResponse, err := client.CollectionResources(context.Background(), &resource.QueryGetCollectionResourcesRequest{CollectionId: did})
+	if err != nil {
+		return []*resource.ResourceHeader{}, err
+	}
+
+	return resourceResponse.Resources, nil
 }
 
 func (ls *LedgerService) RegisterLedger(namespace string, url string) error {
