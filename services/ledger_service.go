@@ -83,8 +83,7 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (resource.R
 	client := resource.NewQueryClient(conn)
 	resourceResponse, err := client.Resource(context.Background(), &resource.QueryGetResourceRequest{CollectionId: collectionId, Id: resourceId})
 	if err != nil {
-		log.Info().Msgf("Resource not found %r", err.Error())
-
+		log.Info().Msgf("Resource not found %s", err.Error())
 		return resource.Resource{}, false, nil
 	}
 
