@@ -36,13 +36,22 @@ func (rs RequestService) IsDidUrl(didUrl string) bool {
 }
 
 func (rs RequestService) ProcessDIDRequest(didUrl string, resolutionOptions types.ResolutionOption) (string, error) {
+	var result string
+	var err error
 	if rs.IsDidUrl(didUrl) {
 		log.Trace().Msgf("Dereferencing %s", didUrl)
-		return rs.prepareDereferencingResult(didUrl, types.DereferencingOption(resolutionOptions))
+		result, err = rs.prepareDereferencingResult(didUrl, types.DereferencingOption(resolutionOptions))
 	} else {
 		log.Trace().Msgf("Resolving %s", didUrl)
-		return rs.prepareResolutionResult(didUrl, resolutionOptions)
+		result, err = rs.prepareResolutionResult(didUrl, resolutionOptions)
 	}
+
+	if resolutionOptions.Accept == types.HTML {
+		return "<!DOCTYPE html><html><body><h1>Cheqd DID Resolver</h1><pre id=\"r\"></pre><script> var data = " +
+			result + ";document.getElementById(\"r\").innerHTML = JSON.stringify(data, null, 4);" +
+			"</script></body></html>", err
+	}
+	return result, err
 }
 
 func (rs RequestService) prepareResolutionResult(did string, resolutionOptions types.ResolutionOption) (string, error) {
@@ -103,7 +112,6 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 	didResolutionMetadata := types.NewResolutionMetadata(did, resolutionOptions.Accept, "")
 
 	if didMethod, _, _, _ := cheqdUtils.TrySplitDID(did); didMethod != rs.didMethod {
-		fmt.Print("resolution: " + did)
 		didResolutionMetadata.ResolutionError = types.ResolutionMethodNotSupported
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
 	}
@@ -129,8 +137,12 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
 	}
 
-	if didResolutionMetadata.ContentType == types.DIDJSONLD {
+	if didResolutionMetadata.ContentType == types.DIDJSONLD || didResolutionMetadata.ContentType == types.JSONLD {
 		didDoc.Context = append(didDoc.Context, types.DIDSchemaJSONLD)
+	} else if didResolutionMetadata.ContentType == types.DIDJSON || didResolutionMetadata.ContentType == types.HTML {
+		didDoc.Context = []string{}
+	} else {
+		return types.DidResolution{}, fmt.Errorf("content type %s is not supported", didResolutionMetadata.ContentType)
 	}
 	return types.DidResolution{Did: didDoc, Metadata: resolvedMetadata, ResolutionMetadata: didResolutionMetadata}, nil
 }
@@ -172,9 +184,8 @@ func (rs RequestService) dereferencePrimary(path string, did string, didUrl stri
 		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingNotSupported)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
-	_, _, collectionId, _ := cheqdUtils.TrySplitDID(did)
 
-	resource, isFound, err := rs.ledgerService.QueryResource(collectionId, resourceId)
+	resource, isFound, err := rs.ledgerService.QueryResource(did, resourceId)
 	if err != nil {
 		return types.DidDereferencing{}, err
 	}

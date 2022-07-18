@@ -95,7 +95,7 @@ func (ls MockLedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, 
 	return ls.Did, ls.Metadata, isFound, nil
 }
 
-func (ls MockLedgerService) QueryResource(collectionDid string, resourceId string) (resource.Resource, bool, error) {
+func (ls MockLedgerService) QueryResource(did string, resourceId string) (resource.Resource, bool, error) {
 	isFound := true
 	if ls.Resource.Header == nil {
 		isFound = false
@@ -196,8 +196,10 @@ func TestResolve(t *testing.T) {
 				MethodSpecificId: subtest.identifier,
 				Method:           subtest.method,
 			}
-			if (subtest.resolutionType == types.DIDJSONLD || subtest.resolutionType == types.JSONLD) && subtest.expectedError == "" {
+			if (subtest.resolutionType == "" || subtest.resolutionType == types.DIDJSONLD) && subtest.expectedError == "" {
 				subtest.expectedDID.Context = []string{types.DIDSchemaJSONLD}
+			} else {
+				subtest.expectedDID.Context = nil
 			}
 
 			resolutionResult, err := requestService.Resolve(id, types.ResolutionOption{Accept: subtest.resolutionType})
@@ -267,7 +269,7 @@ func TestDereferencing(t *testing.T) {
 			name:              "successful Primary dereferencing (resource)",
 			ledgerService:     NewMockLedgerService(validDIDDoc, validMetadata, validResource),
 			dereferencingType: types.DIDJSONLD,
-			didUrl:            validDid + "/resource/" + validResourceId,
+			didUrl:            validDid + "/resources/" + validResourceId,
 			expectedContentStream: fmt.Sprintf("{\"@context\":[\"%s\"],\"collectionId\":\"%s\",\"id\":\"%s\",\"name\":\"%s\",\"resourceType\":\"%s\",\"mediaType\":\"%s\",\"checksum\":%s,\"data\":%s}",
 				types.DIDSchemaJSONLD, validResource.Header.CollectionId, validResource.Header.Id, validResource.Header.Name, validResource.Header.ResourceType, validResource.Header.MediaType, validChecksum, validData),
 			expectedMetadata: types.ResolutionDidDocMetadata{},
@@ -309,7 +311,7 @@ func TestDereferencing(t *testing.T) {
 			name:              "resource not found",
 			ledgerService:     NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
 			dereferencingType: types.DIDJSONLD,
-			didUrl:            validDid + "/resource/00000000-0000-0000-0000-000000000000",
+			didUrl:            validDid + "/resources/00000000-0000-0000-0000-000000000000",
 			expectedMetadata:  types.ResolutionDidDocMetadata{},
 			expectedError:     types.DereferencingNotFound,
 		},

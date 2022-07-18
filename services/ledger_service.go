@@ -52,6 +52,8 @@ func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool
 		return cheqd.Did{}, cheqd.Metadata{}, false, err
 	}
 
+	defer mustCloseGRPCConnection(conn)
+
 	log.Info().Msgf("Querying did doc: %s", did)
 	client := cheqd.NewQueryClient(conn)
 	didDocResponse, err := client.Did(context.Background(), &cheqd.QueryGetDidRequest{Id: did})
@@ -62,8 +64,8 @@ func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool
 	return *didDocResponse.Did, *didDocResponse.Metadata, true, err
 }
 
-func (ls LedgerService) QueryResource(collectionDid string, resourceId string) (resource.Resource, bool, error) {
-	collectionId, namespace, _, _ := cheqdUtils.TrySplitDID(collectionDid)
+func (ls LedgerService) QueryResource(did string, resourceId string) (resource.Resource, bool, error) {
+	collectionId, namespace, _, _ := cheqdUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[namespace]
 	if !namespaceFound {
 		return resource.Resource{}, false, fmt.Errorf("namespace not supported: %s", namespace)
@@ -75,7 +77,9 @@ func (ls LedgerService) QueryResource(collectionDid string, resourceId string) (
 		return resource.Resource{}, false, err
 	}
 
-	log.Info().Msgf("Querying did resource: %s, %s", collectionDid, resourceId)
+	defer mustCloseGRPCConnection(conn)
+
+	log.Info().Msgf("Querying did resource: %s, %s", did, resourceId)
 
 	client := resource.NewQueryClient(conn)
 	resourceResponse, err := client.Resource(context.Background(), &resource.QueryGetResourceRequest{CollectionId: collectionId, Id: resourceId})
@@ -147,16 +151,19 @@ func (ls LedgerService) openGRPCConnection(addr string) (conn *grpc.ClientConn, 
 		return nil, err
 	}
 
-	defer func(conn *grpc.ClientConn) {
-		err := conn.Close()
-		if err != nil {
-			log.Panic().Err(err).Msg("QueryDIDDoc: failed to close connection")
-			panic(err)
-		}
-	}(conn)
-
 	log.Info().Msg("openGRPCConnection: opened")
 	return conn, nil
+}
+
+func mustCloseGRPCConnection(conn *grpc.ClientConn) {
+	if conn == nil {
+		return
+	}
+	err := conn.Close()
+	if err != nil {
+		log.Panic().Err(err).Msg("QueryDIDDoc: failed to close connection")
+		panic(err)
+	}
 }
 
 func (ls LedgerService) GetNamespaces() []string {
