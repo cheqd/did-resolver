@@ -4,7 +4,7 @@
 
 cheqd DID resovler offers multiple implementations for resolving cheqd DIDs, according to the [cheqd DID method](https://docs.cheqd.io/node/architecture/adr-list/adr-002-cheqd-did-method#:~:text=Summary,on%20the%20Cosmos%20blockchain%20framework.)
 
-This resolver aims to make it easy for third parties to resolve cheqd DIDs, using either a full DID resolver, a proxy DID resolver or through the [Universal Resolver](https://dev.uniresolver.io/).
+This resolver aims to make it easy for third parties to resolve cheqd DIDs, using either a Full DID resolver, a Light DID resolver or through the [Universal Resolver](https://dev.uniresolver.io/).
 
 ## Example DIDs
 
@@ -15,9 +15,11 @@ This resolver aims to make it easy for third parties to resolve cheqd DIDs, usin
 
 ## Quick Start
 
-If you do not want to install anything, but just want to resolve a DID right now, then make a request in the browser https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY:
+If you do not want to install anything, but just want to resolve a DID, then you can make a request in the browser:
 
-or through the terminal:
+https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
+
+or through the command terminal:
 
 ```bash
 curl -X GET https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
@@ -88,13 +90,13 @@ curl -X GET https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDB
 
 ## Full DID Resolver
 
-For starting Full DID Resolver use
+For initiating the Full DID Resolver, use:
 
 ```bash
 docker compose --profile full up --build
 ```
 
-After you can check if it works
+After, you can check if it works:
 
 ```bash
 curl -X GET https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
@@ -104,15 +106,15 @@ Response should be the same with [this example](#response-example)
 
 [Read more about Full DID Resolver configuration](https://github.com/cheqd/identity-docs/blob/main/tutorials/resolver/using-full-cheqd-did-resolver.md)
 
-## Proxy DID Resolver
+## Light DID Resolver
 
-You can use light profile:
+For initiating the Light DID Resolver, use:
 
 ```commandline
 docker compose --profile light up --build
 ```
 
-for having an opportunity to make a localhost requests
+To make a localhost request, you can use:
 
 ```commandline
 curl -X GET http://localhost:8080/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
