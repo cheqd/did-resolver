@@ -30,7 +30,7 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
                                 r"\"dereferencingMetadata(.*?)\"error\":\"notFound\""),
 
         (TESTNET_RESOURCE, fr"\"contentStream\":(.*?)collectionId(.*?),\"contentMetadata\":(.*?),"
-                                r"\"dereferencingMetadata(.*?)"),
+                           r"\"dereferencingMetadata(.*?)"),
         (FAKE_TESTNET_RESOURCE, r"\"contentStream\":null,\"contentMetadata\":\[\],"
                                 r"\"dereferencingMetadata(.*?)\"error\":\"notFound\""),
     ]
@@ -40,21 +40,21 @@ def test_resolution(did_url, expected_output):
 
 
 @pytest.mark.parametrize(
-    "accept, expected_header, expected_body",
+    "accept, expected_header, has_context, expected_body",
     [
-        (LDJSON, LDJSON, r"(.*?)didResolutionMetadata(.*?)application/ld\+json"
-                         r"(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
-        (DIDLDJSON, DIDLDJSON, "(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"
-                               "(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
-        ("", DIDLDJSON, "(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"
-                        "(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
-        (DIDJSON, DIDJSON, r"(.*?)didResolutionMetadata(.*?)application/did\+json"
-                           r"(.*?)didDocument(.*?)(?!`@context`)(.*?)didDocumentMetadata"),
-        (HTML + ",application/xhtml+xml", HTML, fr"(.*?)didResolutionMetadata(.*?){HTML}"
-                                                fr"(.*?)didDocument(.*?)(?!`@context`)(.*?)didDocumentMetadata"),
+        (LDJSON, LDJSON, True, r"(.*?)didResolutionMetadata(.*?)application/ld\+json"
+                               r"(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
+        (DIDLDJSON, DIDLDJSON, True, "(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"
+                                     "(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
+        ("", DIDLDJSON, True, "(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"
+                              "(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
+        (DIDJSON, DIDJSON, False, r"(.*?)didResolutionMetadata(.*?)application/did\+json"
+                                  r"(.*?)didDocument(.*?)(?!`@context`)(.*?)didDocumentMetadata"),
+        (HTML + ",application/xhtml+xml", HTML, False, fr"(.*?)didResolutionMetadata(.*?){HTML}"
+                                                       fr"(.*?)didDocument(.*?)(?!`@context`)(.*?)didDocumentMetadata"),
     ]
 )
-def test_resolution_content_type(accept, expected_header, expected_body):
+def test_resolution_content_type(accept, expected_header, expected_body, has_context):
     url = RESOLVER_URL + PATH + TESTNET_DID
     header = {"Accept": accept} if accept else {}
 
@@ -62,3 +62,62 @@ def test_resolution_content_type(accept, expected_header, expected_body):
 
     assert r.headers["Content-Type"] == expected_header
     assert re.match(expected_body, r.text)
+    if has_context:
+        assert re.findall(r"context", r.text)
+    else:
+        assert not re.findall(r"context", r.text)
+
+
+dereferencing_content_type_test_set = [
+    (LDJSON, LDJSON, True,
+     r"(.*?)contentStream(.*?)@context(.*?)contentMetadata"
+     r"(.*?)dereferencingMetadata(.*?)application/ld\+json"),
+    (DIDLDJSON, DIDLDJSON, True,
+     "(.*?)contentStream(.*?)@context(.*?)contentMetadata"
+     "(.*?)dereferencingMetadata(.*?)application/did\+ld\+json"),
+    ("", DIDLDJSON, True,
+     "(.*?)contentStream(.*?)@context(.*?)contentMetadata"
+     "(.*?)dereferencingMetadata(.*?)application/did\+ld\+json"),
+    (DIDJSON, DIDJSON, False,
+     r"(.*?)contentStream(.*?)contentMetadata"
+     r"(.*?)dereferencingMetadata(.*?)application/did\+json"),
+    (HTML + ",application/xhtml+xml", HTML, False,
+     fr"(.*?)contentStream(.*?)contentMetadata"
+     fr"(.*?)dereferencingMetadata(.*?){HTML}"),
+]
+
+
+@pytest.mark.parametrize(
+    "accept, expected_header, has_context, expected_body",
+    dereferencing_content_type_test_set
+)
+def test_dereferencing_content_type_fragment(accept, expected_header, expected_body, has_context):
+    url = RESOLVER_URL + PATH + TESTNET_RESOURCE
+    header = {"Accept": accept} if accept else {}
+
+    r = requests.get(url, headers=header)
+
+    assert r.headers["Content-Type"] == expected_header
+    assert re.match(expected_body, r.text)
+    if has_context:
+        assert re.findall(r"context", r.text)
+    else:
+        assert not re.findall(r"context", r.text)
+
+
+@pytest.mark.parametrize(
+    "accept, expected_header, has_context, expected_body",
+    dereferencing_content_type_test_set
+)
+def test_dereferencing_content_type_resource(accept, expected_header, expected_body, has_context):
+    url = RESOLVER_URL + PATH + TESTNET_FRAGMENT.replace("#", "%23")
+    header = {"Accept": accept} if accept else {}
+
+    r = requests.get(url, headers=header)
+
+    assert r.headers["Content-Type"] == expected_header
+    assert re.match(expected_body, r.text)
+    if has_context:
+        assert re.findall(r"context", r.text)
+    else:
+        assert not re.findall(r"context", r.text)
