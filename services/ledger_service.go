@@ -64,7 +64,7 @@ func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool
 }
 
 func (ls LedgerService) QueryResource(did string, resourceId string) (resource.Resource, bool, error) {
-	collectionId, namespace, _, _ := cheqdUtils.TrySplitDID(did)
+	_, namespace, collectionId, _ := cheqdUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[namespace]
 	if !namespaceFound {
 		return resource.Resource{}, false, fmt.Errorf("namespace not supported: %s", namespace)
@@ -78,11 +78,12 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (resource.R
 
 	defer mustCloseGRPCConnection(conn)
 
-	log.Info().Msgf("Querying did resource: %s, %s", did, resourceId)
+	log.Info().Msgf("Querying did resource: %s, %s", collectionId, resourceId)
 
 	client := resource.NewQueryClient(conn)
 	resourceResponse, err := client.Resource(context.Background(), &resource.QueryGetResourceRequest{CollectionId: collectionId, Id: resourceId})
 	if err != nil {
+		log.Info().Msgf("Resource not found %s", err.Error())
 		return resource.Resource{}, false, nil
 	}
 

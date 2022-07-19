@@ -5,7 +5,7 @@ import requests
 
 from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRAGMENT, \
     FAKE_TESTNET_DID, FAKE_MAINNET_DID, FAKE_TESTNET_FRAGMENT, FAKE_MAINNET_FRAGMENT, RESOLVER_URL, PATH, \
-    LDJSON, DIDJSON, DIDLDJSON, HTML, FAKE_TESTNET_RESOURCE
+    LDJSON, DIDJSON, DIDLDJSON, HTML, FAKE_TESTNET_RESOURCE, TESTNET_RESOURCE
 
 
 @pytest.mark.parametrize(
@@ -29,6 +29,8 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
         (FAKE_MAINNET_FRAGMENT, r"\"contentStream\":null,\"contentMetadata\":\[\],"
                                 r"\"dereferencingMetadata(.*?)\"error\":\"notFound\""),
 
+        (TESTNET_RESOURCE, fr"\"contentStream\":(.*?)collectionId(.*?),\"contentMetadata\":(.*?),"
+                                r"\"dereferencingMetadata(.*?)"),
         (FAKE_TESTNET_RESOURCE, r"\"contentStream\":null,\"contentMetadata\":\[\],"
                                 r"\"dereferencingMetadata(.*?)\"error\":\"notFound\""),
     ]
