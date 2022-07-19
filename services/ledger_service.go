@@ -92,7 +92,7 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (resource.R
 }
 
 func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, error) {
-	_, namespace, _, _ := cheqdUtils.TrySplitDID(did)
+	_, namespace, collectionId, _ := cheqdUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[namespace]
 	if !namespaceFound {
 		return []*resource.ResourceHeader{}, fmt.Errorf("namespace not supported: %s", namespace)
@@ -107,7 +107,7 @@ func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.Resour
 	log.Info().Msgf("Querying did resource: %s", did)
 
 	client := resource.NewQueryClient(conn)
-	resourceResponse, err := client.CollectionResources(context.Background(), &resource.QueryGetCollectionResourcesRequest{CollectionId: did})
+	resourceResponse, err := client.CollectionResources(context.Background(), &resource.QueryGetCollectionResourcesRequest{CollectionId: collectionId})
 	if err != nil {
 		return []*resource.ResourceHeader{}, err
 	}
