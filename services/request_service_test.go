@@ -103,7 +103,6 @@ func (ls MockLedgerService) QueryResource(did string, resourceId string) (resour
 	return ls.Resource, isFound, nil
 }
 
-
 func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, error) {
 	if ls.Metadata.Resources == nil {
 		return []*resource.ResourceHeader{}, nil

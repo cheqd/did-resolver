@@ -9,8 +9,8 @@ import (
 	"github.com/rs/zerolog/log"
 
 	cheqdTypes "github.com/cheqd/cheqd-node/x/cheqd/types"
-	resourceTypes "github.com/cheqd/cheqd-node/x/resource/types"
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
+	resourceTypes "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
 	"google.golang.org/protobuf/runtime/protoiface"
@@ -245,7 +245,6 @@ func (rs RequestService) ResolveMetadata(did string, metadata cheqdTypes.Metadat
 		return types.ResolutionDidDocMetadata{}, err
 	}
 	return types.NewResolutionDidDocMetadata(metadata, resources), nil
-
 }
 
 func createJsonResolution(didDoc string, metadata string, resolutionMetadata string) (string, error) {
