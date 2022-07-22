@@ -49,4 +49,3 @@ func TransformToFragmentMetadata(metadata ResolutionDidDocMetadata) ResolutionDi
 	metadata.Resources = nil
 	return metadata
 }
-
