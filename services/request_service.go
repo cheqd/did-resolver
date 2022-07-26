@@ -238,13 +238,13 @@ func (rs RequestService) dereferenceSecondary(did string, fragmentId string, did
 
 func (rs RequestService) ResolveMetadata(did string, metadata cheqdTypes.Metadata) (types.ResolutionDidDocMetadata, error) {
 	if metadata.Resources == nil {
-		return types.NewResolutionDidDocMetadata(metadata, []*resourceTypes.ResourceHeader{}), nil
+		return types.NewResolutionDidDocMetadata(did, metadata, []*resourceTypes.ResourceHeader{}), nil
 	}
 	resources, err := rs.ledgerService.QueryCollectionResources(did)
 	if err != nil {
 		return types.ResolutionDidDocMetadata{}, err
 	}
-	return types.NewResolutionDidDocMetadata(metadata, resources), nil
+	return types.NewResolutionDidDocMetadata(did, metadata, resources), nil
 }
 
 func createJsonResolution(didDoc string, metadata string, resolutionMetadata string) (string, error) {

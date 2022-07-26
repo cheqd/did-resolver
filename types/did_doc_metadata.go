@@ -14,14 +14,14 @@ type ResolutionDidDocMetadata struct {
 }
 
 type ResourcePreview struct {
-	Id           string `json:"id,omitempty"`
+	ResourceURI  string `json:"resourceURI,omitempty"`
 	Name         string `json:"name,omitempty"`
 	ResourceType string `json:"resourceType,omitempty"`
 	MediaType    string `json:"mediaType,omitempty"`
 	Created      string `json:"created,omitempty"`
 }
 
-func NewResolutionDidDocMetadata(metadata cheqd.Metadata, resources []*resource.ResourceHeader) ResolutionDidDocMetadata {
+func NewResolutionDidDocMetadata(did string, metadata cheqd.Metadata, resources []*resource.ResourceHeader) ResolutionDidDocMetadata {
 	newMetadata := ResolutionDidDocMetadata{
 		metadata.Created,
 		metadata.Updated,
@@ -34,7 +34,7 @@ func NewResolutionDidDocMetadata(metadata cheqd.Metadata, resources []*resource.
 	}
 	for _, r := range resources {
 		resourcePreview := ResourcePreview{
-			r.Id,
+			did + RESOURCE_PATH + r.Id,
 			r.Name,
 			r.ResourceType,
 			r.MediaType,
