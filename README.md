@@ -25,65 +25,6 @@ or through the command terminal:
 curl -X GET https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
 ```
 
-### Response example
-
-```json
-    {
-       "didResolutionMetadata":{
-          "contentType":"application/did+ld+json",
-          "retrieved":"2022-07-15T14:55:16Z",
-          "did":{
-             "didString":"did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY",
-             "methodSpecificId":"zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY",
-             "method":"cheqd"
-          }
-       },
-       "didDocument":{
-          "@context":[
-             "https://www.w3.org/ns/did/v1"
-          ],
-          "id":"did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY",
-          "verificationMethod":[
-             {
-                "id":"did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY#key1",
-                "type":"Ed25519VerificationKey2020",
-                "controller":"did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY",
-                "publicKeyMultibase":"zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkYsWCo7fztHtepn"
-             }
-          ],
-          "authentication":[
-             "did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY#key1"
-          ],
-          "service":[
-             {
-                "id":"did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY#website",
-                "type":"LinkedDomains",
-                "serviceEndpoint":"https://www.cheqd.io"
-             },
-             {
-                "id":"did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY#non-fungible-image",
-                "type":"LinkedDomains",
-                "serviceEndpoint":"https://gateway.ipfs.io/ipfs/bafybeihetj2ng3d74k7t754atv2s5dk76pcqtvxls6dntef3xa6rax25xe"
-             },
-             {
-                "id":"did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY#twitter",
-                "type":"LinkedDomains",
-                "serviceEndpoint":"https://twitter.com/cheqd_io"
-             },
-             {
-                "id":"did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY#linkedin",
-                "type":"LinkedDomains",
-                "serviceEndpoint":"https://www.linkedin.com/company/cheqd-identity/"
-             }
-          ]
-       },
-       "didDocumentMetadata":{
-          "created":"2022-04-05T11:49:19Z",
-          "versionId":"EDEAD35C83E20A72872ACD3C36B7BA42300712FC8E3EEE1340E47E2F1B216B2D"
-       }
-    }
-```
-
 [Read more about cheqd DID resolver features](https://github.com/cheqd/identity-docs/blob/main/tutorials/resolver/using-cheqd-universal-resolver-driver.md)
 
 ## 🧑‍💻🛠 Developer Guide
@@ -102,33 +43,32 @@ After, you can check if it works:
 curl -X GET https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
 ```
 
-Response should be the same with [this example](#response-example)
-
 [Read more about Full DID Resolver configuration](https://github.com/cheqd/identity-docs/blob/main/tutorials/resolver/using-full-cheqd-did-resolver.md)
 
 ## Light DID Resolver
 
-For initiating the Light DID Resolver, use:
-
-```commandline
-docker compose --profile light up --build
-```
-
-To make a localhost request, you can use:
-
-```commandline
-curl -X GET http://localhost:8080/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
-```
-
-with [this kind](#response-example) of responses redirected from `https://resolver.cheqd.net`
+Status: In development
 
 [More about light DID Resolver](https://github.com/cheqd/identity-docs/blob/main/tutorials/resolver/using-light-cheqd-did-resolver.md)
 
 ## Universal Resolver
 
-The Universal Resolver wraps an API around a number of co-located Docker containers running DID-method-specific drivers.
+The [Universal Resolver](https://github.com/decentralized-identity/universal-resolver) wraps an API around a number of co-located Docker containers running DID-method-specific drivers.
 
-Integration phase: in progress
+For a [quick start](https://github.com/decentralized-identity/universal-resolver#quick-start)
+
+```bash
+git clone https://github.com/decentralized-identity/universal-resolver
+cd universal-resolver/
+docker-compose -f docker-compose.yml pull
+docker-compose -f docker-compose.yml up
+```
+
+You should then be able to resolve identifiers locally using simple `curl` requests as follow:
+
+```bash
+curl -X GET http://localhost:8080/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
+```
 
 ## 🙋 Find us elsewhere
 
