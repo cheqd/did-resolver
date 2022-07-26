@@ -17,7 +17,7 @@ This resolver aims to make it easy for third parties to resolve cheqd DIDs, usin
 
 If you do not want to install anything, but just want to resolve a DID, then you can make a request in the browser:
 
-https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
+<https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY>
 
 or through the command terminal:
 
