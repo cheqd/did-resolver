@@ -26,3 +26,7 @@ const (
 const (
 	DIDSchemaJSONLD = "https://www.w3.org/ns/did/v1"
 )
+
+const (
+	RESOURCE_PATH = "/resources/"
+)

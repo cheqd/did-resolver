@@ -7,10 +7,11 @@ import json
 RESOLVER_URL = "http://localhost:1313"
 PATH = "/1.0/identifiers/"
 
-TESTNET_DID = "did:cheqd:testnet:zFWM1mKVGGU2gHYuLAQcTJfZBebqBpGf"
+TESTNET_DID = "did:cheqd:testnet:DAzMQo4MDMxCjgwM"
 TESTNET_FRAGMENT = TESTNET_DID + "#key1"
 FAKE_TESTNET_DID = "did:cheqd:testnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY"
-TESTNET_RESOURCE = "did:cheqd:testnet:DAzMQo4MDMxCjgwM" + "/resources/44547089-170b-4f5a-bcbc-06e46e0089e4"
+TESTNET_RESOURCE = TESTNET_DID + "/resources/44547089-170b-4f5a-bcbc-06e46e0089e4"
+TESTNET_RESOURCE_NAME = "Demo Resource"
 FAKE_TESTNET_FRAGMENT = TESTNET_DID + "#fake_key"
 FAKE_TESTNET_RESOURCE = TESTNET_DID + "/resources/76471e8c-0d1c-4b97-9b11-17b65e024334"
 

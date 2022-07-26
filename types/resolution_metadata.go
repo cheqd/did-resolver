@@ -25,9 +25,9 @@ type DidProperties struct {
 }
 
 type DidResolution struct {
-	Did                cheqd.Did          `json:"didDocument,omitempty"`
-	Metadata           cheqd.Metadata     `json:"didDocumentMetadata,omitempty"`
-	ResolutionMetadata ResolutionMetadata `json:"didResolutionMetadata,omitempty"`
+	Did                cheqd.Did                `json:"didDocument,omitempty"`
+	Metadata           ResolutionDidDocMetadata `json:"didDocumentMetadata,omitempty"`
+	ResolutionMetadata ResolutionMetadata       `json:"didResolutionMetadata,omitempty"`
 }
 
 func NewResolutionMetadata(didUrl string, contentType ContentType, resolutionError ErrorType) ResolutionMetadata {

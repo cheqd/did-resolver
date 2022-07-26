@@ -8,7 +8,9 @@ import (
 
 	"github.com/rs/zerolog/log"
 
+	cheqdTypes "github.com/cheqd/cheqd-node/x/cheqd/types"
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
+	resourceTypes "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
 	"google.golang.org/protobuf/runtime/protoiface"
@@ -68,16 +70,16 @@ func (rs RequestService) prepareResolutionResult(did string, resolutionOptions t
 		return "", err
 	}
 
-	metadata, err := rs.didDocService.MarshallProto(&didResolution.Metadata)
+	metadata, err := json.Marshal(&didResolution.Metadata)
 	if err != nil {
 		return "", err
 	}
 
 	if didResolution.ResolutionMetadata.ResolutionError != "" {
-		didDoc, metadata = "", ""
+		didDoc, metadata = "", []byte{}
 	}
 
-	return createJsonResolution(didDoc, metadata, string(resolutionMetadata))
+	return createJsonResolution(didDoc, string(metadata), string(resolutionMetadata))
 }
 
 func (rs RequestService) prepareDereferencingResult(did string, dereferencingOptions types.DereferencingOption) (string, error) {
@@ -97,12 +99,12 @@ func (rs RequestService) prepareDereferencingResult(did string, dereferencingOpt
 		return createJsonDereferencing(nil, "", string(dereferencingMetadata))
 	}
 
-	metadata, err := rs.didDocService.MarshallProto(&didDereferencing.Metadata)
+	metadata, err := json.Marshal(didDereferencing.Metadata)
 	if err != nil {
 		return "", err
 	}
 
-	return createJsonDereferencing(didDereferencing.ContentStream, metadata, string(dereferencingMetadata))
+	return createJsonDereferencing(didDereferencing.ContentStream, string(metadata), string(dereferencingMetadata))
 }
 
 // https://w3c-ccg.github.io/did-resolution/#resolving
@@ -125,6 +127,11 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 		return types.DidResolution{}, err
 	}
 
+	resolvedMetadata, err := rs.ResolveMetadata(did, metadata)
+	if err != nil {
+		return types.DidResolution{}, err
+	}
+
 	if !isFound {
 		didResolutionMetadata.ResolutionError = types.ResolutionNotFound
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
@@ -137,8 +144,7 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 	} else {
 		return types.DidResolution{}, fmt.Errorf("content type %s is not supported", didResolutionMetadata.ContentType)
 	}
-
-	return types.DidResolution{Did: didDoc, Metadata: metadata, ResolutionMetadata: didResolutionMetadata}, nil
+	return types.DidResolution{Did: didDoc, Metadata: resolvedMetadata, ResolutionMetadata: didResolutionMetadata}, nil
 }
 
 // https://w3c-ccg.github.io/did-resolution/#dereferencing
@@ -202,6 +208,7 @@ func (rs RequestService) dereferenceSecondary(did string, fragmentId string, did
 	if err != nil {
 		return types.DidDereferencing{}, err
 	}
+	metadata := didResolution.Metadata
 	dereferencingMetadata := types.DereferencingMetadata(didResolution.ResolutionMetadata)
 	if dereferencingMetadata.ResolutionError != "" {
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
@@ -210,6 +217,7 @@ func (rs RequestService) dereferenceSecondary(did string, fragmentId string, did
 	var protoContent protoiface.MessageV1
 	if fragmentId != "" {
 		protoContent = rs.didDocService.GetDIDFragment(fragmentId, didResolution.Did)
+		metadata = types.TransformToFragmentMetadata(metadata)
 	} else {
 		protoContent = &didResolution.Did
 	}
@@ -225,7 +233,18 @@ func (rs RequestService) dereferenceSecondary(did string, fragmentId string, did
 	}
 	contentStream := json.RawMessage(jsonFragment)
 
-	return types.DidDereferencing{ContentStream: contentStream, Metadata: didResolution.Metadata, DereferencingMetadata: dereferencingMetadata}, nil
+	return types.DidDereferencing{ContentStream: contentStream, Metadata: metadata, DereferencingMetadata: dereferencingMetadata}, nil
+}
+
+func (rs RequestService) ResolveMetadata(did string, metadata cheqdTypes.Metadata) (types.ResolutionDidDocMetadata, error) {
+	if metadata.Resources == nil {
+		return types.NewResolutionDidDocMetadata(did, metadata, []*resourceTypes.ResourceHeader{}), nil
+	}
+	resources, err := rs.ledgerService.QueryCollectionResources(did)
+	if err != nil {
+		return types.ResolutionDidDocMetadata{}, err
+	}
+	return types.NewResolutionDidDocMetadata(did, metadata, resources), nil
 }
 
 func createJsonResolution(didDoc string, metadata string, resolutionMetadata string) (string, error) {

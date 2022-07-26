@@ -64,16 +64,16 @@ func (ds DIDDocService) MarshallDID(didDoc cheqd.Did) (string, error) {
 func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1, contentType types.ContentType) (string, error) {
 	var mapContent orderedmap.OrderedMap
 	var err error
-	var context types.ContentType
+	var context []string
 	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
-		context = types.DIDSchemaJSONLD
+		context = []string{types.DIDSchemaJSONLD}
 	}
 
 	switch contentStream := contentStream.(type) {
 	case *cheqd.VerificationMethod:
 		mapContent, err = ds.prepareJWKPubkey(contentStream)
 	case *cheqd.Did:
-		contentStream.Context = []string{string(context)}
+		contentStream.Context = context
 		jsonDid, err := ds.MarshallDID(*contentStream)
 		if err != nil {
 			return "", err
@@ -81,7 +81,7 @@ func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1
 		return string(jsonDid), nil
 	case *resource.Resource:
 		dResource := types.DereferencedResource{
-			Context:           []string{string(context)},
+			Context:           context,
 			CollectionId:      contentStream.Header.CollectionId,
 			Id:                contentStream.Header.Id,
 			Name:              contentStream.Header.Name,
@@ -107,8 +107,8 @@ func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1
 	}
 
 	// Context changes
-	if context != "" {
-		mapContent.Set("@"+didContext, context)
+	if len(context) != 0 {
+		mapContent.Set("@"+didContext, context[0])
 		mapContent.Sort(func(a *orderedmap.Pair, b *orderedmap.Pair) bool {
 			return a.Key() == "@"+didContext
 		})
