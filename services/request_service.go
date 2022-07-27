@@ -4,7 +4,6 @@ import (
 	// jsonpb Marshaller is deprecated, but is needed because there's only one way to proto
 	// marshal in combination with our proto generator version
 	"encoding/json"
-	"fmt"
 
 	"github.com/rs/zerolog/log"
 
@@ -44,12 +43,6 @@ func (rs RequestService) ProcessDIDRequest(didUrl string, resolutionOptions type
 	} else {
 		log.Trace().Msgf("Resolving %s", didUrl)
 		result, err = rs.prepareResolutionResult(didUrl, resolutionOptions)
-	}
-
-	if resolutionOptions.Accept == types.HTML {
-		return "<!DOCTYPE html><html><body><h1>Cheqd DID Resolver</h1><pre id=\"r\"></pre><script> var data = " +
-			result + ";document.getElementById(\"r\").innerHTML = JSON.stringify(data, null, 4);" +
-			"</script></body></html>", err
 	}
 	return result, err
 }
@@ -139,10 +132,11 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 
 	if didResolutionMetadata.ContentType == types.DIDJSONLD || didResolutionMetadata.ContentType == types.JSONLD {
 		didDoc.Context = append(didDoc.Context, types.DIDSchemaJSONLD)
-	} else if didResolutionMetadata.ContentType == types.DIDJSON || didResolutionMetadata.ContentType == types.HTML {
+	} else if didResolutionMetadata.ContentType == types.DIDJSON {
 		didDoc.Context = []string{}
 	} else {
-		return types.DidResolution{}, fmt.Errorf("content type %s is not supported", didResolutionMetadata.ContentType)
+		didResolutionMetadata.ResolutionError = types.DereferencingNotSupported
+		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
 	}
 	return types.DidResolution{Did: didDoc, Metadata: resolvedMetadata, ResolutionMetadata: didResolutionMetadata}, nil
 }
