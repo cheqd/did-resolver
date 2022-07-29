@@ -80,6 +80,8 @@ func serve() {
 			requestedContentType = types.DIDJSON
 		} else if strings.Contains(accept, string(types.JSONLD)) {
 			requestedContentType = types.JSONLD
+		} else {
+			requestedContentType = types.JSON
 		}
 		log.Debug().Msgf("Requested content type: %s", requestedContentType)
 

@@ -4,7 +4,6 @@ import (
 	// jsonpb Marshaller is deprecated, but is needed because there's only one way to proto
 	// marshal in combination with our proto generator version
 	"encoding/json"
-	"strings"
 
 	"github.com/rs/zerolog/log"
 
@@ -146,6 +145,10 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.DereferencingOption) (types.DidDereferencing, error) {
 	did, path, query, fragmentId, err := cheqdUtils.TrySplitDIDUrl(didUrl)
 	log.Info().Msgf("did: %s, path: %s, query: %s, fragmentId: %s", did, path, query, fragmentId)
+
+	if !dereferenceOptions.Accept.IsSupported() {
+		return types.DidDereferencing{DereferencingMetadata: types.NewDereferencingMetadata(did, types.JSON, types.RepresentationNotSupportedError)}, nil
+	}
 
 	if err != nil || !cheqdUtils.IsValidDIDUrl(didUrl, "", []string{}) {
 		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.InvalidDIDUrlError)

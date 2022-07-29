@@ -52,8 +52,8 @@ def test_resolution(did_url, expected_output):
         (DIDJSON, DIDJSON, False, r"(.*?)didResolutionMetadata(.*?)application/did\+json"
                                   r"(.*?)didDocument(.*?)(?!`@context`)(.*?)didDocumentMetadata"),
         (HTML + ",application/xhtml+xml", JSON, False,
-         "\"didResolutionMetadata(.*?)\"error\":\"representationNotSupported\""
-         "(.*?)\"didDocument\":null,\"didDocumentMetadata\":\[\],"),
+         "(.*?)didResolutionMetadata(.*?)\"error\":\"representationNotSupported\""
+         "(.*?)\"didDocument\":null,\"didDocumentMetadata\":\[\]"),
     ]
 )
 def test_resolution_content_type(accept, expected_header, expected_body, has_context):
