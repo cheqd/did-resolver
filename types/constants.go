@@ -41,9 +41,9 @@ const (
 
 func (cType ContentType) IsSupported() bool {
 	supportedTypes := map[ContentType]bool{
-		DIDJSON: true,
+		DIDJSON:   true,
 		DIDJSONLD: true,
-		JSONLD: true,
+		JSONLD:    true,
 	}
 	return supportedTypes[cType]
 }
