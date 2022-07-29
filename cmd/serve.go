@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"net/http"
 	"strings"
 
 	"github.com/cheqd/did-resolver/services"
@@ -85,15 +84,12 @@ func serve() {
 		}
 		log.Debug().Msgf("Requested content type: %s", requestedContentType)
 
-		responseBody, err := requestService.ProcessDIDRequest(didUrl, types.ResolutionOption{Accept: requestedContentType})
-		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-		}
+		responseBody, status := requestService.ProcessDIDRequest(didUrl, types.ResolutionOption{Accept: requestedContentType})
 
 		log.Debug().Msgf("Response body: %s", responseBody)
 
 		c.Response().Header().Set(echo.HeaderContentType, string(requestedContentType))
-		return c.JSONBlob(http.StatusOK, []byte(responseBody))
+		return c.JSONBlob(status, []byte(responseBody))
 	})
 
 	log.Info().Msg("Starting listener")

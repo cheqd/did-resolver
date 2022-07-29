@@ -2,6 +2,8 @@ package utils
 
 import (
 	"regexp"
+
+	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
 )
 
 var (
@@ -16,4 +18,9 @@ func GetResourceId(didUrlPath string) (id string) {
 
 	match := ResourceId.FindStringSubmatch(didUrlPath)
 	return match[0]
+}
+
+func IsDidUrl(didUrl string) bool {
+	_, path, query, fragmentId, err := cheqdUtils.TrySplitDIDUrl(didUrl)
+	return err == nil && (path != "" || query != "" || fragmentId != "")
 }
