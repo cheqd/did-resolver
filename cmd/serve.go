@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"net/http"
 	"strings"
 
 	"github.com/cheqd/did-resolver/services"
@@ -69,26 +68,28 @@ func serve() {
 		didUrl := c.Param("did")
 		log.Debug().Msgf("DID: %s", didUrl)
 
-		accept := strings.Split(c.Request().Header.Get(echo.HeaderAccept), ";")[0]
+		accept := c.Request().Header.Get(echo.HeaderAccept)
 		log.Trace().Msgf("Accept: %s", accept)
 
-		requestedContentType := types.ContentType(accept)
-		if accept == "*/*" {
+		var requestedContentType types.ContentType
+
+		if strings.Contains(accept, "*/*") || strings.Contains(accept, string(types.DIDJSONLD)) {
 			requestedContentType = types.DIDJSONLD
-		} else if strings.Contains(accept, string(types.HTML)) {
-			requestedContentType = types.HTML
+		} else if strings.Contains(accept, string(types.DIDJSON)) {
+			requestedContentType = types.DIDJSON
+		} else if strings.Contains(accept, string(types.JSONLD)) {
+			requestedContentType = types.JSONLD
+		} else {
+			requestedContentType = types.JSON
 		}
 		log.Debug().Msgf("Requested content type: %s", requestedContentType)
 
-		responseBody, err := requestService.ProcessDIDRequest(didUrl, types.ResolutionOption{Accept: requestedContentType})
-		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-		}
+		responseBody, status := requestService.ProcessDIDRequest(didUrl, types.ResolutionOption{Accept: requestedContentType})
 
 		log.Debug().Msgf("Response body: %s", responseBody)
 
 		c.Response().Header().Set(echo.HeaderContentType, string(requestedContentType))
-		return c.JSONBlob(http.StatusOK, []byte(responseBody))
+		return c.JSONBlob(status, []byte(responseBody))
 	})
 
 	log.Info().Msg("Starting listener")
