@@ -49,6 +49,7 @@ func (rs RequestService) prepareResolutionResult(did string, resolutionOptions t
 	didDoc, mErr2 := rs.didDocService.MarshallDID(didResolution.Did)
 	metadata, mErr3 := json.Marshal(&didResolution.Metadata)
 	if mErr1 != nil || mErr2 != nil || mErr3 != nil {
+		log.Error().Errs("errors", []error{mErr1, mErr2, mErr3}).Msg("Marshalling error")
 		return createJsonResolutionInternalError(resolutionMetadata)
 	}
 
@@ -58,6 +59,7 @@ func (rs RequestService) prepareResolutionResult(did string, resolutionOptions t
 
 	result, err := createJsonResolution(didDoc, string(metadata), string(resolutionMetadata))
 	if err != nil {
+		log.Error().Err(err).Msg("Marshalling error")
 		return createJsonResolutionInternalError([]byte{})
 	}
 	return result, didResolution.ResolutionMetadata.ResolutionError.GetStatusCode()
@@ -71,6 +73,7 @@ func (rs RequestService) prepareDereferencingResult(did string, dereferencingOpt
 	dereferencingMetadata, mErr1 := json.Marshal(didDereferencing.DereferencingMetadata)
 	metadata, mErr2 := json.Marshal(didDereferencing.Metadata)
 	if mErr1 != nil || mErr2 != nil {
+		log.Error().Errs("errors", []error{mErr1, mErr2}).Msg("Marshalling error")
 		return createJsonDereferencingInternalError([]byte{})
 	}
 
@@ -81,6 +84,7 @@ func (rs RequestService) prepareDereferencingResult(did string, dereferencingOpt
 
 	result, err := createJsonDereferencing(didDereferencing.ContentStream, string(metadata), string(dereferencingMetadata))
 	if err != nil {
+		log.Error().Err(err).Msg("Marshalling error")
 		return createJsonDereferencingInternalError(dereferencingMetadata)
 	}
 
