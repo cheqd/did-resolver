@@ -18,7 +18,8 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 		Name:         "Existing Resource Name",
 		ResourceType: "CL-Schema",
 		MediaType:    "application/json",
-		Checksum:     []byte("test_checksum")}
+		Checksum:     []byte("test_checksum"),
+	}
 
 	validMetadataResource := ResourcePreview{
 		ResourceURI:       validDid + RESOURCE_PATH + resourceHeader.Id,
@@ -34,7 +35,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 	subtests := []struct {
 		name           string
 		metadata       cheqd.Metadata
-		resources       []*resource.ResourceHeader
+		resources      []*resource.ResourceHeader
 		expectedResult ResolutionDidDocMetadata
 	}{
 		{
@@ -80,7 +81,6 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
-
 			result := NewResolutionDidDocMetadata(validDid, subtest.metadata, subtest.resources)
 
 			require.EqualValues(t, subtest.expectedResult, result)
