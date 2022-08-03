@@ -1,6 +1,8 @@
 package types
 
 import (
+	"fmt"
+
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
 )
@@ -19,7 +21,7 @@ type ResourcePreview struct {
 	ResourceType      string `json:"resourceType,omitempty"`
 	MediaType         string `json:"mediaType,omitempty"`
 	Created           string `json:"created,omitempty"`
-	Checksum          []byte `json:"checksum,omitempty"`
+	Checksum          string `json:"checksum,omitempty"`
 	PreviousVersionId string `json:"previousVersionId,omitempty"`
 	NextVersionId     string `json:"nextVersionId,omitempty"`
 }
@@ -42,7 +44,7 @@ func NewResolutionDidDocMetadata(did string, metadata cheqd.Metadata, resources 
 			r.ResourceType,
 			r.MediaType,
 			r.Created,
-			r.Checksum,
+			fmt.Sprintf("%x", r.Checksum),
 			r.PreviousVersionId,
 			r.NextVersionId,
 		}
