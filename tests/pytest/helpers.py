@@ -23,6 +23,7 @@ FAKE_MAINNET_FRAGMENT = MAINNET_DID + "#fake_key"
 DIDJSON = "application/did+json"
 DIDLDJSON = "application/did+ld+json"
 LDJSON = "application/ld+json"
+JSON = "application/json"
 HTML = "text/html"
 
 IMPLICIT_TIMEOUT = 40
