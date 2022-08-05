@@ -95,19 +95,18 @@ func (ls MockLedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, 
 	return ls.Did, ls.Metadata, isFound, nil
 }
 
-func (ls MockLedgerService) QueryResource(did string, resourceId string) (resource.Resource, bool, error) {
-	isFound := true
-	if ls.Resource.Header == nil {
-		isFound = false
+func (ls MockLedgerService) QueryResource(did string, resourceId string) (*resource.Resource, types.ErrorType) {
+	if ls.Resource.Header == nil || ls.Resource.Header.Id != resourceId {
+		return &resource.Resource{}, types.NotFoundError
 	}
-	return ls.Resource, isFound, nil
+	return &ls.Resource, ""
 }
 
-func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, error) {
+func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, types.ErrorType) {
 	if ls.Metadata.Resources == nil {
-		return []*resource.ResourceHeader{}, nil
+		return []*resource.ResourceHeader{}, types.NotFoundError
 	}
-	return []*resource.ResourceHeader{ls.Resource.Header}, nil
+	return []*resource.ResourceHeader{ls.Resource.Header}, ""
 }
 
 func (ls MockLedgerService) GetNamespaces() []string {
@@ -345,7 +344,7 @@ func TestDereferencing(t *testing.T) {
 
 			fmt.Println(" dereferencingResult   " + subtest.didUrl)
 
-			dereferencingResult := requestService.Dereference(subtest.didUrl, types.DereferencingOption{Accept: subtest.dereferencingType})
+			dereferencingResult, statusCode := requestService.Dereference(subtest.didUrl, types.DereferencingOption{Accept: subtest.dereferencingType})
 
 			fmt.Println(subtest.name + ": dereferencingResult:")
 			fmt.Println(dereferencingResult)
@@ -354,6 +353,7 @@ func TestDereferencing(t *testing.T) {
 			require.EqualValues(t, subtest.dereferencingType, dereferencingResult.DereferencingMetadata.ContentType)
 			require.EqualValues(t, subtest.expectedError, dereferencingResult.DereferencingMetadata.ResolutionError)
 			require.EqualValues(t, expectedDIDProperties, dereferencingResult.DereferencingMetadata.DidProperties)
+			require.EqualValues(t, subtest.expectedError.GetStatusCode(), statusCode)
 		})
 	}
 }

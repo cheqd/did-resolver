@@ -7,6 +7,7 @@ import (
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
+	"github.com/cheqd/did-resolver/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -50,16 +51,14 @@ func TestQueryResource(t *testing.T) {
 		collectionDid    string
 		resourceId       string
 		expectedResource resource.Resource
-		expectedIsFound  bool
-		expectedError    error
+		expectedError    types.ErrorType
 	}{
 		{
 			name:             "DeadlineExceeded",
 			collectionDid:    "321",
 			resourceId:       "123",
 			expectedResource: resource.Resource{},
-			expectedIsFound:  false,
-			expectedError:    errors.New("namespace not supported: "),
+			expectedError:    types.InvalidDIDUrlError,
 		},
 	}
 
@@ -69,10 +68,9 @@ func TestQueryResource(t *testing.T) {
 			require.NoError(t, err)
 
 			ledgerService := NewLedgerService(timeout, false)
-			resource, isFound, err := ledgerService.QueryResource(subtest.collectionDid, subtest.resourceId)
+			resource, errorType := ledgerService.QueryResource(subtest.collectionDid, subtest.resourceId)
 			require.EqualValues(t, subtest.expectedResource, resource)
-			require.EqualValues(t, subtest.expectedIsFound, isFound)
-			require.EqualValues(t, subtest.expectedError, err)
+			require.EqualValues(t, subtest.expectedError, errorType)
 		})
 	}
 }

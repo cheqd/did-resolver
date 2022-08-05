@@ -55,7 +55,7 @@ func serve() {
 		name, url := args[0], args[1]
 
 		log.Info().Msgf("Registering network. Name: %s, url: %s.", name, url)
-		err := ledgerService.RegisterLedger(name, url)
+		err := ledgerService.RegisterLedger(config.Resolver.Method, name, url)
 		if err != nil {
 			panic(err)
 		}
@@ -84,12 +84,12 @@ func serve() {
 		}
 		log.Debug().Msgf("Requested content type: %s", requestedContentType)
 
-		responseBody, status := requestService.ProcessDIDRequest(didUrl, types.ResolutionOption{Accept: requestedContentType})
+		responseBody, status, contentType := requestService.ProcessDIDRequest(didUrl, types.ResolutionOption{Accept: requestedContentType})
 
 		log.Debug().Msgf("Response body: %s", responseBody)
 
-		c.Response().Header().Set(echo.HeaderContentType, string(requestedContentType))
-		return c.JSONBlob(status, []byte(responseBody))
+		c.Response().Header().Set(echo.HeaderContentType, string(contentType))
+		return c.JSONBlob(status, responseBody)
 	})
 
 	log.Info().Msg("Starting listener")
