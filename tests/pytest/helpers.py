@@ -4,7 +4,7 @@ import pexpect
 import json
 
 
-RESOLVER_URL = "http://localhost:1313"
+RESOLVER_URL = "http://localhost:8080"
 PATH = "/1.0/identifiers/"
 
 TESTNET_DID = "did:cheqd:testnet:DAzMQo4MDMxCjgwM"
@@ -44,4 +44,3 @@ def json_loads(s_to_load: str) -> dict:
     s = s.replace("\"[", "[")
     s = s.replace("]\"", "]")
     return json.loads(s)
-
