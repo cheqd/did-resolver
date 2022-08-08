@@ -1,13 +1,14 @@
 name: "Build & Test"
-on: workflow_call
+on:
+  workflow_call:
 defaults:
   run:
     shell: bash
 
 jobs:
 
-  golang-tests:
-    name: "Golang Tests"
+  unit-tests:
+    name: "Unit Tests"
     runs-on: ubuntu-latest
 
     steps:
@@ -15,41 +16,57 @@ jobs:
       
       - uses: actions/setup-go@v3
         with:
-          go-version: '1.17'
-
-      - name: "Run Golang unit tests"
+          go-version: 1.17
+      
+      - name: Run Golang unit tests
         run: go test -v ./...
-  
-  golang-build:
-    name: "Golang Build"
+
+  build-docker:
+    name: "Build Docker image"
     runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: ${{ github.repository }}
+      COMMIT_SHA: ${{ github.sha }}
 
     steps:
       - uses: actions/checkout@v3
-      
-      - uses: actions/setup-go@v3
         with:
-          go-version: '1.17'
+          fetch-depth: 0
 
-      - name: "Run Golang build"
-        run: go build main.go
-
-  try-docker-build:
-    name: "Check docker build"
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Check docker building
-        working-directory: .
-        run: docker build -f docker/Dockerfile -t cheqd-did-resolver .
-
-      - name: Save cheqd-did-resolver Docker image
-        run: docker save -o cheqd-did-resolver.tar cheqd-did-resolver
-
-      - name: Store cheqd-did-resolver artifact
-        uses: actions/upload-artifact@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        id: buildx
         with:
-          name: cheqd-did-resolver.tar
-          path: cheqd-did-resolver.tar
+          install: true
+          version: latest
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          platforms: linux/amd64
+          load: true
+          tags: ${{ env.IMAGE_NAME }}:${{ env.COMMIT_SHA }}
+
+      - name: Set up Docker container for test
+        run: docker run --rm ${{ env.IMAGE_NAME }}:${{ env.COMMIT_SHA }}
+
+      - name: Setup Python environment
+        working-directory: ./tests/pytest
+        run: |
+          set -euo pipefail
+          pip3 install -r requirements.txt >> /dev/null
+          sudo chmod -R 775 /home/runner/
+
+      - name: Run tests
+        working-directory: ./tests/pytest
+        run: |
+          set -euo pipefail
+          pytest -v -rP ./*.py
