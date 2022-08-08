@@ -51,6 +51,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          file: ${context}/docker/Dockerfile
           platforms: linux/amd64
           load: true
           tags: ${{ env.IMAGE_NAME }}:${{ env.COMMIT_SHA }}
