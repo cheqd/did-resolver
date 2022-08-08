@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME: ${{ github.repository }}
-      TEST_TAG: ${{ env.IMAGE_NAME }}:test
+      TEST_TAG: ${{ github.repository }}:test
 
     steps:
       - uses: actions/checkout@v3
