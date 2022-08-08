@@ -51,7 +51,7 @@ jobs:
           docker push ghcr.io/${{ github.repository }}:latest
 
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@v3
         with:
           # either 'goreleaser' (default) or 'goreleaser-pro'
           version: latest
