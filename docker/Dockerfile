@@ -34,4 +34,5 @@ COPY config.yaml .
 
 EXPOSE 8080
 
-ENTRYPOINT ["cheqd-did-resolver serve"]
+ENTRYPOINT ["cheqd-did-resolver"]
+CMD ["serve"]
