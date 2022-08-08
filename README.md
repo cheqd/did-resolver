@@ -18,66 +18,124 @@ The **cheqd DID Resolver** is designed to implement the [W3C DID *Resolution* sp
 
 The [Architecture Decision Record for the cheqd DID Resolver](https://docs.cheqd.io/identity/architecture/adr-list/adr-001-did-resolver) describes the architecture & design decisions for this software package.
 
-### 📚 Documentation
+## 👉 Quick Start
 
-Further documentation on [cheqd DID Resolver](https://docs.cheqd.io/identity/decentralized-identifiers/did-resolver) are available on the [cheqd Identity Documentation site](https://docs.cheqd.io/identity/).
+If you do not want to install anything and just want to resolve a `did:cheqd` entry from the ledger, you can [load the REST API endpoint for resolver.cheqd.net in your browser](https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY).
 
-## Quick Start
-
-If you do not want to install anything, but just want to resolve a DID, then you can make a request in the browser:
-
-<https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY>
-
-or through the command terminal:
+Or, make a request from terminal to this hosted REST API:
 
 ```bash
 curl -X GET https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
 ```
 
-[Read more about cheqd DID resolver features](https://github.com/cheqd/identity-docs/blob/main/tutorials/resolver/using-cheqd-universal-resolver-driver.md)
+### Running your own cheqd DID Resolver using Docker
+
+#### Docker Compose command
+
+Spinning up a Docker container from the [pre-built `did-resolver` Docker image on Github](https://github.com/cheqd/did-resolver/pkgs/container/did-resolver) is as simple as the command below:
+
+```bash
+docker-compose -f docker/docker-compose.yml --env-file docker/docker-compose.env up --no-build
+```
+
+#### Docker Compose environment variable configuration
+
+Environment variables needed in Docker Compose are defined in the `docker/docker-compose.env` file. There are defaults already specified, but you can edit these.
+
+1. `IMAGE_VERSION` (default: `latest`): Version number / tag of the Docker image to run. By default, this is set to pull images from Github Container Registry.
+2. `RESOLVER_PORT` (default: `8080`): Port on which the Resolver service is published/exposed on the host machine. Internally mapped to port 8080 in the container.
+3. `RESOLVER_HOME_DIR` (default: `/resolver`): Default config directory inside the Docker container
+
+#### Configure resolver settings
+
+To configure the resolver, edit the `config.yaml` file in the root of the `@cheqd/did-resolver` repository. The values that can be edited are as follows:
+
+1. **`ledger`**
+   1. `networks`: A string specifying the Cosmos SDK gRPC endpoint from which the Resolver pulls data. Format: `<did-namespace>=<resource_url>:<resource_port>;...`
+   2. `useTls`: Specify whether gRPC connection to ledger should use secure or insecure pulls. Default is `true` since gRPC uses HTTP/2 with TLS as the transport mechanism.
+   3. `timeout`: Timeout (in seconds) to wait for before any ledger requests are considered to have time out.
+2. **`resolver`**
+   1. `method`: A string describing DID Method that the resolver uses. Set to `cheqd`.
+3. **`api`**
+   1. `listener`: A string with address and port where the resolver listens for requests from clients.
+   2. `resolverPath`: A string with path for DID Doc resolution. Example: `/1.0/identifiers/:did` for requests like `/1.0/identifiers/did:cheqd:testnet:MTMxDQKMTMxDQKMT`
+4. **`logLevel`**: `debug`/`warn`/`info`/`error` - to define the application log level
+
+#### Example `config.yaml` file
+
+```yaml
+ledger:
+  # Provide gRPC endpoints for one of more networks "namespaces" to fetch DIDs/DIDDocs from
+  # Must be in format "namespace=endpoint:port"
+  networks: "mainnet=grpc.cheqd.net:443;testnet=grpc.cheqd.network:443"
+  # Specify whether gRPC connection to ledger should use secure or insecure pulls
+  # default: true
+  useTls: true
+  # Specify a timeout value
+  timeout: "5s"
+
+resolver:
+  method: "cheqd"
+
+api:
+  listener: "0.0.0.0:1313"
+  resolverPath: "/1.0/identifiers/:did"
+
+logLevel: "warn"
+```
 
 ## 🧑‍💻🛠 Developer Guide
 
-## Full DID Resolver
+### Using `Dockerfile`
 
-For initiating the Full DID Resolver, use:
-
-```bash
-docker compose --profile full up --build
-```
-
-After, you can check if it works:
+Build Docker container image using Dockerfile:
 
 ```bash
-curl -X GET https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
+docker build --file docker/Dockerfile --target resolver . --tag did-resolver:local
 ```
 
-[Read more about Full DID Resolver configuration](https://github.com/cheqd/identity-docs/blob/main/tutorials/resolver/using-full-cheqd-did-resolver.md)
-
-## Light DID Resolver
-
-Status: In development
-
-[More about light DID Resolver](https://github.com/cheqd/identity-docs/blob/main/tutorials/resolver/using-light-cheqd-did-resolver.md)
-
-## Universal Resolver
-
-The [Universal Resolver](https://github.com/decentralized-identity/universal-resolver) wraps an API around a number of co-located Docker containers running DID-method-specific drivers.
-
-For a [quick start](https://github.com/decentralized-identity/universal-resolver#quick-start)
+Run the Docker container (modify according to your own build tags and other desired parameters):
 
 ```bash
-git clone https://github.com/decentralized-identity/universal-resolver
-cd universal-resolver/
-docker-compose -f docker-compose.yml pull
-docker-compose -f docker-compose.yml up
+docker run -it did-resolver:local
 ```
 
-You should then be able to resolve identifiers locally using simple `curl` requests as follow:
+### Using Docker Compose
+
+Uncomment the `build` section in the `docker/docker-compose.yml` file. This relies on the `Dockerfile` above but uses Docker Compose syntax to customise the build:
+
+```yaml
+build:
+  context: ../
+  dockerfile: docker/Dockerfile
+  target: resolver
+image: did-resolver:${LOCAL_IMAGE_TAG}
+# image: ghcr.io/cheqd/did-resolver:${IMAGE_VERSION}
+```
+
+Make sure you comment out the pre-existing `image` property that pulls in a container image from Github Container Registry, as shown above.
+
+Also, take a look at the environment variables in `docker/docker-compose.env` and modify any as needed. Then, when you're ready, you can build and bring the container up in a single step:
 
 ```bash
-curl -X GET http://localhost:8080/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
+docker-compose -f docker/docker-compose.yml --env-file docker/docker-compose.env up
 ```
+
+You can also do *just* a build with:
+
+```bash
+docker-compose -f docker/docker-compose.yml --env-file docker/docker-compose.env build --no-cache
+```
+
+## 📚 Documentation
+
+Further documentation on [cheqd DID Resolver](https://docs.cheqd.io/identity/decentralized-identifiers/did-resolver) are available on the [cheqd Identity Documentation site](https://docs.cheqd.io/identity/).
+
+## 💬 Community
+
+The [**cheqd Community Slack**](http://cheqd.link/join-cheqd-slack) is our primary chat channel for the open-source community, software developers, and node operators.
+
+Please reach out to us there for discussions, help, and feedback on the project.
 
 ## 🙋 Find us elsewhere
 
