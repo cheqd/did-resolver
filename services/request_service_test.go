@@ -217,7 +217,7 @@ func TestResolve(t *testing.T) {
 			if expectedContentType == "" {
 				expectedContentType = subtest.resolutionType
 			}
-			resolutionResult, err := requestService.Resolve(id, types.ResolutionOption{Accept: subtest.resolutionType})
+			resolutionResult := requestService.Resolve(id, types.ResolutionOption{Accept: subtest.resolutionType})
 
 			fmt.Println(subtest.name + ": resolutionResult:")
 			fmt.Println(resolutionResult.Did.VerificationMethod)
@@ -227,7 +227,6 @@ func TestResolve(t *testing.T) {
 			require.EqualValues(t, expectedContentType, resolutionResult.ResolutionMetadata.ContentType)
 			require.EqualValues(t, subtest.expectedError, resolutionResult.ResolutionMetadata.ResolutionError)
 			require.EqualValues(t, expectedDIDProperties, resolutionResult.ResolutionMetadata.DidProperties)
-			require.Empty(t, err)
 		})
 	}
 }
@@ -346,7 +345,7 @@ func TestDereferencing(t *testing.T) {
 
 			fmt.Println(" dereferencingResult   " + subtest.didUrl)
 
-			dereferencingResult, err := requestService.Dereference(subtest.didUrl, types.DereferencingOption{Accept: subtest.dereferencingType})
+			dereferencingResult := requestService.Dereference(subtest.didUrl, types.DereferencingOption{Accept: subtest.dereferencingType})
 
 			fmt.Println(subtest.name + ": dereferencingResult:")
 			fmt.Println(dereferencingResult)
@@ -355,7 +354,6 @@ func TestDereferencing(t *testing.T) {
 			require.EqualValues(t, subtest.dereferencingType, dereferencingResult.DereferencingMetadata.ContentType)
 			require.EqualValues(t, subtest.expectedError, dereferencingResult.DereferencingMetadata.ResolutionError)
 			require.EqualValues(t, expectedDIDProperties, dereferencingResult.DereferencingMetadata.DidProperties)
-			require.Empty(t, err)
 		})
 	}
 }
