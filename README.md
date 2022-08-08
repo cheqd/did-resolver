@@ -1,17 +1,26 @@
-# did:cheqd DID Resolver
+# cheqd DID Resolver
+
+[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/cheqd/did-resolver/Workflow%20Dispatch/main?label=Lint%2C%20Build%2C%20Test&style=flat-square)](https://github.com/cheqd/did-resolver/actions/workflows/dispatch.yml) 
+
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cheqd/did-resolver?color=green&label=stable&sort=semver&style=flat-square)](https://github.com/cheqd/did-resolver/releases/latest) ![GitHub Release Date](https://img.shields.io/github/release-date/cheqd/did-resolver?style=flat-square)
+
+[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/cheqd/did-resolver?include_prereleases&label=latest%20%28incl.%20pre-release%29&sort=semver&style=flat-square)](https://github.com/cheqd/did-resolver/releases/) ![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/cheqd/did-resolver/latest?style=flat-square)
+
+[![GitHub contributors](https://img.shields.io/github/contributors/cheqd/did-resolver?style=flat-square)](https://github.com/cheqd/did-resolver/graphs/contributors) ![GitHub repo size](https://img.shields.io/github/repo-size/cheqd/did-resolver?style=flat-square)
 
 ## ℹ️ Overview
 
-cheqd DID resovler offers multiple implementations for resolving cheqd DIDs, according to the [cheqd DID method](https://docs.cheqd.io/node/architecture/adr-list/adr-002-cheqd-did-method#:~:text=Summary,on%20the%20Cosmos%20blockchain%20framework.)
+DID methods are expected to provide [standards-compliant methods of DID and DID Document ("DIDDoc") production](https://w3c.github.io/did-core/#production-and-consumption).
 
-This resolver aims to make it easy for third parties to resolve cheqd DIDs, using either a Full DID resolver, a Light DID resolver or through the [Universal Resolver](https://github.com/decentralized-identity/universal-resolver).
+The **cheqd DID Resolver** is designed to implement the [W3C DID *Resolution* specification](https://w3c-ccg.github.io/did-resolution/) for [`did:cheqd`](https://docs.cheqd.io/node/architecture/adr-list/adr-002-cheqd-did-method) method.
 
-## Example DIDs
+### 📝 Architecture
 
-```commandline
-    did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
-    did:cheqd:testnet:MTMxDQKMTMxDQKMT
-```
+The [Architecture Decision Record for the cheqd DID Resolver](https://docs.cheqd.io/identity/architecture/adr-list/adr-001-did-resolver) describes the architecture & design decisions for this software package.
+
+### 📚 Documentation
+
+Further documentation on [cheqd DID Resolver](https://docs.cheqd.io/identity/decentralized-identifiers/did-resolver) are available on the [cheqd Identity Documentation site](https://docs.cheqd.io/identity/).
 
 ## Quick Start
 
