@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME: ${{ github.repository }}
-      COMMIT_SHA: ${{ github.sha }}
+      TEST_TAG: ${{ env.IMAGE_NAME }}:test
 
     steps:
       - uses: actions/checkout@v3
@@ -54,10 +54,10 @@ jobs:
           file: docker/Dockerfile
           platforms: linux/amd64
           load: true
-          tags: ${{ env.IMAGE_NAME }}:${{ env.COMMIT_SHA }}
+          tags: ${{ env.TEST_TAG }}
 
       - name: Set up Docker container for test
-        run: docker run --rm ${{ env.IMAGE_NAME }}:${{ env.COMMIT_SHA }}
+        run: docker run --rm ${{ env.TEST_TAG }}
 
       - name: Setup Python environment
         working-directory: ./tests/pytest
