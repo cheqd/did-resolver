@@ -8,7 +8,7 @@ WORKDIR /resolver
 COPY . ./
 
 # Build did-resolver binary
-RUN go mod download && go build -o did-resolver main.go
+RUN go mod download && go build -o cheqd-did-resolver main.go
 
 #####################################################################
 ###    STAGE 2: Build cheqd did-resolver container image          ###
@@ -27,11 +27,11 @@ WORKDIR /resolver
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 
 # Copy compiled cheqd-did-resolver binary from Stage 1
-COPY --from=builder /resolver/did-resolver /bin/did-resolver
+COPY --from=builder /resolver/cheqd-did-resolver /bin/cheqd-did-resolver
 
 # Copy base config.yaml
 COPY config.yaml .
 
-EXPOSE 1313
+EXPOSE 8080
 
-ENTRYPOINT ["did-resolver serve"]
+ENTRYPOINT ["cheqd-did-resolver serve"]
