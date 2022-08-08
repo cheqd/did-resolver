@@ -4,7 +4,6 @@ import (
 	// jsonpb Marshaller is deprecated, but is needed because there's only one way to proto
 	// marshal in combination with our proto generator version
 	"encoding/json"
-	"fmt"
 
 	"github.com/rs/zerolog/log"
 
@@ -44,12 +43,6 @@ func (rs RequestService) ProcessDIDRequest(didUrl string, resolutionOptions type
 	} else {
 		log.Trace().Msgf("Resolving %s", didUrl)
 		result, err = rs.prepareResolutionResult(didUrl, resolutionOptions)
-	}
-
-	if resolutionOptions.Accept == types.HTML {
-		return "<!DOCTYPE html><html><body><h1>Cheqd DID Resolver</h1><pre id=\"r\"></pre><script> var data = " +
-			result + ";document.getElementById(\"r\").innerHTML = JSON.stringify(data, null, 4);" +
-			"</script></body></html>", err
 	}
 	return result, err
 }
@@ -109,15 +102,18 @@ func (rs RequestService) prepareDereferencingResult(did string, dereferencingOpt
 
 // https://w3c-ccg.github.io/did-resolution/#resolving
 func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionOption) (types.DidResolution, error) {
+	if !resolutionOptions.Accept.IsSupported() {
+		return types.DidResolution{ResolutionMetadata: types.NewResolutionMetadata(did, types.JSON, types.RepresentationNotSupportedError)}, nil
+	}
 	didResolutionMetadata := types.NewResolutionMetadata(did, resolutionOptions.Accept, "")
 
 	if didMethod, _, _, _ := cheqdUtils.TrySplitDID(did); didMethod != rs.didMethod {
-		didResolutionMetadata.ResolutionError = types.ResolutionMethodNotSupported
+		didResolutionMetadata.ResolutionError = types.MethodNotSupportedError
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
 	}
 
 	if !cheqdUtils.IsValidDID(did, "", rs.ledgerService.GetNamespaces()) {
-		didResolutionMetadata.ResolutionError = types.ResolutionInvalidDID
+		didResolutionMetadata.ResolutionError = types.InvalidDIDError
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
 
 	}
@@ -133,16 +129,14 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 	}
 
 	if !isFound {
-		didResolutionMetadata.ResolutionError = types.ResolutionNotFound
+		didResolutionMetadata.ResolutionError = types.NotFoundError
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}, nil
 	}
 
 	if didResolutionMetadata.ContentType == types.DIDJSONLD || didResolutionMetadata.ContentType == types.JSONLD {
 		didDoc.Context = append(didDoc.Context, types.DIDSchemaJSONLD)
-	} else if didResolutionMetadata.ContentType == types.DIDJSON || didResolutionMetadata.ContentType == types.HTML {
-		didDoc.Context = []string{}
 	} else {
-		return types.DidResolution{}, fmt.Errorf("content type %s is not supported", didResolutionMetadata.ContentType)
+		didDoc.Context = []string{}
 	}
 	return types.DidResolution{Did: didDoc, Metadata: resolvedMetadata, ResolutionMetadata: didResolutionMetadata}, nil
 }
@@ -152,14 +146,18 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 	did, path, query, fragmentId, err := cheqdUtils.TrySplitDIDUrl(didUrl)
 	log.Info().Msgf("did: %s, path: %s, query: %s, fragmentId: %s", did, path, query, fragmentId)
 
+	if !dereferenceOptions.Accept.IsSupported() {
+		return types.DidDereferencing{DereferencingMetadata: types.NewDereferencingMetadata(did, types.JSON, types.RepresentationNotSupportedError)}, nil
+	}
+
 	if err != nil || !cheqdUtils.IsValidDIDUrl(didUrl, "", []string{}) {
-		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingInvalidDIDUrl)
+		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.InvalidDIDUrlError)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
 
 	// TODO: implement
 	if query != "" {
-		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingNotSupported)
+		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.RepresentationNotSupportedError)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
 
@@ -181,7 +179,7 @@ func (rs RequestService) dereferencePrimary(path string, did string, didUrl stri
 	resourceId := utils.GetResourceId(path)
 	// Only `resource` path is supported
 	if resourceId == "" {
-		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingNotSupported)
+		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.RepresentationNotSupportedError)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
 
@@ -190,7 +188,7 @@ func (rs RequestService) dereferencePrimary(path string, did string, didUrl stri
 		return types.DidDereferencing{}, err
 	}
 	if !isFound {
-		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingNotFound)
+		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.NotFoundError)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
 	jsonFragment, err := rs.didDocService.MarshallContentStream(&resource, dereferenceOptions.Accept)
@@ -223,7 +221,7 @@ func (rs RequestService) dereferenceSecondary(did string, fragmentId string, did
 	}
 
 	if protoContent == nil {
-		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.DereferencingNotFound)
+		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.NotFoundError)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
 

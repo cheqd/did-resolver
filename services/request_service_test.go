@@ -119,15 +119,16 @@ func TestResolve(t *testing.T) {
 	validMetadata := validMetadata()
 	validResource := validResource()
 	subtests := []struct {
-		name             string
-		ledgerService    MockLedgerService
-		resolutionType   types.ContentType
-		identifier       string
-		method           string
-		namespace        string
-		expectedDID      cheqd.Did
-		expectedMetadata types.ResolutionDidDocMetadata
-		expectedError    types.ErrorType
+		name                   string
+		ledgerService          MockLedgerService
+		resolutionType         types.ContentType
+		identifier             string
+		method                 string
+		namespace              string
+		expectedDID            cheqd.Did
+		expectedMetadata       types.ResolutionDidDocMetadata
+		expectedResolutionType types.ContentType
+		expectedError          types.ErrorType
 	}{
 		{
 			name:             "successful resolution",
@@ -149,7 +150,7 @@ func TestResolve(t *testing.T) {
 			namespace:        validNamespace,
 			expectedDID:      cheqd.Did{},
 			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.ResolutionNotFound,
+			expectedError:    types.NotFoundError,
 		},
 		{
 			name:             "invalid DID",
@@ -160,7 +161,7 @@ func TestResolve(t *testing.T) {
 			namespace:        validNamespace,
 			expectedDID:      cheqd.Did{},
 			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.ResolutionInvalidDID,
+			expectedError:    types.InvalidDIDError,
 		},
 		{
 			name:             "invalid method",
@@ -171,7 +172,7 @@ func TestResolve(t *testing.T) {
 			namespace:        validNamespace,
 			expectedDID:      cheqd.Did{},
 			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.ResolutionMethodNotSupported,
+			expectedError:    types.MethodNotSupportedError,
 		},
 		{
 			name:             "invalid namespace",
@@ -182,7 +183,19 @@ func TestResolve(t *testing.T) {
 			namespace:        "invalid_namespace",
 			expectedDID:      cheqd.Did{},
 			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.ResolutionInvalidDID,
+			expectedError:    types.InvalidDIDError,
+		},
+		{
+			name:                   "representation is not supported",
+			ledgerService:          NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			resolutionType:         "text/html,application/xhtml+xml",
+			identifier:             validIdentifier,
+			method:                 validMethod,
+			namespace:              validNamespace,
+			expectedDID:            cheqd.Did{},
+			expectedMetadata:       types.ResolutionDidDocMetadata{},
+			expectedResolutionType: types.JSON,
+			expectedError:          types.RepresentationNotSupportedError,
 		},
 	}
 
@@ -200,7 +213,10 @@ func TestResolve(t *testing.T) {
 			} else {
 				subtest.expectedDID.Context = nil
 			}
-
+			expectedContentType := subtest.expectedResolutionType
+			if expectedContentType == "" {
+				expectedContentType = subtest.resolutionType
+			}
 			resolutionResult, err := requestService.Resolve(id, types.ResolutionOption{Accept: subtest.resolutionType})
 
 			fmt.Println(subtest.name + ": resolutionResult:")
@@ -208,7 +224,7 @@ func TestResolve(t *testing.T) {
 			fmt.Println(subtest.expectedDID.VerificationMethod)
 			require.EqualValues(t, subtest.expectedDID, resolutionResult.Did)
 			require.EqualValues(t, subtest.expectedMetadata, resolutionResult.Metadata)
-			require.EqualValues(t, subtest.resolutionType, resolutionResult.ResolutionMetadata.ContentType)
+			require.EqualValues(t, expectedContentType, resolutionResult.ResolutionMetadata.ContentType)
 			require.EqualValues(t, subtest.expectedError, resolutionResult.ResolutionMetadata.ResolutionError)
 			require.EqualValues(t, expectedDIDProperties, resolutionResult.ResolutionMetadata.DidProperties)
 			require.Empty(t, err)
@@ -280,7 +296,7 @@ func TestDereferencing(t *testing.T) {
 			didUrl:            "unvalid_url",
 			dereferencingType: types.DIDJSONLD,
 			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.DereferencingInvalidDIDUrl,
+			expectedError:     types.InvalidDIDUrlError,
 		},
 		{
 			name:              "not supported path",
@@ -288,7 +304,7 @@ func TestDereferencing(t *testing.T) {
 			dereferencingType: types.DIDJSONLD,
 			didUrl:            validDid + "/unknown_path",
 			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.DereferencingNotSupported,
+			expectedError:     types.RepresentationNotSupportedError,
 		},
 		{
 			name:              "not supported query",
@@ -296,7 +312,7 @@ func TestDereferencing(t *testing.T) {
 			dereferencingType: types.DIDJSONLD,
 			didUrl:            validDid + "?unknown_query",
 			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.DereferencingNotSupported,
+			expectedError:     types.RepresentationNotSupportedError,
 		},
 		{
 			name:              "key not found",
@@ -304,7 +320,7 @@ func TestDereferencing(t *testing.T) {
 			dereferencingType: types.DIDJSONLD,
 			didUrl:            validDid + "#notFoundKey",
 			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.DereferencingNotFound,
+			expectedError:     types.NotFoundError,
 		},
 		{
 			name:              "resource not found",
@@ -312,7 +328,7 @@ func TestDereferencing(t *testing.T) {
 			dereferencingType: types.DIDJSONLD,
 			didUrl:            validDid + types.RESOURCE_PATH + "00000000-0000-0000-0000-000000000000",
 			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.DereferencingNotFound,
+			expectedError:     types.NotFoundError,
 		},
 	}
 
@@ -320,7 +336,7 @@ func TestDereferencing(t *testing.T) {
 		t.Run(subtest.name, func(t *testing.T) {
 			requestService := NewRequestService("cheqd", subtest.ledgerService)
 			var expectedDIDProperties types.DidProperties
-			if subtest.expectedError != types.DereferencingInvalidDIDUrl {
+			if subtest.expectedError != types.InvalidDIDUrlError {
 				expectedDIDProperties = types.DidProperties{
 					DidString:        validDid,
 					MethodSpecificId: validIdentifier,
