@@ -27,7 +27,7 @@ WORKDIR /resolver
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 
 # Copy compiled cheqd-did-resolver binary from Stage 1
-COPY --from=builder /resolver/did-resolver /usr/bin/did-resolver
+COPY --from=builder /resolver/did-resolver /bin/did-resolver
 
 # Copy base config.yaml
 COPY config.yaml .
