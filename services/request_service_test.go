@@ -236,7 +236,7 @@ func TestDereferencing(t *testing.T) {
 	validVerificationMethod := validVerificationMethod()
 	validService := validService()
 	validResource := validResource()
-	validChecksum, _ := json.Marshal(validResource.Header.Checksum)
+	validChecksum := fmt.Sprintf("%x", validResource.Header.Checksum)
 	validData, _ := json.Marshal(validResource.Data)
 	validMetadata := validMetadata()
 	validFragmentMetadata := types.NewResolutionDidDocMetadata(validDid, validMetadata, []*resource.ResourceHeader{})
@@ -284,7 +284,7 @@ func TestDereferencing(t *testing.T) {
 			ledgerService:     NewMockLedgerService(validDIDDoc, validMetadata, validResource),
 			dereferencingType: types.DIDJSONLD,
 			didUrl:            validDid + types.RESOURCE_PATH + validResourceId,
-			expectedContentStream: fmt.Sprintf("{\"@context\":[\"%s\"],\"collectionId\":\"%s\",\"id\":\"%s\",\"name\":\"%s\",\"resourceType\":\"%s\",\"mediaType\":\"%s\",\"checksum\":%s,\"data\":%s}",
+			expectedContentStream: fmt.Sprintf("{\"@context\":[\"%s\"],\"collectionId\":\"%s\",\"id\":\"%s\",\"name\":\"%s\",\"resourceType\":\"%s\",\"mediaType\":\"%s\",\"checksum\":\"%s\",\"data\":%s}",
 				types.DIDSchemaJSONLD, validResource.Header.CollectionId, validResource.Header.Id, validResource.Header.Name, validResource.Header.ResourceType, validResource.Header.MediaType, validChecksum, validData),
 			expectedMetadata: types.ResolutionDidDocMetadata{},
 			expectedError:    "",

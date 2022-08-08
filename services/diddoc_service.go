@@ -5,6 +5,7 @@ import (
 	// jsonpb Marshaller is deprecated, but is needed because there's only one way to proto
 	// marshal in combination with our proto generator version
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
@@ -88,7 +89,7 @@ func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1
 			ResourceType:      contentStream.Header.ResourceType,
 			MediaType:         contentStream.Header.MediaType,
 			Created:           contentStream.Header.Created,
-			Checksum:          contentStream.Header.Checksum,
+			Checksum:          fmt.Sprintf("%x", contentStream.Header.Checksum),
 			PreviousVersionId: contentStream.Header.PreviousVersionId,
 			NextVersionId:     contentStream.Header.NextVersionId,
 			Data:              contentStream.Data,
