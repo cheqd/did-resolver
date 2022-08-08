@@ -16,18 +16,18 @@ import (
 )
 
 type RequestService struct {
-	didMethod     string
-	ledgerService LedgerServiceI
-	didDocService DIDDocService
+	didMethod                  string
+	ledgerService              LedgerServiceI
+	didDocService              DIDDocService
 	resourceDereferenceService ResourceDereferenceService
 }
 
 func NewRequestService(didMethod string, ledgerService LedgerServiceI) RequestService {
 	didDocService := DIDDocService{}
 	return RequestService{
-		didMethod:     didMethod,
-		ledgerService: ledgerService,
-		didDocService: didDocService,
+		didMethod:                  didMethod,
+		ledgerService:              ledgerService,
+		didDocService:              didDocService,
 		resourceDereferenceService: NewResourceDereferenceService(ledgerService, didDocService),
 	}
 }
@@ -73,10 +73,6 @@ func (rs RequestService) prepareDereferencingResult(didUrl string, dereferencing
 	log.Info().Msgf("Dereferencing %s", didUrl)
 	contentType := dereferencingOptions.Accept
 
-	if result, statusCode, contentType := rs.tryAlternativeDereference(didUrl); result != nil {
-		return result, statusCode, contentType 
-	}
-
 	didDereferencing, statusCode := rs.Dereference(didUrl, dereferencingOptions)
 
 	dereferencingMetadata, mErr1 := json.Marshal(didDereferencing.DereferencingMetadata)
@@ -92,6 +88,9 @@ func (rs RequestService) prepareDereferencingResult(didUrl string, dereferencing
 		metadata = []byte{}
 	} else {
 		contentType = didDereferencing.DereferencingMetadata.ContentType
+		if contentType != dereferencingOptions.Accept {
+			return didDereferencing.ContentStream, statusCode, contentType
+		}
 	}
 
 	result, err := createJsonDereferencing(didDereferencing.ContentStream, string(metadata), string(dereferencingMetadata))
@@ -100,7 +99,6 @@ func (rs RequestService) prepareDereferencingResult(didUrl string, dereferencing
 		response, errorStatusCode := createJsonDereferencingInternalError(dereferencingMetadata)
 		return response, errorStatusCode, dereferencingOptions.Accept
 	}
-
 	return result, statusCode, contentType
 }
 
@@ -169,26 +167,16 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 	}
 
 	var didDereferencing types.DidDereferencing
-	var statusCode int
 	if path != "" {
-		didDereferencing, statusCode = rs.dereferencePrimary(path, did, didUrl, dereferenceOptions)
+		didDereferencing = rs.dereferencePrimary(path, did, didUrl, dereferenceOptions)
 	} else {
 		didDereferencing = rs.dereferenceSecondary(did, fragmentId, didUrl, dereferenceOptions)
-		statusCode = didDereferencing.DereferencingMetadata.ResolutionError.GetStatusCode()
 	}
 
-	return didDereferencing, statusCode
+	return didDereferencing, didDereferencing.DereferencingMetadata.ResolutionError.GetStatusCode()
 }
 
-func (rs RequestService) tryAlternativeDereference(didUrl string) ([]byte, int, types.ContentType) {
-	if utils.IsResourceDataPath(didUrl) {
-		//TODO: implement
-		//rs.resourceDereferenceService.DereferenceResourceData(didUrl)
-	}
-	return []byte{}, 0, ""
-}
-
-func (rs RequestService) dereferencePrimary(path string, did string, didUrl string, dereferenceOptions types.DereferencingOption) (types.DidDereferencing, int) {
+func (rs RequestService) dereferencePrimary(path string, did string, didUrl string, dereferenceOptions types.DereferencingOption) types.DidDereferencing {
 	// Only resource are avalable for primary dereferencing
 	return rs.resourceDereferenceService.DereferenceResource(path, did, didUrl, dereferenceOptions)
 }
@@ -232,7 +220,7 @@ func (rs RequestService) ResolveMetadata(did string, metadata cheqdTypes.Metadat
 	}
 	resources, errorType := rs.ledgerService.QueryCollectionResources(did)
 	if errorType != "" {
-		return  types.ResolutionDidDocMetadata{}, errorType
+		return types.ResolutionDidDocMetadata{}, errorType
 	}
 	return types.NewResolutionDidDocMetadata(did, metadata, resources), ""
 }

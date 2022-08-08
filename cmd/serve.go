@@ -84,6 +84,9 @@ func serve() {
 		}
 		log.Debug().Msgf("Requested content type: %s", requestedContentType)
 
+		// if utils.IsCollectionResourcesPathRedirect(didUrl) {
+		// 	c.Redirect(301, strings.Replace(config.Api.ResolverPath, ":did", "", -1) + didUrl + "all")
+		// }
 		responseBody, status, contentType := requestService.ProcessDIDRequest(didUrl, types.ResolutionOption{Accept: requestedContentType})
 
 		log.Debug().Msgf("Response body: %s", responseBody)

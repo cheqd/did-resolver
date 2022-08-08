@@ -35,7 +35,7 @@ func IsCollectionResourcesPath(didUrlPath string) bool {
 }
 
 func IsCollectionResourcesPathRedirect(didUrlPath string) bool {
-	return CollectionResourcesPathRedirect.Match([]byte(didUrlPath))
+	return CollectionResourcesPathRedirect.Match([]byte(didUrlPath)) && !IsCollectionResourcesPath(didUrlPath)
 }
 
 func IsDidUrl(didUrl string) bool {
