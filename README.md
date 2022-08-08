@@ -4,7 +4,7 @@
 
 cheqd DID resovler offers multiple implementations for resolving cheqd DIDs, according to the [cheqd DID method](https://docs.cheqd.io/node/architecture/adr-list/adr-002-cheqd-did-method#:~:text=Summary,on%20the%20Cosmos%20blockchain%20framework.)
 
-This resolver aims to make it easy for third parties to resolve cheqd DIDs, using either a Full DID resolver, a Light DID resolver or through the [Universal Resolver](https://dev.uniresolver.io/).
+This resolver aims to make it easy for third parties to resolve cheqd DIDs, using either a Full DID resolver, a Light DID resolver or through the [Universal Resolver](https://github.com/decentralized-identity/universal-resolver).
 
 ## Example DIDs
 
