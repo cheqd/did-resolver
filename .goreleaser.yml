@@ -1,4 +1,6 @@
-project-name: did-resolver
+# Goreleaser configuration file
+
+project_name: did-resolver
 
 before:
   hooks:
