@@ -76,4 +76,4 @@ release:
   prerelease: auto
   mode: append
   header: |
-    # {{.ProjectName}} v{{.Version}} release notes
+    # Release Notes for {{.ProjectName}} v{{.Version}}
