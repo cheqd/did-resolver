@@ -18,7 +18,7 @@ The **cheqd DID Resolver** is designed to implement the [W3C DID *Resolution* sp
 
 The [Architecture Decision Record for the cheqd DID Resolver](https://docs.cheqd.io/identity/architecture/adr-list/adr-001-did-resolver) describes the architecture & design decisions for this software package.
 
-## 👉 Quick Start
+## ✅ Quick Start
 
 If you do not want to install anything and just want to resolve a `did:cheqd` entry from the ledger, you can [load the REST API endpoint for resolver.cheqd.net in your browser](https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY).
 
@@ -84,52 +84,9 @@ api:
 logLevel: "warn"
 ```
 
-## 🧑‍💻🛠 Developer Guide
+## 📖 Documentation
 
-### Using `Dockerfile`
-
-Build Docker container image using Dockerfile:
-
-```bash
-docker build --file docker/Dockerfile --target resolver . --tag did-resolver:local
-```
-
-Run the Docker container (modify according to your own build tags and other desired parameters):
-
-```bash
-docker run -it did-resolver:local
-```
-
-### Using Docker Compose
-
-Uncomment the `build` section in the `docker/docker-compose.yml` file. This relies on the `Dockerfile` above but uses Docker Compose syntax to customise the build:
-
-```yaml
-build:
-  context: ../
-  dockerfile: docker/Dockerfile
-  target: resolver
-image: did-resolver:${LOCAL_IMAGE_TAG}
-# image: ghcr.io/cheqd/did-resolver:${IMAGE_VERSION}
-```
-
-Make sure you comment out the pre-existing `image` property that pulls in a container image from Github Container Registry, as shown above.
-
-Also, take a look at the environment variables in `docker/docker-compose.env` and modify any as needed. Then, when you're ready, you can build and bring the container up in a single step:
-
-```bash
-docker-compose -f docker/docker-compose.yml --env-file docker/docker-compose.env up
-```
-
-You can also do *just* a build with:
-
-```bash
-docker-compose -f docker/docker-compose.yml --env-file docker/docker-compose.env build --no-cache
-```
-
-## 📚 Documentation
-
-Further documentation on [cheqd DID Resolver](https://docs.cheqd.io/identity/decentralized-identifiers/did-resolver) are available on the [cheqd Identity Documentation site](https://docs.cheqd.io/identity/).
+Further documentation on [cheqd DID Resolver](https://docs.cheqd.io/identity/on-ledger-identity/did-resolver) is available on the [cheqd Identity Documentation site](https://docs.cheqd.io/identity/).
 
 ## 💬 Community
 
