@@ -1,14 +1,8 @@
 project-name: did-resolver
 
-release:
-  github:
-    owner: cheqd
-    name: did-resolver
-
 before:
   hooks:
     - go mod tidy
-    # you may remove this if you don't need go generate
     - go mod download
 
 builds:
@@ -44,9 +38,6 @@ archives:
 checksum:
   name_template: 'checksums.txt'
 
-snapshot:
-  name_template: "{{ incpatch .Version }}-next"
-
 changelog:
   use: github-native
   sort: asc
@@ -77,8 +68,12 @@ changelog:
       - '^revert'
       - '^style'
 
-snapshot:
-  name_template: SNAPSHOT-{{ .Commit }}
-
-changelog:
-  skip: true
+release:
+  github:
+    owner: cheqd
+    name: did-resolver
+    draft: false
+    prerelease: auto
+    mode: append
+    header: |
+      # {{.ProjectName}} v{{.Version}} release notes

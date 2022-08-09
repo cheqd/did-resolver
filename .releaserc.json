@@ -28,25 +28,18 @@
                     { "type": "revert", "release": false },
                     { "type": "style", "release": false },
                     { "type": "test", "release": false },
-                    { "scope": "no-release", "release": false }
+                    { "scope": "no-release", "release": false },
+                    { "scope": "release", "release": "patch" }
                 ],
                 "presetConfig": true
             }
         ],
-        [ "@semantic-release/release-notes-generator",
+        "@semantic-release/git",
+        [ "@semantic-release/exec",
             {
-                "presetConfig": true
-            }
-        ],
-        [ "@semantic-release/changelog",
-            {
-                "changelogTitle": "# Changelog"
-            }
-        ],
-        [ "@semantic-release/git",
-            {
-                "assets": [ "package.json", "CHANGELOG.md" ],
-                "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+                "prepareCmd": "npm run lint",
+                "successCmd": "npm run test",
+                "failureCmd": "npm run test"
             }
         ],
         "@semantic-release/github"
