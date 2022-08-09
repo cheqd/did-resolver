@@ -89,7 +89,7 @@ jobs:
           flavor: |
             latest=auto
           tags: |
-            type=semver,pattern={{version}},value=${{ jobs.release-binary.outputs.VERSION_NUMBER }}
+            type=semver,pattern={{version}},value=${{ needs.release-binary.outputs.VERSION_NUMBER }}
           labels: |
             org.opencontainers.image.title="cheqd DID Resolver"
             org.opencontainers.image.description="DID Resolver for the did:cheqd method"
