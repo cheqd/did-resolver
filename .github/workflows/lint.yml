@@ -35,7 +35,7 @@ jobs:
   go-lint:
     # We can't use VALIDATE_GO from super linter because of this issue:
     # https://github.com/github/super-linter/issues/143
-    name: "Golang"
+    name: "Golang Lint"
     runs-on: ubuntu-latest
     
     steps:
@@ -65,6 +65,7 @@ jobs:
       env:
         IGNORE_GITIGNORED_FILES: true
         DEFAULT_BRANCH: main
+        LINTER_RULES_PATH: '.github/linters'
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         LOG_LEVEL: WARN
         VALIDATE_ALL_CODEBASE: true
@@ -72,9 +73,8 @@ jobs:
 
         VALIDATE_BASH: true
         VALIDATE_DOCKERFILE_HADOLINT: true
-        DOCKERFILE_HADOLINT_FILE_NAME: '../linters/.hadolint.yml'
         VALIDATE_GITHUB_ACTIONS: true
-        VALIDATE_JSON: true
+        VALIDATE_JSONC: true
         VALIDATE_MARKDOWN: true
         VALIDATE_OPENAPI: true
         VALIDATE_XML: true

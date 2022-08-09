@@ -1,20 +1,37 @@
-name: "Build"
-on:
-  workflow_call:
+name: "Build & Test"
+on: workflow_call
+defaults:
+  run:
+    shell: bash
 
 jobs:
 
-  check-building:
-    name: "Check binary build"
+  golang-tests:
+    name: "Golang Tests"
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
+      
       - uses: actions/setup-go@v3
         with:
           go-version: '1.17'
 
-      - name: Run Golang build
+      - name: "Run Golang unit tests"
+        run: go test -v ./...
+  
+  golang-build:
+    name: "Golang Build"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '1.17'
+
+      - name: "Run Golang build"
         run: go build main.go
 
   try-docker-build:

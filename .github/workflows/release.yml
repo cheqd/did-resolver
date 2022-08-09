@@ -1,66 +1,47 @@
 name: "Release"
 on:
   workflow_call:
-    inputs:
-      RELEASE_VERSION:
-        description: "Release version number"
-        required: true
-        type: string
 defaults:
   run:
     shell: bash
+permissions:
+  contents: write
+  packages: write
 
 
 jobs:
-  make-release:
+  
+  release-binary:
+    name: "Release Binary"
     runs-on: ubuntu-latest
-    env:
-      RELEASE_VERSION: ${{ inputs.RELEASE_VERSION }}
-      REGISTRY: ghcr.io
+    
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Set up Go
-        uses: actions/setup-go@v2
-
-      - name: Login to Container registry
-        uses: docker/login-action@v1
+      - uses: actions/setup-go@v3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          go-version: '1.17'
 
-      - name: Download resolver Docker image
-        uses: actions/download-artifact@v3
+      # Node.js setup is needed to run Semantic Release
+      - uses: actions/setup-node@v3
         with:
-          name: cheqd-did-resolver.tar
+          node-version: 16
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
 
-      - name: Load resolver Docker image
-        run: |
-          docker load -i cheqd-did-resolver.tar
-          rm cheqd-did-resolver.tar
-
-      - name: Push cheqd-node image
-        run: |
-          docker tag cheqd-did-resolver ghcr.io/${{ github.repository }}:${{ env.RELEASE_VERSION }}
-          docker tag cheqd-did-resolver ghcr.io/${{ github.repository }}:latest
-          docker push ghcr.io/${{ github.repository }}:${{ env.RELEASE_VERSION }}
-          docker push ghcr.io/${{ github.repository }}:latest
-
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
+      - name: "Obtain Github App token"
+        id: app-token
+        uses: getsentry/action-github-app-token@v1.0.6
         with:
-          # either 'goreleaser' (default) or 'goreleaser-pro'
-          version: latest
-          args: release --rm-dist
+          app_id: ${{ secrets.BOT_APP_ID }}
+          private_key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+
+      - name: "Install Semantic Release dependencies"
+        run: npm ci
+
+      - name: "Execute Semantic Release"
+        run: npx semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload assets
-        uses: actions/upload-artifact@v2
-        with:
-          name: did-resolver
-          path: dist/*
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
