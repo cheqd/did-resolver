@@ -37,11 +37,8 @@
         "@semantic-release/git",
         [ "@semantic-release/exec",
             {
-                "prepareCmd": "npm run lint",
-                "successCmd": "npm run test",
-                "failureCmd": "npm run test"
+                "publishCmd": "goreleaser release --rm-dist"
             }
-        ],
-        "@semantic-release/github"
+        ]
     ]
 }
