@@ -7,7 +7,7 @@ resolver:
   method: "cheqd"
 
 api:
-  listener: "0.0.0.0:1313"
+  listener: "0.0.0.0:8080"
   resolverPath: "/1.0/identifiers/:did"
 
 logLevel: "debug"

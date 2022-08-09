@@ -11,5 +11,6 @@ override:
   warning:
   info:
     - DL3008
+    - DL3018
     - DL3027
   style:

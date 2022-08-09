@@ -7,16 +7,6 @@ defaults:
 
 
 jobs:
-
-  sh-euox-pipefail-check:
-    name: "Shell pipefail check"
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Run 'set -euox pipefail' check
-        run: bash ./.github/scripts/ensure_set_euox_pipefail.sh
   
   md-link-check:
     name: "Broken Markdown links"
