@@ -54,8 +54,6 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
-          # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
 
   release-docker:
     name: "Release Docker image"
@@ -80,7 +78,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       
-      
+      - name: Comfigure Docker image metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/${{ github.repository}}
+          flavor: latest=auto
+          tags: type=semver,pattern={{version}}
+          labels: |
+            org.opencontainers.image.title="cheqd DID Resolver"
+            org.opencontainers.image.description="DID Resolver for the did:cheqd method"
+            org.opencontainers.image.source="https://github.com/cheqd/did-resolver"
+            org.opencontainers.image.vendor="Cheqd Foundation Limited"
+            org.opencontainers.image.created={{date 'dddd, MMMM Do YYYY, h:mm:ss a'}}
+            org.opencontainers.image.documentation="https://docs.cheqd.io/identity"
 
       - name: Build and push image
         uses: docker/build-push-action@v3
@@ -89,4 +100,5 @@ jobs:
           file: docker/Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ${{ env.TEST_TAG }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
