@@ -16,9 +16,6 @@ RUN go mod download && go build -o cheqd-did-resolver main.go
 
 FROM alpine:3.16 AS resolver
 
-LABEL org.opencontainers.image.description="cheqd DID Resolver"
-LABEL org.opencontainers.image.source="https://github.com/cheqd/did-resolver"
-
 # Install pre-requisites
 RUN apk update && apk add --no-cache bash ca-certificates
 

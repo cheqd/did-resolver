@@ -4,34 +4,31 @@ project_name: did-resolver
 
 before:
   hooks:
-    - go mod tidy
+    - go mod tidy -compat=1.17
     - go mod download
 
 builds:
-  env:
-    - CGO_ENABLED=0
-  main: .
-  binary: did-resolver
-  goos:
-    - linux
-    - darwin
-  goarch:
-    - amd64
-    - arm64
+  - 
+    env:
+      - CGO_ENABLED=0
+    main: .
+    binary: did-resolver
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
 
 
 archives:
-  - replacements:
-      darwin: Darwin
-      linux: Linux
-      windows: Windows
-      386: i386
-      amd64: x86_64
-  - format: tar.gz
+  - 
+    replacements:
+        darwin: Darwin
+        linux: Linux
+        amd64: x86_64
+    format: tar.gz
     wrap_in_directory: true
-    format_overrides:
-      - goos: windows
-        format: zip
     name_template: "{{ .Binary }}-{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
     files:
       - LICENSE
@@ -74,8 +71,9 @@ release:
   github:
     owner: cheqd
     name: did-resolver
-    draft: false
-    prerelease: auto
-    mode: append
-    header: |
-      # {{.ProjectName}} v{{.Version}} release notes
+  
+  draft: false
+  prerelease: auto
+  mode: append
+  header: |
+    # {{.ProjectName}} v{{.Version}} release notes
