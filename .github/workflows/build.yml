@@ -59,7 +59,7 @@ jobs:
       #   uses: mxschmitt/action-tmate@v3
 
       - name: Set up Docker container for test
-        run: docker-compose -f test/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up --no-build
+        run: docker-compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up --no-build
         env:
           TEST_TAG: ${{ env.TEST_TAG }}
 
