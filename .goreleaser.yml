@@ -41,7 +41,7 @@ checksum:
   name_template: 'checksums.txt'
 
 changelog:
-  use: github-native
+  use: github
   sort: asc
   groups:
   - title: Features
