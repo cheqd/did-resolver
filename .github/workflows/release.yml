@@ -14,6 +14,8 @@ jobs:
   release-binary:
     name: "Release Binary"
     runs-on: ubuntu-latest
+    outputs:
+      VERSION_NUMBER: ${{ steps.go-releaser.outputs.metadata.version }}
     
     steps:
       - uses: actions/checkout@v3
@@ -47,6 +49,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
 
       - name: Run GoReleaser
+        id: go-releaser
         uses: goreleaser/goreleaser-action@v3
         with:
           distribution: goreleaser
@@ -78,13 +81,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Comfigure Docker image metadata
+      - name: Configure Docker image metadata
         id: meta
         uses: docker/metadata-action@v4
         with:
           images: ghcr.io/${{ github.repository}}
-          flavor: latest=auto
-          tags: type=semver,pattern={{version}}
+          flavor: |
+            latest=auto
+          tags: |
+            type=semver,pattern={{version}},value=${{ jobs.release-binary.outputs.VERSION_NUMBER }}
           labels: |
             org.opencontainers.image.title="cheqd DID Resolver"
             org.opencontainers.image.description="DID Resolver for the did:cheqd method"
