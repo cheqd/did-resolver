@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"google.golang.org/grpc/credentials"
@@ -12,11 +13,14 @@ import (
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
+	"github.com/cheqd/did-resolver/types"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"github.com/cheqd/did-resolver/types"
+)
 
+const (
+	DELIMITER = ":"
 )
 
 type LedgerServiceI interface {
@@ -43,7 +47,7 @@ func NewLedgerService(connectionTimeout time.Duration, useTls bool) LedgerServic
 
 func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool, error) {
 	method, namespace, _, _ := cheqdUtils.TrySplitDID(did)
-	serverAddr, namespaceFound := ls.ledgers[method + ":" + namespace]
+	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return cheqd.Did{}, cheqd.Metadata{}, false, fmt.Errorf("namespace not supported: %s", namespace)
 	}
@@ -68,7 +72,7 @@ func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool
 
 func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.Resource, types.ErrorType) {
 	method, namespace, collectionId, _ := cheqdUtils.TrySplitDID(did)
-	serverAddr, namespaceFound := ls.ledgers[method + ":" + namespace]
+	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return &resource.Resource{}, types.InvalidDIDError
 	}
@@ -95,7 +99,7 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.
 
 func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, types.ErrorType) {
 	method, namespace, collectionId, _ := cheqdUtils.TrySplitDID(did)
-	serverAddr, namespaceFound := ls.ledgers[method + ":" + namespace]
+	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.InvalidDIDError
 	}
@@ -128,7 +132,7 @@ func (ls *LedgerService) RegisterLedger(method string, namespace string, url str
 		return errors.New("ledger node url cannot be empty")
 	}
 
-	ls.ledgers[method + ":" + namespace] = url
+	ls.ledgers[method+DELIMITER+namespace] = url
 	return nil
 }
 
@@ -172,7 +176,8 @@ func mustCloseGRPCConnection(conn *grpc.ClientConn) {
 func (ls LedgerService) GetNamespaces() []string {
 	keys := make([]string, 0, len(ls.ledgers))
 	for k := range ls.ledgers {
-		keys = append(keys, k)
+		namespace := strings.Split(k, DELIMITER)[1]
+		keys = append(keys, namespace)
 	}
 	return keys
 }
