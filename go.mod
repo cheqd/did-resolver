@@ -6,7 +6,7 @@ require (
 	github.com/cheqd/cheqd-node v0.6.0
 	github.com/iancoleman/orderedmap v0.2.0
 	github.com/labstack/echo/v4 v4.7.2
-	github.com/rs/zerolog v1.23.0
+	github.com/rs/zerolog v1.27.0
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.11.0
 	github.com/stretchr/testify v1.7.1
