@@ -8,10 +8,10 @@ import (
 
 var (
 	ResourceId, _                      = regexp.Compile(`[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`)
-	ResourceDataPath, _                = regexp.Compile(`resources\/` + ResourceId.String())
-	ResourceHeaderPath, _              = regexp.Compile(`resources\/` + ResourceId.String() + `\/metadata`)
-	CollectionResourcesPath, _         = regexp.Compile(`resources\/all`)
-	CollectionResourcesPathRedirect, _ = regexp.Compile(`resources\/`)
+	ResourceDataPath, _                = regexp.Compile(`\/resources\/` + ResourceId.String() + `$`)
+	ResourceHeaderPath, _              = regexp.Compile(`\/resources\/` + ResourceId.String() + `\/metadata$`)
+	CollectionResourcesPath, _         = regexp.Compile(`\/resources\/all$`)
+	CollectionResourcesPathRedirect, _ = regexp.Compile(`\/resources\/$`)
 )
 
 func GetResourceId(didUrlPath string) (id string) {
@@ -23,19 +23,19 @@ func GetResourceId(didUrlPath string) (id string) {
 }
 
 func IsResourceDataPath(didUrlPath string) bool {
-	return ResourceDataPath.Match([]byte(didUrlPath))
+	return ResourceDataPath.MatchString(didUrlPath)
 }
 
 func IsResourceHeaderPath(didUrlPath string) bool {
-	return ResourceHeaderPath.Match([]byte(didUrlPath))
+	return ResourceHeaderPath.MatchString(didUrlPath)
 }
 
 func IsCollectionResourcesPath(didUrlPath string) bool {
-	return CollectionResourcesPath.Match([]byte(didUrlPath))
+	return CollectionResourcesPath.MatchString(didUrlPath)
 }
 
 func IsCollectionResourcesPathRedirect(didUrlPath string) bool {
-	return CollectionResourcesPathRedirect.Match([]byte(didUrlPath)) && !IsCollectionResourcesPath(didUrlPath)
+	return CollectionResourcesPathRedirect.MatchString(didUrlPath)
 }
 
 func IsDidUrl(didUrl string) bool {

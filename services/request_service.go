@@ -113,7 +113,6 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 		didResolutionMetadata.ResolutionError = types.MethodNotSupportedError
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}
 	}
-
 	if !cheqdUtils.IsValidDID(did, "", rs.ledgerService.GetNamespaces()) {
 		didResolutionMetadata.ResolutionError = types.InvalidDIDError
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}
@@ -177,7 +176,7 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 }
 
 func (rs RequestService) dereferencePrimary(path string, did string, didUrl string, dereferenceOptions types.DereferencingOption) types.DidDereferencing {
-	// Only resource are avalable for primary dereferencing
+	// Only resource are available for primary dereferencing
 	return rs.resourceDereferenceService.DereferenceResource(path, did, didUrl, dereferenceOptions)
 }
 

@@ -5,7 +5,7 @@ type DereferencingOption ResolutionOption
 type DereferencingMetadata ResolutionMetadata
 
 type DidDereferencing struct {
-	ContentStream         []byte         `json:"contentStream,omitempty"`
+	ContentStream         []byte                   `json:"contentStream,omitempty"`
 	Metadata              ResolutionDidDocMetadata `json:"contentMetadata,omitempty"`
 	DereferencingMetadata DereferencingMetadata    `json:"dereferencingMetadata,omitempty"`
 }

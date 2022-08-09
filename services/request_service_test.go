@@ -316,12 +316,12 @@ func TestDereferencing(t *testing.T) {
 			expectedError:     types.InvalidDIDUrlError,
 		},
 		{
-			name:                "not supported path",
-			ledgerService:       NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
-			dereferencingType:   types.DIDJSONLD,
-			didUrl:              validDid + "/unknown_path",
-			expectedMetadata:    types.ResolutionDidDocMetadata{},
-			expectedError:       types.RepresentationNotSupportedError,
+			name:              "not supported path",
+			ledgerService:     NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
+			dereferencingType: types.DIDJSONLD,
+			didUrl:            validDid + "/unknown_path",
+			expectedMetadata:  types.ResolutionDidDocMetadata{},
+			expectedError:     types.RepresentationNotSupportedError,
 		},
 		{
 			name:              "not supported query",
@@ -377,7 +377,6 @@ func TestDereferencing(t *testing.T) {
 			require.EqualValues(t, subtest.expectedError, dereferencingResult.DereferencingMetadata.ResolutionError)
 			require.EqualValues(t, expectedDIDProperties, dereferencingResult.DereferencingMetadata.DidProperties)
 			require.EqualValues(t, subtest.expectedError.GetStatusCode(), statusCode)
-
 		})
 	}
 }

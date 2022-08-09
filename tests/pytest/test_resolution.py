@@ -5,7 +5,8 @@ import requests
 
 from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRAGMENT, \
     FAKE_TESTNET_DID, FAKE_MAINNET_DID, FAKE_TESTNET_FRAGMENT, FAKE_MAINNET_FRAGMENT, RESOLVER_URL, PATH, \
-    LDJSON, DIDJSON, DIDLDJSON, HTML, FAKE_TESTNET_RESOURCE, TESTNET_RESOURCE, TESTNET_RESOURCE_NAME, JSON
+    LDJSON, DIDJSON, DIDLDJSON, HTML, FAKE_TESTNET_RESOURCE, TESTNET_RESOURCE_METADATA, TESTNET_RESOURCE_NAME, JSON, \
+    TESTNET_RESOURCE, RESOURCE_DATA, TESTNET_RESOURCE_LIST, TESTNET_RESOURCE_LIST_REDIRECT
 
 
 @pytest.mark.parametrize(
@@ -30,8 +31,11 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
         (FAKE_MAINNET_FRAGMENT, r"\"contentStream\":null,\"contentMetadata\":\[\],"
                                 r"\"dereferencingMetadata(.*?)\"error\":\"notFound\""),
 
-        (TESTNET_RESOURCE, fr"\"contentStream\":(.*?)collectionId(.*?),\"contentMetadata\":(.*?),"
-                           r"\"dereferencingMetadata(.*?)"),
+        (TESTNET_RESOURCE_METADATA, fr"\"contentStream\":(.*?)collectionId(.*?),\"contentMetadata\":(.*?),"
+                                    r"\"dereferencingMetadata(.*?)"),
+        (TESTNET_RESOURCE_LIST, fr"\"contentStream\":\[(.*?)collectionId(.*?),\"contentMetadata\":(.*?),"
+                                r"\"dereferencingMetadata(.*?)"),
+        (TESTNET_RESOURCE, RESOURCE_DATA),
         (FAKE_TESTNET_RESOURCE, r"\"contentStream\":null,\"contentMetadata\":\[\],"
                                 r"\"dereferencingMetadata(.*?)\"error\":\"notFound\""),
     ]
@@ -99,7 +103,7 @@ dereferencing_content_type_test_set = [
     dereferencing_content_type_test_set
 )
 def test_dereferencing_content_type_fragment(accept, expected_header, expected_body, has_context, expected_status_code):
-    url = RESOLVER_URL + PATH + TESTNET_RESOURCE
+    url = RESOLVER_URL + PATH + TESTNET_FRAGMENT.replace("#", "%23")
     header = {"Accept": accept} if accept else {}
 
     r = requests.get(url, headers=header)
@@ -117,8 +121,9 @@ def test_dereferencing_content_type_fragment(accept, expected_header, expected_b
     "accept, expected_header, has_context, expected_status_code, expected_body",
     dereferencing_content_type_test_set
 )
-def test_dereferencing_content_type_resource(accept, expected_header, expected_body, has_context, expected_status_code):
-    url = RESOLVER_URL + PATH + TESTNET_FRAGMENT.replace("#", "%23")
+def test_dereferencing_content_type_resource_metadata(accept, expected_header, expected_body, has_context,
+                                                      expected_status_code):
+    url = RESOLVER_URL + PATH + TESTNET_RESOURCE_METADATA
     header = {"Accept": accept} if accept else {}
 
     r = requests.get(url, headers=header)
@@ -132,11 +137,34 @@ def test_dereferencing_content_type_resource(accept, expected_header, expected_b
 
 
 @pytest.mark.parametrize(
+    "accept, expected_header, expected_status_code",
+    [(LDJSON, JSON, 200), ]
+)
+def test_dereferencing_content_type_resource(accept, expected_header, expected_status_code):
+    url = RESOLVER_URL + PATH + TESTNET_RESOURCE
+    header = {"Accept": accept} if accept else {}
+    r = requests.get(url, headers=header)
+    assert r.headers["Content-Type"] == expected_header
+
+@pytest.mark.parametrize(
+    "accept, expected_header, expected_status_code, expected_body",
+    [(LDJSON, LDJSON, 301,
+      r"(.*?)\"contentStream\":\[(.*?)collectionId(.*?),\"contentMetadata\":(.*?),\"dereferencingMetadata(.*?)"),]
+)
+def test_dereferencing_content_type_resource_redirect(accept, expected_header, expected_status_code, expected_body):
+    url = RESOLVER_URL + PATH + TESTNET_RESOURCE_LIST_REDIRECT
+    header = {"Accept": accept} if accept else {}
+    r = requests.get(url, headers=header)
+    assert r.headers["Content-Type"] == expected_header
+    assert re.match(expected_body, r.text)
+
+
+@pytest.mark.parametrize(
     "did_url, expected_status_code",
     [
         (TESTNET_DID, 200),
         (TESTNET_FRAGMENT, 200),
-        (TESTNET_RESOURCE, 200),
+        (TESTNET_RESOURCE_METADATA, 200),
         (FAKE_TESTNET_DID, 404),
         (FAKE_TESTNET_FRAGMENT, 404),
         (FAKE_TESTNET_RESOURCE, 404),
@@ -149,6 +177,4 @@ def test_resolution_status_code(did_url, expected_status_code):
     url = RESOLVER_URL + PATH + did_url.replace("#", "%23")
     r = requests.get(url)
 
-    print(url)
-    print(r.text)
     assert r.status_code == expected_status_code
