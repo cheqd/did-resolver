@@ -15,7 +15,7 @@ jobs:
     name: "Release Binary"
     runs-on: ubuntu-latest
     outputs:
-      VERSION_NUMBER: ${{ steps.go-releaser.outputs.metadata.version }}
+      VERSION_NUMBER: ${{ steps.go-releaser.outputs.version }}
     
     steps:
       - uses: actions/checkout@v3
