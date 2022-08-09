@@ -24,12 +24,22 @@ jobs:
         with:
           go-version: '1.17'
 
+      # Node.js setup is needed to run Semantic Release
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
       - name: "Obtain Github App token"
         id: app-token
         uses: getsentry/action-github-app-token@v1.0.6
         with:
           app_id: ${{ secrets.BOT_APP_ID }}
           private_key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+
+      - name: "Install Semantic Release dependencies"
+        run: npm ci
 
       - name: "Execute Semantic Release"
         run: npx semantic-release
