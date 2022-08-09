@@ -1,129 +1,84 @@
-project_name: regen-ledger
-
-env:
-  - GO111MODULE=on
-
-builds:
-  - id: regen-darwin-amd64
-    binary: regen
-    main: ./app/regen
-    goarch:
-      - amd64
-    goos:
-      - darwin
-    env:
-      - CGO_ENABLED=1
-      - CC=/home/runner/work/osxcross/target/target/bin/o64-clang
-      - CXX=/home/runner/work/osxcross/target/target/bin/o64-clang++
-      - LD_LIBRARY_PATH=/home/runner/work/osxcross/target/binaries/lib
-    flags:
-      - -mod=readonly
-      - -tags="netgo ledger"
-      - -trimpath
-    ldflags:
-      - -s -w
-      - -X github.com/cosmos/cosmos-sdk/version.Name=regen
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=regen
-      - -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}}
-      - -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-      - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger
-
-  - id: regen-darwin-arm64
-    binary: regen
-    main: ./app/regen
-    goarch:
-      - arm64
-    goos:
-      - darwin
-    env:
-      - LD_LIBRARY_PATH=/home/runner/work/osxcross/target/binaries/lib
-    flags:
-      - -mod=readonly
-      - -tags="netgo ledger"
-      - -trimpath
-    ldflags:
-      - -s -w
-      - -X github.com/cosmos/cosmos-sdk/version.Name=regen
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=regen
-      - -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}}
-      - -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-      - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger
-
-  - id: regen-linux-amd64
-    binary: regen
-    main: ./app/regen
-    env:
-      - CGO_ENABLED=1
-      - CC=x86_64-linux-gnu-gcc
-      - CXX=x86_64-linux-gnu-g++
-    goarch:
-      - amd64
-    goos:
-      - linux
-    flags:
-      - -mod=readonly
-      - -tags="netgo ledger"
-      - -trimpath
-    ldflags:
-      - -s -w
-      - -X github.com/cosmos/cosmos-sdk/version.Name=regen
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=regen
-      - -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}}
-      - -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-      - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger
-
-  - id: regen-linux-arm64
-    binary: regen
-    main: ./app/regen
-    goarch:
-      - arm64
-    goos:
-      - linux
-    flags:
-      - -mod=readonly
-      - -tags="netgo ledger"
-      - -trimpath
-    ldflags:
-      - -s -w
-      - -X github.com/cosmos/cosmos-sdk/version.Name=regen
-      - -X github.com/cosmos/cosmos-sdk/version.AppName=regen
-      - -X github.com/cosmos/cosmos-sdk/version.Version={{.Version}}
-      - -X github.com/cosmos/cosmos-sdk/version.Commit={{.Commit}}
-      - -X github.com/cosmos/cosmos-sdk/version.BuildTags=netgo,ledger
-
-archives:
-  - id: regen
-    builds:
-      - regen-darwin-amd64
-      - regen-darwin-arm64
-      - regen-linux-amd64
-      - regen-linux-arm64
-      - regen-windows-amd64
-    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-    wrap_in_directory: true
-    format: zip
-    files:
-      - none*
-
-brews:
-  - name: regen-ledger
-    ids: 
-      - regen
-    tap:
-      owner: regen-network
-      name: regen-ledger
-      branch: homebrew-taps
-    folder: "{{ .Tag }}"
-    homepage: "https://www.regen.network/"
-    description: "Blockchain-powered marketplace for climate solutions and planetary regenerations"
-    test: |
-      system "#{bin}/regen --version"
-    install: |
-      bin.install "regen"
+project-name: did-resolver
 
 release:
   github:
-    owner: regen-network
-    name: regen-ledger
-  prerelease: auto
-  draft: false
+    owner: cheqd
+    name: did-resolver
+
+before:
+  hooks:
+    - go mod tidy
+    # you may remove this if you don't need go generate
+    - go mod download
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+  main: .
+  binary: did-resolver
+  goos:
+    - linux
+    - darwin
+  goarch:
+    - amd64
+    - arm64
+
+
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+  - format: tar.gz
+    wrap_in_directory: true
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: "{{ .Binary }}-{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    files:
+      - LICENSE
+      - README.md
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  use: github-native
+  sort: asc
+  groups:
+  - title: Features
+    regexp: "^.*feat[(\\w)]*:+.*$"
+    order: 0
+  - title: 'Fixes'
+    regexp: "^.*fix[(\\w)]*:+.*$"
+    order: 1
+  - title: 'Performance Improvements'
+    regexp: "^.*perf[(\\w)]*:+.*$"
+    order: 2
+  - title: 'Build Improvements'
+    regexp: "^.*build[(\\w)]*:+.*$"
+    order: 3
+  - title: 'Security'
+    regexp: "^.*build[(\\w)]*:+.*$"
+    order: 4
+  - title: 'Other changes'
+    order: 999
+  filters:
+    exclude:
+      - '^docs'
+      - '^test'
+      - '^ci'
+      - '^refactor'
+      - '^revert'
+      - '^style'
+
+snapshot:
+  name_template: SNAPSHOT-{{ .Commit }}
+
+changelog:
+  skip: true
