@@ -55,11 +55,13 @@ jobs:
           load: true
           tags: ${{ env.TEST_TAG }}
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
 
       - name: Set up Docker container for test
-        run: docker run --rm ${{ env.TEST_TAG }}
+        run: docker-compose -f test/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up --no-build
+        env:
+          TEST_TAG: ${{ env.TEST_TAG }}
 
       - name: Setup Python environment
         working-directory: ./tests/pytest
