@@ -34,7 +34,12 @@
                 "presetConfig": true
             }
         ],
-        "@semantic-release/git",
+        [ "@semantic-release/git",
+            {
+                "assets": [ "package.json" ],
+                "message": "chore(release): ${nextRelease.version} [skip ci]"
+            }
+        ],
         [ "@semantic-release/exec",
             {
                 "publishCmd": "goreleaser release --rm-dist"
