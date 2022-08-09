@@ -6,10 +6,7 @@ import (
 )
 
 var (
-    version = "dev"
-    commit  = "none"
-    date    = "unknown"
-    builtBy = "unknown"
+	version = "dev"
 )
 
 func getVersionCmd() *cobra.Command {
@@ -23,7 +20,7 @@ func getVersionCmd() *cobra.Command {
 }
 
 func printVersion(cmd *cobra.Command, args []string) error {
-	println(Version)
+	println(version)
 
 	return nil
 }
