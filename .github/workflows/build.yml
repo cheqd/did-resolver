@@ -25,7 +25,6 @@ jobs:
     name: "Build Docker image"
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: ${{ github.repository }}
       TEST_TAG: ${{ github.repository }}:test
 
     steps:
@@ -46,6 +45,9 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       - name: Build image
         uses: docker/build-push-action@v3
