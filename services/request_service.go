@@ -167,20 +167,20 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 
 	var didDereferencing types.DidDereferencing
 	if path != "" {
-		didDereferencing = rs.dereferencePrimary(path, did, didUrl, dereferenceOptions)
+		didDereferencing = rs.dereferencePrimary(path, did, dereferenceOptions)
 	} else {
-		didDereferencing = rs.dereferenceSecondary(did, fragmentId, didUrl, dereferenceOptions)
+		didDereferencing = rs.dereferenceSecondary(did, fragmentId, dereferenceOptions)
 	}
 
 	return didDereferencing, didDereferencing.DereferencingMetadata.ResolutionError.GetStatusCode()
 }
 
-func (rs RequestService) dereferencePrimary(path string, did string, didUrl string, dereferenceOptions types.DereferencingOption) types.DidDereferencing {
+func (rs RequestService) dereferencePrimary(path string, did string, dereferenceOptions types.DereferencingOption) types.DidDereferencing {
 	// Only resource are available for primary dereferencing
-	return rs.resourceDereferenceService.DereferenceResource(path, did, didUrl, dereferenceOptions)
+	return rs.resourceDereferenceService.DereferenceResource(path, did, dereferenceOptions)
 }
 
-func (rs RequestService) dereferenceSecondary(did string, fragmentId string, didUrl string, dereferenceOptions types.DereferencingOption) types.DidDereferencing {
+func (rs RequestService) dereferenceSecondary(did string, fragmentId string, dereferenceOptions types.DereferencingOption) types.DidDereferencing {
 	didResolution := rs.Resolve(did, types.ResolutionOption(dereferenceOptions))
 
 	dereferencingMetadata := types.DereferencingMetadata(didResolution.ResolutionMetadata)
@@ -199,13 +199,13 @@ func (rs RequestService) dereferenceSecondary(did string, fragmentId string, did
 	}
 
 	if protoContent == nil {
-		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.NotFoundError)
+		dereferencingMetadata := types.NewDereferencingMetadata(did, dereferenceOptions.Accept, types.NotFoundError)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
 	}
 
 	jsonFragment, err := rs.didDocService.MarshallContentStream(protoContent, dereferenceOptions.Accept)
 	if err != nil {
-		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.InternalError)
+		dereferencingMetadata := types.NewDereferencingMetadata(did, dereferenceOptions.Accept, types.InternalError)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
 	}
 	contentStream := json.RawMessage(jsonFragment)

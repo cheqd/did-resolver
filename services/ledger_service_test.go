@@ -58,7 +58,7 @@ func TestQueryResource(t *testing.T) {
 			collectionDid:    "321",
 			resourceId:       "123",
 			expectedResource: resource.Resource{},
-			expectedError:    types.InvalidDIDUrlError,
+			expectedError:    types.InvalidDIDError,
 		},
 	}
 
@@ -69,7 +69,7 @@ func TestQueryResource(t *testing.T) {
 
 			ledgerService := NewLedgerService(timeout, false)
 			resource, errorType := ledgerService.QueryResource(subtest.collectionDid, subtest.resourceId)
-			require.EqualValues(t, subtest.expectedResource, resource)
+			require.EqualValues(t, &subtest.expectedResource, resource)
 			require.EqualValues(t, subtest.expectedError, errorType)
 		})
 	}

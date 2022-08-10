@@ -21,14 +21,14 @@ func NewResourceDereferenceService(ledgerService LedgerServiceI, didDocService D
 	}
 }
 
-func (rds ResourceDereferenceService) DereferenceResource(path string, did string, didUrl string, dereferenceOptions types.DereferencingOption) types.DidDereferencing {
+func (rds ResourceDereferenceService) DereferenceResource(path string, did string, dereferenceOptions types.DereferencingOption) types.DidDereferencing {
 	var cotentStream []byte
 	var dereferenceMetadata types.DereferencingMetadata
 
 	if utils.IsResourceHeaderPath(path) {
 		cotentStream, dereferenceMetadata = rds.dereferenceHeader(path, did, dereferenceOptions)
 	} else if utils.IsCollectionResourcesPath(path) {
-		cotentStream, dereferenceMetadata = rds.dereferenceCollectionResources(path, did, dereferenceOptions)
+		cotentStream, dereferenceMetadata = rds.dereferenceCollectionResources(did, dereferenceOptions)
 	} else if utils.IsResourceDataPath(path) {
 		cotentStream, dereferenceMetadata = rds.dereferenceResourceData(path, did, dereferenceOptions)
 	} else {
@@ -57,7 +57,7 @@ func (rds ResourceDereferenceService) dereferenceHeader(path string, did string,
 	return []byte(cotentStream), dereferenceMetadata
 }
 
-func (rds ResourceDereferenceService) dereferenceCollectionResources(path string, did string, dereferenceOptions types.DereferencingOption) ([]byte, types.DereferencingMetadata) {
+func (rds ResourceDereferenceService) dereferenceCollectionResources(did string, dereferenceOptions types.DereferencingOption) ([]byte, types.DereferencingMetadata) {
 	dereferenceMetadata := types.NewDereferencingMetadata(did, dereferenceOptions.Accept, "")
 	resources, dereferencingError := rds.ledgerService.QueryCollectionResources(did)
 	if dereferencingError != "" {
