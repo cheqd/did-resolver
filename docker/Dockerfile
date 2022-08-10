@@ -1,58 +1,35 @@
 #####################################################################
-###    STAGE 1: Build cheqd-did-resolver binary pre-requisites    ###
+###    STAGE 1: Build cheqd did-resolver binary pre-requisites    ###
 #####################################################################
 
-FROM golang:1.17.8-buster as builder
+FROM golang:1.17-alpine AS builder
 
-WORKDIR /root
+WORKDIR /resolver
+COPY . ./
 
-COPY types ./types
-COPY services ./services
-COPY cmd ./cmd
-COPY utils ./utils
-COPY go.mod .
-COPY go.sum .
-COPY main.go .
-
-# Make cheqd-did-resolver binary
-RUN go build -o cheqd-did-resolver main.go
+# Build did-resolver binary
+RUN go mod download && go build -o cheqd-did-resolver main.go
 
 #####################################################################
-###           STAGE 2: Build cheqd-did-resolver runner            ###
+###    STAGE 2: Build cheqd did-resolver container image          ###
 #####################################################################
 
-FROM ubuntu:focal AS runner
+FROM alpine:3.16 AS resolver
 
-LABEL org.opencontainers.image.description="Cheqd DID-Resolver runner"
-LABEL org.opencontainers.image.source="https://github.com/cheqd/did-resolver"
+# Install pre-requisites
+RUN apk update && apk add --no-cache bash ca-certificates
 
-# Install certificates
-RUN apt update && apt -y --no-install-recommends install \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set user details
-ARG UID=1000
-ARG GID=1000
-
-ARG USER="resolver"
-ARG GROUP="resolver"
-
-ARG HOME="/home/resolver"
-
-# Create user and group
-RUN groupadd --system --gid $GID $USER &&\
-    useradd --system --create-home --home-dir $HOME --shell /bin/bash --gid $GROUP --uid $UID $USER
+# Set working directory & bash defaults
+WORKDIR /resolver
+SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 
 # Copy compiled cheqd-did-resolver binary from Stage 1
-COPY --from=builder /root /bin
+COPY --from=builder /resolver/cheqd-did-resolver /bin/cheqd-did-resolver
 
 # Copy base config.yaml
-COPY config.yaml $HOME
+COPY config.yaml .
 
-WORKDIR $HOME
-USER $USER
+EXPOSE 8080
 
-EXPOSE 1313
-
-ENTRYPOINT ["cheqd-did-resolver", "serve"]
+ENTRYPOINT ["cheqd-did-resolver"]
+CMD ["serve"]

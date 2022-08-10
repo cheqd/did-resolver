@@ -1,6 +1,6 @@
 # cheqd DID Resolver
 
-[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/cheqd/did-resolver/Workflow%20Dispatch/main?label=Lint%2C%20Build%2C%20Test&style=flat-square)](https://github.com/cheqd/did-resolver/actions/workflows/dispatch.yml)
+[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/cheqd/did-resolver/Workflow%20Dispatch/main?label=workflows&style=flat-square)](https://github.com/cheqd/did-resolver/actions/workflows/dispatch.yml)
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cheqd/did-resolver?color=green&label=stable&sort=semver&style=flat-square)](https://github.com/cheqd/did-resolver/releases/latest) ![GitHub Release Date](https://img.shields.io/github/release-date/cheqd/did-resolver?style=flat-square)
 

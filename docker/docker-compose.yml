@@ -1,34 +1,30 @@
 version: '3.7'
 
+# CAUTION: Please ensure you edit necessary values in docker-compose.env before using this Docker Compose file.
+
+# SYNTAX: docker-compose -f docker/docker-compose.yml --env-file docker/docker-compose.env up --no-build
 
 services:
   did_resolver:
-    build:
-      dockerfile: docker/Dockerfile
-      context: ../
-      args:
-        - HOME=${CHEQD_RESOLVER_HOME_DIR}
+    # OPTIONAL: Rebuild cheqd did-resolver Docker image, if you want build your own
+    # Default is to pull in the pre-published image on GitHub Container Registry
+    # SYNTAX: docker-compose -f docker/docker-compose.yml --env-file docker/docker-compose.env build --no-cache
+    # build:
+    #  context: ../
+    #  dockerfile: docker/Dockerfile
+    #  target: resolver
+    # CAUTION: Change IMAGE_VERSION to local in docker-compose.env if building your own image in section below
+    # image: did-resolver-custom-build:${IMAGE_VERSION}
+    image: ghcr.io/cheqd/did-resolver:${IMAGE_VERSION}
     configs:
-      - source: config
-        target: ${CHEQD_RESOLVER_HOME_DIR}/config.yaml
-    expose:
-      - ${RESOLVER_PORT}
+      - source: resolver-config
+        target: ${RESOLVER_HOME_DIR}/config.yaml
     ports:
-      - "${RESOLVER_PORT}:${RESOLVER_PORT}"
-    profiles:
-      - full
-
-  redirect:
-    image: morbz/docker-web-redirect
-    restart: always
-    ports:
-      - "${REDIRECTED_PORT}:${REDIRECTED_PORT}"
-    environment:
-      - VIRTUAL_HOST={LOCAL_REDIRECT_FROM}
-      - REDIRECT_TARGET=${EXTERNAL_REDIRECT_TO}
-    profiles:
-      - light
+      - target: 8080
+        published: ${RESOLVER_PORT}
+        mode: host
+    restart: on-failure
 
 configs:
-  config:
+  resolver-config:
     file: ../config.yaml

@@ -1,0 +1,21 @@
+version: '3.7'
+
+# CAUTION: Please ensure you edit necessary values in docker-compose.env before using this Docker Compose file.
+
+# SYNTAX: docker-compose -f docker/docker-compose.yml --env-file docker/docker-compose.env up --no-build
+
+services:
+  did_resolver:
+    image: ${TEST_TAG}
+    configs:
+      - source: resolver-config
+        target: ${RESOLVER_HOME_DIR}/config.yaml
+    ports:
+      - target: 8080
+        published: ${RESOLVER_PORT}
+        mode: host
+    restart: on-failure
+
+configs:
+  resolver-config:
+    file: ../../config.yaml
