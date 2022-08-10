@@ -137,6 +137,16 @@ func (DIDDocService) GetDIDFragment(fragmentId string, didDoc cheqd.Did) protoif
 	return nil
 }
 
+func (DIDDocService) GetDIDQuery(query string, didDoc cheqd.Did) *cheqd.Service {
+	queryId := strings.Split(query, "=")[1]
+	for _, service := range didDoc.Service {
+		if strings.Split(service.Id, "#")[1] == queryId {
+			return service
+		}
+	}
+	return nil
+}
+
 func (ds DIDDocService) prepareJWKPubkey(verificationMethod *cheqd.VerificationMethod) (orderedmap.OrderedMap, error) {
 	methodJson, err := ds.protoToMap(verificationMethod)
 	if err != nil {
