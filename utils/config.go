@@ -13,6 +13,7 @@ func LoadConfig() (types.Config, error) {
 	err := viper.ReadInConfig()
 
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.SetEnvPrefix("CHEQD_DID_RESOLVER")
 	viper.AutomaticEnv()
 
 	if err != nil {

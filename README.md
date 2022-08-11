@@ -46,7 +46,7 @@ Environment variables needed in Docker Compose are defined in the `docker/docker
 2. `RESOLVER_PORT` (default: `8080`): Port on which the Resolver service is published/exposed on the host machine. Internally mapped to port 8080 in the container.
 3. `RESOLVER_HOME_DIR` (default: `/resolver`): Default config directory inside the Docker container
 
-#### Configure resolver settings
+#### Configure resolver settings via config.yaml
 
 To configure the resolver, edit the `config.yaml` file in the root of the `@cheqd/did-resolver` repository. The values that can be edited are as follows:
 
@@ -60,6 +60,39 @@ To configure the resolver, edit the `config.yaml` file in the root of the `@cheq
    1. `listener`: A string with address and port where the resolver listens for requests from clients.
    2. `resolverPath`: A string with path for DID Doc resolution. Example: `/1.0/identifiers/:did` for requests like `/1.0/identifiers/did:cheqd:testnet:MTMxDQKMTMxDQKMT`
 4. **`logLevel`**: `debug`/`warn`/`info`/`error` - to define the application log level
+
+#### Configure resolver settings via environment variables
+
+To configure the resolver via environment variables you can look at the `config.yaml` and prefix every value with `CHEQD_DID_RESOLVER_` .
+
+For example you can set
+
+```yml
+resolver:
+  method: "cheqd"
+```
+
+to
+
+```console
+export CHEQD_DID_RESOLVER_RESOLVER_METHOD=test
+```
+
+and `cheqd-did-resolver` will show the following
+
+```console
+go run main.go print-config
+ledger:
+    networks: mainnet=grpc.cheqd.net:443;testnet=grpc.cheqd.network:443
+    timeout: 5s
+    usetls: true
+resolver:
+    method: test
+api:
+    listener: 0.0.0.0:8080
+    resolverpath: /1.0/identifiers/:did
+loglevel: debug
+```
 
 #### Example `config.yaml` file
 
