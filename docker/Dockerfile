@@ -5,23 +5,26 @@
 FROM golang:1.17-alpine AS builder
 
 WORKDIR /resolver
-COPY . ./
+RUN apk add --no-cache git
+COPY ./go.mod ./go.sum ./
+RUN go mod download
+COPY ./ ./
+
 
 # Build did-resolver binary
-RUN go mod download && go build -o cheqd-did-resolver main.go
+ENV CGO_ENABLED=0
+RUN go build -o cheqd-did-resolver main.go
 
 #####################################################################
 ###    STAGE 2: Build cheqd did-resolver container image          ###
 #####################################################################
 
-FROM alpine:3.16 AS resolver
-
-# Install pre-requisites
-RUN apk update && apk add --no-cache bash ca-certificates
+FROM gcr.io/distroless/static AS resolver
 
 # Set working directory & bash defaults
 WORKDIR /resolver
-SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
+
+USER nonroot:nonroot
 
 # Copy compiled cheqd-did-resolver binary from Stage 1
 COPY --from=builder /resolver/cheqd-did-resolver /bin/cheqd-did-resolver
