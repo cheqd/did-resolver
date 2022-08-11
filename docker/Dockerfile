@@ -2,7 +2,7 @@
 ###    STAGE 1: Build cheqd did-resolver binary pre-requisites    ###
 #####################################################################
 
-FROM golang:1.17-alpine AS builder
+FROM golang:1.17 AS builder
 
 WORKDIR /resolver
 RUN apk add --no-cache git
