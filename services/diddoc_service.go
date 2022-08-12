@@ -54,7 +54,7 @@ func (ds DIDDocService) MarshallDID(didDoc cheqd.Did) (string, error) {
 		})
 	}
 
-	result, err := json.Marshal(mapDID)
+	result, err := json.MarshalIndent(mapDID, "", "  ")
 	if err != nil {
 		return "", err
 	}
@@ -101,7 +101,7 @@ func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1
 		})
 	}
 
-	result, err := json.Marshal(mapContent)
+	result, err := json.MarshalIndent(mapContent, "", "  ")
 	if err != nil {
 		return "", err
 	}

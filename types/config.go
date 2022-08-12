@@ -45,7 +45,7 @@ func (c *Config) MustMarshalYaml() string {
 }
 
 func (c *Config) MarshalJson() (string, error) {
-	bytes, err := json.Marshal(c)
+	bytes, err := json.MarshalIndent(c, "", "  ")
 	return string(bytes), err
 }
 

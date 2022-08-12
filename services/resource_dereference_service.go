@@ -73,7 +73,7 @@ func (rds ResourceDereferenceService) dereferenceCollectionResources(did string,
 		}
 		jsonResources = append(jsonResources, json.RawMessage(jsonR))
 	}
-	cotentStream, err := json.Marshal(jsonResources)
+	cotentStream, err := json.MarshalIndent(jsonResources, "", "  ")
 	if err != nil {
 		dereferenceMetadata.ResolutionError = types.InternalError
 		return []byte(nil), dereferenceMetadata

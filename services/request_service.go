@@ -49,9 +49,9 @@ func (rs RequestService) ProcessDIDRequest(didUrl string, resolutionOptions type
 func (rs RequestService) prepareResolutionResult(did string, resolutionOptions types.ResolutionOption) ([]byte, int) {
 	didResolution := rs.Resolve(did, resolutionOptions)
 
-	resolutionMetadata, mErr1 := json.Marshal(didResolution.ResolutionMetadata)
+	resolutionMetadata, mErr1 := json.MarshalIndent(didResolution.ResolutionMetadata, "", "  ")
 	didDoc, mErr2 := rs.didDocService.MarshallDID(didResolution.Did)
-	metadata, mErr3 := json.Marshal(&didResolution.Metadata)
+	metadata, mErr3 := json.MarshalIndent(&didResolution.Metadata, "", "  ")
 	if mErr1 != nil || mErr2 != nil || mErr3 != nil {
 		log.Error().Errs("errors", []error{mErr1, mErr2, mErr3}).Msg("Marshalling error")
 		return createJsonResolutionInternalError(resolutionMetadata)
@@ -243,7 +243,7 @@ func createJsonResolution(didDoc string, metadata string, resolutionMetadata str
 		DidDocumentMetadata:   json.RawMessage(metadata),
 	}
 
-	respJson, err := json.Marshal(&response)
+	respJson, err := json.MarshalIndent(&response, "", "  ")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to marshal response")
 		return []byte{}, err
