@@ -11,5 +11,4 @@ type DereferencedResource struct {
 	Checksum          string   `json:"checksum,omitempty"`
 	PreviousVersionId string   `json:"previousVersionId,omitempty"`
 	NextVersionId     string   `json:"nextVersionId,omitempty"`
-	Data              []byte   `json:"data,omitempty"`
 }
