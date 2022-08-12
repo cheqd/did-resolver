@@ -4,7 +4,7 @@ import (
 	// jsonpb Marshaller is deprecated, but is needed because there's only one way to proto
 	// marshal in combination with our proto generator version
 	"encoding/json"
-	"strings"
+	"net/url"
 
 	"github.com/rs/zerolog/log"
 
@@ -149,10 +149,9 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
 	}
 
-	// TODO: implement
 	var didDereferencing types.DidDereferencing
 	if query != "" {
-		didDereferencing, err = rs.dereferenceService(did, query, didUrl, dereferenceOptions)
+		didDereferencing, err = rs.dereferenceService(did, query, fragmentId, didUrl, dereferenceOptions)
 	} else if path != "" {
 		didDereferencing, err = rs.dereferencePrimary(path, did, didUrl, dereferenceOptions)
 	} else {
@@ -167,7 +166,7 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 	return didDereferencing
 }
 
-func (rs RequestService) dereferenceService(did string, query string, didUrl string, dereferenceOptions types.DereferencingOption) (types.DidDereferencing, error) {
+func (rs RequestService) dereferenceService(did string, query string, fragmentId string, didUrl string, dereferenceOptions types.DereferencingOption) (types.DidDereferencing, error) {
 	didResolution := rs.Resolve(did, types.ResolutionOption(dereferenceOptions))
 
 	dereferencingMetadata := types.DereferencingMetadata(didResolution.ResolutionMetadata)
@@ -175,17 +174,28 @@ func (rs RequestService) dereferenceService(did string, query string, didUrl str
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
 
-	service := rs.didDocService.GetDIDQuery(query, didResolution.Did)
+	QueryUrl, err := url.Parse("?" + query)
+	if err != nil {
+		return types.DidDereferencing{}, err
+	}
+	ParseQuery:= QueryUrl.Query()
 
+	queryId := ParseQuery.Get("service")
+	if queryId == "" {
+		dereferencingMetadata = types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.RepresentationNotSupportedError)
+		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
+	}
+	
+	service := rs.didDocService.GetDIDService(queryId, didResolution.Did)
 	if service == nil {
-		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.NotFoundError)
+		dereferencingMetadata = types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.NotFoundError)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
 
-	service.ServiceEndpoint = CreatServiceEndpoint(didUrl, service.ServiceEndpoint)
+	serviceEndpoint := CreatServiceEndpoint(ParseQuery.Get("relativeRef"), fragmentId, service.ServiceEndpoint)
 	metadata := types.TransformToFragmentMetadata(didResolution.Metadata)
 
-	jsonFragment, err := rs.didDocService.MarshallContentStream(service, dereferenceOptions.Accept)
+	jsonFragment, err := json.Marshal(serviceEndpoint)
 	if err != nil {
 		return types.DidDereferencing{}, err
 	}
@@ -334,19 +344,4 @@ func createJsonResolutionInternalError(resolutionMetadata []byte) (string, int) 
 		return "", types.InternalError.GetStatusCode()
 	}
 	return result, types.InternalError.GetStatusCode()
-}
-
-func CreatServiceEndpoint(didUrl string, inputServiceEndpoint string) (outputServiceEndpoint string) {
-	_, path, query, fragment, _ := cheqdUtils.TrySplitDIDUrl(didUrl)
-	outputServiceEndpoint = inputServiceEndpoint
-	if path != "" {
-		outputServiceEndpoint += "/" + path
-		if query != "" {
-			outputServiceEndpoint += "?" + strings.Split(query, "=")[1]
-		}
-	}
-	if fragment != "" {
-		outputServiceEndpoint += "#" + fragment
-	}
-	return outputServiceEndpoint
 }

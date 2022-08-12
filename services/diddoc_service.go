@@ -122,14 +122,25 @@ func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1
 	return string(result), nil
 }
 
+func FindId (Id string, requestedId string) bool{	
+	if strings.Contains(Id, "#"){
+		Id = strings.Split(Id, "#")[1]
+	}
+	if Id == requestedId {
+		return true
+	} else {
+		return false
+	}
+} 
+
 func (DIDDocService) GetDIDFragment(fragmentId string, didDoc cheqd.Did) protoiface.MessageV1 {
 	for _, verMethod := range didDoc.VerificationMethod {
-		if strings.Contains(verMethod.Id, fragmentId) {
+		if FindId(verMethod.Id, fragmentId) {
 			return verMethod
 		}
 	}
 	for _, service := range didDoc.Service {
-		if strings.Contains(service.Id, fragmentId) {
+		if FindId(service.Id, fragmentId) {
 			return service
 		}
 	}
@@ -137,10 +148,9 @@ func (DIDDocService) GetDIDFragment(fragmentId string, didDoc cheqd.Did) protoif
 	return nil
 }
 
-func (DIDDocService) GetDIDQuery(query string, didDoc cheqd.Did) *cheqd.Service {
-	queryId := strings.Split(query, "=")[1]
+func (DIDDocService) GetDIDService(queryId string, didDoc cheqd.Did) *cheqd.Service {
 	for _, service := range didDoc.Service {
-		if strings.Split(service.Id, "#")[1] == queryId {
+		if FindId(service.Id, queryId) {
 			return service
 		}
 	}
@@ -187,4 +197,12 @@ func (ds DIDDocService) protoToMap(protoObject protoiface.MessageV1) (orderedmap
 	}
 
 	return *mapObj, err
+}
+
+func CreatServiceEndpoint(relativeRef string, fragmentId string, inputServiceEndpoint string) (outputServiceEndpoint string) {
+	outputServiceEndpoint = inputServiceEndpoint + relativeRef
+	if fragmentId != "" {
+		outputServiceEndpoint += "#" + fragmentId
+	}
+	return outputServiceEndpoint
 }
