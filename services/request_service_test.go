@@ -234,7 +234,7 @@ func TestDereferencing(t *testing.T) {
 	validVerificationMethod := validVerificationMethod()
 	validService := validService()
 	validResource := validResource()
-	validChecksum := fmt.Sprintf("%x", validResource.Header.Checksum)
+	validChecksum := types.FixResourceChecksum(validResource.Header.Checksum)
 	validMetadata := validMetadata()
 	validFragmentMetadata := types.NewResolutionDidDocMetadata(validDid, validMetadata, []*resource.ResourceHeader{})
 	subtests := []struct {
