@@ -1,7 +1,6 @@
 package types
 
 import (
-	"fmt"
 	"testing"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
@@ -29,7 +28,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 		ResourceType:      resourceHeader.ResourceType,
 		MediaType:         resourceHeader.MediaType,
 		Created:           resourceHeader.Created,
-		Checksum:          fmt.Sprintf("%x", resourceHeader.Checksum),
+		Checksum:          FixResourceChecksum(resourceHeader.Checksum),
 		PreviousVersionId: resourceHeader.PreviousVersionId,
 		NextVersionId:     resourceHeader.NextVersionId,
 	}

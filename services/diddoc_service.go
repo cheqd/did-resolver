@@ -5,7 +5,6 @@ import (
 	// jsonpb Marshaller is deprecated, but is needed because there's only one way to proto
 	// marshal in combination with our proto generator version
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
@@ -80,18 +79,7 @@ func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1
 		}
 		return string(jsonDid), nil
 	case *resource.ResourceHeader:
-		dResource := types.DereferencedResource{
-			Context:           context,
-			CollectionId:      contentStream.CollectionId,
-			Id:                contentStream.Id,
-			Name:              contentStream.Name,
-			ResourceType:      contentStream.ResourceType,
-			MediaType:         contentStream.MediaType,
-			Created:           contentStream.Created,
-			Checksum:          fmt.Sprintf("%x", contentStream.Checksum),
-			PreviousVersionId: contentStream.PreviousVersionId,
-			NextVersionId:     contentStream.NextVersionId,
-		}
+		dResource := types.NewDereferencedResource(context, contentStream)
 		jsonResource, err := json.Marshal(dResource)
 		if err != nil {
 			return "", err

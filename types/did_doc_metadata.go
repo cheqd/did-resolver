@@ -1,8 +1,6 @@
 package types
 
 import (
-	"fmt"
-
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
 )
@@ -46,7 +44,7 @@ func NewResolutionDidDocMetadata(did string, metadata cheqd.Metadata, resources 
 			r.ResourceType,
 			r.MediaType,
 			r.Created,
-			fmt.Sprintf("%x", r.Checksum),
+			FixResourceChecksum(r.Checksum),
 			r.PreviousVersionId,
 			r.NextVersionId,
 		}
