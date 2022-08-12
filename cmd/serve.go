@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"net/http"
 	"strings"
 
+	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
@@ -55,7 +57,7 @@ func serve() {
 		name, url := args[0], args[1]
 
 		log.Info().Msgf("Registering network. Name: %s, url: %s.", name, url)
-		err := ledgerService.RegisterLedger(name, url)
+		err := ledgerService.RegisterLedger(config.Resolver.Method, name, url)
 		if err != nil {
 			panic(err)
 		}
@@ -84,12 +86,17 @@ func serve() {
 		}
 		log.Debug().Msgf("Requested content type: %s", requestedContentType)
 
-		responseBody, status := requestService.ProcessDIDRequest(didUrl, types.ResolutionOption{Accept: requestedContentType})
+		_, path, _, _, _ := cheqdUtils.TrySplitDIDUrl(didUrl)
+		log.Debug().Msg(path)
+		if utils.IsCollectionResourcesPathRedirect(path) {
+			return c.Redirect(http.StatusMovedPermanently, "all")
+		}
+		responseBody, status, contentType := requestService.ProcessDIDRequest(didUrl, types.ResolutionOption{Accept: requestedContentType})
 
 		log.Debug().Msgf("Response body: %s", responseBody)
 
-		c.Response().Header().Set(echo.HeaderContentType, string(requestedContentType))
-		return c.JSONBlob(status, []byte(responseBody))
+		c.Response().Header().Set(echo.HeaderContentType, string(contentType))
+		return c.Blob(status, string(contentType), responseBody)
 	})
 
 	log.Info().Msg("Starting listener")

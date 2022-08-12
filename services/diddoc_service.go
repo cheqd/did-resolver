@@ -4,7 +4,6 @@ import (
 
 	// jsonpb Marshaller is deprecated, but is needed because there's only one way to proto
 	// marshal in combination with our proto generator version
-	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -70,7 +69,6 @@ func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1
 	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
 		context = []string{types.DIDSchemaJSONLD}
 	}
-
 	switch contentStream := contentStream.(type) {
 	case *cheqd.VerificationMethod:
 		mapContent, err = ds.prepareJWKPubkey(contentStream)
@@ -81,23 +79,18 @@ func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1
 			return "", err
 		}
 		return string(jsonDid), nil
-	case *resource.Resource:
-		hash := sha256.New()
-		hash.Write(contentStream.Data)
-		hash.Sum(nil)
-
+	case *resource.ResourceHeader:
 		dResource := types.DereferencedResource{
 			Context:           context,
-			CollectionId:      contentStream.Header.CollectionId,
-			Id:                contentStream.Header.Id,
-			Name:              contentStream.Header.Name,
-			ResourceType:      contentStream.Header.ResourceType,
-			MediaType:         contentStream.Header.MediaType,
-			Created:           contentStream.Header.Created,
-			Checksum:          fmt.Sprintf("%x", contentStream.Header.Checksum),
-			PreviousVersionId: contentStream.Header.PreviousVersionId,
-			NextVersionId:     contentStream.Header.NextVersionId,
-			Data:              contentStream.Data,
+			CollectionId:      contentStream.CollectionId,
+			Id:                contentStream.Id,
+			Name:              contentStream.Name,
+			ResourceType:      contentStream.ResourceType,
+			MediaType:         contentStream.MediaType,
+			Created:           contentStream.Created,
+			Checksum:          fmt.Sprintf("%x", contentStream.Checksum),
+			PreviousVersionId: contentStream.PreviousVersionId,
+			NextVersionId:     contentStream.NextVersionId,
 		}
 		jsonResource, err := json.Marshal(dResource)
 		if err != nil {
