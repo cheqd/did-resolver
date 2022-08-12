@@ -16,7 +16,12 @@ type Config struct {
 }
 
 type LedgerConfig struct {
-	Networks string
+	Networks []Network
+}
+
+type Network struct {
+	Namespace string
+	Endpoint string
 	Timeout  time.Duration
 	UseTls   bool
 }

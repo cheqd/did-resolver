@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -48,9 +49,10 @@ func serve() {
 	e.Use(middleware.Recover())
 
 	// Services
-	ledgerService := services.NewLedgerService(config.Ledger.Timeout, config.Ledger.UseTls)
+	ledgerService := services.NewLedgerService()
 
-	networks := strings.Split(config.Ledger.Networks, ";")
+	var networks []types.Network
+	json.Unmarshal([]byte(config.Ledger.Networks), networks)
 	for _, network := range networks {
 		args := strings.Split(network, "=")
 		name, url := args[0], args[1]

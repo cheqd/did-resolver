@@ -1,7 +1,18 @@
 ledger:
-  networks: "mainnet=grpc.cheqd.net:443;testnet=grpc.cheqd.network:443"
-  useTls: true
-  timeout: "5s"
+  networks: "[
+    { 
+      \"namespace\": \"mainnet\",
+      \"endpoint\": \"grpc.cheqd.net:443\",
+      \"tls\": true,
+      \"timeout\": \"5s\"
+    },
+    { 
+      \"namespace\": \"testnet\",
+      \"endpoint\": \"grpc.cheqd.network:443\",
+      \"tls\": true,
+      \"timeout\": \"5s\"
+    }
+]"
 
 resolver:
   method: "cheqd"
