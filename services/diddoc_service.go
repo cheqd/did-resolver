@@ -4,6 +4,7 @@ import (
 
 	// jsonpb Marshaller is deprecated, but is needed because there's only one way to proto
 	// marshal in combination with our proto generator version
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -81,6 +82,10 @@ func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1
 		}
 		return string(jsonDid), nil
 	case *resource.Resource:
+		hash := sha256.New()
+		hash.Write(contentStream.Data)
+		hash.Sum(nil)
+
 		dResource := types.DereferencedResource{
 			Context:           context,
 			CollectionId:      contentStream.Header.CollectionId,

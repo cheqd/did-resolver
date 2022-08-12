@@ -12,18 +12,19 @@ type ResolutionDidDocMetadata struct {
 	Updated     string            `json:"updated,omitempty"`
 	Deactivated bool              `json:"deactivated,omitempty"`
 	VersionId   string            `json:"versionId,omitempty"`
-	Resources   []ResourcePreview `json:"resources,omitempty"`
+	Resources   []ResourcePreview `json:"linkedResourceMetadata,omitempty"`
 }
 
 type ResourcePreview struct {
-	ResourceURI       string `json:"resourceURI,omitempty"`
-	Name              string `json:"name,omitempty"`
-	ResourceType      string `json:"resourceType,omitempty"`
-	MediaType         string `json:"mediaType,omitempty"`
-	Created           string `json:"created,omitempty"`
-	Checksum          string `json:"checksum,omitempty"`
-	PreviousVersionId string `json:"previousVersionId,omitempty"`
-	NextVersionId     string `json:"nextVersionId,omitempty"`
+	ResourceURI       string `json:"resourceURI"`
+	CollectionId      string `json:"resourceCollectionId"`
+	Name              string `json:"resourceName"`
+	ResourceType      string `json:"resourceType"`
+	MediaType         string `json:"mediaType"`
+	Created           string `json:"created"`
+	Checksum          string `json:"checksum"`
+	PreviousVersionId string `json:"previousVersionId"`
+	NextVersionId     string `json:"nextVersionId"`
 }
 
 func NewResolutionDidDocMetadata(did string, metadata cheqd.Metadata, resources []*resource.ResourceHeader) ResolutionDidDocMetadata {
@@ -40,6 +41,7 @@ func NewResolutionDidDocMetadata(did string, metadata cheqd.Metadata, resources 
 	for _, r := range resources {
 		resourcePreview := ResourcePreview{
 			did + RESOURCE_PATH + r.Id,
+			r.CollectionId,
 			r.Name,
 			r.ResourceType,
 			r.MediaType,

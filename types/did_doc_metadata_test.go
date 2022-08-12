@@ -24,6 +24,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 
 	validMetadataResource := ResourcePreview{
 		ResourceURI:       validDid + RESOURCE_PATH + resourceHeader.Id,
+		CollectionId:      resourceHeader.CollectionId,
 		Name:              resourceHeader.Name,
 		ResourceType:      resourceHeader.ResourceType,
 		MediaType:         resourceHeader.MediaType,
@@ -85,7 +86,6 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 			result := NewResolutionDidDocMetadata(validDid, subtest.metadata, subtest.resources)
 
 			require.EqualValues(t, subtest.expectedResult, result)
-			// require.EqualValues(t, subtest.expectedError, err)
 		})
 	}
 }
