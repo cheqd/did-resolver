@@ -16,16 +16,16 @@ type DereferencedResource struct {
 }
 
 func NewDereferencedResource(context []string, resource *resource.ResourceHeader) DereferencedResource {
-return DereferencedResource{
-	Context:           context,
-	CollectionId:      resource.CollectionId,
-	Id:                resource.Id,
-	Name:              resource.Name,
-	ResourceType:      resource.ResourceType,
-	MediaType:         resource.MediaType,
-	Created:           resource.Created,
-	Checksum:          FixResourceChecksum(resource.Checksum),
-	PreviousVersionId: resource.PreviousVersionId,
-	NextVersionId:     resource.NextVersionId,
-}
+	return DereferencedResource{
+		Context:           context,
+		CollectionId:      resource.CollectionId,
+		Id:                resource.Id,
+		Name:              resource.Name,
+		ResourceType:      resource.ResourceType,
+		MediaType:         resource.MediaType,
+		Created:           resource.Created,
+		Checksum:          FixResourceChecksum(resource.Checksum),
+		PreviousVersionId: resource.PreviousVersionId,
+		NextVersionId:     resource.NextVersionId,
+	}
 }
