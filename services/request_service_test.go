@@ -374,7 +374,7 @@ func TestDereferencing(t *testing.T) {
 			fmt.Println(dereferencingResult)
 			resultContentStream := strings.ReplaceAll(string(dereferencingResult.ContentStream), " ", "")
 			resultContentStream = strings.ReplaceAll(resultContentStream, "\n", "")
-			
+
 			require.EqualValues(t, subtest.expectedContentStream, resultContentStream)
 			require.EqualValues(t, subtest.expectedMetadata, dereferencingResult.Metadata)
 			require.EqualValues(t, expectedContentType, dereferencingResult.DereferencingMetadata.ContentType)
