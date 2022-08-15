@@ -16,14 +16,14 @@ type Config struct {
 }
 
 type LedgerConfig struct {
-	Networks []Network
+	Networks string // json with []Network
 }
 
 type Network struct {
 	Namespace string
-	Endpoint string
-	Timeout  time.Duration
-	UseTls   bool
+	Endpoint  string
+	Timeout   time.Duration
+	UseTls    bool
 }
 
 type ResolverConfig struct {

@@ -51,14 +51,14 @@ func serve() {
 	// Services
 	ledgerService := services.NewLedgerService()
 
-	var networks []types.Network
-	json.Unmarshal([]byte(config.Ledger.Networks), networks)
-	for _, network := range networks {
-		args := strings.Split(network, "=")
-		name, url := args[0], args[1]
-
-		log.Info().Msgf("Registering network. Name: %s, url: %s.", name, url)
-		err := ledgerService.RegisterLedger(config.Resolver.Method, name, url)
+	var networks *[]types.Network
+	err = json.Unmarshal([]byte(config.Ledger.Networks), networks)
+	if err != nil {
+		panic(err)
+	}
+	for _, network := range *networks {
+		log.Info().Msgf("Registering network: %s.", network)
+		err := ledgerService.RegisterLedger(config.Resolver.Method, network)
 		if err != nil {
 			panic(err)
 		}
