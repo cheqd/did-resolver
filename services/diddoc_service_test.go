@@ -32,7 +32,7 @@ func TestMarshallDID(t *testing.T) {
 		VerificationMethod: []*cheqd.VerificationMethod{&verificationMethod1, &verificationMethod2},
 	}
 
-	expectedDID := "{\n"+
+	expectedDID := "{\n" +
 		"  \"@context\": [\n" +
 		"    \"test\"\n" +
 		"  ],\n" +
