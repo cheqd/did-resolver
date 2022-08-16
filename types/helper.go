@@ -14,3 +14,12 @@ func FixResourceChecksum(inputChecksum []byte) (hash string) {
 	h.Write(data)
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
+
+func AddElemToSet(set []string, newElement string) []string {
+	for _, c := range set {
+		if c == newElement {
+			return set
+		}
+	}
+	return append(set, newElement)
+} 

@@ -13,20 +13,20 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
     "did_url, expected_output",
     [
         (TESTNET_DID,
-         fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\":\"{TESTNET_DID}\"(.*?)didDocumentMetadata(.*?){TESTNET_RESOURCE_NAME}"),
-        (MAINNET_DID, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\":\"{MAINNET_DID}\"(.*?)didDocumentMetadata"),
-        (FAKE_TESTNET_DID, r"\"didResolutionMetadata(.*?)\"error\":\"notFound\"(.*?)"
-                           r"didDocument\":null,\"didDocumentMetadata\":\[\]"),
-        (FAKE_MAINNET_DID, r"\"didResolutionMetadata(.*?)\"error\":\"notFound\"(.*?)"
-                           r"didDocument\":null,\"didDocumentMetadata\":\[\]"),
-        ("did:wrong_method:MTMxDQKMTMxDQKMT", r"\"didResolutionMetadata(.*?)\"error\":\"methodNotSupported\"(.*?)"
-                                              r"didDocument\":null,\"didDocumentMetadata\":\[\]"),
+         fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{TESTNET_DID}\"(.*?)didDocumentMetadata(.*?){TESTNET_RESOURCE_NAME}"),
+        (MAINNET_DID, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MAINNET_DID}\"(.*?)didDocumentMetadata"),
+        (FAKE_TESTNET_DID, r"\"didResolutionMetadata(.*?)\"error\": \"notFound\"(.*?)"
+                           r"didDocument\": null,(.*?)\"didDocumentMetadata\": \[\]"),
+        (FAKE_MAINNET_DID, r"\"didResolutionMetadata(.*?)\"error\": \"notFound\"(.*?)"
+                           r"didDocument\": null,(.*?)\"didDocumentMetadata\": \[\]"),
+        ("did:wrong_method:MTMxDQKMTMxDQKMT", r"\"didResolutionMetadata(.*?)\"error\": \"methodNotSupported\"(.*?)"
+                                              r"didDocument\": null,(.*?)\"didDocumentMetadata\": \[\]"),
 
-        (TESTNET_FRAGMENT, fr"\"contentStream\":(.*?)\"id\":\"{TESTNET_FRAGMENT}\"(.*?)contentMetadata"
+        (TESTNET_FRAGMENT, fr"\"contentStream\":(.*?)\"id\": \"{TESTNET_FRAGMENT}\"(.*?)contentMetadata"
                            r"(.*?)dereferencingMetadata\""),
-        (MAINNET_FRAGMENT, fr"\"contentStream\":(.*?)\"id\":\"{MAINNET_FRAGMENT}\"(.*?)contentMetadata"
+        (MAINNET_FRAGMENT, fr"\"contentStream\":(.*?)\"id\": \"{MAINNET_FRAGMENT}\"(.*?)contentMetadata"
                            r"(.*?)dereferencingMetadata\""),
-        (FAKE_TESTNET_FRAGMENT, r"\"contentStream\":null,\"contentMetadata\":\[\],"
+        (FAKE_TESTNET_FRAGMENT, r"\"contentStream\": null,([ \t]+)\"contentMetadata\":\[\],"
                                 r"\"dereferencingMetadata(.*?)\"error\":\"notFound\""),
         (FAKE_MAINNET_FRAGMENT, r"\"contentStream\":null,\"contentMetadata\":\[\],"
                                 r"\"dereferencingMetadata(.*?)\"error\":\"notFound\""),
@@ -69,7 +69,7 @@ def test_resolution_content_type(accept, expected_header, expected_body, has_con
     header = {"Accept": accept} if accept else {}
 
     r = requests.get(url, headers=header)
-
+    print(r.text)
     assert r.headers["Content-Type"] == expected_header
     assert r.status_code == expected_status_code
     assert re.match(expected_body, r.text)

@@ -15,9 +15,8 @@ type DereferencedResource struct {
 	NextVersionId     string   `json:"nextVersionId,omitempty"`
 }
 
-func NewDereferencedResource(context []string, resource *resource.ResourceHeader) DereferencedResource {
-	return DereferencedResource{
-		Context:           context,
+func NewDereferencedResource(resource *resource.ResourceHeader) *DereferencedResource {
+	return &DereferencedResource{
 		CollectionId:      resource.CollectionId,
 		Id:                resource.Id,
 		Name:              resource.Name,
@@ -29,3 +28,43 @@ func NewDereferencedResource(context []string, resource *resource.ResourceHeader
 		NextVersionId:     resource.NextVersionId,
 	}
 }
+
+func (e *DereferencedResource) AddContext(newProtocol string) {
+	e.Context = AddElemToSet(e.Context, newProtocol)
+}
+
+func (e *DereferencedResource) RemoveContext() {
+	e.Context = []string{}
+}
+
+func (e *DereferencedResource) GetBytes() []byte {
+	return []byte{}
+}
+
+type DereferencedResourceList struct {
+	Context   []string               `json:"@context,omitempty"`
+	Resources []DereferencedResource `json:"resources,omitempty"`
+}
+
+func NewDereferencedResourceList(protoResources []*resource.ResourceHeader) *DereferencedResourceList {
+	resourceList := []DereferencedResource{}
+	for _, r := range protoResources {
+		resourceList = append(resourceList, *NewDereferencedResource(r))
+	}
+
+	return &DereferencedResourceList{
+		Resources: resourceList,
+	}
+}
+
+func (e *DereferencedResourceList) AddContext(newProtocol string) {
+	e.Context = AddElemToSet(e.Context, newProtocol)
+}
+func (e *DereferencedResourceList) RemoveContext()   { e.Context = []string{} }
+func (e *DereferencedResourceList) GetBytes() []byte { return []byte{} }
+
+type DereferencedResourceData []byte
+
+func (e *DereferencedResourceData) AddContext(newProtocol string) {}
+func (e *DereferencedResourceData) RemoveContext()                {}
+func (e *DereferencedResourceData) GetBytes() []byte              { return []byte(*e) }
