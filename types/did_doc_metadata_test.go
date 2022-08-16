@@ -1,6 +1,7 @@
 package types
 
 import (
+	"crypto/sha256"
 	"testing"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
@@ -12,13 +13,16 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 	validIdentifier := "N22KY2Dyvmuu2Pyy"
 	validDid := "did:cheqd:mainnet:" + validIdentifier
 	validResourceId := "18e9d838-0bea-435b-964b-c6529ede6d2b"
+	resourceData := []byte("test_checksum")
+	h := sha256.New()
+	h.Write(resourceData)
 	resourceHeader := resource.ResourceHeader{
 		CollectionId: validIdentifier,
 		Id:           validResourceId,
 		Name:         "Existing Resource Name",
 		ResourceType: "CL-Schema",
 		MediaType:    "application/json",
-		Checksum:     []byte("test_checksum"),
+		Checksum:     h.Sum(nil),
 	}
 
 	validMetadataResource := ResourcePreview{

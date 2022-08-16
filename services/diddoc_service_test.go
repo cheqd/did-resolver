@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"testing"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
@@ -33,10 +32,32 @@ func TestMarshallDID(t *testing.T) {
 		VerificationMethod: []*cheqd.VerificationMethod{&verificationMethod1, &verificationMethod2},
 	}
 
-	expectedDID := "{\"@context\":[\"test\"],\"id\":\"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue\",\"verificationMethod\":[{\"id\":\"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue#verkey\",\"type\":\"Ed25519VerificationKey2020\",\"controller\":\"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue\",\"publicKeyMultibase\":\"zAKJP3f7BD6W4iWEQ9jwndVTCBq8ua2Utt8EEjJ6Vxsf\"},{\"id\":\"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue#verkey\",\"type\":\"JsonWebKey2020\",\"controller\":\"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue\",\"publicKeyJwk\":{\"crv\":\"Ed25519\",\"kty\":\"OKP\",\"x\":\"VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ\"}}]}"
+	expectedDID := "{\n"+
+		"  \"@context\": [\n" +
+		"    \"test\"\n" +
+		"  ],\n" +
+		"  \"id\": \"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue\",\n" +
+		"  \"verificationMethod\": [\n" +
+		"    {\n" +
+		"      \"id\": \"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue#verkey\",\n" +
+		"      \"type\": \"Ed25519VerificationKey2020\",\n" +
+		"      \"controller\": \"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue\",\n" +
+		"      \"publicKeyMultibase\": \"zAKJP3f7BD6W4iWEQ9jwndVTCBq8ua2Utt8EEjJ6Vxsf\"\n" +
+		"    },\n" +
+		"    {\n" +
+		"      \"id\": \"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue#verkey\",\n" +
+		"      \"type\": \"JsonWebKey2020\",\n" +
+		"      \"controller\": \"did:cheqd:mainnet:N22KY2Dyvmuu2PyyqSFKue\",\n" +
+		"      \"publicKeyJwk\": {\n" +
+		"        \"crv\": \"Ed25519\",\n" +
+		"        \"kty\": \"OKP\",\n" +
+		"        \"x\": \"VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ\"\n" +
+		"      }\n" +
+		"    }\n" +
+		"  ]\n" +
+		"}"
 	jsonDID, err := didDocService.MarshallDID(didDoc)
 
-	fmt.Println(jsonDID)
 	require.EqualValues(t, expectedDID, jsonDID)
 	require.Empty(t, err)
 }
