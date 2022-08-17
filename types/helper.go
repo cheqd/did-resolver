@@ -25,4 +25,4 @@ func AddElemToSet(set []string, newElement string) []string {
 		}
 	}
 	return append(set, newElement)
-} 
+}

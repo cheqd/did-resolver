@@ -5,9 +5,9 @@ type DereferencingOption ResolutionOption
 type DereferencingMetadata ResolutionMetadata
 
 type DidDereferencing struct {
-	DereferencingMetadata DereferencingMetadata    `json:"dereferencingMetadata,omitempty"`
-	ContentStream         ContentStreamI           `json:"contentStream,omitempty"`
-	Metadata              ResolutionDidDocMetadata `json:"contentMetadata,omitempty"`
+	DereferencingMetadata DereferencingMetadata    `json:"dereferencingMetadata"`
+	ContentStream         ContentStreamI           `json:"contentStream"`
+	Metadata              ResolutionDidDocMetadata `json:"contentMetadata"`
 }
 
 func NewDereferencingMetadata(did string, contentType ContentType, resolutionError ErrorType) DereferencingMetadata {

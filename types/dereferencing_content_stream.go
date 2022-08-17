@@ -3,16 +3,16 @@ package types
 import resource "github.com/cheqd/cheqd-node/x/resource/types"
 
 type DereferencedResource struct {
-	ResourceURI       string   `json:"resourceURI"`
-	CollectionId      string   `json:"resourceCollectionId"`
-	ResourceId        string   `json:"resourceId"`
-	Name              string   `json:"resourceName"`
-	ResourceType      string   `json:"resourceType"`
-	MediaType         string   `json:"mediaType"`
-	Created           string   `json:"created"`
-	Checksum          string   `json:"checksum"`
-	PreviousVersionId *string   `json:"previousVersionId"`
-	NextVersionId     *string   `json:"nextVersionId"`
+	ResourceURI       string  `json:"resourceURI"`
+	CollectionId      string  `json:"resourceCollectionId"`
+	ResourceId        string  `json:"resourceId"`
+	Name              string  `json:"resourceName"`
+	ResourceType      string  `json:"resourceType"`
+	MediaType         string  `json:"mediaType"`
+	Created           string  `json:"created"`
+	Checksum          string  `json:"checksum"`
+	PreviousVersionId *string `json:"previousVersionId"`
+	NextVersionId     *string `json:"nextVersionId"`
 }
 
 func NewDereferencedResource(did string, resource *resource.ResourceHeader) *DereferencedResource {
@@ -53,8 +53,8 @@ func NewDereferencedResourceList(did string, protoResources []*resource.Resource
 }
 
 func (e *DereferencedResourceList) AddContext(newProtocol string) {}
-func (e *DereferencedResourceList) RemoveContext()   {}
-func (e *DereferencedResourceList) GetBytes() []byte { return []byte{} }
+func (e *DereferencedResourceList) RemoveContext()                {}
+func (e *DereferencedResourceList) GetBytes() []byte              { return []byte{} }
 
 type DereferencedResourceData []byte
 

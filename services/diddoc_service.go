@@ -2,6 +2,7 @@ package services
 
 import (
 	"strings"
+
 	"github.com/cheqd/did-resolver/types"
 )
 

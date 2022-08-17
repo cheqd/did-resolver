@@ -113,7 +113,6 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 	}
 
 	if dereferenceOptions.Accept == types.DIDJSONLD || dereferenceOptions.Accept == types.JSONLD {
-
 		didDereferencing.ContentStream.AddContext(types.DIDSchemaJSONLD)
 	} else {
 		didDereferencing.ContentStream.RemoveContext()

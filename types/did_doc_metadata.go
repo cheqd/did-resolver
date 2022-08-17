@@ -28,10 +28,10 @@ type ResourcePreview struct {
 
 func NewResolutionDidDocMetadata(did string, metadata cheqd.Metadata, resources []*resource.ResourceHeader) ResolutionDidDocMetadata {
 	newMetadata := ResolutionDidDocMetadata{
-		Created: metadata.Created,
-		Updated: metadata.Updated,
+		Created:     metadata.Created,
+		Updated:     metadata.Updated,
 		Deactivated: metadata.Deactivated,
-		VersionId: metadata.VersionId,
+		VersionId:   metadata.VersionId,
 	}
 	if metadata.Resources == nil || len(resources) == 0 {
 		return newMetadata

@@ -16,28 +16,28 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
          fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{TESTNET_DID}\"(.*?)didDocumentMetadata(.*?){TESTNET_RESOURCE_NAME}"),
         (MAINNET_DID, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MAINNET_DID}\"(.*?)didDocumentMetadata"),
         (FAKE_TESTNET_DID, r"\"didResolutionMetadata(.*?)\"error\": \"notFound\"(.*?)"
-                           r"didDocument\": null,(.*?)\"didDocumentMetadata\": \[\]"),
+                           r"didDocument\": null,(.*?)\"didDocumentMetadata\": \{\}"),
         (FAKE_MAINNET_DID, r"\"didResolutionMetadata(.*?)\"error\": \"notFound\"(.*?)"
-                           r"didDocument\": null,(.*?)\"didDocumentMetadata\": \[\]"),
+                           r"didDocument\": null,(.*?)\"didDocumentMetadata\": \{\}"),
         ("did:wrong_method:MTMxDQKMTMxDQKMT", r"\"didResolutionMetadata(.*?)\"error\": \"methodNotSupported\"(.*?)"
-                                              r"didDocument\": null,(.*?)\"didDocumentMetadata\": \[\]"),
+                                              r"didDocument\": null,(.*?)\"didDocumentMetadata\": \{\}"),
 
-        (TESTNET_FRAGMENT, fr"\"contentStream\":(.*?)\"id\": \"{TESTNET_FRAGMENT}\"(.*?)contentMetadata"
-                           r"(.*?)dereferencingMetadata\""),
-        (MAINNET_FRAGMENT, fr"\"contentStream\":(.*?)\"id\": \"{MAINNET_FRAGMENT}\"(.*?)contentMetadata"
-                           r"(.*?)dereferencingMetadata\""),
-        (FAKE_TESTNET_FRAGMENT, r"\"contentStream\": null,([ \t]+)\"contentMetadata\":\[\],"
-                                r"\"dereferencingMetadata(.*?)\"error\":\"notFound\""),
-        (FAKE_MAINNET_FRAGMENT, r"\"contentStream\":null,\"contentMetadata\":\[\],"
-                                r"\"dereferencingMetadata(.*?)\"error\":\"notFound\""),
+        (TESTNET_FRAGMENT, r"(.*?)dereferencingMetadata\"(.*?)"
+                           fr"\"contentStream\":(.*?)\"id\": \"{TESTNET_FRAGMENT}\"(.*?)contentMetadata"),
+        (MAINNET_FRAGMENT, r"(.*?)dereferencingMetadata\"(.*?)"
+                           fr"\"contentStream\":(.*?)\"id\": \"{MAINNET_FRAGMENT}\"(.*?)contentMetadata"),
+        (FAKE_TESTNET_FRAGMENT, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
+                                r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
+        (FAKE_MAINNET_FRAGMENT, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
+                                r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
 
-        (TESTNET_RESOURCE_METADATA, fr"\"contentStream\":(.*?)collectionId(.*?),\"contentMetadata\":(.*?),"
-                                    r"\"dereferencingMetadata(.*?)"),
-        (TESTNET_RESOURCE_LIST, fr"\"contentStream\":\[(.*?)collectionId(.*?),\"contentMetadata\":(.*?),"
-                                r"\"dereferencingMetadata(.*?)"),
+        (TESTNET_RESOURCE_METADATA, r"\"dereferencingMetadata(.*?)\"contentStream\":(.*?)linkedResourceMetadata(.*?)"
+                                    "resourceCollectionId(.*?)\"contentMetadata\":(.*?)"),
+        (TESTNET_RESOURCE_LIST, r"\"dereferencingMetadata(.*?)\"contentStream\":(.*?)linkedResourceMetadata(.*?)"
+                                "resourceCollectionId(.*?)\"contentMetadata\":(.*?)"),
         (TESTNET_RESOURCE, RESOURCE_DATA),
-        (FAKE_TESTNET_RESOURCE, r"\"contentStream\":null,\"contentMetadata\":\[\],"
-                                r"\"dereferencingMetadata(.*?)\"error\":\"notFound\""),
+        (FAKE_TESTNET_RESOURCE, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
+                                r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
     ]
 )
 def test_resolution(did_url, expected_output):
@@ -48,20 +48,19 @@ def test_resolution(did_url, expected_output):
     "accept, expected_header, has_context, expected_status_code, expected_body",
     [
         (LDJSON, LDJSON, True, 200,
-         r"(.*?)didResolutionMetadata(.*?)application/ld\+json"
-         r"(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
+         r"(.*?)didResolutionMetadata"),
         (DIDLDJSON, DIDLDJSON, True, 200,
          "(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"
-         "(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
+         "(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata(.*?)"),
         ("*/*", DIDLDJSON, True, 200,
          "(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"
-         "(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata"),
+         "(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata(.*?)"),
         (DIDJSON, DIDJSON, False, 200,
          r"(.*?)didResolutionMetadata(.*?)application/did\+json"
-         r"(.*?)didDocument(.*?)(?!`@context`)(.*?)didDocumentMetadata"),
+         r"(.*?)didDocument(.*?)(?!`@context`)(.*?)didDocumentMetadata(.*?)"),
         (HTML + ",application/xhtml+xml", JSON, False, 406,
-         "(.*?)didResolutionMetadata(.*?)\"error\":\"representationNotSupported\""
-         "(.*?)\"didDocument\":null,\"didDocumentMetadata\":\[\]"),
+         "(.*?)didResolutionMetadata(.*?)\"error\": \"representationNotSupported\""
+         "(.*?)\"didDocument\": null,(.*?)\"didDocumentMetadata\": \{\}"),
     ]
 )
 def test_resolution_content_type(accept, expected_header, expected_body, has_context, expected_status_code):
@@ -69,38 +68,38 @@ def test_resolution_content_type(accept, expected_header, expected_body, has_con
     header = {"Accept": accept} if accept else {}
 
     r = requests.get(url, headers=header)
-    print(r.text)
+    print(r.text.replace("\n", "\\n"))
     assert r.headers["Content-Type"] == expected_header
     assert r.status_code == expected_status_code
-    assert re.match(expected_body, r.text)
+    assert re.match(expected_body, r.text.replace("\n", "\\n").replace("\n", "\\n"))
     if has_context:
-        assert re.findall(r"context", r.text)
+        assert re.findall(r"context", r.text.replace("\n", "\\n").replace("\n", "\\n"))
     else:
-        assert not re.findall(r"context", r.text)
+        assert not re.findall(r"context", r.text.replace("\n", "\\n").replace("\n", "\\n"))
 
 
-dereferencing_content_type_test_set = [
+secondary_dereferencing_content_type_test_set = [
     (LDJSON, LDJSON, True, 200,
-     r"(.*?)contentStream(.*?)@context(.*?)contentMetadata"
-     r"(.*?)dereferencingMetadata(.*?)application/ld\+json"),
+     r"(.*?)dereferencingMetadata(.*?)application/ld\+json"
+     r"(.*?)contentStream(.*?)@context(.*?)contentMetadata"),
     (DIDLDJSON, DIDLDJSON, True, 200,
-     "(.*?)contentStream(.*?)@context(.*?)contentMetadata"
-     "(.*?)dereferencingMetadata(.*?)application/did\+ld\+json"),
+     "(.*?)dereferencingMetadata(.*?)application/did\+ld\+json"
+     "(.*?)contentStream(.*?)@context(.*?)contentMetadata"),
     ("*/*", DIDLDJSON, True, 200,
-     "(.*?)contentStream(.*?)@context(.*?)contentMetadata"
-     "(.*?)dereferencingMetadata(.*?)application/did\+ld\+json"),
+     "(.*?)dereferencingMetadata(.*?)application/did\+ld\+json"
+     "(.*?)contentStream(.*?)@context(.*?)contentMetadata"),
     (DIDJSON, DIDJSON, False, 200,
-     r"(.*?)contentStream(.*?)contentMetadata"
-     r"(.*?)dereferencingMetadata(.*?)application/did\+json"),
-    (HTML + ",application/xhtml+xml", JSON, False, 406,
-     "(.*?)\"contentStream\":null,\"contentMetadata\":\[\],"
-     "\"dereferencingMetadata(.*?)\"error\":\"representationNotSupported\""),
+     r"(.*?)dereferencingMetadata(.*?)application/did\+json"
+     r"(.*?)contentStream(.*?)contentMetadata"),
+    (HTML, JSON, False, 406,
+     "(.*?)dereferencingMetadata(.*?)\"error\": \"representationNotSupported\""
+     "(.*?)\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
 ]
 
 
 @pytest.mark.parametrize(
     "accept, expected_header, has_context, expected_status_code, expected_body",
-    dereferencing_content_type_test_set
+    secondary_dereferencing_content_type_test_set
 )
 def test_dereferencing_content_type_fragment(accept, expected_header, expected_body, has_context, expected_status_code):
     url = RESOLVER_URL + PATH + TESTNET_FRAGMENT.replace("#", "%23")
@@ -110,16 +109,35 @@ def test_dereferencing_content_type_fragment(accept, expected_header, expected_b
 
     assert r.headers["Content-Type"] == expected_header
     assert r.status_code == expected_status_code
-    assert re.match(expected_body, r.text)
+    assert re.match(expected_body, r.text.replace("\n", "\\n"))
     if has_context:
-        assert re.findall(r"context", r.text)
+        assert re.findall(r"context", r.text.replace("\n", "\\n"))
     else:
-        assert not re.findall(r"context", r.text)
+        assert not re.findall(r"context", r.text.replace("\n", "\\n"))
+
+
+primary_dereferencing_content_type_test_set = [
+    (LDJSON, LDJSON, True, 200,
+     r"(.*?)dereferencingMetadata(.*?)application/ld\+json"
+     r"(.*?)contentStream(.*?)contentMetadata"),
+    (DIDLDJSON, DIDLDJSON, True, 200,
+     "(.*?)dereferencingMetadata(.*?)application/did\+ld\+json"
+     "(.*?)contentStream(.*?)contentMetadata"),
+    ("*/*", DIDLDJSON, True, 200,
+     "(.*?)dereferencingMetadata(.*?)application/did\+ld\+json"
+     "(.*?)contentStream(.*?)contentMetadata"),
+    (DIDJSON, DIDJSON, False, 200,
+     r"(.*?)dereferencingMetadata(.*?)application/did\+json"
+     r"(.*?)contentStream(.*?)contentMetadata"),
+    (HTML, JSON, False, 406,
+     "(.*?)dereferencingMetadata(.*?)\"error\": \"representationNotSupported\""
+     "(.*?)\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
+]
 
 
 @pytest.mark.parametrize(
     "accept, expected_header, has_context, expected_status_code, expected_body",
-    dereferencing_content_type_test_set
+    primary_dereferencing_content_type_test_set
 )
 def test_dereferencing_content_type_resource_metadata(accept, expected_header, expected_body, has_context,
                                                       expected_status_code):
@@ -127,13 +145,10 @@ def test_dereferencing_content_type_resource_metadata(accept, expected_header, e
     header = {"Accept": accept} if accept else {}
 
     r = requests.get(url, headers=header)
-
+    print(r.text)
     assert r.headers["Content-Type"] == expected_header
-    assert re.match(expected_body, r.text)
-    if has_context:
-        assert re.findall(r"context", r.text)
-    else:
-        assert not re.findall(r"context", r.text)
+    assert re.match(expected_body, r.text.replace("\n", "\\n"))
+    assert not re.findall(r"context", r.text.replace("\n", "\\n"))
 
 
 @pytest.mark.parametrize(
@@ -146,17 +161,19 @@ def test_dereferencing_content_type_resource(accept, expected_header, expected_s
     r = requests.get(url, headers=header)
     assert r.headers["Content-Type"] == expected_header
 
+
 @pytest.mark.parametrize(
     "accept, expected_header, expected_status_code, expected_body",
     [(LDJSON, LDJSON, 301,
-      r"(.*?)\"contentStream\":\[(.*?)collectionId(.*?),\"contentMetadata\":(.*?),\"dereferencingMetadata(.*?)"),]
+      r"(.*?)\"dereferencingMetadata(.*?)\"contentStream\":(.*?)"
+      r"resourceCollectionId(.*?)\"contentMetadata\":(.*?)"), ]
 )
 def test_dereferencing_content_type_resource_redirect(accept, expected_header, expected_status_code, expected_body):
     url = RESOLVER_URL + PATH + TESTNET_RESOURCE_LIST_REDIRECT
     header = {"Accept": accept} if accept else {}
     r = requests.get(url, headers=header)
     assert r.headers["Content-Type"] == expected_header
-    assert re.match(expected_body, r.text)
+    assert re.match(expected_body, r.text.replace("\n", "\\n"))
 
 
 @pytest.mark.parametrize(

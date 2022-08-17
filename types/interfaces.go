@@ -11,4 +11,3 @@ type ResolutinResultI interface {
 	GetContentType() string
 	GetBytes() []byte
 }
-

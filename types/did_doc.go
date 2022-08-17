@@ -78,13 +78,15 @@ func NewService(protoService *cheqd.Service) *Service {
 }
 
 func (e *DidDoc) AddContext(newProtocol string) { e.Context = AddElemToSet(e.Context, newProtocol) }
-func (e *DidDoc) RemoveContext() { e.Context = nil }
-func (e *DidDoc) GetBytes() []byte { return []byte{} }
+func (e *DidDoc) RemoveContext()                { e.Context = nil }
+func (e *DidDoc) GetBytes() []byte              { return []byte{} }
 
 func (e *Service) AddContext(newProtocol string) { e.Context = AddElemToSet(e.Context, newProtocol) }
-func (e *Service) RemoveContext() { e.Context = nil }
-func (e *Service) GetBytes() []byte { return []byte{} }
+func (e *Service) RemoveContext()                { e.Context = nil }
+func (e *Service) GetBytes() []byte              { return []byte{} }
 
-func (e *VerificationMethod) AddContext(newProtocol string) { e.Context = AddElemToSet(e.Context, newProtocol) }
-func (e *VerificationMethod) RemoveContext() { e.Context = nil }
+func (e *VerificationMethod) AddContext(newProtocol string) {
+	e.Context = AddElemToSet(e.Context, newProtocol)
+}
+func (e *VerificationMethod) RemoveContext()   { e.Context = nil }
 func (e *VerificationMethod) GetBytes() []byte { return []byte{} }
