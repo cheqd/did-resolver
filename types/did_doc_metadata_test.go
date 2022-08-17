@@ -25,16 +25,17 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 		Checksum:     h.Sum(nil),
 	}
 
-	validMetadataResource := ResourcePreview{
+	validMetadataResource := DereferencedResource{
 		ResourceURI:       validDid + RESOURCE_PATH + resourceHeader.Id,
 		CollectionId:      resourceHeader.CollectionId,
+		ResourceId:        resourceHeader.Id,
 		Name:              resourceHeader.Name,
 		ResourceType:      resourceHeader.ResourceType,
 		MediaType:         resourceHeader.MediaType,
 		Created:           resourceHeader.Created,
 		Checksum:          FixResourceChecksum(resourceHeader.Checksum),
-		PreviousVersionId: resourceHeader.PreviousVersionId,
-		NextVersionId:     resourceHeader.NextVersionId,
+		PreviousVersionId: nil,
+		NextVersionId:     nil,
 	}
 
 	subtests := []struct {
@@ -54,7 +55,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 			expectedResult: ResolutionDidDocMetadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
-				Resources:   []ResourcePreview{validMetadataResource},
+				Resources:   []DereferencedResource{validMetadataResource},
 			},
 		},
 		{
@@ -70,13 +71,12 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 			},
 		},
 		{
-			name: "matadata with resources",
+			name: "matadata without resources",
 			metadata: cheqd.Metadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
 				Resources:   []string{validResourceId},
 			},
-			resources: []*resource.ResourceHeader{},
 			expectedResult: ResolutionDidDocMetadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,

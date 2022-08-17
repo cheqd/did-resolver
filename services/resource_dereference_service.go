@@ -6,6 +6,8 @@ import (
 
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
+	"github.com/rs/zerolog/log"
+	resourceTypes "github.com/cheqd/cheqd-node/x/resource/types"
 )
 
 type ResourceDereferenceService struct {
@@ -38,29 +40,30 @@ func (rds ResourceDereferenceService) DereferenceResource(path string, did strin
 		cotentStream, dereferenceMetadata = rds.dereferenceCollectionResources(did, dereferenceOptions)
 	} else if utils.IsResourceDataPath(path) {
 		cotentStream, dereferenceMetadata = rds.dereferenceResourceData(path, did, dereferenceOptions)
-		if dereferenceOptions.Accept != dereferenceMetadata.ContentType {
-			dereferencingMetadata := types.NewDereferencingMetadata(did, types.JSON, types.RepresentationNotSupportedError)
-			return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
-		}
+		// if dereferenceOptions.Accept != dereferenceMetadata.ContentType && dereferenceOptions.Accept != types.ContentTypeL {
+		// 	dereferencingMetadata := types.NewDereferencingMetadata(did, types.JSON, types.RepresentationNotSupportedError)
+		// 	return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
+		// }
 	} else {
 		dereferenceMetadata = types.NewDereferencingMetadata(did, dereferenceOptions.Accept, types.RepresentationNotSupportedError)
 	}
-
+	
+	
 	return types.DidDereferencing{ContentStream: cotentStream, DereferencingMetadata: dereferenceMetadata}
 }
 
-func (rds ResourceDereferenceService) dereferenceHeader(path string, did string, dereferenceOptions types.DereferencingOption) (*types.DereferencedResource, types.DereferencingMetadata) {
+func (rds ResourceDereferenceService) dereferenceHeader(path string, did string, dereferenceOptions types.DereferencingOption) (*types.DereferencedResourceList, types.DereferencingMetadata) {
 	dereferenceMetadata := types.NewDereferencingMetadata(did, dereferenceOptions.Accept, "")
 
 	resourceId := utils.GetResourceId(path)
 
 	resource, dereferencingError := rds.ledgerService.QueryResource(did, resourceId)
-
+	log.Warn().Msgf("dereferencingError: %s", dereferencingError)
 	if dereferencingError != "" {
 		dereferenceMetadata.ResolutionError = dereferencingError
-		return &types.DereferencedResource{}, dereferenceMetadata
+		return &types.DereferencedResourceList{}, dereferenceMetadata
 	}
-	return types.NewDereferencedResource(resource.Header), dereferenceMetadata
+	return types.NewDereferencedResourceList(did, []*resourceTypes.ResourceHeader{resource.Header}), dereferenceMetadata
 }
 
 func (rds ResourceDereferenceService) dereferenceCollectionResources(did string, dereferenceOptions types.DereferencingOption) (*types.DereferencedResourceList, types.DereferencingMetadata) {
@@ -70,7 +73,7 @@ func (rds ResourceDereferenceService) dereferenceCollectionResources(did string,
 		dereferenceMetadata.ResolutionError = dereferencingError
 		return &types.DereferencedResourceList{}, dereferenceMetadata
 	}
-	return types.NewDereferencedResourceList(resources), dereferenceMetadata
+	return types.NewDereferencedResourceList(did, resources), dereferenceMetadata
 }
 
 func (rds ResourceDereferenceService) dereferenceResourceData(path string, did string, dereferenceOptions types.DereferencingOption) (*types.DereferencedResourceData, types.DereferencingMetadata) {

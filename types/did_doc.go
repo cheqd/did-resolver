@@ -34,18 +34,18 @@ type Service struct {
 	ServiceEndpoint string   `json:"serviceEndpoint,omitempty"`
 }
 
-func NewDidDoc(protoDidDoc cheqd.Did) DidDoc {
+func NewDidDoc(protoDidDoc cheqd.Did) *DidDoc {
 	verificationMethods := []VerificationMethod{}
 	for _, vm := range protoDidDoc.VerificationMethod {
-		verificationMethods = append(verificationMethods, NewVerificationMethod(vm))
+		verificationMethods = append(verificationMethods, *NewVerificationMethod(vm))
 	}
 
 	services := []Service{}
 	for _, s := range protoDidDoc.Service {
-		services = append(services, NewService(s))
+		services = append(services, *NewService(s))
 	}
 
-	return DidDoc{
+	return &DidDoc{
 		Id:                   protoDidDoc.Id,
 		Controller:           protoDidDoc.Controller,
 		VerificationMethod:   verificationMethods,
@@ -59,8 +59,8 @@ func NewDidDoc(protoDidDoc cheqd.Did) DidDoc {
 	}
 }
 
-func NewVerificationMethod(protoVerificationMethod *cheqd.VerificationMethod) VerificationMethod {
-	return VerificationMethod{
+func NewVerificationMethod(protoVerificationMethod *cheqd.VerificationMethod) *VerificationMethod {
+	return &VerificationMethod{
 		Id:                 protoVerificationMethod.Id,
 		Type:               protoVerificationMethod.Type,
 		Controller:         protoVerificationMethod.Controller,
@@ -69,8 +69,8 @@ func NewVerificationMethod(protoVerificationMethod *cheqd.VerificationMethod) Ve
 	}
 }
 
-func NewService(protoService *cheqd.Service) Service {
-	return Service{
+func NewService(protoService *cheqd.Service) *Service {
+	return &Service{
 		Id:              protoService.Id,
 		Type:            protoService.Type,
 		ServiceEndpoint: protoService.ServiceEndpoint,
@@ -78,13 +78,13 @@ func NewService(protoService *cheqd.Service) Service {
 }
 
 func (e *DidDoc) AddContext(newProtocol string) { e.Context = AddElemToSet(e.Context, newProtocol) }
-func (e *DidDoc) RemoveContext() { e.Context = []string{} }
+func (e *DidDoc) RemoveContext() { e.Context = nil }
 func (e *DidDoc) GetBytes() []byte { return []byte{} }
 
 func (e *Service) AddContext(newProtocol string) { e.Context = AddElemToSet(e.Context, newProtocol) }
-func (e *Service) RemoveContext() { e.Context = []string{} }
+func (e *Service) RemoveContext() { e.Context = nil }
 func (e *Service) GetBytes() []byte { return []byte{} }
 
 func (e *VerificationMethod) AddContext(newProtocol string) { e.Context = AddElemToSet(e.Context, newProtocol) }
-func (e *VerificationMethod) RemoveContext() { e.Context = []string{} }
+func (e *VerificationMethod) RemoveContext() { e.Context = nil }
 func (e *VerificationMethod) GetBytes() []byte { return []byte{} }

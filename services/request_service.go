@@ -1,10 +1,6 @@
 package services
 
 import (
-	// jsonpb Marshaller is deprecated, but is needed because there's only one way to proto
-	// marshal in combination with our proto generator version
-	"encoding/json"
-
 	"github.com/rs/zerolog/log"
 
 	cheqdTypes "github.com/cheqd/cheqd-node/x/cheqd/types"
@@ -33,6 +29,8 @@ func NewRequestService(didMethod string, ledgerService LedgerServiceI) RequestSe
 
 func (rs RequestService) ProcessDIDRequest(didUrl string, resolutionOptions types.ResolutionOption) types.ResolutinResultI {
 	var result types.ResolutinResultI
+	did, path, query, fragmentId, _ := cheqdUtils.TrySplitDIDUrl(didUrl)
+	log.Warn().Msgf("Query %s %s %s %s ", did, path, query, fragmentId)
 	if utils.IsDidUrl(didUrl) {
 		log.Trace().Msgf("Dereferencing %s", didUrl)
 		result = rs.Dereference(didUrl, types.DereferencingOption(resolutionOptions))
@@ -108,16 +106,19 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 		didDereferencing = rs.dereferenceSecondary(did, fragmentId, dereferenceOptions)
 	}
 
+	if didDereferencing.DereferencingMetadata.ResolutionError != "" {
+		didDereferencing.ContentStream = nil
+		didDereferencing.Metadata = types.ResolutionDidDocMetadata{}
+		return didDereferencing
+	}
+
 	if dereferenceOptions.Accept == types.DIDJSONLD || dereferenceOptions.Accept == types.JSONLD {
+
 		didDereferencing.ContentStream.AddContext(types.DIDSchemaJSONLD)
 	} else {
 		didDereferencing.ContentStream.RemoveContext()
 	}
 
-	if didDereferencing.DereferencingMetadata.ResolutionError != "" {
-		didDereferencing.ContentStream = nil
-		didDereferencing.Metadata = types.ResolutionDidDocMetadata{}
-	} 
 	return didDereferencing
 }
 
@@ -131,7 +132,7 @@ func (rs RequestService) dereferenceSecondary(did string, fragmentId string, der
 		dereferencingMetadata := types.NewDereferencingMetadata(did, types.JSON, types.RepresentationNotSupportedError)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
 	}
-	
+
 	didResolution := rs.Resolve(did, types.ResolutionOption(dereferenceOptions))
 
 	dereferencingMetadata := types.DereferencingMetadata(didResolution.ResolutionMetadata)
@@ -143,10 +144,10 @@ func (rs RequestService) dereferenceSecondary(did string, fragmentId string, der
 
 	var contentStream types.ContentStreamI
 	if fragmentId != "" {
-		contentStream = rs.didDocService.GetDIDFragment(fragmentId, didResolution.Did)
+		contentStream = rs.didDocService.GetDIDFragment(fragmentId, *didResolution.Did)
 		metadata = types.TransformToFragmentMetadata(metadata)
 	} else {
-		contentStream = &didResolution.Did
+		contentStream = didResolution.Did
 	}
 
 	if contentStream == nil {
@@ -165,76 +166,4 @@ func (rs RequestService) ResolveMetadata(did string, metadata cheqdTypes.Metadat
 		return types.ResolutionDidDocMetadata{}, errorType
 	}
 	return types.NewResolutionDidDocMetadata(did, metadata, resources), ""
-}
-
-func createJsonResolution(didDoc string, metadata string, resolutionMetadata string) ([]byte, error) {
-	if didDoc == "" {
-		didDoc = "null"
-	}
-
-	if metadata == "" {
-		metadata = "[]"
-	}
-
-	response := struct {
-		DidResolutionMetadata json.RawMessage `json:"didResolutionMetadata"`
-		DidDocument           json.RawMessage `json:"didDocument"`
-		DidDocumentMetadata   json.RawMessage `json:"didDocumentMetadata"`
-	}{
-		DidResolutionMetadata: json.RawMessage(resolutionMetadata),
-		DidDocument:           json.RawMessage(didDoc),
-		DidDocumentMetadata:   json.RawMessage(metadata),
-	}
-
-	respJson, err := json.MarshalIndent(&response, "", "  ")
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to marshal response")
-		return []byte{}, err
-	}
-
-	return respJson, nil
-}
-
-func createJsonDereferencing(contentStream json.RawMessage, metadata string, dereferencingMetadata string) ([]byte, error) {
-	if contentStream == nil {
-		contentStream = json.RawMessage("null")
-	}
-
-	if metadata == "" {
-		metadata = "[]"
-	}
-
-	response := struct {
-		ContentStream         json.RawMessage `json:"contentStream"`
-		ContentMetadata       json.RawMessage `json:"contentMetadata"`
-		DereferencingMetadata json.RawMessage `json:"dereferencingMetadata"`
-	}{
-		ContentStream:         contentStream,
-		ContentMetadata:       json.RawMessage(metadata),
-		DereferencingMetadata: json.RawMessage(dereferencingMetadata),
-	}
-
-	respJson, err := json.MarshalIndent(&response, "  ", "")
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to marshal response")
-		return []byte{}, err
-	}
-	
-	return respJson, nil
-}
-
-func createJsonDereferencingInternalError(dereferencingMetadata []byte) ([]byte, int) {
-	result, mErr := createJsonDereferencing(nil, "", string(dereferencingMetadata))
-	if mErr != nil {
-		return []byte{}, types.InternalError.GetStatusCode()
-	}
-	return result, types.InternalError.GetStatusCode()
-}
-
-func createJsonResolutionInternalError(resolutionMetadata []byte) ([]byte, int) {
-	result, mErr := createJsonResolution("", "", string(resolutionMetadata))
-	if mErr != nil {
-		return []byte{}, types.InternalError.GetStatusCode()
-	}
-	return result, types.InternalError.GetStatusCode()
 }

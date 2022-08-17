@@ -6,16 +6,17 @@ import (
 )
 
 type ResolutionDidDocMetadata struct {
-	Created     string            `json:"created,omitempty"`
-	Updated     string            `json:"updated,omitempty"`
-	Deactivated bool              `json:"deactivated,omitempty"`
-	VersionId   string            `json:"versionId,omitempty"`
-	Resources   []ResourcePreview `json:"linkedResourceMetadata,omitempty"`
+	Created     string                 `json:"created,omitempty"`
+	Updated     string                 `json:"updated,omitempty"`
+	Deactivated bool                   `json:"deactivated,omitempty"`
+	VersionId   string                 `json:"versionId,omitempty"`
+	Resources   []DereferencedResource `json:"linkedResourceMetadata,omitempty"`
 }
 
 type ResourcePreview struct {
 	ResourceURI       string `json:"resourceURI"`
 	CollectionId      string `json:"resourceCollectionId"`
+	ResourceId        string `json:"resourceId"`
 	Name              string `json:"resourceName"`
 	ResourceType      string `json:"resourceType"`
 	MediaType         string `json:"mediaType"`
@@ -27,29 +28,15 @@ type ResourcePreview struct {
 
 func NewResolutionDidDocMetadata(did string, metadata cheqd.Metadata, resources []*resource.ResourceHeader) ResolutionDidDocMetadata {
 	newMetadata := ResolutionDidDocMetadata{
-		metadata.Created,
-		metadata.Updated,
-		metadata.Deactivated,
-		metadata.VersionId,
-		[]ResourcePreview(nil),
+		Created: metadata.Created,
+		Updated: metadata.Updated,
+		Deactivated: metadata.Deactivated,
+		VersionId: metadata.VersionId,
 	}
-	if metadata.Resources == nil {
+	if metadata.Resources == nil || len(resources) == 0 {
 		return newMetadata
 	}
-	for _, r := range resources {
-		resourcePreview := ResourcePreview{
-			did + RESOURCE_PATH + r.Id,
-			r.CollectionId,
-			r.Name,
-			r.ResourceType,
-			r.MediaType,
-			r.Created,
-			FixResourceChecksum(r.Checksum),
-			r.PreviousVersionId,
-			r.NextVersionId,
-		}
-		newMetadata.Resources = append(newMetadata.Resources, resourcePreview)
-	}
+	newMetadata.Resources = NewDereferencedResourceList(did, resources).Resources
 	return newMetadata
 }
 

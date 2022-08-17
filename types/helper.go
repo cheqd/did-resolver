@@ -16,6 +16,9 @@ func FixResourceChecksum(inputChecksum []byte) (hash string) {
 }
 
 func AddElemToSet(set []string, newElement string) []string {
+	if set == nil {
+		set = []string{}
+	}
 	for _, c := range set {
 		if c == newElement {
 			return set

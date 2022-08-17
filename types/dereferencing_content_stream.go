@@ -3,53 +3,48 @@ package types
 import resource "github.com/cheqd/cheqd-node/x/resource/types"
 
 type DereferencedResource struct {
-	Context           []string `json:"@context,omitempty"`
-	CollectionId      string   `json:"collectionId,omitempty"`
-	Id                string   `json:"id,omitempty"`
-	Name              string   `json:"name,omitempty"`
-	ResourceType      string   `json:"resourceType,omitempty"`
-	MediaType         string   `json:"mediaType,omitempty"`
-	Created           string   `json:"created,omitempty"`
-	Checksum          string   `json:"checksum,omitempty"`
-	PreviousVersionId string   `json:"previousVersionId,omitempty"`
-	NextVersionId     string   `json:"nextVersionId,omitempty"`
+	ResourceURI       string   `json:"resourceURI"`
+	CollectionId      string   `json:"resourceCollectionId"`
+	ResourceId        string   `json:"resourceId"`
+	Name              string   `json:"resourceName"`
+	ResourceType      string   `json:"resourceType"`
+	MediaType         string   `json:"mediaType"`
+	Created           string   `json:"created"`
+	Checksum          string   `json:"checksum"`
+	PreviousVersionId *string   `json:"previousVersionId"`
+	NextVersionId     *string   `json:"nextVersionId"`
 }
 
-func NewDereferencedResource(resource *resource.ResourceHeader) *DereferencedResource {
+func NewDereferencedResource(did string, resource *resource.ResourceHeader) *DereferencedResource {
+	var previousVersionId, nextVersionId *string
+	if resource.PreviousVersionId != "" {
+		previousVersionId = &resource.PreviousVersionId
+	}
+	if resource.NextVersionId != "" {
+		nextVersionId = &resource.NextVersionId
+	}
 	return &DereferencedResource{
+		ResourceURI:       did + RESOURCE_PATH + resource.Id,
 		CollectionId:      resource.CollectionId,
-		Id:                resource.Id,
+		ResourceId:        resource.Id,
 		Name:              resource.Name,
 		ResourceType:      resource.ResourceType,
 		MediaType:         resource.MediaType,
 		Created:           resource.Created,
 		Checksum:          FixResourceChecksum(resource.Checksum),
-		PreviousVersionId: resource.PreviousVersionId,
-		NextVersionId:     resource.NextVersionId,
+		PreviousVersionId: previousVersionId,
+		NextVersionId:     nextVersionId,
 	}
 }
 
-func (e *DereferencedResource) AddContext(newProtocol string) {
-	e.Context = AddElemToSet(e.Context, newProtocol)
-}
-
-func (e *DereferencedResource) RemoveContext() {
-	e.Context = []string{}
-}
-
-func (e *DereferencedResource) GetBytes() []byte {
-	return []byte{}
-}
-
 type DereferencedResourceList struct {
-	Context   []string               `json:"@context,omitempty"`
-	Resources []DereferencedResource `json:"resources,omitempty"`
+	Resources []DereferencedResource `json:"linkedResourceMetadata,omitempty"`
 }
 
-func NewDereferencedResourceList(protoResources []*resource.ResourceHeader) *DereferencedResourceList {
+func NewDereferencedResourceList(did string, protoResources []*resource.ResourceHeader) *DereferencedResourceList {
 	resourceList := []DereferencedResource{}
 	for _, r := range protoResources {
-		resourceList = append(resourceList, *NewDereferencedResource(r))
+		resourceList = append(resourceList, *NewDereferencedResource(did, r))
 	}
 
 	return &DereferencedResourceList{
@@ -57,10 +52,8 @@ func NewDereferencedResourceList(protoResources []*resource.ResourceHeader) *Der
 	}
 }
 
-func (e *DereferencedResourceList) AddContext(newProtocol string) {
-	e.Context = AddElemToSet(e.Context, newProtocol)
-}
-func (e *DereferencedResourceList) RemoveContext()   { e.Context = []string{} }
+func (e *DereferencedResourceList) AddContext(newProtocol string) {}
+func (e *DereferencedResourceList) RemoveContext()   {}
 func (e *DereferencedResourceList) GetBytes() []byte { return []byte{} }
 
 type DereferencedResourceData []byte

@@ -98,7 +98,7 @@ func serve() {
 		// if contentType != dereferencingOptions.Accept {
 		// 	return didDereferencing.ContentStream, statusCode, contentType
 		// }
-		if utils.IsResourceDataPath(path) {
+		if utils.IsResourceDataPath(path) && resolutionResponse.GetStatus() == http.StatusOK {
 			return c.Blob(resolutionResponse.GetStatus(), resolutionResponse.GetContentType(), resolutionResponse.GetBytes())
 		}
 		return c.JSONPretty(resolutionResponse.GetStatus(), resolutionResponse, "  ")

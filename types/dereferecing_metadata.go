@@ -5,9 +5,9 @@ type DereferencingOption ResolutionOption
 type DereferencingMetadata ResolutionMetadata
 
 type DidDereferencing struct {
+	DereferencingMetadata DereferencingMetadata    `json:"dereferencingMetadata,omitempty"`
 	ContentStream         ContentStreamI           `json:"contentStream,omitempty"`
 	Metadata              ResolutionDidDocMetadata `json:"contentMetadata,omitempty"`
-	DereferencingMetadata DereferencingMetadata    `json:"dereferencingMetadata,omitempty"`
 }
 
 func NewDereferencingMetadata(did string, contentType ContentType, resolutionError ErrorType) DereferencingMetadata {
@@ -23,5 +23,8 @@ func (d DidDereferencing) GetContentType() string {
 }
 
 func (d DidDereferencing) GetBytes() []byte {
+	if d.ContentStream == nil {
+		return []byte{}
+	}
 	return d.ContentStream.GetBytes()
 }
