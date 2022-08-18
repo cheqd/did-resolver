@@ -91,12 +91,17 @@ func serve() {
 		if utils.IsCollectionResourcesPathRedirect(path) {
 			return c.Redirect(http.StatusMovedPermanently, "all")
 		}
-		responseBody, status, contentType := requestService.ProcessDIDRequest(didUrl, types.ResolutionOption{Accept: requestedContentType})
+		resolutionResponse := requestService.ProcessDIDRequest(didUrl, types.ResolutionOption{Accept: requestedContentType})
 
-		log.Debug().Msgf("Response body: %s", responseBody)
+		c.Response().Header().Set(echo.HeaderContentType, resolutionResponse.GetContentType())
 
-		c.Response().Header().Set(echo.HeaderContentType, string(contentType))
-		return c.Blob(status, string(contentType), responseBody)
+		// if contentType != dereferencingOptions.Accept {
+		// 	return didDereferencing.ContentStream, statusCode, contentType
+		// }
+		if utils.IsResourceDataPath(path) && resolutionResponse.GetStatus() == http.StatusOK {
+			return c.Blob(resolutionResponse.GetStatus(), resolutionResponse.GetContentType(), resolutionResponse.GetBytes())
+		}
+		return c.JSONPretty(resolutionResponse.GetStatus(), resolutionResponse, "  ")
 	})
 
 	log.Info().Msg("Starting listener")
