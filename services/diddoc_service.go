@@ -122,15 +122,11 @@ func (ds DIDDocService) MarshallContentStream(contentStream protoiface.MessageV1
 	return string(result), nil
 }
 
-func FindId (Id string, requestedId string) bool{	
-	if strings.Contains(Id, "#"){
-		Id = strings.Split(Id, "#")[1]
+func FindId (id string, requestedId string) bool{	
+	if strings.Contains(id, "#"){
+		id = strings.Split(id, "#")[1]
 	}
-	if Id == requestedId {
-		return true
-	} else {
-		return false
-	}
+	return id == requestedId
 } 
 
 func (DIDDocService) GetDIDFragment(fragmentId string, didDoc cheqd.Did) protoiface.MessageV1 {
@@ -199,7 +195,7 @@ func (ds DIDDocService) protoToMap(protoObject protoiface.MessageV1) (orderedmap
 	return *mapObj, err
 }
 
-func CreatServiceEndpoint(relativeRef string, fragmentId string, inputServiceEndpoint string) (outputServiceEndpoint string) {
+func CreateServiceEndpoint(relativeRef string, fragmentId string, inputServiceEndpoint string) (outputServiceEndpoint string) {
 	outputServiceEndpoint = inputServiceEndpoint + relativeRef
 	if fragmentId != "" {
 		outputServiceEndpoint += "#" + fragmentId

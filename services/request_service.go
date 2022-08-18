@@ -151,7 +151,7 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 
 	var didDereferencing types.DidDereferencing
 	if query != "" {
-		didDereferencing, err = rs.dereferenceService(did, query, fragmentId, didUrl, dereferenceOptions)
+		didDereferencing, err = rs.dereferenceService(didUrl, dereferenceOptions)
 	} else if path != "" {
 		didDereferencing, err = rs.dereferencePrimary(path, did, didUrl, dereferenceOptions)
 	} else {
@@ -166,7 +166,8 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 	return didDereferencing
 }
 
-func (rs RequestService) dereferenceService(did string, query string, fragmentId string, didUrl string, dereferenceOptions types.DereferencingOption) (types.DidDereferencing, error) {
+func (rs RequestService) dereferenceService(didUrl string, dereferenceOptions types.DereferencingOption) (types.DidDereferencing, error) {
+	did, _, query, fragmentId, _ := cheqdUtils.TrySplitDIDUrl(didUrl)
 	didResolution := rs.Resolve(did, types.ResolutionOption(dereferenceOptions))
 
 	dereferencingMetadata := types.DereferencingMetadata(didResolution.ResolutionMetadata)
@@ -174,13 +175,13 @@ func (rs RequestService) dereferenceService(did string, query string, fragmentId
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
 
-	QueryUrl, err := url.Parse("?" + query)
+	queryUrl, err := url.Parse("?" + query)
 	if err != nil {
 		return types.DidDereferencing{}, err
 	}
-	ParseQuery:= QueryUrl.Query()
+	parseQuery:= queryUrl.Query()
 
-	queryId := ParseQuery.Get("service")
+	queryId := parseQuery.Get("service")
 	if queryId == "" {
 		dereferencingMetadata = types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.RepresentationNotSupportedError)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
@@ -192,7 +193,7 @@ func (rs RequestService) dereferenceService(did string, query string, fragmentId
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
 
-	serviceEndpoint := CreatServiceEndpoint(ParseQuery.Get("relativeRef"), fragmentId, service.ServiceEndpoint)
+	serviceEndpoint := CreateServiceEndpoint(parseQuery.Get("relativeRef"), fragmentId, service.ServiceEndpoint)
 	metadata := types.TransformToFragmentMetadata(didResolution.Metadata)
 
 	jsonFragment, err := json.Marshal(serviceEndpoint)
