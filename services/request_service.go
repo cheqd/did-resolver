@@ -27,8 +27,8 @@ func NewRequestService(didMethod string, ledgerService LedgerServiceI) RequestSe
 	}
 }
 
-func (rs RequestService) ProcessDIDRequest(didUrl string, resolutionOptions types.ResolutionOption) types.ResolutinResultI {
-	var result types.ResolutinResultI
+func (rs RequestService) ProcessDIDRequest(didUrl string, resolutionOptions types.ResolutionOption) types.ResolutionResultI {
+	var result types.ResolutionResultI
 	did, path, query, fragmentId, _ := cheqdUtils.TrySplitDIDUrl(didUrl)
 	log.Warn().Msgf("Query %s %s %s %s ", did, path, query, fragmentId)
 	if utils.IsDidUrl(didUrl) {
