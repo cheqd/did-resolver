@@ -1,7 +1,5 @@
 package types
 
-type DereferencingOption ResolutionOption
-
 type DereferencingMetadata ResolutionMetadata
 
 type DidDereferencing struct {

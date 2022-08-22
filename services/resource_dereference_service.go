@@ -32,11 +32,11 @@ func (rds ResourceDereferenceService) DereferenceResource(path string, did strin
 	}
 
 	if utils.IsResourceHeaderPath(path) {
-		cotentStream, dereferenceMetadata = rds.dereferenceHeader(path, did, dereferenceOptions)
+		cotentStream, dereferenceMetadata = rds.DereferenceHeader(path, did, dereferenceOptions)
 	} else if utils.IsCollectionResourcesPath(path) {
-		cotentStream, dereferenceMetadata = rds.dereferenceCollectionResources(did, dereferenceOptions)
+		cotentStream, dereferenceMetadata = rds.DereferenceCollectionResources(did, dereferenceOptions)
 	} else if utils.IsResourceDataPath(path) {
-		cotentStream, dereferenceMetadata = rds.dereferenceResourceData(path, did, dereferenceOptions)
+		cotentStream, dereferenceMetadata = rds.DereferenceResourceData(path, did, dereferenceOptions)
 	} else {
 		dereferenceMetadata = types.NewDereferencingMetadata(did, dereferenceOptions.Accept, types.RepresentationNotSupportedError)
 	}
@@ -44,41 +44,39 @@ func (rds ResourceDereferenceService) DereferenceResource(path string, did strin
 	return types.DidDereferencing{ContentStream: cotentStream, DereferencingMetadata: dereferenceMetadata}
 }
 
-func (rds ResourceDereferenceService) dereferenceHeader(path string, did string, dereferenceOptions types.DereferencingOption) (*types.DereferencedResourceList, types.DereferencingMetadata) {
-	dereferenceMetadata := types.NewDereferencingMetadata(did, dereferenceOptions.Accept, "")
-
-	resourceId := utils.GetResourceId(path)
-
+func (rds ResourceDereferenceService) DereferenceHeader(resourceId string, did string, contentType types.ContentType) types.DidDereferencing {
+	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 	resource, dereferencingError := rds.ledgerService.QueryResource(did, resourceId)
 	log.Warn().Msgf("dereferencingError: %s", dereferencingError)
 	if dereferencingError != "" {
 		dereferenceMetadata.ResolutionError = dereferencingError
-		return &types.DereferencedResourceList{}, dereferenceMetadata
+		return types.DidDereferencing{DereferencingMetadata: dereferenceMetadata}
 	}
-	return types.NewDereferencedResourceList(did, []*resourceTypes.ResourceHeader{resource.Header}), dereferenceMetadata
+	contentStream := types.NewDereferencedResourceList(did, []*resourceTypes.ResourceHeader{resource.Header})
+	return types.DidDereferencing{ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}
 }
 
-func (rds ResourceDereferenceService) dereferenceCollectionResources(did string, dereferenceOptions types.DereferencingOption) (*types.DereferencedResourceList, types.DereferencingMetadata) {
-	dereferenceMetadata := types.NewDereferencingMetadata(did, dereferenceOptions.Accept, "")
+func (rds ResourceDereferenceService) DereferenceCollectionResources(did string, contentType types.ContentType) types.DidDereferencing {
+	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 	resources, dereferencingError := rds.ledgerService.QueryCollectionResources(did)
 	if dereferencingError != "" {
 		dereferenceMetadata.ResolutionError = dereferencingError
-		return &types.DereferencedResourceList{}, dereferenceMetadata
+		return types.DidDereferencing{DereferencingMetadata: dereferenceMetadata}
 	}
-	return types.NewDereferencedResourceList(did, resources), dereferenceMetadata
+	contentStream := types.NewDereferencedResourceList(did, resources)
+	return types.DidDereferencing{ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}
 }
 
-func (rds ResourceDereferenceService) dereferenceResourceData(path string, did string, dereferenceOptions types.DereferencingOption) (*types.DereferencedResourceData, types.DereferencingMetadata) {
-	dereferenceMetadata := types.NewDereferencingMetadata(did, dereferenceOptions.Accept, "")
-	resourceId := utils.GetResourceId(path)
+func (rds ResourceDereferenceService) DereferenceResourceData(resourceId string, did string, contentType types.ContentType) types.DidDereferencing {
+	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 
 	resource, dereferencingError := rds.ledgerService.QueryResource(did, resourceId)
 
 	if dereferencingError != "" {
 		dereferenceMetadata.ResolutionError = dereferencingError
-		return &types.DereferencedResourceData{}, dereferenceMetadata
+		return types.DidDereferencing{DereferencingMetadata: dereferenceMetadata}
 	}
 	result := types.DereferencedResourceData(resource.Data)
 	dereferenceMetadata.ContentType = types.ContentType(resource.Header.MediaType)
-	return &result, dereferenceMetadata
+	return types.DidDereferencing{ContentStream: &result, DereferencingMetadata: dereferenceMetadata}
 }

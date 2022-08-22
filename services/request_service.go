@@ -1,6 +1,10 @@
 package services
 
 import (
+	"net/http"
+	"strings"
+
+	"github.com/labstack/echo"
 	"github.com/rs/zerolog/log"
 
 	cheqdTypes "github.com/cheqd/cheqd-node/x/cheqd/types"
@@ -165,4 +169,47 @@ func (rs RequestService) ResolveMetadata(did string, metadata cheqdTypes.Metadat
 		return types.ResolutionDidDocMetadata{}, errorType
 	}
 	return types.NewResolutionDidDocMetadata(did, metadata, resources), ""
+}
+
+func (rs RequestService) DereferenceResourceMetadata(c echo.Context) types.DidDereferencing {
+	did := c.Param("did")
+	resourceId := c.Param("resource")
+	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
+	result := rs.resourceDereferenceService.DereferenceHeader(resourceId, did, requestedContentType)
+	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
+	return c.JSONPretty(result.GetStatus(), result, "  ")
+}
+
+func (rs RequestService) DereferenceResourceData(c echo.Context) types.DidDereferencing {
+	did := c.Param("did")
+	resourceId := c.Param("resource")
+	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
+	result := rs.resourceDereferenceService.DereferenceResourceData(resourceId, did, requestedContentType)
+	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
+	if result.GetStatus() == http.StatusOK {
+		return c.Blob(result.GetStatus(), result.GetContentType(), result.GetBytes())
+	}
+	return c.JSONPretty(result.GetStatus(), result, "  ")
+}
+
+func (rs RequestService) DereferenceCollectionResources(c echo.Context) types.DidDereferencing {
+	did := c.Param("did")
+	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
+	resolutionResponse := rs.resourceDereferenceService.DereferenceCollectionResources(did, requestedContentType)
+	c.Response().Header().Set(echo.HeaderContentType, resolutionResponse.GetContentType())
+	return c.JSONPretty(resolutionResponse.GetStatus(), resolutionResponse, "  ")
+}
+
+func getContentType(accept string) types.ContentType {
+	tmp := strings.Split(accept, ",")
+	for _, cType := range tmp {
+		result := types.ContentType(strings.Split(cType, ";")[0])
+		if result == "*/*" {
+			result = types.DIDJSONLD
+		}
+		if result.IsSupported() {
+			return result
+		}
+	}
+	return ""
 }

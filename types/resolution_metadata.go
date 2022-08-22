@@ -6,10 +6,6 @@ import (
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
 )
 
-type ResolutionOption struct {
-	Accept ContentType `json:"accept,omitempty"`
-}
-
 type ResolutionMetadata struct {
 	ContentType     ContentType   `json:"contentType,omitempty"`
 	ResolutionError ErrorType     `json:"error,omitempty"`
