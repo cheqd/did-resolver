@@ -6,7 +6,7 @@ type ContentStreamI interface {
 	GetBytes() []byte
 }
 
-type ResolutinResultI interface {
+type ResolutionResultI interface {
 	GetStatus() int
 	GetContentType() string
 	GetBytes() []byte
