@@ -5,7 +5,8 @@ import requests
 
 from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRAGMENT, \
     FAKE_TESTNET_DID, FAKE_MAINNET_DID, FAKE_TESTNET_FRAGMENT, FAKE_MAINNET_FRAGMENT, RESOLVER_URL, PATH, \
-    LDJSON, DIDJSON, DIDLDJSON, HTML, FAKE_TESTNET_RESOURCE, TESTNET_RESOURCE, TESTNET_RESOURCE_NAME, JSON
+    LDJSON, DIDJSON, DIDLDJSON, HTML, FAKE_TESTNET_RESOURCE, TESTNET_RESOURCE, TESTNET_RESOURCE_NAME, JSON, \
+    MAINNET_SERVICE
 
 
 @pytest.mark.parametrize(
@@ -29,6 +30,16 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
                                 r"\"dereferencingMetadata(.*?)\"error\":\"notFound\""),
         (FAKE_MAINNET_FRAGMENT, r"\"contentStream\":null,\"contentMetadata\":\[\],"
                                 r"\"dereferencingMetadata(.*?)\"error\":\"notFound\""),
+
+        # TODO: uncomment after implementing
+        # (MAINNET_SERVICE, fr"\"contentStream\":(.*?)\"serviceEndpoint\"(.*?)contentMetadata"
+        #                   r"(.*?)dereferencingMetadata\""),
+        # (MAINNET_SERVICE + "&relativeRef=%2Fsome%2Fpath%3Fquery",
+        #  fr"\"contentStream\":(.*?)\"serviceEndpoint\"(.*?)/some/path?query(.*?)"
+        #  r"contentMetadata(.*?)dereferencingMetadata\""),
+        # (MAINNET_SERVICE + "&relativeRef=%2Fmyresume%2Fdoc%3Fversion%3Dlatest" + "#flag",
+        #  r"\"contentStream\":(.*?)\"serviceEndpoint\"(.*?)/some/path?query#flag(.*?)"
+        #  r"contentMetadata(.*?)dereferencingMetadata\""),
 
         (TESTNET_RESOURCE, fr"\"contentStream\":(.*?)collectionId(.*?),\"contentMetadata\":(.*?),"
                            r"\"dereferencingMetadata(.*?)"),

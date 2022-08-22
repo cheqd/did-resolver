@@ -149,10 +149,14 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
 	}
 
-	var didDereferencing types.DidDereferencing
+    // TODO: implement
 	if query != "" {
-		didDereferencing, err = rs.dereferenceService(didUrl, dereferenceOptions)
-	} else if path != "" {
+		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.RepresentationNotSupportedError)
+		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
+	}
+
+	var didDereferencing types.DidDereferencing
+	if path != "" {
 		didDereferencing, err = rs.dereferencePrimary(path, did, didUrl, dereferenceOptions)
 	} else {
 		didDereferencing, err = rs.dereferenceSecondary(did, fragmentId, didUrl, dereferenceOptions)

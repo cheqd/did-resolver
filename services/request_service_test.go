@@ -330,7 +330,7 @@ func TestDereferencing(t *testing.T) {
 			expectedError:     types.NotFoundError,
 		},
 		{
-			name: 				"get clean endpoint",
+			name: 				"successful primary service dereferencing",
 			ledgerService: 		NewMockLedgerService(validDIDDoc, validMetadata, validResource),
 			dereferencingType: 	types.DIDJSONLD,
 			didUrl:            	validDid + "?service=service-1",
@@ -339,7 +339,7 @@ func TestDereferencing(t *testing.T) {
 			expectedError:    	"",
 		},
 		{
-			name: 				"sercice not found",
+			name: 				"Primary service dereferencing(not found)",
 			ledgerService: 		NewMockLedgerService(validDIDDoc, validMetadata, validResource),
 			dereferencingType: 	types.DIDJSONLD,
 			didUrl:            	validDid + "?service=serv",
@@ -347,7 +347,7 @@ func TestDereferencing(t *testing.T) {
 			expectedError:     	types.NotFoundError,
 		},
 		{
-			name: 				"hash simpol",
+			name: 				"Primary service dereferencing(hash simpol)",
 			ledgerService: 		NewMockLedgerService(validDIDDoc, validMetadata, validResource),
 			dereferencingType: 	types.DIDJSONLD,
 			didUrl:            	validDid + "?service=service-1#flag",
@@ -356,7 +356,7 @@ func TestDereferencing(t *testing.T) {
 			expectedError:    	"",
 		},
 		{
-			name: 				"relativeRef",
+			name: 				"Primary service dereferencing(relativeRef)",
 			ledgerService: 		NewMockLedgerService(validDIDDoc, validMetadata, validResource),
 			dereferencingType: 	types.DIDJSONLD,
 			didUrl:            	validDid + "?service=service-1&relativeRef=/some/path?some_query",
@@ -365,7 +365,7 @@ func TestDereferencing(t *testing.T) {
 			expectedError:    	"",
 		},
 		{
-			name: 				"relativeRef + hash simpol",
+			name: 				"Primary dereferencing(relativeRef + hash flag)",
 			ledgerService: 		NewMockLedgerService(validDIDDoc, validMetadata, validResource),
 			dereferencingType: 	types.DIDJSONLD,
 			didUrl:            	validDid + "?service=service-1&relativeRef=/some/path?some_query#flag",
