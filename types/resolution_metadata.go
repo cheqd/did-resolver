@@ -3,7 +3,6 @@ package types
 import (
 	"time"
 
-	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
 )
 
@@ -25,9 +24,9 @@ type DidProperties struct {
 }
 
 type DidResolution struct {
-	Did                cheqd.Did                `json:"didDocument,omitempty"`
-	Metadata           ResolutionDidDocMetadata `json:"didDocumentMetadata,omitempty"`
-	ResolutionMetadata ResolutionMetadata       `json:"didResolutionMetadata,omitempty"`
+	ResolutionMetadata ResolutionMetadata       `json:"didResolutionMetadata"`
+	Did                *DidDoc                  `json:"didDocument"`
+	Metadata           ResolutionDidDocMetadata `json:"didDocumentMetadata"`
 }
 
 func NewResolutionMetadata(didUrl string, contentType ContentType, resolutionError ErrorType) ResolutionMetadata {
@@ -47,4 +46,16 @@ func NewResolutionMetadata(didUrl string, contentType ContentType, resolutionErr
 		Retrieved:       time.Now().UTC().Format(time.RFC3339),
 		DidProperties:   didProperties,
 	}
+}
+
+func (r DidResolution) GetStatus() int {
+	return r.ResolutionMetadata.ResolutionError.GetStatusCode()
+}
+
+func (r DidResolution) GetContentType() string {
+	return string(r.ResolutionMetadata.ContentType)
+}
+
+func (r DidResolution) GetBytes() []byte {
+	return []byte{}
 }

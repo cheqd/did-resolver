@@ -1,11 +1,6 @@
 package services
 
 import (
-	// jsonpb Marshaller is deprecated, but is needed because there's only one way to proto
-	// marshal in combination with our proto generator version
-	"encoding/json"
-	"net/url"
-
 	"github.com/rs/zerolog/log"
 
 	cheqdTypes "github.com/cheqd/cheqd-node/x/cheqd/types"
@@ -13,83 +8,37 @@ import (
 	resourceTypes "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
-	"google.golang.org/protobuf/runtime/protoiface"
 )
 
 type RequestService struct {
-	didMethod     string
-	ledgerService LedgerServiceI
-	didDocService DIDDocService
+	didMethod                  string
+	ledgerService              LedgerServiceI
+	didDocService              DIDDocService
+	resourceDereferenceService ResourceDereferenceService
 }
 
 func NewRequestService(didMethod string, ledgerService LedgerServiceI) RequestService {
+	didDocService := DIDDocService{}
 	return RequestService{
-		didMethod:     didMethod,
-		ledgerService: ledgerService,
-		didDocService: DIDDocService{},
+		didMethod:                  didMethod,
+		ledgerService:              ledgerService,
+		didDocService:              didDocService,
+		resourceDereferenceService: NewResourceDereferenceService(ledgerService, didDocService),
 	}
 }
 
-func (rs RequestService) ProcessDIDRequest(didUrl string, resolutionOptions types.ResolutionOption) (string, int) {
-	var result string
-	var statusCode int
+func (rs RequestService) ProcessDIDRequest(didUrl string, resolutionOptions types.ResolutionOption) types.ResolutionResultI {
+	var result types.ResolutionResultI
+	did, path, query, fragmentId, _ := cheqdUtils.TrySplitDIDUrl(didUrl)
+	log.Warn().Msgf("Query %s %s %s %s ", did, path, query, fragmentId)
 	if utils.IsDidUrl(didUrl) {
 		log.Trace().Msgf("Dereferencing %s", didUrl)
-		result, statusCode = rs.prepareDereferencingResult(didUrl, types.DereferencingOption(resolutionOptions))
+		result = rs.Dereference(didUrl, types.DereferencingOption(resolutionOptions))
 	} else {
 		log.Trace().Msgf("Resolving %s", didUrl)
-		result, statusCode = rs.prepareResolutionResult(didUrl, resolutionOptions)
+		result = rs.Resolve(didUrl, resolutionOptions)
 	}
-	return result, statusCode
-}
-
-func (rs RequestService) prepareResolutionResult(did string, resolutionOptions types.ResolutionOption) (string, int) {
-	didResolution := rs.Resolve(did, resolutionOptions)
-
-	resolutionMetadata, mErr1 := json.Marshal(didResolution.ResolutionMetadata)
-	didDoc, mErr2 := rs.didDocService.MarshallDID(didResolution.Did)
-	metadata, mErr3 := json.Marshal(&didResolution.Metadata)
-	if mErr1 != nil || mErr2 != nil || mErr3 != nil {
-		log.Error().Errs("errors", []error{mErr1, mErr2, mErr3}).Msg("Marshalling error")
-		return createJsonResolutionInternalError(resolutionMetadata)
-	}
-
-	if didResolution.ResolutionMetadata.ResolutionError != "" {
-		didDoc, metadata = "", []byte{}
-	}
-
-	result, err := createJsonResolution(didDoc, string(metadata), string(resolutionMetadata))
-	if err != nil {
-		log.Error().Err(err).Msg("Marshalling error")
-		return createJsonResolutionInternalError([]byte{})
-	}
-	return result, didResolution.ResolutionMetadata.ResolutionError.GetStatusCode()
-}
-
-func (rs RequestService) prepareDereferencingResult(did string, dereferencingOptions types.DereferencingOption) (string, int) {
-	log.Info().Msgf("Dereferencing %s", did)
-
-	didDereferencing := rs.Dereference(did, dereferencingOptions)
-
-	dereferencingMetadata, mErr1 := json.Marshal(didDereferencing.DereferencingMetadata)
-	metadata, mErr2 := json.Marshal(didDereferencing.Metadata)
-	if mErr1 != nil || mErr2 != nil {
-		log.Error().Errs("errors", []error{mErr1, mErr2}).Msg("Marshalling error")
-		return createJsonDereferencingInternalError([]byte{})
-	}
-
-	if didDereferencing.DereferencingMetadata.ResolutionError != "" {
-		didDereferencing.ContentStream = nil
-		metadata = []byte{}
-	}
-
-	result, err := createJsonDereferencing(didDereferencing.ContentStream, string(metadata), string(dereferencingMetadata))
-	if err != nil {
-		log.Error().Err(err).Msg("Marshalling error")
-		return createJsonDereferencingInternalError(dereferencingMetadata)
-	}
-
-	return result, didDereferencing.DereferencingMetadata.ResolutionError.GetStatusCode()
+	return result
 }
 
 // https://w3c-ccg.github.io/did-resolution/#resolving
@@ -103,21 +52,20 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 		didResolutionMetadata.ResolutionError = types.MethodNotSupportedError
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}
 	}
-
 	if !cheqdUtils.IsValidDID(did, "", rs.ledgerService.GetNamespaces()) {
 		didResolutionMetadata.ResolutionError = types.InvalidDIDError
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}
 
 	}
 
-	didDoc, metadata, isFound, err := rs.ledgerService.QueryDIDDoc(did)
+	protoDidDoc, metadata, isFound, err := rs.ledgerService.QueryDIDDoc(did)
 	if err != nil {
 		didResolutionMetadata.ResolutionError = types.InternalError
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}
 	}
 
-	resolvedMetadata, err := rs.ResolveMetadata(did, metadata)
-	if err != nil {
+	resolvedMetadata, errorType := rs.ResolveMetadata(did, metadata)
+	if errorType != "" {
 		didResolutionMetadata.ResolutionError = types.InternalError
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}
 	}
@@ -126,11 +74,11 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 		didResolutionMetadata.ResolutionError = types.NotFoundError
 		return types.DidResolution{ResolutionMetadata: didResolutionMetadata}
 	}
-
+	didDoc := types.NewDidDoc(protoDidDoc)
 	if didResolutionMetadata.ContentType == types.DIDJSONLD || didResolutionMetadata.ContentType == types.JSONLD {
-		didDoc.Context = append(didDoc.Context, types.DIDSchemaJSONLD)
+		didDoc.AddContext(types.DIDSchemaJSONLD)
 	} else {
-		didDoc.Context = []string{}
+		didDoc.RemoveContext()
 	}
 	return types.DidResolution{Did: didDoc, Metadata: resolvedMetadata, ResolutionMetadata: didResolutionMetadata}
 }
@@ -139,10 +87,6 @@ func (rs RequestService) Resolve(did string, resolutionOptions types.ResolutionO
 func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.DereferencingOption) types.DidDereferencing {
 	did, path, query, fragmentId, err := cheqdUtils.TrySplitDIDUrl(didUrl)
 	log.Info().Msgf("did: %s, path: %s, query: %s, fragmentId: %s", did, path, query, fragmentId)
-
-	if !dereferenceOptions.Accept.IsSupported() {
-		return types.DidDereferencing{DereferencingMetadata: types.NewDereferencingMetadata(did, types.JSON, types.RepresentationNotSupportedError)}
-	}
 
 	if err != nil || !cheqdUtils.IsValidDIDUrl(didUrl, "", []string{}) {
 		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.InvalidDIDUrlError)
@@ -157,14 +101,21 @@ func (rs RequestService) Dereference(didUrl string, dereferenceOptions types.Der
 
 	var didDereferencing types.DidDereferencing
 	if path != "" {
-		didDereferencing, err = rs.dereferencePrimary(path, did, didUrl, dereferenceOptions)
+		didDereferencing = rs.dereferencePrimary(path, did, dereferenceOptions)
 	} else {
-		didDereferencing, err = rs.dereferenceSecondary(did, fragmentId, didUrl, dereferenceOptions)
+		didDereferencing = rs.dereferenceSecondary(did, fragmentId, dereferenceOptions)
 	}
 
-	if err != nil {
-		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.InternalError)
-		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
+	if didDereferencing.DereferencingMetadata.ResolutionError != "" {
+		didDereferencing.ContentStream = nil
+		didDereferencing.Metadata = types.ResolutionDidDocMetadata{}
+		return didDereferencing
+	}
+
+	if dereferenceOptions.Accept == types.DIDJSONLD || dereferenceOptions.Accept == types.JSONLD {
+		didDereferencing.ContentStream.AddContext(types.DIDSchemaJSONLD)
+	} else {
+		didDereferencing.ContentStream.RemoveContext()
 	}
 
 	return didDereferencing
@@ -190,7 +141,7 @@ func (rs RequestService) dereferenceService(didUrl string, dereferenceOptions ty
 		dereferencingMetadata = types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.RepresentationNotSupportedError)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
 	}
-	
+
 	service := rs.didDocService.GetDIDService(queryId, didResolution.Did)
 	if service == nil {
 		dereferencingMetadata = types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.NotFoundError)
@@ -210,143 +161,48 @@ func (rs RequestService) dereferenceService(didUrl string, dereferenceOptions ty
 	return types.DidDereferencing{ContentStream: contentStream, Metadata: metadata, DereferencingMetadata: dereferencingMetadata}, nil
 }
 
-func (rs RequestService) dereferencePrimary(path string, did string, didUrl string, dereferenceOptions types.DereferencingOption) (types.DidDereferencing, error) {
-	resourceId := utils.GetResourceId(path)
-	// Only `resource` path is supported
-	if resourceId == "" {
-		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.RepresentationNotSupportedError)
-		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
-	}
-
-	resource, isFound, err := rs.ledgerService.QueryResource(did, resourceId)
-	if err != nil {
-		return types.DidDereferencing{}, err
-	}
-	if !isFound {
-		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.NotFoundError)
-		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
-	}
-	jsonFragment, err := rs.didDocService.MarshallContentStream(&resource, dereferenceOptions.Accept)
-	if err != nil {
-		return types.DidDereferencing{}, err
-	}
-	contentStream := json.RawMessage(jsonFragment)
-
-	dereferenceMetadata := types.NewDereferencingMetadata(did, dereferenceOptions.Accept, "")
-	return types.DidDereferencing{ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
+func (rs RequestService) dereferencePrimary(path string, did string, dereferenceOptions types.DereferencingOption) types.DidDereferencing {
+	// Only resource are available for primary dereferencing
+	return rs.resourceDereferenceService.DereferenceResource(path, did, dereferenceOptions)
 }
 
-func (rs RequestService) dereferenceSecondary(did string, fragmentId string, didUrl string, dereferenceOptions types.DereferencingOption) (types.DidDereferencing, error) {
+func (rs RequestService) dereferenceSecondary(did string, fragmentId string, dereferenceOptions types.DereferencingOption) types.DidDereferencing {
+	if !dereferenceOptions.Accept.IsSupported() {
+		dereferencingMetadata := types.NewDereferencingMetadata(did, types.JSON, types.RepresentationNotSupportedError)
+		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
+	}
+
 	didResolution := rs.Resolve(did, types.ResolutionOption(dereferenceOptions))
 
 	dereferencingMetadata := types.DereferencingMetadata(didResolution.ResolutionMetadata)
 	if dereferencingMetadata.ResolutionError != "" {
-		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
+		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
 	}
 
 	metadata := didResolution.Metadata
 
-	var protoContent protoiface.MessageV1
+	var contentStream types.ContentStreamI
 	if fragmentId != "" {
-		protoContent = rs.didDocService.GetDIDFragment(fragmentId, didResolution.Did)
+		contentStream = rs.didDocService.GetDIDFragment(fragmentId, *didResolution.Did)
 		metadata = types.TransformToFragmentMetadata(metadata)
 	} else {
-		protoContent = &didResolution.Did
+		contentStream = didResolution.Did
 	}
 
-	if protoContent == nil {
-		dereferencingMetadata := types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.NotFoundError)
-		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
-	}
-
-	jsonFragment, err := rs.didDocService.MarshallContentStream(protoContent, dereferenceOptions.Accept)
-	if err != nil {
-		return types.DidDereferencing{}, err
-	}
-	contentStream := json.RawMessage(jsonFragment)
-
-	return types.DidDereferencing{ContentStream: contentStream, Metadata: metadata, DereferencingMetadata: dereferencingMetadata}, nil
-}
-
-func (rs RequestService) ResolveMetadata(did string, metadata cheqdTypes.Metadata) (types.ResolutionDidDocMetadata, error) {
-	if metadata.Resources == nil {
-		return types.NewResolutionDidDocMetadata(did, metadata, []*resourceTypes.ResourceHeader{}), nil
-	}
-	resources, err := rs.ledgerService.QueryCollectionResources(did)
-	if err != nil {
-		return types.ResolutionDidDocMetadata{}, err
-	}
-	return types.NewResolutionDidDocMetadata(did, metadata, resources), nil
-}
-
-func createJsonResolution(didDoc string, metadata string, resolutionMetadata string) (string, error) {
-	if didDoc == "" {
-		didDoc = "null"
-	}
-
-	if metadata == "" {
-		metadata = "[]"
-	}
-
-	response := struct {
-		DidResolutionMetadata json.RawMessage `json:"didResolutionMetadata"`
-		DidDocument           json.RawMessage `json:"didDocument"`
-		DidDocumentMetadata   json.RawMessage `json:"didDocumentMetadata"`
-	}{
-		DidResolutionMetadata: json.RawMessage(resolutionMetadata),
-		DidDocument:           json.RawMessage(didDoc),
-		DidDocumentMetadata:   json.RawMessage(metadata),
-	}
-
-	respJson, err := json.Marshal(&response)
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to marshal response")
-		return "", err
-	}
-
-	return string(respJson), nil
-}
-
-func createJsonDereferencing(contentStream json.RawMessage, metadata string, dereferencingMetadata string) (string, error) {
 	if contentStream == nil {
-		contentStream = json.RawMessage("null")
+		dereferencingMetadata := types.NewDereferencingMetadata(did, dereferenceOptions.Accept, types.NotFoundError)
+		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
 	}
-
-	if metadata == "" {
-		metadata = "[]"
-	}
-
-	response := struct {
-		ContentStream         json.RawMessage `json:"contentStream"`
-		ContentMetadata       json.RawMessage `json:"contentMetadata"`
-		DereferencingMetadata json.RawMessage `json:"dereferencingMetadata"`
-	}{
-		ContentStream:         contentStream,
-		ContentMetadata:       json.RawMessage(metadata),
-		DereferencingMetadata: json.RawMessage(dereferencingMetadata),
-	}
-
-	respJson, err := json.Marshal(&response)
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to marshal response")
-		return "", err
-	}
-
-	return string(respJson), nil
+	return types.DidDereferencing{ContentStream: contentStream, Metadata: metadata, DereferencingMetadata: dereferencingMetadata}
 }
 
-func createJsonDereferencingInternalError(dereferencingMetadata []byte) (string, int) {
-	result, mErr := createJsonDereferencing(nil, "", string(dereferencingMetadata))
-	if mErr != nil {
-		return "", types.InternalError.GetStatusCode()
+func (rs RequestService) ResolveMetadata(did string, metadata cheqdTypes.Metadata) (types.ResolutionDidDocMetadata, types.ErrorType) {
+	if metadata.Resources == nil {
+		return types.NewResolutionDidDocMetadata(did, metadata, []*resourceTypes.ResourceHeader{}), ""
 	}
-	return result, types.InternalError.GetStatusCode()
-}
-
-func createJsonResolutionInternalError(resolutionMetadata []byte) (string, int) {
-	result, mErr := createJsonResolution("", "", string(resolutionMetadata))
-	if mErr != nil {
-		return "", types.InternalError.GetStatusCode()
+	resources, errorType := rs.ledgerService.QueryCollectionResources(did)
+	if errorType != "" {
+		return types.ResolutionDidDocMetadata{}, errorType
 	}
-	return result, types.InternalError.GetStatusCode()
+	return types.NewResolutionDidDocMetadata(did, metadata, resources), ""
 }

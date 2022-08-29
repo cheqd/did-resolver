@@ -1,7 +1,7 @@
 package types
 
 import (
-	"fmt"
+	"crypto/sha256"
 	"testing"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
@@ -13,24 +13,29 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 	validIdentifier := "N22KY2Dyvmuu2Pyy"
 	validDid := "did:cheqd:mainnet:" + validIdentifier
 	validResourceId := "18e9d838-0bea-435b-964b-c6529ede6d2b"
+	resourceData := []byte("test_checksum")
+	h := sha256.New()
+	h.Write(resourceData)
 	resourceHeader := resource.ResourceHeader{
 		CollectionId: validIdentifier,
 		Id:           validResourceId,
 		Name:         "Existing Resource Name",
 		ResourceType: "CL-Schema",
 		MediaType:    "application/json",
-		Checksum:     []byte("test_checksum"),
+		Checksum:     h.Sum(nil),
 	}
 
-	validMetadataResource := ResourcePreview{
+	validMetadataResource := DereferencedResource{
 		ResourceURI:       validDid + RESOURCE_PATH + resourceHeader.Id,
+		CollectionId:      resourceHeader.CollectionId,
+		ResourceId:        resourceHeader.Id,
 		Name:              resourceHeader.Name,
 		ResourceType:      resourceHeader.ResourceType,
 		MediaType:         resourceHeader.MediaType,
 		Created:           resourceHeader.Created,
-		Checksum:          fmt.Sprintf("%x", resourceHeader.Checksum),
-		PreviousVersionId: resourceHeader.PreviousVersionId,
-		NextVersionId:     resourceHeader.NextVersionId,
+		Checksum:          FixResourceChecksum(resourceHeader.Checksum),
+		PreviousVersionId: nil,
+		NextVersionId:     nil,
 	}
 
 	subtests := []struct {
@@ -50,7 +55,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 			expectedResult: ResolutionDidDocMetadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
-				Resources:   []ResourcePreview{validMetadataResource},
+				Resources:   []DereferencedResource{validMetadataResource},
 			},
 		},
 		{
@@ -66,13 +71,12 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 			},
 		},
 		{
-			name: "matadata with resources",
+			name: "matadata without resources",
 			metadata: cheqd.Metadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
 				Resources:   []string{validResourceId},
 			},
-			resources: []*resource.ResourceHeader{},
 			expectedResult: ResolutionDidDocMetadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
@@ -85,7 +89,6 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 			result := NewResolutionDidDocMetadata(validDid, subtest.metadata, subtest.resources)
 
 			require.EqualValues(t, subtest.expectedResult, result)
-			// require.EqualValues(t, subtest.expectedError, err)
 		})
 	}
 }
