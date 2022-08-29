@@ -4,9 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
 	"github.com/cheqd/did-resolver/services"
-	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -66,24 +64,7 @@ func serve() {
 	requestService := services.NewRequestService(config.Resolver.Method, ledgerService)
 
 	// Routes
-	e.GET(config.Api.ResolverPath + ":did", func(c echo.Context) error {
-		didUrl := c.Param("did")
-		log.Debug().Msgf("DID: %s", didUrl)
-
-		accept := c.Request().Header.Get(echo.HeaderAccept)
-		log.Trace().Msgf("Accept: %s", accept)
-
-		c.QueryParams()
-
-		var requestedContentType types.ContentType
-
-		resolutionResponse := requestService.ProcessDIDRequest(didUrl, types.ResolutionOption{Accept: requestedContentType})
-
-		c.Response().Header().Set(echo.HeaderContentType, resolutionResponse.GetContentType())
-		return c.JSONPretty(resolutionResponse.GetStatus(), resolutionResponse, "  ")
-	})
-
-
+	e.GET(config.Api.ResolverPath + ":did", requestService.ResolveDIDDoc)
 	e.GET(config.Api.ResolverPath + ":did/resources/:resource", requestService.DereferenceResourceData)
 	e.GET(config.Api.ResolverPath + ":did/resource/:resource/metadata", requestService.DereferenceResourceMetadata)
 	e.GET(config.Api.ResolverPath + ":did/resources/all", requestService.DereferenceCollectionResources)

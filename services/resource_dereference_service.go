@@ -6,7 +6,6 @@ import (
 
 	resourceTypes "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
-	"github.com/cheqd/did-resolver/utils"
 	"github.com/rs/zerolog/log"
 )
 
@@ -22,29 +21,11 @@ func NewResourceDereferenceService(ledgerService LedgerServiceI, didDocService D
 	}
 }
 
-func (rds ResourceDereferenceService) DereferenceResource(path string, did string, dereferenceOptions types.DereferencingOption) types.DidDereferencing {
-	var cotentStream types.ContentStreamI
-	var dereferenceMetadata types.DereferencingMetadata
-
-	if !dereferenceOptions.Accept.IsSupported() && !utils.IsResourceDataPath(path) {
+func (rds ResourceDereferenceService) DereferenceHeader(resourceId string, did string, contentType types.ContentType) types.DidDereferencing {
+	if !contentType.IsSupported() {
 		dereferencingMetadata := types.NewDereferencingMetadata(did, types.JSON, types.RepresentationNotSupportedError)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
 	}
-
-	if utils.IsResourceHeaderPath(path) {
-		cotentStream, dereferenceMetadata = rds.DereferenceHeader(path, did, dereferenceOptions)
-	} else if utils.IsCollectionResourcesPath(path) {
-		cotentStream, dereferenceMetadata = rds.DereferenceCollectionResources(did, dereferenceOptions)
-	} else if utils.IsResourceDataPath(path) {
-		cotentStream, dereferenceMetadata = rds.DereferenceResourceData(path, did, dereferenceOptions)
-	} else {
-		dereferenceMetadata = types.NewDereferencingMetadata(did, dereferenceOptions.Accept, types.RepresentationNotSupportedError)
-	}
-
-	return types.DidDereferencing{ContentStream: cotentStream, DereferencingMetadata: dereferenceMetadata}
-}
-
-func (rds ResourceDereferenceService) DereferenceHeader(resourceId string, did string, contentType types.ContentType) types.DidDereferencing {
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 	resource, dereferencingError := rds.ledgerService.QueryResource(did, resourceId)
 	log.Warn().Msgf("dereferencingError: %s", dereferencingError)
@@ -57,6 +38,10 @@ func (rds ResourceDereferenceService) DereferenceHeader(resourceId string, did s
 }
 
 func (rds ResourceDereferenceService) DereferenceCollectionResources(did string, contentType types.ContentType) types.DidDereferencing {
+	if !contentType.IsSupported() {
+		dereferencingMetadata := types.NewDereferencingMetadata(did, types.JSON, types.RepresentationNotSupportedError)
+		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
+	}
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 	resources, dereferencingError := rds.ledgerService.QueryCollectionResources(did)
 	if dereferencingError != "" {
