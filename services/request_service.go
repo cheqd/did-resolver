@@ -1,7 +1,9 @@
 package services
 
 import (
+	"errors"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -30,10 +32,10 @@ func NewRequestService(didMethod string, ledgerService LedgerServiceI) RequestSe
 	}
 }
 
-func (rs RequestService) ProcessDIDRequest(did string, fragmentId string, queries map[string]string, flag string, contentType types.ContentType) types.ResolutionResultI {
+func (rs RequestService) ProcessDIDRequest(did string, fragmentId string, queries url.Values, flag *string, contentType types.ContentType) types.ResolutionResultI {
 	log.Trace().Msgf("ProcessDIDRequest %s, %s, %s", did, fragmentId, queries)
 	var result types.ResolutionResultI
-	if len(queries) > 0 || flag != "" {
+	if len(queries) > 0 || flag != nil {
 		dereferencingMetadata := types.NewDereferencingMetadata(did, contentType, types.RepresentationNotSupportedError)
 		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
 	} else if fragmentId != "" {
@@ -157,16 +159,16 @@ func (rs RequestService) ResolveMetadata(did string, metadata cheqdTypes.Metadat
 
 func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
 	splitedDID := strings.Split(c.Param("did"), "#")
-	
-	log.Trace().Msgf("Request URL %s", c.Request().URL)
-	log.Trace().Msgf("Request URL %s", c.Request().RequestURI)
-	splitedURL := strings.Split(c.QueryString(), "%23")
-	flag, queries := prepareQueries(c)
-
 	did := splitedDID[0]
 	var fragmentId string
 	if len(splitedDID) == 2 {
-		fragmentId = splitedURL[1]
+		fragmentId = splitedDID[1]
+	}
+
+	queryRaw, flag := prepareQueries(c)
+	queries, err := url.ParseQuery(queryRaw)
+	if err != nil {
+		return errors.New(string(types.InternalError))
 	}
 
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
@@ -218,11 +220,12 @@ func getContentType(accept string) types.ContentType {
 	return ""
 }
 
-func prepareQueries(c echo.Context) (flag string, rawQuery *string) {
-	splitedQuery := strings.(c.Request().URL.RawQuery, "%23")
-	c.Request().URL.RawQuery = splitedQuery[0]
-	if len(splitedQuery) == 2 {
-		return splitedQuery[0], &splitedQuery[1]
-	} 
-	return splitedQuery[0], nil
+func prepareQueries(c echo.Context) (rawQuery string, flag *string) {
+	rawQuery = c.Request().URL.RawQuery
+	flagIndex := strings.LastIndex(rawQuery, "%23")
+	if flagIndex == -1 || strings.Contains(rawQuery[flagIndex:], "&") {
+		return rawQuery, nil
+	}
+	queryFlag := rawQuery[flagIndex:]
+	return rawQuery[0:flagIndex], &queryFlag
 }

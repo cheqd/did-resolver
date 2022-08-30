@@ -41,6 +41,7 @@ func serve() {
 
 	// Echo instance
 	e := echo.New()
+	// e.HTTPErrorHandler = NewHttpErrorHandler(NewErrorStatusCodeMaps()).Handler
 
 	// Middleware
 	e.Use(middleware.Logger())
@@ -66,7 +67,7 @@ func serve() {
 	// Routes
 	e.GET(config.Api.ResolverPath + ":did", requestService.ResolveDIDDoc)
 	e.GET(config.Api.ResolverPath + ":did/resources/:resource", requestService.DereferenceResourceData)
-	e.GET(config.Api.ResolverPath + ":did/resource/:resource/metadata", requestService.DereferenceResourceMetadata)
+	e.GET(config.Api.ResolverPath + ":did/resources/:resource/metadata", requestService.DereferenceResourceMetadata)
 	e.GET(config.Api.ResolverPath + ":did/resources/all", requestService.DereferenceCollectionResources)
 	e.GET(config.Api.ResolverPath + ":did/resources/", func(c echo.Context) error {
 		return c.Redirect(http.StatusMovedPermanently, "all")
