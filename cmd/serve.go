@@ -41,7 +41,7 @@ func serve() {
 
 	// Echo instance
 	e := echo.New()
-	// e.HTTPErrorHandler = NewHttpErrorHandler(NewErrorStatusCodeMaps()).Handler
+	e.HTTPErrorHandler = CustomHTTPErrorHandler
 
 	// Middleware
 	e.Use(middleware.Logger())

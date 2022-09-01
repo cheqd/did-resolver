@@ -6,7 +6,6 @@ import (
 
 	resourceTypes "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
-	"github.com/rs/zerolog/log"
 )
 
 type ResourceDereferenceService struct {
@@ -21,47 +20,40 @@ func NewResourceDereferenceService(ledgerService LedgerServiceI, didDocService D
 	}
 }
 
-func (rds ResourceDereferenceService) DereferenceHeader(resourceId string, did string, contentType types.ContentType) types.DidDereferencing {
+func (rds ResourceDereferenceService) DereferenceHeader(resourceId string, did string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
 	if !contentType.IsSupported() {
-		dereferencingMetadata := types.NewDereferencingMetadata(did, types.JSON, types.RepresentationNotSupportedError)
-		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
+		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
 	}
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
-	resource, dereferencingError := rds.ledgerService.QueryResource(did, resourceId)
-	log.Warn().Msgf("dereferencingError: %s", dereferencingError)
-	if dereferencingError != "" {
-		dereferenceMetadata.ResolutionError = dereferencingError
-		return types.DidDereferencing{DereferencingMetadata: dereferenceMetadata}
+	resource, err := rds.ledgerService.QueryResource(did, resourceId)
+	if err != nil {
+		return nil, err
 	}
 	contentStream := types.NewDereferencedResourceList(did, []*resourceTypes.ResourceHeader{resource.Header})
-	return types.DidDereferencing{ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}
+	return &types.DidDereferencing{ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
-func (rds ResourceDereferenceService) DereferenceCollectionResources(did string, contentType types.ContentType) types.DidDereferencing {
+func (rds ResourceDereferenceService) DereferenceCollectionResources(did string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
 	if !contentType.IsSupported() {
-		dereferencingMetadata := types.NewDereferencingMetadata(did, types.JSON, types.RepresentationNotSupportedError)
-		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}
+		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
 	}
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
-	resources, dereferencingError := rds.ledgerService.QueryCollectionResources(did)
-	if dereferencingError != "" {
-		dereferenceMetadata.ResolutionError = dereferencingError
-		return types.DidDereferencing{DereferencingMetadata: dereferenceMetadata}
+	resources, err := rds.ledgerService.QueryCollectionResources(did)
+	if err != nil {
+		return nil, err
 	}
 	contentStream := types.NewDereferencedResourceList(did, resources)
-	return types.DidDereferencing{ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}
+	return &types.DidDereferencing{ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
-func (rds ResourceDereferenceService) DereferenceResourceData(resourceId string, did string, contentType types.ContentType) types.DidDereferencing {
+func (rds ResourceDereferenceService) DereferenceResourceData(resourceId string, did string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 
-	resource, dereferencingError := rds.ledgerService.QueryResource(did, resourceId)
-
-	if dereferencingError != "" {
-		dereferenceMetadata.ResolutionError = dereferencingError
-		return types.DidDereferencing{DereferencingMetadata: dereferenceMetadata}
+	resource, err := rds.ledgerService.QueryResource(did, resourceId)
+	if err != nil {
+		return nil, err
 	}
 	result := types.DereferencedResourceData(resource.Data)
 	dereferenceMetadata.ContentType = types.ContentType(resource.Header.MediaType)
-	return types.DidDereferencing{ContentStream: &result, DereferencingMetadata: dereferenceMetadata}
+	return &types.DidDereferencing{ContentStream: &result, DereferencingMetadata: dereferenceMetadata}, nil
 }
