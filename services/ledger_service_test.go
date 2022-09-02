@@ -1,7 +1,6 @@
 package services
 
 import (
-	"errors"
 	"testing"
 	"time"
 
@@ -26,7 +25,7 @@ func TestQueryDIDDoc(t *testing.T) {
 			expectedDID:      cheqd.Did{},
 			expectedMetadata: cheqd.Metadata{},
 			expectedIsFound:  false,
-			expectedError:    errors.New("namespace not supported: "),
+			expectedError:    types.NewInvalidDIDError("fake did", types.JSON, nil, false),
 		},
 	}
 
@@ -36,10 +35,9 @@ func TestQueryDIDDoc(t *testing.T) {
 			require.NoError(t, err)
 
 			ledgerService := NewLedgerService(timeout, false)
-			didDoc, metadata, isFound, err := ledgerService.QueryDIDDoc("fake did")
+			didDoc, metadata, err := ledgerService.QueryDIDDoc("fake did")
 			require.EqualValues(t, subtest.expectedDID, didDoc)
 			require.EqualValues(t, subtest.expectedMetadata, metadata)
-			require.EqualValues(t, subtest.expectedIsFound, isFound)
 			require.EqualValues(t, subtest.expectedError, err)
 		})
 	}
@@ -51,14 +49,14 @@ func TestQueryResource(t *testing.T) {
 		collectionDid    string
 		resourceId       string
 		expectedResource resource.Resource
-		expectedError    types.ErrorType
+		expectedError    error
 	}{
 		{
 			name:             "DeadlineExceeded",
 			collectionDid:    "321",
 			resourceId:       "123",
 			expectedResource: resource.Resource{},
-			expectedError:    types.InvalidDIDError,
+			expectedError:    types.NewInvalidDIDError("321", types.JSON, nil, true),
 		},
 	}
 

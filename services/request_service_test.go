@@ -2,12 +2,15 @@ package services
 
 import (
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
+	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/require"
 )
 
@@ -25,26 +28,22 @@ func NewMockLedgerService(did cheqd.Did, metadata cheqd.Metadata, resource resou
 	}
 }
 
-func (ls MockLedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool, error) {
-	isFound := true
-	if ls.Did.Id != did {
-		isFound = false
-	}
-	return ls.Did, ls.Metadata, isFound, nil
+func (ls MockLedgerService) QueryDIDDoc(did string) (*cheqd.Did, *cheqd.Metadata, *types.IdentityError) {
+	return &ls.Did, &ls.Metadata, nil
 }
 
-func (ls MockLedgerService) QueryResource(did string, resourceId string) (*resource.Resource, types.ErrorType) {
+func (ls MockLedgerService) QueryResource(did string, resourceId string) (*resource.Resource, *types.IdentityError) {
 	if ls.Resource.Header == nil || ls.Resource.Header.Id != resourceId {
-		return &resource.Resource{}, types.NotFoundError
+		return nil, types.NewNotFoundError(did, types.JSON, nil, true)
 	}
-	return &ls.Resource, ""
+	return &ls.Resource, nil
 }
 
-func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, types.ErrorType) {
+func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, *types.IdentityError) {
 	if ls.Metadata.Resources == nil {
-		return []*resource.ResourceHeader{}, types.NotFoundError
+		return []*resource.ResourceHeader{}, types.NewNotFoundError(did, types.JSON, nil, true)
 	}
-	return []*resource.ResourceHeader{ls.Resource.Header}, ""
+	return []*resource.ResourceHeader{ls.Resource.Header}, nil
 }
 
 func (ls MockLedgerService) GetNamespaces() []string {
@@ -65,7 +64,7 @@ func TestResolve(t *testing.T) {
 		expectedDID            *types.DidDoc
 		expectedMetadata       types.ResolutionDidDocMetadata
 		expectedResolutionType types.ContentType
-		expectedError          types.ErrorType
+		expectedError          error
 	}{
 		{
 			name:             "successful resolution",
@@ -76,7 +75,7 @@ func TestResolve(t *testing.T) {
 			namespace:        utils.ValidNamespace,
 			expectedDID:      types.NewDidDoc(validDIDDoc),
 			expectedMetadata: types.NewResolutionDidDocMetadata(utils.ValidDid, validMetadata, []*resource.ResourceHeader{validResource.Header}),
-			expectedError:    "",
+			expectedError:    nil,
 		},
 		{
 			name:             "DID not found",
@@ -137,9 +136,15 @@ func TestResolve(t *testing.T) {
 	}
 
 	for _, subtest := range subtests {
+		id := "did:" + subtest.method + ":" + subtest.namespace + ":" + subtest.identifier
 		t.Run(subtest.name, func(t *testing.T) {
+			// Setup
+			e := echo.New()
+			req := httptest.NewRequest(http.MethodGet, id, nil)
+			rec := httptest.NewRecorder()
+			context := e.NewContext(req, rec)
+
 			requestService := NewRequestService("cheqd", subtest.ledgerService)
-			id := "did:" + subtest.method + ":" + subtest.namespace + ":" + subtest.identifier
 			expectedDIDProperties := types.DidProperties{
 				DidString:        id,
 				MethodSpecificId: subtest.identifier,
@@ -154,12 +159,13 @@ func TestResolve(t *testing.T) {
 			if expectedContentType == "" {
 				expectedContentType = subtest.resolutionType
 			}
-			resolutionResult := requestService.Resolve(id, types.ResolutionOption{Accept: subtest.resolutionType})
+			err := requestService.ResolveDIDDoc(context)
+			
+			require.EqualValues(t, subtest.expectedError, err)
 
 			require.EqualValues(t, subtest.expectedDID, resolutionResult.Did)
 			require.EqualValues(t, subtest.expectedMetadata, resolutionResult.Metadata)
 			require.EqualValues(t, expectedContentType, resolutionResult.ResolutionMetadata.ContentType)
-			require.EqualValues(t, subtest.expectedError, resolutionResult.ResolutionMetadata.ResolutionError)
 			require.EqualValues(t, expectedDIDProperties, resolutionResult.ResolutionMetadata.DidProperties)
 		})
 	}

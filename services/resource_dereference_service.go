@@ -10,13 +10,11 @@ import (
 
 type ResourceDereferenceService struct {
 	ledgerService LedgerServiceI
-	didDocService DIDDocService
 }
 
-func NewResourceDereferenceService(ledgerService LedgerServiceI, didDocService DIDDocService) ResourceDereferenceService {
+func NewResourceDereferenceService(ledgerService LedgerServiceI) ResourceDereferenceService {
 	return ResourceDereferenceService{
 		ledgerService: ledgerService,
-		didDocService: didDocService,
 	}
 }
 

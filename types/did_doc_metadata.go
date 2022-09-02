@@ -26,7 +26,7 @@ type ResourcePreview struct {
 	NextVersionId     string `json:"nextVersionId"`
 }
 
-func NewResolutionDidDocMetadata(did string, metadata cheqd.Metadata, resources []*resource.ResourceHeader) *ResolutionDidDocMetadata {
+func NewResolutionDidDocMetadata(did string, metadata cheqd.Metadata, resources []*resource.ResourceHeader) ResolutionDidDocMetadata {
 	newMetadata := ResolutionDidDocMetadata{
 		Created:     metadata.Created,
 		Updated:     metadata.Updated,
@@ -34,10 +34,10 @@ func NewResolutionDidDocMetadata(did string, metadata cheqd.Metadata, resources 
 		VersionId:   metadata.VersionId,
 	}
 	if metadata.Resources == nil || len(resources) == 0 {
-		return &newMetadata
+		return newMetadata
 	}
 	newMetadata.Resources = NewDereferencedResourceList(did, resources).Resources
-	return &newMetadata
+	return newMetadata
 }
 
 func TransformToFragmentMetadata(metadata ResolutionDidDocMetadata) ResolutionDidDocMetadata {

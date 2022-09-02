@@ -20,19 +20,19 @@ func TestDIDDocFragment(t *testing.T) {
 		{
 			name:             "successful VerificationMethod finding",
 			fragmentId:       validDIDDoc.VerificationMethod[0].Id,
-			didDoc:           *validDIDDoc,
+			didDoc:           validDIDDoc,
 			expectedFragment: &validDIDDoc.VerificationMethod[0],
 		},
 		{
 			name:             "successful Service finding",
 			fragmentId:       validDIDDoc.Service[0].Id,
-			didDoc:           *validDIDDoc,
+			didDoc:           validDIDDoc,
 			expectedFragment: &validDIDDoc.Service[0],
 		},
 		{
 			name:             "Fragment is not found",
 			fragmentId:       "fake_id",
-			didDoc:           *validDIDDoc,
+			didDoc:           validDIDDoc,
 			expectedFragment: nil,
 		},
 	}
