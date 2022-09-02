@@ -48,8 +48,6 @@ func (rs RequestService) ProcessDIDRequest(did string, fragmentId string, querie
 	}
 
 	if err != nil {
-		err.ContentType = contentType
-		err.Did = did
 		err.DefineDisplaying(isDereferencing)
 		return nil, err
 	}
@@ -59,7 +57,7 @@ func (rs RequestService) ProcessDIDRequest(did string, fragmentId string, querie
 // https://w3c-ccg.github.io/did-resolution/#resolving
 func (rs RequestService) Resolve(did string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {
 	if !contentType.IsSupported() {
-		return nil, types.NewRepresentationNotSupportedError(did, contentType, nil, false)
+		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, false)
 	}
 	didResolutionMetadata := types.NewResolutionMetadata(did, contentType, "")
 
@@ -72,11 +70,13 @@ func (rs RequestService) Resolve(did string, contentType types.ContentType) (*ty
 
 	protoDidDoc, metadata, err := rs.ledgerService.QueryDIDDoc(did)
 	if err != nil {
+		err.ContentType = contentType
 		return nil, err
 	}
 
 	resolvedMetadata, mErr := rs.ResolveMetadata(did, *metadata, contentType)
 	if mErr != nil {
+		mErr.ContentType = contentType
 		return nil, mErr
 	}
 	didDoc := types.NewDidDoc(*protoDidDoc)
@@ -91,7 +91,7 @@ func (rs RequestService) Resolve(did string, contentType types.ContentType) (*ty
 // https://w3c-ccg.github.io/did-resolution/#dereferencing
 func (rs RequestService) dereferenceSecondary(did string, fragmentId string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
 	if !contentType.IsSupported() {
-		return nil, types.NewRepresentationNotSupportedError(did, contentType, nil, true)
+		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
 	}
 
 	didResolution, err := rs.Resolve(did, contentType)
@@ -154,7 +154,6 @@ func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
 	result, rErr := rs.ProcessDIDRequest(did, fragmentId, queries, flag, requestedContentType)
 	if rErr != nil {
-		log.Error().Err(rErr)
 		return rErr
 	}
 	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
@@ -167,8 +166,6 @@ func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
 	result, err := rs.resourceDereferenceService.DereferenceHeader(resourceId, did, requestedContentType)
 	if err != nil {
-		err.ContentType = requestedContentType
-		err.Did = did
 		err.DefineDisplaying(true)
 		return err
 	}
@@ -182,8 +179,6 @@ func (rs RequestService) DereferenceResourceData(c echo.Context) error {
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
 	result, err := rs.resourceDereferenceService.DereferenceResourceData(resourceId, did, requestedContentType)
 	if err != nil {
-		err.ContentType = requestedContentType
-		err.Did = did
 		err.DefineDisplaying(true)
 		return err
 	}
@@ -196,8 +191,6 @@ func (rs RequestService) DereferenceCollectionResources(c echo.Context) error {
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
 	resolutionResponse, err := rs.resourceDereferenceService.DereferenceCollectionResources(did, requestedContentType)
 	if err != nil {
-		err.ContentType = requestedContentType
-		err.Did = did
 		err.DefineDisplaying(true)
 		return err
 	}

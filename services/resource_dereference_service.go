@@ -27,6 +27,7 @@ func (rds ResourceDereferenceService) DereferenceHeader(resourceId string, did s
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 	resource, err := rds.ledgerService.QueryResource(did, resourceId)
 	if err != nil {
+		err.ContentType = contentType
 		return nil, err
 	}
 	contentStream := types.NewDereferencedResourceList(did, []*resourceTypes.ResourceHeader{resource.Header})
@@ -40,6 +41,7 @@ func (rds ResourceDereferenceService) DereferenceCollectionResources(did string,
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 	resources, err := rds.ledgerService.QueryCollectionResources(did)
 	if err != nil {
+		err.ContentType = contentType
 		return nil, err
 	}
 	contentStream := types.NewDereferencedResourceList(did, resources)
@@ -48,9 +50,12 @@ func (rds ResourceDereferenceService) DereferenceCollectionResources(did string,
 
 func (rds ResourceDereferenceService) DereferenceResourceData(resourceId string, did string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
-
+	if !contentType.IsSupported() {
+		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
+	}
 	resource, err := rds.ledgerService.QueryResource(did, resourceId)
 	if err != nil {
+		err.ContentType = contentType
 		return nil, err
 	}
 	result := types.DereferencedResourceData(resource.Data)
