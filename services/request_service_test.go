@@ -27,7 +27,7 @@ func TestResolveDIDDoc(t *testing.T) {
 		expectedDID            *types.DidDoc
 		expectedMetadata       types.ResolutionDidDocMetadata
 		expectedResolutionType types.ContentType
-		expectedError          *types.IdentityError
+		expectedError          error
 	}{
 		{
 			name:             "successful resolution",
@@ -51,45 +51,49 @@ func TestResolveDIDDoc(t *testing.T) {
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
-			
-			// Setup
-			e := echo.New()
-			req := httptest.NewRequest(http.MethodGet, "/", nil)
-			rec := httptest.NewRecorder()
-			context := e.NewContext(req, rec)
-			context.SetPath("/1.0/identifiers/:did")
-			context.SetParamNames("did")
-			context.SetParamValues(subtest.did)
-
+			context, rec := setupContext("/1.0/identifiers/:did", []string{"did"}, []string{subtest.did}, subtest.resolutionType)
 			requestService := NewRequestService("cheqd", subtest.ledgerService)
-			expectedDIDProperties := types.DidProperties{
-				DidString:        utils.ValidDid,
-				MethodSpecificId: utils.ValidIdentifier,
-				Method:           utils.ValidMethod,
-			}
+
 			if (subtest.resolutionType == "" || subtest.resolutionType == types.DIDJSONLD) && subtest.expectedError == nil {
 				subtest.expectedDID.Context = []string{types.DIDSchemaJSONLD}
 			} else if subtest.expectedDID != nil {
 				subtest.expectedDID.Context = nil
 			}
-			expectedContentType := subtest.expectedResolutionType
-			if expectedContentType == "" {
-				expectedContentType = subtest.resolutionType
-			}
+			expectedContentType := defineContentType(subtest.expectedResolutionType, subtest.resolutionType)
+
 			err := requestService.ResolveDIDDoc(context)
 			var resolutionResult types.DidResolution
 			json.Unmarshal(rec.Body.Bytes(), &resolutionResult)
 
 			if subtest.expectedError != nil {
-				require.EqualValues(t, subtest.expectedError, err)
+				require.EqualValues(t, subtest.expectedError.Error(), err.Error())
 			} else {
 				require.Empty(t, err)
 				require.EqualValues(t, subtest.expectedError, err)
 				require.EqualValues(t, subtest.expectedDID, resolutionResult.Did)
 				require.EqualValues(t, subtest.expectedMetadata, resolutionResult.Metadata)
 				require.EqualValues(t, expectedContentType, resolutionResult.ResolutionMetadata.ContentType)
-				require.EqualValues(t, expectedDIDProperties, resolutionResult.ResolutionMetadata.DidProperties)
+				require.EqualValues(t, expectedContentType, rec.Header().Get("Content-Type"))
 			}
 		})
 	}
+}
+
+func defineContentType(expectedContentType types.ContentType, resolutionType types.ContentType) types.ContentType {
+	if expectedContentType == "" {
+		return resolutionType
+	}
+	return expectedContentType
+}
+
+func setupContext(path string, paramsNames []string, paramsValues []string, resolutionType types.ContentType) (echo.Context, *httptest.ResponseRecorder) {
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	context := e.NewContext(req, rec)
+	context.SetPath(path)
+	context.SetParamNames(paramsNames...)
+	context.SetParamValues(paramsValues...)
+	req.Header.Add("accept", string(resolutionType))
+	return context, rec
 }
