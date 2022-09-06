@@ -5,15 +5,15 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/labstack/echo/v4"
 	"github.com/cheqd/did-resolver/types"
+	"github.com/labstack/echo/v4"
 )
 
 type RequestService struct {
 	didMethod                  string
 	ledgerService              LedgerServiceI
 	didDocService              DIDDocService
-	resourceDereferenceService ResourceDereferenceService
+	resourceDereferenceService ResourceService
 }
 
 func NewRequestService(didMethod string, ledgerService LedgerServiceI) RequestService {
@@ -21,7 +21,7 @@ func NewRequestService(didMethod string, ledgerService LedgerServiceI) RequestSe
 		didMethod:                  didMethod,
 		ledgerService:              ledgerService,
 		didDocService:              NewDIDDocService(didMethod, ledgerService),
-		resourceDereferenceService: NewResourceDereferenceService(ledgerService),
+		resourceDereferenceService: NewResourceService(didMethod, ledgerService),
 	}
 }
 
@@ -52,7 +52,7 @@ func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 	did := c.Param("did")
 	resourceId := c.Param("resource")
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
-	result, err := rs.resourceDereferenceService.DereferenceHeader(resourceId, did, requestedContentType)
+	result, err := rs.resourceDereferenceService.DereferenceResourceMetadata(resourceId, did, requestedContentType)
 	if err != nil {
 		err.DefineDisplaying(true)
 		return err
