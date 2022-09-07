@@ -1,7 +1,5 @@
 package types
 
-type DereferencingOption ResolutionOption
-
 type DereferencingMetadata ResolutionMetadata
 
 type DidDereferencing struct {
@@ -10,12 +8,8 @@ type DidDereferencing struct {
 	Metadata              ResolutionDidDocMetadata `json:"contentMetadata"`
 }
 
-func NewDereferencingMetadata(did string, contentType ContentType, resolutionError ErrorType) DereferencingMetadata {
+func NewDereferencingMetadata(did string, contentType ContentType, resolutionError string) DereferencingMetadata {
 	return DereferencingMetadata(NewResolutionMetadata(did, contentType, resolutionError))
-}
-
-func (d DidDereferencing) GetStatus() int {
-	return d.DereferencingMetadata.ResolutionError.GetStatusCode()
 }
 
 func (d DidDereferencing) GetContentType() string {

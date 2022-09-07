@@ -34,7 +34,7 @@ type Service struct {
 	ServiceEndpoint string   `json:"serviceEndpoint,omitempty"`
 }
 
-func NewDidDoc(protoDidDoc cheqd.Did) *DidDoc {
+func NewDidDoc(protoDidDoc cheqd.Did) DidDoc {
 	verificationMethods := []VerificationMethod{}
 	for _, vm := range protoDidDoc.VerificationMethod {
 		verificationMethods = append(verificationMethods, *NewVerificationMethod(vm))
@@ -45,7 +45,7 @@ func NewDidDoc(protoDidDoc cheqd.Did) *DidDoc {
 		services = append(services, *NewService(s))
 	}
 
-	return &DidDoc{
+	return DidDoc{
 		Id:                   protoDidDoc.Id,
 		Controller:           protoDidDoc.Controller,
 		VerificationMethod:   verificationMethods,

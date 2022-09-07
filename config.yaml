@@ -8,6 +8,6 @@ resolver:
 
 api:
   listener: "0.0.0.0:8080"
-  resolverPath: "/1.0/identifiers/:did"
+  resolverPath: "/1.0/identifiers/"
 
 logLevel: "warn"

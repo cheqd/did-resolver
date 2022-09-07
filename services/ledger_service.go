@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 
@@ -24,9 +23,9 @@ const (
 )
 
 type LedgerServiceI interface {
-	QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool, error)
-	QueryResource(collectionDid string, resourceId string) (*resource.Resource, types.ErrorType)
-	QueryCollectionResources(did string) ([]*resource.ResourceHeader, types.ErrorType)
+	QueryDIDDoc(did string) (*cheqd.Did, *cheqd.Metadata, *types.IdentityError)
+	QueryResource(collectionDid string, resourceId string) (*resource.Resource, *types.IdentityError)
+	QueryCollectionResources(did string) ([]*resource.ResourceHeader, *types.IdentityError)
 	GetNamespaces() []string
 }
 
@@ -45,17 +44,17 @@ func NewLedgerService(connectionTimeout time.Duration, useTls bool) LedgerServic
 	return ls
 }
 
-func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool, error) {
+func (ls LedgerService) QueryDIDDoc(did string) (*cheqd.Did, *cheqd.Metadata, *types.IdentityError) {
 	method, namespace, _, _ := cheqdUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
-		return cheqd.Did{}, cheqd.Metadata{}, false, fmt.Errorf("namespace not supported: %s", namespace)
+		return nil, nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
 	}
 
 	conn, err := ls.openGRPCConnection(serverAddr)
 	if err != nil {
 		log.Error().Err(err).Msg("QueryDIDDoc: failed connection")
-		return cheqd.Did{}, cheqd.Metadata{}, false, err
+		return nil, nil, types.NewInternalError(did, types.JSON, err, false)
 	}
 
 	defer mustCloseGRPCConnection(conn)
@@ -64,23 +63,23 @@ func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool
 	client := cheqd.NewQueryClient(conn)
 	didDocResponse, err := client.Did(context.Background(), &cheqd.QueryGetDidRequest{Id: did})
 	if err != nil {
-		return cheqd.Did{}, cheqd.Metadata{}, false, nil
+		return nil, nil, types.NewNotFoundError(did, types.JSON, err, false)
 	}
 
-	return *didDocResponse.Did, *didDocResponse.Metadata, true, err
+	return didDocResponse.Did, didDocResponse.Metadata, nil
 }
 
-func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.Resource, types.ErrorType) {
+func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.Resource, *types.IdentityError) {
 	method, namespace, collectionId, _ := cheqdUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
-		return &resource.Resource{}, types.InvalidDIDError
+		return nil, types.NewInvalidDIDError(did, types.JSON, nil, true)
 	}
 
 	conn, err := ls.openGRPCConnection(serverAddr)
 	if err != nil {
 		log.Error().Err(err).Msg("QueryResource: failed connection")
-		return &resource.Resource{}, types.InternalError
+		return nil, types.NewInternalError(did, types.JSON, err, true)
 	}
 
 	defer mustCloseGRPCConnection(conn)
@@ -91,34 +90,34 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.
 	resourceResponse, err := client.Resource(context.Background(), &resource.QueryGetResourceRequest{CollectionId: collectionId, Id: resourceId})
 	if err != nil {
 		log.Info().Msgf("Resource not found %s", err.Error())
-		return &resource.Resource{}, types.NotFoundError
+		return nil, types.NewNotFoundError(did, types.JSON, err, true)
 	}
 
-	return resourceResponse.Resource, ""
+	return resourceResponse.Resource, nil
 }
 
-func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, types.ErrorType) {
+func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, *types.IdentityError) {
 	method, namespace, collectionId, _ := cheqdUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
-		return nil, types.InvalidDIDError
+		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
 	}
 
 	conn, err := ls.openGRPCConnection(serverAddr)
 	if err != nil {
 		log.Error().Err(err).Msg("QueryResource: failed connection")
-		return nil, types.InternalError
+		return nil, types.NewInternalError(did, types.JSON, err, false)
 	}
 
-	log.Info().Msgf("Querying did resource: %s", did)
+	log.Info().Msgf("Querying did resources: %s", did)
 
 	client := resource.NewQueryClient(conn)
 	resourceResponse, err := client.CollectionResources(context.Background(), &resource.QueryGetCollectionResourcesRequest{CollectionId: collectionId})
 	if err != nil {
-		return nil, types.NotFoundError
+		return nil, types.NewNotFoundError(did, types.JSON, err, false)
 	}
 
-	return resourceResponse.Resources, ""
+	return resourceResponse.Resources, nil
 }
 
 func (ls *LedgerService) RegisterLedger(method string, namespace string, url string) error {

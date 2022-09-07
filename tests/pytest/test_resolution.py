@@ -186,7 +186,7 @@ def test_dereferencing_content_type_resource_redirect(accept, expected_header, e
         (FAKE_TESTNET_FRAGMENT, 404),
         (FAKE_TESTNET_RESOURCE, 404),
         ("did:wrong_method:MTMxDQKMTMxDQKMT", 406),
-        (TESTNET_DID + "/", 406),
+        (TESTNET_DID + "/", 400),
         (TESTNET_DID + "invalidDID", 400),
     ]
 )

@@ -1,7 +1,6 @@
 package services
 
 import (
-	"errors"
 	"testing"
 	"time"
 
@@ -15,18 +14,18 @@ func TestQueryDIDDoc(t *testing.T) {
 	subtests := []struct {
 		name             string
 		did              string
-		expectedDID      cheqd.Did
-		expectedMetadata cheqd.Metadata
+		expectedDID      *cheqd.Did
+		expectedMetadata *cheqd.Metadata
 		expectedIsFound  bool
 		expectedError    error
 	}{
 		{
 			name:             "DeadlineExceeded",
 			did:              "fake did",
-			expectedDID:      cheqd.Did{},
-			expectedMetadata: cheqd.Metadata{},
+			expectedDID:      nil,
+			expectedMetadata: nil,
 			expectedIsFound:  false,
-			expectedError:    errors.New("namespace not supported: "),
+			expectedError:    types.NewInvalidDIDError("fake did", types.JSON, nil, false),
 		},
 	}
 
@@ -36,11 +35,10 @@ func TestQueryDIDDoc(t *testing.T) {
 			require.NoError(t, err)
 
 			ledgerService := NewLedgerService(timeout, false)
-			didDoc, metadata, isFound, err := ledgerService.QueryDIDDoc("fake did")
+			didDoc, metadata, err := ledgerService.QueryDIDDoc("fake did")
 			require.EqualValues(t, subtest.expectedDID, didDoc)
 			require.EqualValues(t, subtest.expectedMetadata, metadata)
-			require.EqualValues(t, subtest.expectedIsFound, isFound)
-			require.EqualValues(t, subtest.expectedError, err)
+			require.EqualValues(t, subtest.expectedError.Error(), err.Error())
 		})
 	}
 }
@@ -50,15 +48,15 @@ func TestQueryResource(t *testing.T) {
 		name             string
 		collectionDid    string
 		resourceId       string
-		expectedResource resource.Resource
-		expectedError    types.ErrorType
+		expectedResource *resource.Resource
+		expectedError    error
 	}{
 		{
 			name:             "DeadlineExceeded",
 			collectionDid:    "321",
 			resourceId:       "123",
-			expectedResource: resource.Resource{},
-			expectedError:    types.InvalidDIDError,
+			expectedResource: nil,
+			expectedError:    types.NewInvalidDIDError("321", types.JSON, nil, true),
 		},
 	}
 
@@ -68,9 +66,9 @@ func TestQueryResource(t *testing.T) {
 			require.NoError(t, err)
 
 			ledgerService := NewLedgerService(timeout, false)
-			resource, errorType := ledgerService.QueryResource(subtest.collectionDid, subtest.resourceId)
-			require.EqualValues(t, &subtest.expectedResource, resource)
-			require.EqualValues(t, subtest.expectedError, errorType)
+			resource, err := ledgerService.QueryResource(subtest.collectionDid, subtest.resourceId)
+			require.EqualValues(t, subtest.expectedResource, resource)
+			require.EqualValues(t, subtest.expectedError.Error(), err.Error())
 		})
 	}
 }

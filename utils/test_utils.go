@@ -5,6 +5,7 @@ import (
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
+	"github.com/cheqd/did-resolver/types"
 )
 
 const (
@@ -66,4 +67,44 @@ func ValidResource() resource.Resource {
 
 func ValidMetadata() cheqd.Metadata {
 	return cheqd.Metadata{VersionId: "test_version_id", Deactivated: false, Resources: []string{ValidResourceId}}
+}
+
+type MockLedgerService struct {
+	Did      cheqd.Did
+	Metadata cheqd.Metadata
+	Resource resource.Resource
+}
+
+func NewMockLedgerService(did cheqd.Did, metadata cheqd.Metadata, resource resource.Resource) MockLedgerService {
+	return MockLedgerService{
+		Did:      did,
+		Metadata: metadata,
+		Resource: resource,
+	}
+}
+
+func (ls MockLedgerService) QueryDIDDoc(did string) (*cheqd.Did, *cheqd.Metadata, *types.IdentityError) {
+	if did == ls.Did.Id {
+		println("query !!!" + ls.Did.Id)
+		return &ls.Did, &ls.Metadata, nil
+	}
+	return nil, nil, types.NewNotFoundError(did, types.JSON, nil, true)
+}
+
+func (ls MockLedgerService) QueryResource(did string, resourceId string) (*resource.Resource, *types.IdentityError) {
+	if ls.Resource.Header == nil || ls.Resource.Header.Id != resourceId {
+		return nil, types.NewNotFoundError(did, types.JSON, nil, true)
+	}
+	return &ls.Resource, nil
+}
+
+func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, *types.IdentityError) {
+	if ls.Metadata.Resources == nil {
+		return []*resource.ResourceHeader{}, types.NewNotFoundError(did, types.JSON, nil, true)
+	}
+	return []*resource.ResourceHeader{ls.Resource.Header}, nil
+}
+
+func (ls MockLedgerService) GetNamespaces() []string {
+	return []string{"testnet", "mainnet"}
 }
