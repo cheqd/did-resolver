@@ -3,11 +3,11 @@ package types
 import "fmt"
 
 type IdentityError struct {
-	Code           int
-	Message        string
-	Internal       error
-	Did            string
-	ContentType    ContentType
+	Code            int
+	Message         string
+	Internal        error
+	Did             string
+	ContentType     ContentType
 	IsDereferencing bool
 }
 
@@ -29,17 +29,17 @@ func (e IdentityError) GetDereferencingOutput() ResolutionResultI {
 func (e *IdentityError) DisplayMessage() ResolutionResultI {
 	if e.IsDereferencing {
 		return e.GetDereferencingOutput()
-	} 
+	}
 	return e.GetResolutionOutput()
 }
 
 func NewIdentityError(code int, message string, isDereferencing bool, did string, contentType ContentType, err error) *IdentityError {
 	e := IdentityError{
-		Code:        code,
-		Message:     message,
-		Internal:    err,
-		Did:         did,
-		ContentType: contentType,
+		Code:            code,
+		Message:         message,
+		Internal:        err,
+		Did:             did,
+		ContentType:     contentType,
 		IsDereferencing: isDereferencing,
 	}
 	return &e
