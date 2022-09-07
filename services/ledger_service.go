@@ -119,7 +119,7 @@ func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.Resour
 
 	return resourceResponse.Resources, nil
 }
- 
+
 func (ls *LedgerService) RegisterLedger(method string, namespace string, url string) error {
 	if namespace == "" || method == "" {
 		err := errors.New("namespace and method cannot be empty")

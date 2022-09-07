@@ -130,9 +130,6 @@ func TestDereferenceResourceMetadata(t *testing.T) {
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
-			if !utils.IsValidResourceId(subtest.resourceId) {
-				return
-			}
 			resourceService := NewResourceService(utils.ValidMethod, subtest.ledgerService)
 			id := "did:" + subtest.method + ":" + subtest.namespace + ":" + subtest.identifier
 
@@ -167,13 +164,15 @@ func TestDereferenceResourceMetadata(t *testing.T) {
 	}
 }
 
-
 func TestDereferenceCollectionResources(t *testing.T) {
 	validResource := utils.ValidResource()
 	subtests := getSubtest(types.NewDereferencedResourceList(utils.ValidDid, []*resource.ResourceHeader{validResource.Header}))
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
+			if !utils.IsValidResourceId(subtest.resourceId) {
+				return
+			}
 			resourceService := NewResourceService(utils.ValidMethod, subtest.ledgerService)
 			id := "did:" + subtest.method + ":" + subtest.namespace + ":" + subtest.identifier
 
@@ -206,7 +205,6 @@ func TestDereferenceCollectionResources(t *testing.T) {
 		})
 	}
 }
-
 
 func TestDereferenceResourceData(t *testing.T) {
 	validResource := utils.ValidResource()

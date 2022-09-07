@@ -8,7 +8,7 @@ import (
 
 type ResolutionMetadata struct {
 	ContentType     ContentType   `json:"contentType,omitempty"`
-	ResolutionError string     `json:"error,omitempty"`
+	ResolutionError string        `json:"error,omitempty"`
 	Retrieved       string        `json:"retrieved,omitempty"`
 	DidProperties   DidProperties `json:"did,omitempty"`
 }

@@ -141,7 +141,6 @@ func TestResolve(t *testing.T) {
 	for _, subtest := range subtests {
 		id := "did:" + subtest.method + ":" + subtest.namespace + ":" + subtest.identifier
 		t.Run(subtest.name, func(t *testing.T) {
-
 			diddocService := NewDIDDocService("cheqd", subtest.ledgerService)
 			expectedDIDProperties := types.DidProperties{
 				DidString:        id,

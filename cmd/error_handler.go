@@ -7,7 +7,6 @@ import (
 )
 
 func CustomHTTPErrorHandler(err error, c echo.Context) {
-
 	if err == nil {
 		return
 	}
@@ -18,8 +17,10 @@ func CustomHTTPErrorHandler(err error, c echo.Context) {
 		log.Warn().Err(identityError.Internal)
 	}
 	c.Response().Header().Set(echo.HeaderContentType, string(identityError.ContentType))
-	c.JSONPretty(identityError.Code, identityError.DispalayMessage(), "  ")
-
+	err = c.JSONPretty(identityError.Code, identityError.DispalayMessage(), "  ")
+	if err != nil {
+		log.Error().Err(err)
+	}
 }
 
 func generateIdentityError(err error) *types.IdentityError {

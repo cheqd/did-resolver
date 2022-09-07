@@ -33,6 +33,7 @@ func (e *IdentityError) DefineDisplaying(isDereferencing bool) {
 	}
 	e.DispalayMessage = displayFunc
 }
+
 func NewIdentityError(code int, message string, isDereferencing bool, did string, contentType ContentType, err error) *IdentityError {
 	e := IdentityError{
 		Code:        code,

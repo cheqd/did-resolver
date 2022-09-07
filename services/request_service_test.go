@@ -62,12 +62,13 @@ func TestResolveDIDDoc(t *testing.T) {
 			expectedContentType := defineContentType(subtest.expectedResolutionType, subtest.resolutionType)
 
 			err := requestService.ResolveDIDDoc(context)
-			var resolutionResult types.DidResolution
-			json.Unmarshal(rec.Body.Bytes(), &resolutionResult)
 
 			if subtest.expectedError != nil {
 				require.EqualValues(t, subtest.expectedError.Error(), err.Error())
 			} else {
+				var resolutionResult types.DidResolution
+				unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &resolutionResult)
+				require.Empty(t, unmarshalErr)
 				require.Empty(t, err)
 				require.EqualValues(t, subtest.expectedError, err)
 				require.EqualValues(t, subtest.expectedDID, resolutionResult.Did)
