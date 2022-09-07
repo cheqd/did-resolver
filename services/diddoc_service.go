@@ -56,7 +56,7 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 	}
 
 	if err != nil {
-		err.DefineDisplaying(isDereferencing)
+		err.IsDereferencing = isDereferencing
 		return nil, err
 	}
 	return result, nil
@@ -100,7 +100,7 @@ func (dds DIDDocService) Resolve(did string, contentType types.ContentType) (*ty
 func (dds DIDDocService) dereferenceSecondary(did string, fragmentId string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
 	didResolution, err := dds.Resolve(did, contentType)
 	if err != nil {
-		err.DefineDisplaying(true)
+		err.IsDereferencing = true
 		return nil, err
 	}
 

@@ -3,12 +3,12 @@ package types
 import "fmt"
 
 type IdentityError struct {
-	Code            int
-	Message         string
-	Internal        error
-	Did             string
-	ContentType     ContentType
-	DispalayMessage func() ResolutionResultI
+	Code           int
+	Message        string
+	Internal       error
+	Did            string
+	ContentType    ContentType
+	IsDereferencing bool
 }
 
 // Error makes it compatible with `error` interface.
@@ -26,12 +26,11 @@ func (e IdentityError) GetDereferencingOutput() ResolutionResultI {
 	return DidDereferencing{DereferencingMetadata: metadata}
 }
 
-func (e *IdentityError) DefineDisplaying(isDereferencing bool) {
-	displayFunc := e.GetResolutionOutput
-	if isDereferencing {
-		displayFunc = e.GetDereferencingOutput
-	}
-	e.DispalayMessage = displayFunc
+func (e *IdentityError) DisplayMessage() ResolutionResultI {
+	if e.IsDereferencing {
+		return e.GetDereferencingOutput()
+	} 
+	return e.GetResolutionOutput()
 }
 
 func NewIdentityError(code int, message string, isDereferencing bool, did string, contentType ContentType, err error) *IdentityError {
@@ -41,8 +40,8 @@ func NewIdentityError(code int, message string, isDereferencing bool, did string
 		Internal:    err,
 		Did:         did,
 		ContentType: contentType,
+		IsDereferencing: isDereferencing,
 	}
-	e.DefineDisplaying(isDereferencing)
 	return &e
 }
 

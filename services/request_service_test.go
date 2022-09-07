@@ -80,7 +80,7 @@ func TestResolveDIDDoc(t *testing.T) {
 	}
 }
 
-func TestRequestService_ereferenceResourceData(t *testing.T) {
+func TestRequestService_DereferenceResourceData(t *testing.T) {
 	validDIDDoc := utils.ValidDIDDoc()
 	validMetadata := utils.ValidMetadata()
 	validResource := utils.ValidResource()

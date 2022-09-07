@@ -54,7 +54,7 @@ func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
 	result, err := rs.resourceDereferenceService.DereferenceResourceMetadata(resourceId, did, requestedContentType)
 	if err != nil {
-		err.DefineDisplaying(true)
+		err.IsDereferencing = true
 		return err
 	}
 	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
@@ -67,7 +67,7 @@ func (rs RequestService) DereferenceResourceData(c echo.Context) error {
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
 	result, err := rs.resourceDereferenceService.DereferenceResourceData(resourceId, did, requestedContentType)
 	if err != nil {
-		err.DefineDisplaying(true)
+		err.IsDereferencing = true
 		return err
 	}
 	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
@@ -79,7 +79,7 @@ func (rs RequestService) DereferenceCollectionResources(c echo.Context) error {
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
 	resolutionResponse, err := rs.resourceDereferenceService.DereferenceCollectionResources(did, requestedContentType)
 	if err != nil {
-		err.DefineDisplaying(true)
+		err.IsDereferencing = true
 		return err
 	}
 	c.Response().Header().Set(echo.HeaderContentType, resolutionResponse.GetContentType())

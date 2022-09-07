@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"net/http"
+
 	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
@@ -11,13 +13,13 @@ func CustomHTTPErrorHandler(err error, c echo.Context) {
 		return
 	}
 	identityError := generateIdentityError(err)
-	if identityError.Code == 500 {
+	if identityError.Code == http.StatusInternalServerError {
 		log.Error().Err(identityError.Internal)
 	} else {
 		log.Warn().Err(identityError.Internal)
 	}
 	c.Response().Header().Set(echo.HeaderContentType, string(identityError.ContentType))
-	err = c.JSONPretty(identityError.Code, identityError.DispalayMessage(), "  ")
+	err = c.JSONPretty(identityError.Code, identityError.DisplayMessage(), "  ")
 	if err != nil {
 		log.Error().Err(err)
 	}
@@ -29,7 +31,7 @@ func generateIdentityError(err error) *types.IdentityError {
 		return identityError
 	}
 	he, ok := err.(*echo.HTTPError)
-	if !ok || he.Code != 404 {
+	if !ok || he.Code != http.StatusNotFound {
 		return types.NewInternalError("", types.JSON, err, false)
 	}
 	return types.NewInvalidDIDUrlError("", types.JSON, err, false)
