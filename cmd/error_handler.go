@@ -34,5 +34,5 @@ func generateIdentityError(err error) *types.IdentityError {
 	if !ok || he.Code != http.StatusNotFound {
 		return types.NewInternalError("", types.JSON, err, false)
 	}
-	return types.NewInvalidDIDUrlError("", types.JSON, err, false)
+	return types.NewInvalidDIDUrlError("", types.JSON, err, true)
 }
