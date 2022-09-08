@@ -48,40 +48,31 @@ Environment variables needed in Docker Compose are defined in the `docker/docker
 
 #### Configure resolver settings
 
-To configure the resolver, edit the `config.yaml` file in the root of the `@cheqd/did-resolver` repository. The values that can be edited are as follows:
+To configure the resolver, use envieroment variables or edit them in the `config.env` file in the root of the `@cheqd/did-resolver` repository. The values that can be edited are as follows:
 
-1. **`ledger`**
-   1. `networks`: A string specifying the Cosmos SDK gRPC endpoint from which the Resolver pulls data. Format: `<did-namespace>=<resource_url>:<resource_port>;...`
+1. **`MAINNET_ENDPOINT`** : Mainnet Network endpoint as string with the folowwing format" `<networks>,<useTls>,<timeout>`. Example: `grpc.cheqd.net:443,true,5s`
+   1. `networks`: A string specifying the Cosmos SDK gRPC endpoint from which the Resolver pulls data. Format: `<resource_url>:<resource_port>`
    2. `useTls`: Specify whether gRPC connection to ledger should use secure or insecure pulls. Default is `true` since gRPC uses HTTP/2 with TLS as the transport mechanism.
    3. `timeout`: Timeout (in seconds) to wait for before any ledger requests are considered to have time out.
 2. **`resolver`**
    1. `method`: A string describing DID Method that the resolver uses. Set to `cheqd`.
-3. **`api`**
-   1. `listener`: A string with address and port where the resolver listens for requests from clients.
-   2. `resolverPath`: A string with path for DID Doc resolution. Example: `/1.0/identifiers/:did` for requests like `/1.0/identifiers/did:cheqd:testnet:MTMxDQKMTMxDQKMT`
-4. **`logLevel`**: `debug`/`warn`/`info`/`error` - to define the application log level
+3. **`RESOLVER_LISTNER`**`: A string with address and port where the resolver listens for requests from clients.
+4. **`LOG_LEVEL`**: `debug`/`warn`/`info`/`error` - to define the application log level
 
-#### Example `config.yaml` file
+#### Example `config.env` file
 
-```yaml
-ledger:
-  # Provide gRPC endpoints for one of more networks "namespaces" to fetch DIDs/DIDDocs from
-  # Must be in format "namespace=endpoint:port"
-  networks: "mainnet=grpc.cheqd.net:443;testnet=grpc.cheqd.network:443"
-  # Specify whether gRPC connection to ledger should use secure or insecure pulls
-  # default: true
-  useTls: true
-  # Specify a timeout value
-  timeout: "5s"
+```bash
+# Syntax: <grpc-endpoint-url:port>,boolean,time
+# 1st parameter is gRPC endpoint
+# 2nd (Boolean) parameter is whether to use TLS or not
+# 3nd connection timeout 
+MAINNET_ENDPOINT: grpc.cheqd.net:443,true,5s
+TESTNET_ENDPOINT: grpc.cheqd.network:443,true,5s
 
-resolver:
-  method: "cheqd"
+# Sets Echo logging level
+LOG_LEVEL: "warn"
 
-api:
-  listener: "0.0.0.0:1313"
-  resolverPath: "/1.0/identifiers/:did"
-
-logLevel: "warn"
+RESOLVER_LISTNER: "0.0.0.0:8080"
 ```
 
 ## 📖 Documentation

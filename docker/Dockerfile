@@ -26,8 +26,8 @@ SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 # Copy compiled cheqd-did-resolver binary from Stage 1
 COPY --from=builder /resolver/cheqd-did-resolver /bin/cheqd-did-resolver
 
-# Copy base config.yaml
-COPY config.yaml .
+# Copy base config.env
+COPY config.env .
 
 EXPOSE 8080
 

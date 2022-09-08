@@ -18,4 +18,4 @@ services:
 
 configs:
   resolver-config:
-    file: ../../config.yaml
+    file: ../../config.env

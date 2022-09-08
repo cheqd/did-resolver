@@ -15,10 +15,10 @@ services:
     #  target: resolver
     # CAUTION: Change IMAGE_VERSION to local in docker-compose.env if building your own image in section below
     # image: did-resolver-custom-build:${IMAGE_VERSION}
-    image: ghcr.io/cheqd/did-resolver:${IMAGE_VERSION}
+    image: ac71429a1860
     configs:
       - source: resolver-config
-        target: ${RESOLVER_HOME_DIR}/config.yaml
+        target: ${RESOLVER_HOME_DIR}/config.env
     ports:
       - target: 8080
         published: ${RESOLVER_PORT}
@@ -27,4 +27,4 @@ services:
 
 configs:
   resolver-config:
-    file: ../config.yaml
+    file: ../config.env

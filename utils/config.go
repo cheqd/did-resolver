@@ -2,21 +2,23 @@ package utils
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/cheqd/did-resolver/types"
 	"github.com/spf13/viper"
 )
 
 func LoadConfig() (types.Config, error) {
-	viper.SetConfigFile("config.yaml")
-	err := viper.ReadInConfig()
+	viper.SetConfigFile("config.env")
+	
 
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	// viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
-
+	err := viper.ReadInConfig()
 	if err != nil {
-		return types.Config{}, fmt.Errorf("error reading config.yaml: %s", err)
+		return types.Config{}, fmt.Errorf("error reading config.env: %s", err)
 	}
 
 	conf := &types.Config{}
@@ -35,4 +37,26 @@ func MustLoadConfig() types.Config {
 	}
 
 	return config
+}
+
+func ParseGRPCEndpoint(configEndpoint string, networkName string) (*types.Network, error) {
+	config := strings.Split(configEndpoint, ",")
+	if len(config) != 3 {
+		return nil, fmt.Errorf(fmt.Sprintf("Endpoint config for %s is invalid: %s", networkName, configEndpoint))
+	}
+	useTls, err := strconv.ParseBool(config[1])
+	if err != nil {
+		return nil, fmt.Errorf(fmt.Sprintf("useTls value %s for %s endpoint is invalid", configEndpoint, networkName))
+	}
+	timeout, err := time.ParseDuration(config[2])
+	if err != nil {
+		return nil, fmt.Errorf(fmt.Sprintf("Timeout value %s for %s endpoint is invalid", configEndpoint, networkName))
+	}
+
+	return &types.Network{
+		Namespace: networkName,
+		Endpoint:  config[0],
+		UseTls:    useTls,
+		Timeout:   timeout,
+	}, nil
 }
