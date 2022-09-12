@@ -12,9 +12,7 @@ import (
 
 func LoadConfig() (types.Config, error) {
 	viper.SetConfigFile("config.env")
-	
 
-	// viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 	err := viper.ReadInConfig()
 	if err != nil {

@@ -14,8 +14,7 @@ services:
     #  dockerfile: docker/Dockerfile
     #  target: resolver
     # CAUTION: Change IMAGE_VERSION to local in docker-compose.env if building your own image in section below
-    # image: did-resolver-custom-build:${IMAGE_VERSION}
-    image: ac71429a1860
+    image: did-resolver-custom-build:${IMAGE_VERSION}
     configs:
       - source: resolver-config
         target: ${RESOLVER_HOME_DIR}/config.env
@@ -24,7 +23,10 @@ services:
         published: ${RESOLVER_PORT}
         mode: host
     restart: on-failure
-
-configs:
-  resolver-config:
-    file: ../config.env
+    env_file:
+      - ../config.env
+    environment:
+     - MAINNET_ENDPOINT=${MAINNET_ENDPOINT}
+     - TESTNET_ENDPOINT=${TESTNET_ENDPOINT}
+     - LOG_LEVEL=${LOG_LEVEL}
+     - RESOLVER_LISTNER=${RESOLVER_LISTNER}
