@@ -19,7 +19,7 @@ func (cType ContentType) IsSupported() bool {
 }
 
 const (
-	DIDSchemaJSONLD = "https://www.w3.org/ns/did/v1"
+	DIDSchemaJSONLD        = "https://www.w3.org/ns/did/v1"
 	ResolutionSchemaJSONLD = "https://w3id.org/did-resolution/v1"
 )
 
