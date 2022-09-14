@@ -3,6 +3,7 @@ package types
 type DereferencingMetadata ResolutionMetadata
 
 type DidDereferencing struct {
+	Context               string                   `json:"@context,omitempty"`
 	DereferencingMetadata DereferencingMetadata    `json:"dereferencingMetadata"`
 	ContentStream         ContentStreamI           `json:"contentStream"`
 	Metadata              ResolutionDidDocMetadata `json:"contentMetadata"`

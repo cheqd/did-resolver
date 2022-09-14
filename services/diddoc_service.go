@@ -88,12 +88,14 @@ func (dds DIDDocService) Resolve(did string, contentType types.ContentType) (*ty
 		return nil, mErr
 	}
 	didDoc := types.NewDidDoc(*protoDidDoc)
+	result := types.DidResolution{Did: &didDoc, Metadata: *resolvedMetadata, ResolutionMetadata: didResolutionMetadata}
 	if didResolutionMetadata.ContentType == types.DIDJSONLD || didResolutionMetadata.ContentType == types.JSONLD {
 		didDoc.AddContext(types.DIDSchemaJSONLD)
+		result.Context = types.ResolutionSchemaJSONLD
 	} else {
 		didDoc.RemoveContext()
 	}
-	return &types.DidResolution{Did: &didDoc, Metadata: *resolvedMetadata, ResolutionMetadata: didResolutionMetadata}, nil
+	return &result, nil
 }
 
 // https://w3c-ccg.github.io/did-resolution/#dereferencing
@@ -117,18 +119,20 @@ func (dds DIDDocService) dereferenceSecondary(did string, fragmentId string, con
 	if contentStream == nil {
 		return nil, types.NewNotFoundError(did, contentType, nil, true)
 	}
+	result := types.DidDereferencing{
+		ContentStream:         contentStream,
+		Metadata:              metadata,
+		DereferencingMetadata: types.DereferencingMetadata(didResolution.ResolutionMetadata),
+	}
 
 	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
 		contentStream.AddContext(types.DIDSchemaJSONLD)
+		result.Context = types.ResolutionSchemaJSONLD
 	} else {
 		contentStream.RemoveContext()
 	}
 
-	return &types.DidDereferencing{
-		ContentStream:         contentStream,
-		Metadata:              metadata,
-		DereferencingMetadata: types.DereferencingMetadata(didResolution.ResolutionMetadata),
-	}, nil
+	return &result, nil
 }
 
 func (dds DIDDocService) resolveMetadata(did string, metadata cheqdTypes.Metadata, contentType types.ContentType) (*types.ResolutionDidDocMetadata, *types.IdentityError) {

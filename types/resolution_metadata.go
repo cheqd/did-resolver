@@ -20,6 +20,7 @@ type DidProperties struct {
 }
 
 type DidResolution struct {
+	Context            string                   `json:"@context,omitempty"`
 	ResolutionMetadata ResolutionMetadata       `json:"didResolutionMetadata"`
 	Did                *DidDoc                  `json:"didDocument"`
 	Metadata           ResolutionDidDocMetadata `json:"didDocumentMetadata"`
