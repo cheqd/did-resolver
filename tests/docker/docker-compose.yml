@@ -13,6 +13,6 @@ services:
         mode: host
     restart: on-failure
     environment:
-      source: ../config.env
+      source: ../../config.env
     env_file:
-      - ../config.env
+      - ../../config.env
