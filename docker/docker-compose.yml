@@ -9,24 +9,18 @@ services:
     # OPTIONAL: Rebuild cheqd did-resolver Docker image, if you want build your own
     # Default is to pull in the pre-published image on GitHub Container Registry
     # SYNTAX: docker-compose -f docker/docker-compose.yml --env-file docker/docker-compose.env build --no-cache
-    # build:
-    #  context: ../
-    #  dockerfile: docker/Dockerfile
-    #  target: resolver
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+      target: resolver
     # CAUTION: Change IMAGE_VERSION to local in docker-compose.env if building your own image in section below
-    image: did-resolver-custom-build:${IMAGE_VERSION}
-    configs:
-      - source: resolver-config
-        target: ${RESOLVER_HOME_DIR}/config.env
+#    image: did-resolver-custom-build:${IMAGE_VERSION}
     ports:
       - target: 8080
         published: ${RESOLVER_PORT}
         mode: host
     restart: on-failure
+    environment:
+      source: ../config.env
     env_file:
       - ../config.env
-    environment:
-     - MAINNET_ENDPOINT=${MAINNET_ENDPOINT}
-     - TESTNET_ENDPOINT=${TESTNET_ENDPOINT}
-     - LOG_LEVEL=${LOG_LEVEL}
-     - RESOLVER_LISTNER=${RESOLVER_LISTNER}

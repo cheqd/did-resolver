@@ -50,17 +50,7 @@ func serve() {
 	// Services
 	ledgerService := services.NewLedgerService()
 
-	mainnetEndpoint, err := utils.ParseGRPCEndpoint(config.MainnetEndpoint, "mainnet")
-	if err != nil {
-		panic(err)
-	}
-	testnetEndpoint, err := utils.ParseGRPCEndpoint(config.TestnetEndpoint, "testnet")
-	if err != nil {
-		panic(err)
-	}
-	networks := []types.Network{*mainnetEndpoint, *testnetEndpoint}
-
-	for _, network := range networks {
+	for _, network := range config.Networks {
 		log.Info().Msgf("Registering network: %s.", network.Namespace)
 		err := ledgerService.RegisterLedger(types.DID_METHOD, network)
 		if err != nil {

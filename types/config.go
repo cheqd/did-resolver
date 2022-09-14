@@ -5,11 +5,17 @@ import (
 	"time"
 )
 
-type Config struct {
+type RawConfig struct {
 	MainnetEndpoint  string `mapstructure:"MAINNET_ENDPOINT"`
 	TestnetEndpoint  string `mapstructure:"TESTNET_ENDPOINT"`
 	ResolverListener string `mapstructure:"RESOLVER_LISTNER"`
 	LogLevel         string `mapstructure:"LOG_LEVEL"`
+}
+
+type Config struct {
+	Networks         []Network
+	ResolverListener string
+	LogLevel         string
 }
 
 type Network struct {

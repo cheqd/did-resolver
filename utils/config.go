@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -11,21 +12,29 @@ import (
 )
 
 func LoadConfig() (types.Config, error) {
-	viper.SetConfigFile("config.env")
-
-	viper.AutomaticEnv()
-	err := viper.ReadInConfig()
-	if err != nil {
-		return types.Config{}, fmt.Errorf("error reading config.env: %s", err)
+	if _, err := os.Stat("config.env"); err == nil {
+		viper.SetConfigFile("config.env")
+		err := viper.ReadInConfig()
+		if err != nil {
+			return types.Config{}, fmt.Errorf("error reading config.env: %v", err)
+		}
 	}
+	viper.SetDefault("MAINNET_ENDPOINT", "")
+	viper.SetDefault("TESTNET_ENDPOINT", "")
+	viper.SetDefault("LOG_LEVEL", "")
+	viper.SetDefault("RESOLVER_LISTNER", "")
+	viper.AutomaticEnv()
 
-	conf := &types.Config{}
-	err = viper.Unmarshal(conf)
+	rawConf := &types.RawConfig{}
+	err := viper.Unmarshal(rawConf)
 	if err != nil {
 		return types.Config{}, fmt.Errorf("unable to decode into config struct, %v", err)
 	}
-
-	return *conf, nil
+	conf, err := NewConfig(*rawConf)
+	if err != nil {
+		return types.Config{}, fmt.Errorf("invalid config parameter, %v", err)
+	}
+	return conf, nil
 }
 
 func MustLoadConfig() types.Config {
@@ -56,5 +65,21 @@ func ParseGRPCEndpoint(configEndpoint string, networkName string) (*types.Networ
 		Endpoint:  config[0],
 		UseTls:    useTls,
 		Timeout:   timeout,
+	}, nil
+}
+
+func NewConfig(rawConfig types.RawConfig) (types.Config, error) {
+	mainnetEndpoint, err := ParseGRPCEndpoint(rawConfig.MainnetEndpoint, "mainnet")
+	if err != nil {
+		return types.Config{}, err
+	}
+	testnetEndpoint, err := ParseGRPCEndpoint(rawConfig.TestnetEndpoint, "testnet")
+	if err != nil {
+		return types.Config{}, err
+	}
+	return types.Config{
+		Networks: []types.Network{*mainnetEndpoint, *testnetEndpoint},
+		ResolverListener: rawConfig.ResolverListener,
+		LogLevel: rawConfig.LogLevel,
 	}, nil
 }
