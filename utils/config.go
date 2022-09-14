@@ -78,8 +78,8 @@ func NewConfig(rawConfig types.RawConfig) (types.Config, error) {
 		return types.Config{}, err
 	}
 	return types.Config{
-		Networks: []types.Network{*mainnetEndpoint, *testnetEndpoint},
+		Networks:         []types.Network{*mainnetEndpoint, *testnetEndpoint},
 		ResolverListener: rawConfig.ResolverListener,
-		LogLevel: rawConfig.LogLevel,
+		LogLevel:         rawConfig.LogLevel,
 	}, nil
 }
