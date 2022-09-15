@@ -6,13 +6,11 @@ version: '3.7'
 
 services:
   did_resolver:
-    image: ${TEST_TAG}
+    image: ${TEST_IMAGE_NAME}
     ports:
       - target: 8080
         published: ${RESOLVER_PORT}
         mode: host
     restart: on-failure
-    environment:
-      source: ../../config.env
     env_file:
-      - ../../config.env
+      - ../../docker/container.env
