@@ -50,8 +50,6 @@ jobs:
 
       - name: Set up Docker container for test
         run: docker-compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up -d --no-build
-        env:
-          TEST_TAG: ${{ env.TEST_TAG }}
 
       - name: Setup Python environment
         working-directory: ./tests/pytest
