@@ -87,10 +87,10 @@ func (rs RequestService) DereferenceCollectionResources(c echo.Context) error {
 }
 
 func getContentType(accept string) types.ContentType {
-	tmp := strings.Split(accept, ",")
-	for _, cType := range tmp {
+	typeList := strings.Split(accept, ",")
+	for _, cType := range typeList {
 		result := types.ContentType(strings.Split(cType, ";")[0])
-		if result == "*/*" {
+		if result == "*/*" || result == types.JSONLD {
 			result = types.DIDJSONLD
 		}
 		if result.IsSupported() {

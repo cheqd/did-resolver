@@ -47,8 +47,8 @@ def test_resolution(did_url, expected_output):
 @pytest.mark.parametrize(
     "accept, expected_header, has_context, expected_status_code, expected_body",
     [
-        (LDJSON, LDJSON, True, 200,
-         r"(.*?)didResolutionMetadata"),
+        (LDJSON, DIDLDJSON, True, 200,
+         r"(.*?)context(.*?)didResolutionMetadata"),
         (DIDLDJSON, DIDLDJSON, True, 200,
          "(.*?)didResolutionMetadata(.*?)application/did\+ld\+json"
          "(.*?)didDocument(.*?)@context(.*?)didDocumentMetadata(.*?)"),
@@ -79,8 +79,8 @@ def test_resolution_content_type(accept, expected_header, expected_body, has_con
 
 
 secondary_dereferencing_content_type_test_set = [
-    (LDJSON, LDJSON, True, 200,
-     r"(.*?)dereferencingMetadata(.*?)application/ld\+json"
+    (LDJSON, DIDLDJSON, True, 200,
+     r"(.*?)dereferencingMetadata(.*?)application/did\+ld\+json"
      r"(.*?)contentStream(.*?)@context(.*?)contentMetadata"),
     (DIDLDJSON, DIDLDJSON, True, 200,
      "(.*?)dereferencingMetadata(.*?)application/did\+ld\+json"
@@ -117,8 +117,8 @@ def test_dereferencing_content_type_fragment(accept, expected_header, expected_b
 
 
 primary_dereferencing_content_type_test_set = [
-    (LDJSON, LDJSON, True, 200,
-     r"(.*?)dereferencingMetadata(.*?)application/ld\+json"
+    (LDJSON, DIDLDJSON, True, 200,
+     r"(.*?)dereferencingMetadata(.*?)application/did\+ld\+json"
      r"(.*?)contentStream(.*?)contentMetadata"),
     (DIDLDJSON, DIDLDJSON, True, 200,
      "(.*?)dereferencingMetadata(.*?)application/did\+ld\+json"
@@ -148,7 +148,10 @@ def test_dereferencing_content_type_resource_metadata(accept, expected_header, e
     print(r.text)
     assert r.headers["Content-Type"] == expected_header
     assert re.match(expected_body, r.text.replace("\n", "\\n"))
-    assert not re.findall(r"context", r.text.replace("\n", "\\n"))
+    if has_context:
+        assert re.findall(r"context", r.text.replace("\n", "\\n"))
+    else:
+        assert not re.findall(r"context", r.text.replace("\n", "\\n"))
 
 
 @pytest.mark.parametrize(
@@ -164,7 +167,7 @@ def test_dereferencing_content_type_resource(accept, expected_header, expected_s
 
 @pytest.mark.parametrize(
     "accept, expected_header, expected_status_code, expected_body",
-    [(LDJSON, LDJSON, 301,
+    [(LDJSON, DIDLDJSON, 301,
       r"(.*?)\"dereferencingMetadata(.*?)\"contentStream\":(.*?)"
       r"resourceCollectionId(.*?)\"contentMetadata\":(.*?)"), ]
 )

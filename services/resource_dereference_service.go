@@ -34,8 +34,12 @@ func (rds ResourceService) DereferenceResourceMetadata(resourceId string, did st
 		err.ContentType = contentType
 		return nil, err
 	}
+	var context string
+	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
+		context = types.ResolutionSchemaJSONLD
+	}
 	contentStream := types.NewDereferencedResourceList(did, []*resourceTypes.ResourceHeader{resource.Header})
-	return &types.DidDereferencing{ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
+	return &types.DidDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
 func (rds ResourceService) DereferenceCollectionResources(did string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
@@ -48,8 +52,12 @@ func (rds ResourceService) DereferenceCollectionResources(did string, contentTyp
 		err.ContentType = contentType
 		return nil, err
 	}
+	var context string
+	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
+		context = types.ResolutionSchemaJSONLD
+	}
 	contentStream := types.NewDereferencedResourceList(did, resources)
-	return &types.DidDereferencing{ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
+	return &types.DidDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
 func (rds ResourceService) DereferenceResourceData(resourceId string, did string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
