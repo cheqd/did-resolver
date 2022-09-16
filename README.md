@@ -44,35 +44,33 @@ Environment variables needed in Docker Compose are defined in the `docker/docker
 
 1. `IMAGE_VERSION` (default: `latest`): Version number / tag of the Docker image to run. By default, this is set to pull images from Github Container Registry.
 2. `RESOLVER_PORT` (default: `8080`): Port on which the Resolver service is published/exposed on the host machine. Internally mapped to port 8080 in the container.
-3. `RESOLVER_HOME_DIR` (default: `/resolver`): Default config directory inside the Docker container
 
 #### Configure resolver settings
 
-To configure the resolver, use envieroment variables or edit them in the `config.env` file in the root of the `@cheqd/did-resolver` repository. The values that can be edited are as follows:
+To configure the resolver, use environment variables or edit them in the `container.env` file in the root of the `@cheqd/did-resolver` repository. The values that can be edited are as follows:
 
-1. **`MAINNET_ENDPOINT`** : Mainnet Network endpoint as string with the folowwing format" `<networks>,<useTls>,<timeout>`. Example: `grpc.cheqd.net:443,true,5s`
+1. **`MAINNET_ENDPOINT`** : Mainnet Network endpoint as string with the following format" `<networks>,<useTls>,<timeout>`. Example: `grpc.cheqd.net:443,true,5s`
    1. `networks`: A string specifying the Cosmos SDK gRPC endpoint from which the Resolver pulls data. Format: `<resource_url>:<resource_port>`
    2. `useTls`: Specify whether gRPC connection to ledger should use secure or insecure pulls. Default is `true` since gRPC uses HTTP/2 with TLS as the transport mechanism.
    3. `timeout`: Timeout (in seconds) to wait for before any ledger requests are considered to have time out.
-2. **`resolver`**
-   1. `method`: A string describing DID Method that the resolver uses. Set to `cheqd`.
+2. **`TESTNET_ENDPOINT`** : Testnet Network endpoint as string with the following format" `<networks>,<useTls>,<timeout>`. Example: `grpc.cheqd.network:443,true,5s`
 3. **`RESOLVER_LISTNER`**`: A string with address and port where the resolver listens for requests from clients.
 4. **`LOG_LEVEL`**: `debug`/`warn`/`info`/`error` - to define the application log level
 
-#### Example `config.env` file
+#### Example `container.env` file
 
 ```bash
 # Syntax: <grpc-endpoint-url:port>,boolean,time
 # 1st parameter is gRPC endpoint
 # 2nd (Boolean) parameter is whether to use TLS or not
 # 3nd connection timeout 
-MAINNET_ENDPOINT: grpc.cheqd.net:443,true,5s
-TESTNET_ENDPOINT: grpc.cheqd.network:443,true,5s
+MAINNET_ENDPOINT=grpc.cheqd.net:443,true,5s
+TESTNET_ENDPOINT=grpc.cheqd.network:443,true,5s
 
 # Sets Echo logging level
-LOG_LEVEL: "warn"
+LOG_LEVEL="warn"
 
-RESOLVER_LISTNER: "0.0.0.0:8080"
+RESOLVER_LISTNER="0.0.0.0:8080"
 ```
 
 ## 📖 Documentation
