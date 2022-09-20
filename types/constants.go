@@ -24,5 +24,7 @@ const (
 )
 
 const (
+	DID_METHOD    = "cheqd"
+	RESOLVER_PATH = "/1.0/identifiers/"
 	RESOURCE_PATH = "/resources/"
 )
