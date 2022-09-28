@@ -1,4 +1,4 @@
-name: "Deploy production DID-resolver"
+name: "Deploy"
 on:
   workflow_call:
 defaults:
@@ -7,8 +7,8 @@ defaults:
 
 jobs:
 
-  deploy-did-resolver:
-    name: "Deploy DID-resolver to the production environment"
+  deploy-production:
+    name: "DID Resolver - Production"
     runs-on: ubuntu-latest
     environment:
       name: production
