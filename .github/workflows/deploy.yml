@@ -1,0 +1,24 @@
+name: "Deploy production DID-resolver"
+on:
+  workflow_call:
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  deploy-did-resolver:
+    name: "Deploy DID-resolver to the production environment"
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://resolver.cheqd.net/
+
+    steps: 
+      - name: Install DigitalOcean CLI
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      
+      - name: Force Redeployment
+        run: doctl app create-deployment --force-rebuild ${{ secrets.APP_ID }}
