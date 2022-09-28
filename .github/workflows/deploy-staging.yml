@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Print inputs
-        run: echo "Building docker image from ${{ github.event.inputs.branch }} branch...
+        run: echo "Building docker image from ${{ github.event.inputs.branch }} branch..."
 
       - uses: actions/checkout@v3
         with:
@@ -89,7 +89,7 @@ jobs:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       
       - name: Print inputs
-        run: echo "Deploying ${{ github.event.inputs.branch }} branch to the staging environment...
+        run: echo "Deploying ${{ github.event.inputs.branch }} branch to the staging environment..."
 
       - name: Force Redeployment
         run: doctl app create-deployment --force-rebuild ${{ secrets.APP_ID }}
