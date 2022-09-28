@@ -1,9 +1,10 @@
-name: "Deploy the desired branch to the staging environment"
+name: "Deploy - Staging"
 on: 
   workflow_dispatch:
     inputs:
       branch:
-        description: "Enter the branch name to deploy to the staging environment."
+        description: "Branch name"
+        type: string
         required: true
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
