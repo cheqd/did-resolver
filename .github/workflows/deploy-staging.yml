@@ -41,19 +41,11 @@ jobs:
       - name: Login to DigitalOcean Container Registry
         run: doctl registry login --expiry-seconds 600
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Configure Docker image metadata
         id: meta
         uses: docker/metadata-action@v4
         with:
           images: |
-            name=ghcr.io/${{ github.repository}}
             name=registry.digitalocean.com/cheqd/${{ github.repository }}
           tags: |
             type=raw,value=staging-latest
@@ -81,7 +73,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: staging
-      url: https://did-resolver-dev-39yxa.ondigitalocean.app
+      url: https://resolver-staging.cheqd.net
 
     steps: 
       - name: Install DigitalOcean CLI
