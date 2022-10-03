@@ -36,6 +36,22 @@ jobs:
         with:
           install: true
           version: latest
+      
+      - name: Configure Docker image metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.TEST_IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ github.ref_name }}
+            type=raw,value=staging-latest
+            type=sha,format=long
+          labels: |
+            org.opencontainers.image.description="DID Resolver for cheqd network"
+            org.opencontainers.image.source="https://github.com/cheqd/bdjuno"
+            org.opencontainers.image.vendor="Cheqd Foundation Limited"
+            org.opencontainers.image.created={{date 'dddd, MMMM Do YYYY, h:mm:ss a'}}
+            org.opencontainers.image.documentation="https://docs.cheqd.io/node"
 
       - name: Configure Docker image metadata
         id: build-meta
