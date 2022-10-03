@@ -43,14 +43,15 @@ jobs:
           context: .
           file: docker/Dockerfile
           platforms: linux/amd64
-          load: true
           tags: |
             type=raw,value=${{ github.ref }}
             type=raw,value=staging-latest
             type=sha,format=long
           outputs: |
             type=local,dest=/tmp/did-resolver-image.tar
-            type=image
+      
+      - name: Load docker image
+        run: docker loag --input /tmp/did-resolver-image.tar
 
       - name: Set up Docker container for test
         run: docker-compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up -d --no-build
