@@ -36,6 +36,22 @@ jobs:
         with:
           install: true
           version: latest
+      
+      - name: Configure Docker image metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.TEST_IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ github.ref_name }}
+            type=raw,value=staging-latest
+            type=sha,format=long
+          labels: |
+            org.opencontainers.image.description="DID Resolver for cheqd network"
+            org.opencontainers.image.source="https://github.com/cheqd/bdjuno"
+            org.opencontainers.image.vendor="Cheqd Foundation Limited"
+            org.opencontainers.image.created={{date 'dddd, MMMM Do YYYY, h:mm:ss a'}}
+            org.opencontainers.image.documentation="https://docs.cheqd.io/node"
 
       - name: Build image
         uses: docker/build-push-action@v3
@@ -44,12 +60,15 @@ jobs:
           file: docker/Dockerfile
           platforms: linux/amd64
           load: true
-          tags: |
-            type=raw,value=staging-latest
-            type=sha,format=long
+
+      - name: Save docker images
+        run:  docker save $(docker images -q) -o /tmp/did-resolver-image.tar
       
-      - name: Save docker image
-        run:  docker save ${{ env.TEST_IMAGE_NAME }} > /tmp/did-resolver-image.tar
+      - name: Upload docker images as an artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: did-resolver-image
+          path: /tmp/did-resolver-image.tar
 
       - name: Set up Docker container for test
         run: docker-compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up -d --no-build
@@ -66,9 +85,3 @@ jobs:
         run: |
           set -euo pipefail
           pytest -v -rP ./*.py
-
-      - name: Upload docker image as an artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: did-resolver-image
-          path: /tmp/did-resolver-image.tar
