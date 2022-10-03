@@ -56,9 +56,7 @@ jobs:
           file: docker/Dockerfile
           platforms: linux/amd64
           load: true
-          tags: |
-            type=raw,value=staging-latest
-            type=sha,format=long
+          tags: ${{ steps.build-meta.outputs.tags }}
       
       - name: Save docker image
         run:  docker save ${{ env.IMAGE_NAME }} > /tmp/did-resolver-image.tar
