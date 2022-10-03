@@ -59,16 +59,17 @@ jobs:
           context: .
           file: docker/Dockerfile
           platforms: linux/amd64
-          load: true
-
-      - name: Save docker images
-        run:  docker save "$(docker images -q)" -o /tmp/did-resolver-image.tar
-      
+          outputs: |
+            type=local,dest=/tmp/did-resolver-image.tar
+            
       - name: Upload docker images as an artifact
         uses: actions/upload-artifact@v3
         with:
           name: did-resolver-image
           path: /tmp/did-resolver-image.tar
+
+      - name: Load docker images
+        run:  docker load -q -i /tmp/did-resolver-image.tar
 
       - name: Set up Docker container for test
         run: docker-compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up -d --no-build
