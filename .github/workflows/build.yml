@@ -25,7 +25,7 @@ jobs:
     name: "Build Docker image"
     runs-on: ubuntu-latest
     env:
-      TEST_IMAGE_NAME: ${{ github.repository }}
+      TEST_IMAGE_NAME: registry.digitalocean.com/${{ github.repository }}
 
     steps:
       - uses: actions/checkout@v3
@@ -46,7 +46,11 @@ jobs:
           load: true
           tags: |
             type=raw,value=${{ github.ref }}
+            type=raw,value=staging-latest
             type=sha,format=long
+          outputs: |
+            type=local,dest=/tmp/did-resolver-image.tar
+            type=image
 
       - name: Set up Docker container for test
         run: docker-compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up -d --no-build
@@ -63,3 +67,9 @@ jobs:
         run: |
           set -euo pipefail
           pytest -v -rP ./*.py
+
+      - name: Upload docker image as an artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: did-resolver-image
+          path: /tmp/did-resolver-image.tar
