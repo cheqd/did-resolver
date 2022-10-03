@@ -25,7 +25,7 @@ jobs:
     name: "Build Docker image"
     runs-on: ubuntu-latest
     env:
-      TEST_IMAGE_NAME: registry.digitalocean.com/${{ github.repository }}
+      IMAGE_NAME: ${{ github.repository }}
 
     steps:
       - uses: actions/checkout@v3
@@ -36,6 +36,18 @@ jobs:
         with:
           install: true
           version: latest
+
+      - name: Configure Docker image metadata
+        id: build-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ env.IMAGE_NAME }}
+            registry.digitalocean.com/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=staging-latest
+            type=ref,event=branch
+            type=sha,format=long
 
       - name: Build image
         uses: docker/build-push-action@v3
@@ -49,7 +61,7 @@ jobs:
             type=sha,format=long
       
       - name: Save docker image
-        run:  docker save ${{ env.TEST_IMAGE_NAME }} > /tmp/did-resolver-image.tar
+        run:  docker save ${{ env.IMAGE_NAME }} > /tmp/did-resolver-image.tar
 
       - name: Set up Docker container for test
         run: docker-compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up -d --no-build
@@ -67,7 +79,7 @@ jobs:
           set -euo pipefail
           pytest -v -rP ./*.py
 
-      - name: Upload docker image as an artifact
+      - name: Upload build image as artifact
         uses: actions/upload-artifact@v3
         with:
           name: did-resolver-image
