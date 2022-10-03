@@ -62,7 +62,7 @@ jobs:
           load: true
 
       - name: Save docker images
-        run:  docker save $(docker images -q) -o /tmp/did-resolver-image.tar
+        run:  docker save "$(docker images -q)" -o /tmp/did-resolver-image.tar
       
       - name: Upload docker images as an artifact
         uses: actions/upload-artifact@v3
