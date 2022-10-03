@@ -44,7 +44,7 @@ jobs:
           file: docker/Dockerfile
           platforms: linux/amd64
           tags: |
-            type=raw,value=${{ github.ref }}
+            type=raw,value=${{ github.ref_name }}
             type=raw,value=staging-latest
             type=sha,format=long
           outputs: |
