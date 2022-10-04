@@ -42,18 +42,12 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            registry.digitalocean.com/${{ env.IMAGE_NAME }}
             ${{ env.IMAGE_NAME }}
+            registry.digitalocean.com/${{ env.IMAGE_NAME }}
           tags: |
             type=ref,event=branch
             type=raw,value=staging-latest
             type=sha,format=long
-          labels: |
-            org.opencontainers.image.description="DID Resolver for cheqd network"
-            org.opencontainers.image.source="https://github.com/cheqd/bdjuno"
-            org.opencontainers.image.vendor="Cheqd Foundation Limited"
-            org.opencontainers.image.created={{date 'dddd, MMMM Do YYYY, h:mm:ss a'}}
-            org.opencontainers.image.documentation="https://docs.cheqd.io/node"
       
       - name: Build image
         uses: docker/build-push-action@v3
