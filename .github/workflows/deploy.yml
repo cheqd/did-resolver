@@ -14,7 +14,7 @@ jobs:
       IMAGE_NAME: ${{ github.repository }}
     environment: 
       name: staging
-      url: resolver-staging.cheqd.net
+      url: https://resolver-staging.cheqd.net
     
     steps:
       - name: Install DigitalOcean CLI
