@@ -1,4 +1,4 @@
-name: "Push staging image to DOCR"
+name: "Staging"
 on:
   workflow_call:
 defaults:
@@ -7,11 +7,11 @@ defaults:
 
 jobs:
   
-  push-staging-image:
+  deploy-staging:
     name: "Push staging docker image to DOCR"
     runs-on: ubuntu-latest
     env: 
-      TEST_IMAGE_NAME: registry.digitalocean.com/${{ github.repository }}
+      IMAGE_NAME: registry.digitalocean.com/${{ github.repository }}
     environment: 
       name: staging
       url: resolver-staging.cheqd.net
@@ -25,14 +25,13 @@ jobs:
       - name: Login to DOCR
         run: doctl registry login --expiry-seconds 600
 
-      - name: Download docker image
+      - name: Download Docker image
         uses: actions/download-artifact@v3
         with:
           name: did-resolver-image
-          path: ./
 
-      - name: Load docker images
-        run: docker image load --input /tmp/did-resolver-image.tar
+      - name: Load Docker image
+        run: docker image load --input did-resolver-image.tar
 
-      - name: Push images to DOCR
-        run: docker image push --all-tags ${{ env.TEST_IMAGE_NAME }}
+      - name: Push image to DOCR staging
+        run: docker image push --all-tags ${{ env.IMAGE_NAME }}
