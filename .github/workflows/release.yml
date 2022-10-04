@@ -111,6 +111,7 @@ jobs:
             latest=auto
           tags: |
             type=semver,pattern={{version}},value=${{ needs.release-binary.outputs.VERSION }}
+            type=raw,value=production-latest
             type=sha,format=long
           labels: |
             org.opencontainers.image.title="cheqd DID Resolver"
