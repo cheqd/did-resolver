@@ -75,7 +75,7 @@ jobs:
           pytest -v -rP ./*.py
 
       - name: Save staging Docker image
-        run: docker save registry.digitalocean.com/${{ env.IMAGE_NAME }} > did-resolver-image.tar
+        run: docker save registry.digitalocean.com/${{ env.IMAGE_NAME }} > did-resolver-staging.tar
 
       - name: Upload build image as an artifact
         uses: actions/upload-artifact@v3
