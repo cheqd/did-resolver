@@ -8,7 +8,7 @@ defaults:
 jobs:
   
   deploy-staging:
-    name: "Push staging docker image to DOCR"
+    name: "DigitalOcean Staging"
     runs-on: ubuntu-latest
     env: 
       IMAGE_NAME: ${{ github.repository }}
@@ -33,23 +33,5 @@ jobs:
       - name: Load Docker image
         run: docker image load --input did-resolver-image.tar
 
-      - name: Push image to DOCR staging
+      - name: Push staging image to DOCR
         run: docker image push --all-tags registry.digitalocean.com/${{ env.IMAGE_NAME }}
-        
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Download temp Docker image
-        uses: actions/download-artifact@v3
-        with:
-          name: did-resolver-image2
-
-      - name: Load temp Docker image
-        run: docker image load --input did-resolver-image2.tar
-
-      - name: Push temp image to Github staging
-        run: docker image push --all-tags ghcr.io/${{ env.IMAGE_NAME }}
