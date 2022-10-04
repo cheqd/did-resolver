@@ -1,4 +1,4 @@
-name: "Staging"
+name: "Deploy"
 on:
   workflow_call:
 defaults:
@@ -8,7 +8,7 @@ defaults:
 jobs:
   
   deploy-staging:
-    name: "DigitalOcean Staging"
+    name: "Staging Deploy"
     runs-on: ubuntu-latest
     env: 
       IMAGE_NAME: ${{ github.repository }}
@@ -28,10 +28,10 @@ jobs:
       - name: Download Docker image
         uses: actions/download-artifact@v3
         with:
-          name: did-resolver-image
+          name: did-resolver-staging
 
       - name: Load Docker image
-        run: docker image load --input did-resolver-image.tar
+        run: docker image load --input did-resolver-staging.tar
 
       - name: Push staging image to DOCR
         run: docker image push --all-tags registry.digitalocean.com/${{ env.IMAGE_NAME }}
