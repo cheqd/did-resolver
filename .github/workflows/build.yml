@@ -43,6 +43,7 @@ jobs:
         with:
           images: |
             ${{ env.IMAGE_NAME }}
+            gchr.io/${{ env.IMAGE_NAME }}
             registry.digitalocean.com/${{ env.IMAGE_NAME }}
           tags: |
             type=ref,event=branch
@@ -59,7 +60,21 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
       
       - name: Save docker image
-        run:  docker save registry.digitalocean.com/${{ env.IMAGE_NAME }} > did-resolver-image.tar
+        run: |
+          docker save registry.digitalocean.com/${{ env.IMAGE_NAME }} > did-resolver-image.tar
+          docker save gchr.io/${{ env.IMAGE_NAME }} > did-resolver-image2.tar
+
+      - name: Upload build image as an artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: did-resolver-image
+          path: did-resolver-image.tar
+
+      - name: Upload temp image as an artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: did-resolver-image2
+          path: did-resolver-image2.tar
 
       - name: Set up Docker container for test
         run: docker-compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up -d --no-build
@@ -76,9 +91,3 @@ jobs:
         run: |
           set -euo pipefail
           pytest -v -rP ./*.py
-
-      - name: Upload build image as an artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: did-resolver-image
-          path: did-resolver-image.tar

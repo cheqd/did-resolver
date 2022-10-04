@@ -11,7 +11,7 @@ jobs:
     name: "Push staging docker image to DOCR"
     runs-on: ubuntu-latest
     env: 
-      IMAGE_NAME: registry.digitalocean.com/${{ github.repository }}
+      IMAGE_NAME: ${{ github.repository }}
     environment: 
       name: staging
       url: resolver-staging.cheqd.net
@@ -34,4 +34,15 @@ jobs:
         run: docker image load --input did-resolver-image.tar
 
       - name: Push image to DOCR staging
-        run: docker image push --all-tags ${{ env.IMAGE_NAME }}
+        run: docker image push --all-tags registry.digitalocean.com/${{ env.IMAGE_NAME }}
+
+      - name: Download temp Docker image
+        uses: actions/download-artifact@v3
+        with:
+          name: did-resolver-image2
+
+      - name: Load temp Docker image
+        run: docker image load --input did-resolver-image2.tar
+
+      - name: Push temp image to Github staging
+        run: docker image push --all-tags ghcr.io/${{ env.IMAGE_NAME }}
