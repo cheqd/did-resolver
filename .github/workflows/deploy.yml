@@ -35,6 +35,13 @@ jobs:
 
       - name: Push image to DOCR staging
         run: docker image push --all-tags registry.digitalocean.com/${{ env.IMAGE_NAME }}
+        
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download temp Docker image
         uses: actions/download-artifact@v3
