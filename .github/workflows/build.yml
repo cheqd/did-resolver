@@ -41,9 +41,11 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.TEST_IMAGE_NAME }}
+          images: |
+            registry.digitalocean.com/${{ env.IMAGE_NAME }}
+            ${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=${{ github.ref_name }}
+            type=ref,event=branch
             type=raw,value=staging-latest
             type=sha,format=long
           labels: |
@@ -52,30 +54,9 @@ jobs:
             org.opencontainers.image.vendor="Cheqd Foundation Limited"
             org.opencontainers.image.created={{date 'dddd, MMMM Do YYYY, h:mm:ss a'}}
             org.opencontainers.image.documentation="https://docs.cheqd.io/node"
-
-      - name: Configure Docker image metadata
-        id: build-meta
-        uses: docker/metadata-action@v4
-        with:
-          images: |
-            ${{ env.IMAGE_NAME }}
-            registry.digitalocean.com/${{ env.IMAGE_NAME }}
-          tags: |
-            type=raw,value=staging-latest
-            type=ref,event=branch
-            type=sha,format=long
-
-      - name: Build image
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          file: docker/Dockerfile
-          platforms: linux/amd64
-          load: true
-          tags: ${{ steps.build-meta.outputs.tags }}
       
       - name: Save docker image
-        run:  docker save ${{ env.IMAGE_NAME }} > /tmp/did-resolver-image.tar
+        run:  docker save registry.digitalocean.com/${{ env.IMAGE_NAME }} > did-resolver-image.tar
 
       - name: Set up Docker container for test
         run: docker-compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up -d --no-build
@@ -93,8 +74,8 @@ jobs:
           set -euo pipefail
           pytest -v -rP ./*.py
 
-      - name: Upload build image as artifact
+      - name: Upload build image as an artifact
         uses: actions/upload-artifact@v3
         with:
           name: did-resolver-image
-          path: /tmp/did-resolver-image.tar
+          path: did-resolver-image.tar
