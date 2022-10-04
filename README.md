@@ -1,18 +1,14 @@
 # cheqd DID Resolver
 
-[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/cheqd/did-resolver/Workflow%20Dispatch/main?label=workflows&style=flat-square)](https://github.com/cheqd/did-resolver/actions/workflows/dispatch.yml)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/cheqd/did-resolver?color=green&label=stable%20release&style=flat-square)](https://github.com/cheqd/did-resolver/releases/latest) ![GitHub Release Date](https://img.shields.io/github/release-date/cheqd/did-resolver?color=green&style=flat-square) [![GitHub license](https://img.shields.io/github/license/cheqd/did-resolver?color=blue&style=flat-square)](https://github.com/cheqd/did-resolver/blob/main/LICENSE)
 
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cheqd/did-resolver?color=green&label=stable&sort=semver&style=flat-square)](https://github.com/cheqd/did-resolver/releases/latest) ![GitHub Release Date](https://img.shields.io/github/release-date/cheqd/did-resolver?style=flat-square)
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/cheqd/did-resolver?include_prereleases&label=dev%20release&style=flat-square)](https://github.com/cheqd/did-resolver/releases/) ![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/cheqd/did-resolver/latest?style=flat-square) [![GitHub contributors](https://img.shields.io/github/contributors/cheqd/did-resolver?label=contributors%20%E2%9D%A4%EF%B8%8F&style=flat-square)](https://github.com/cheqd/did-resolver/graphs/contributors)
 
-[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/cheqd/did-resolver?include_prereleases&label=latest%20%28incl.%20pre-release%29&sort=semver&style=flat-square)](https://github.com/cheqd/did-resolver/releases/) ![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/cheqd/did-resolver/latest?style=flat-square)
-
-[![GitHub contributors](https://img.shields.io/github/contributors/cheqd/did-resolver?style=flat-square)](https://github.com/cheqd/did-resolver/graphs/contributors) ![GitHub repo size](https://img.shields.io/github/repo-size/cheqd/did-resolver?style=flat-square)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cheqd/did-resolver/Workflow%20Dispatch?label=workflows&style=flat-square)](https://github.com/cheqd/did-resolver/actions/workflows/dispatch.yml) [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cheqd/did-resolver/CodeQL?label=CodeQL&style=flat-square)](https://github.com/cheqd/did-resolver/actions/workflows/codeql.yml) ![GitHub repo size](https://img.shields.io/github/repo-size/cheqd/did-resolver?style=flat-square)
 
 ## ℹ️ Overview
 
-DID methods are expected to provide [standards-compliant methods of DID and DID Document ("DIDDoc") production](https://w3c.github.io/did-core/#production-and-consumption).
-
-The **cheqd DID Resolver** is designed to implement the [W3C DID *Resolution* specification](https://w3c-ccg.github.io/did-resolution/) for [`did:cheqd`](https://docs.cheqd.io/node/architecture/adr-list/adr-002-cheqd-did-method) method.
+DID methods are expected to provide [standards-compliant methods of DID and DID Document ("DIDDoc") production](https://w3c.github.io/did-core/#production-and-consumption). The **cheqd DID Resolver** is designed to implement the [W3C DID *Resolution* specification](https://w3c-ccg.github.io/did-resolution/) for [`did:cheqd`](https://docs.cheqd.io/node/architecture/adr-list/adr-002-cheqd-did-method) method.
 
 ### 📝 Architecture
 
