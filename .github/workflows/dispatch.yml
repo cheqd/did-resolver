@@ -21,6 +21,7 @@ jobs:
     name: "Deploy"
     needs: call-build
     uses: ./.github/workflows/deploy.yml
+    continue-on-error: true
     secrets: inherit
 
   call-release:
