@@ -67,6 +67,8 @@ jobs:
     name: "Release Docker image"
     needs: release-binary
     runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: ${{ github.repository }}
     environment: 
       name: production
       url: https://resolver.cheqd.net
@@ -103,8 +105,8 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            ghcr.io/${{ github.repository}}
-            registry.digitalocean.com/${{ github.repository }}
+            ghcr.io/${{ env.IMAGE_NAME }}
+            registry.digitalocean.com/${{ env.IMAGE_NAME }}
           flavor: |
             latest=auto
           tags: |
