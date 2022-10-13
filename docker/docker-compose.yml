@@ -21,8 +21,4 @@ services:
         mode: host
     restart: on-failure
     env_file:
-      - docker-compose.env
-
-configs:
-  resolver-config:
-    file: ../config.yaml
+      - container.env
