@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 
 # CAUTION: Please ensure you edit necessary values in docker-compose.env before using this Docker Compose file.
 
@@ -24,6 +24,8 @@ services:
         published: ${RESOLVER_PORT}
         mode: host
     restart: on-failure
+    env_file:
+      - docker-compose.env
 
 configs:
   resolver-config:
