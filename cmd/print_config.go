@@ -17,9 +17,9 @@ func getPrintConfigCmd() *cobra.Command {
 
 func printConfig() error {
 	config := utils.MustLoadConfig()
-	configYaml := config.MustMarshalYaml()
+	configJson := config.MustMarshalJson()
 
-	println(configYaml)
+	println(configJson)
 
 	return nil
 }

@@ -6,16 +6,11 @@ version: '3.7'
 
 services:
   did_resolver:
-    image: ${TEST_TAG}
-    configs:
-      - source: resolver-config
-        target: ${RESOLVER_HOME_DIR}/config.yaml
+    image: ${TEST_IMAGE_NAME}
     ports:
       - target: 8080
         published: ${RESOLVER_PORT}
         mode: host
     restart: on-failure
-
-configs:
-  resolver-config:
-    file: ../../config.yaml
+    env_file:
+      - ../../docker/container.env

@@ -10,15 +10,11 @@ services:
     # Default is to pull in the pre-published image on GitHub Container Registry
     # SYNTAX: docker-compose -f docker/docker-compose.yml --env-file docker/docker-compose.env build --no-cache
     # build:
-    #  context: ../
-    #  dockerfile: docker/Dockerfile
-    #  target: resolver
+    #   context: ../
+    #   dockerfile: docker/Dockerfile
+    #   target: resolver
     # CAUTION: Change IMAGE_VERSION to local in docker-compose.env if building your own image in section below
-    # image: did-resolver-custom-build:${IMAGE_VERSION}
-    image: ghcr.io/cheqd/did-resolver:${IMAGE_VERSION}
-    configs:
-      - source: resolver-config
-        target: ${RESOLVER_HOME_DIR}/config.yaml
+    image: gchr.io/cheqd/did-resolver:${IMAGE_VERSION}
     ports:
       - target: 8080
         published: ${RESOLVER_PORT}

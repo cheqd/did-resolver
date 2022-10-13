@@ -2,7 +2,6 @@ package services
 
 import (
 	"testing"
-	"time"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
@@ -31,10 +30,7 @@ func TestQueryDIDDoc(t *testing.T) {
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
-			timeout, err := time.ParseDuration("5s")
-			require.NoError(t, err)
-
-			ledgerService := NewLedgerService(timeout, false)
+			ledgerService := NewLedgerService()
 			didDoc, metadata, err := ledgerService.QueryDIDDoc("fake did")
 			require.EqualValues(t, subtest.expectedDID, didDoc)
 			require.EqualValues(t, subtest.expectedMetadata, metadata)
@@ -62,10 +58,7 @@ func TestQueryResource(t *testing.T) {
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
-			timeout, err := time.ParseDuration("5s")
-			require.NoError(t, err)
-
-			ledgerService := NewLedgerService(timeout, false)
+			ledgerService := NewLedgerService()
 			resource, err := ledgerService.QueryResource(subtest.collectionDid, subtest.resourceId)
 			require.EqualValues(t, subtest.expectedResource, resource)
 			require.EqualValues(t, subtest.expectedError.Error(), err.Error())

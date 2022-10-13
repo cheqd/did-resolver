@@ -35,9 +35,6 @@ RUN addgroup --system $USER \
 WORKDIR $HOME_DIR
 USER $USER
 
-# Copy base config.yaml
-COPY --chown=$USER:$USER config.yaml .
-
 EXPOSE 8080
 
 ENTRYPOINT ["did-resolver"]

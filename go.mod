@@ -9,8 +9,7 @@ require (
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.13.0
 	github.com/stretchr/testify v1.8.0
-	google.golang.org/grpc v1.49.0
-	gopkg.in/yaml.v3 v3.0.1
+	google.golang.org/grpc v1.50.0
 )
 
 require (
@@ -103,6 +102,7 @@ require (
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 replace (

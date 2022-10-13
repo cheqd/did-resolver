@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"errors"
 	"strings"
-	"time"
 
 	"google.golang.org/grpc/credentials"
 
@@ -30,17 +29,12 @@ type LedgerServiceI interface {
 }
 
 type LedgerService struct {
-	ledgers           map[string]string // namespace -> url
-	connectionTimeout time.Duration
-	useTls            bool
+	ledgers map[string]types.Network // namespace -> endpoint with configs
 }
 
-func NewLedgerService(connectionTimeout time.Duration, useTls bool) LedgerService {
-	ls := LedgerService{
-		connectionTimeout: connectionTimeout,
-		useTls:            useTls,
-	}
-	ls.ledgers = make(map[string]string)
+func NewLedgerService() LedgerService {
+	ls := LedgerService{}
+	ls.ledgers = make(map[string]types.Network)
 	return ls
 }
 
@@ -120,37 +114,37 @@ func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.Resour
 	return resourceResponse.Resources, nil
 }
 
-func (ls *LedgerService) RegisterLedger(method string, namespace string, url string) error {
-	if namespace == "" || method == "" {
+func (ls *LedgerService) RegisterLedger(method string, endpoint types.Network) error {
+	if endpoint.Namespace == "" || method == "" {
 		err := errors.New("namespace and method cannot be empty")
 		log.Error().Err(err).Msg("RegisterLedger: failed")
 		return err
 	}
 
-	if url == "" {
+	if endpoint.Endpoint == "" {
 		return errors.New("ledger node url cannot be empty")
 	}
 
-	ls.ledgers[method+DELIMITER+namespace] = url
+	ls.ledgers[method+DELIMITER+endpoint.Namespace] = endpoint
 	return nil
 }
 
-func (ls LedgerService) openGRPCConnection(addr string) (conn *grpc.ClientConn, err error) {
+func (ls LedgerService) openGRPCConnection(endpoint types.Network) (conn *grpc.ClientConn, err error) {
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithBlock(),
 	}
 
-	if ls.useTls {
+	if endpoint.UseTls {
 		opts = append(opts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})))
 	} else {
 		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), ls.connectionTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), endpoint.Timeout)
 	defer cancel()
 
-	conn, err = grpc.DialContext(ctx, addr, opts...)
+	conn, err = grpc.DialContext(ctx, endpoint.Endpoint, opts...)
 
 	if err != nil {
 		log.Error().Err(err).Msgf("openGRPCConnection: context failed")

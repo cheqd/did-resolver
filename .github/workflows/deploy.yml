@@ -1,0 +1,38 @@
+name: "Deploy"
+on:
+  workflow_call:
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  
+  deploy-staging:
+    name: "Staging Deploy"
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env: 
+      IMAGE_NAME: ${{ github.repository }}
+    environment: 
+      name: staging
+      url: https://resolver-staging.cheqd.net
+    
+    steps:
+      - name: Install DigitalOcean CLI
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Login to DOCR
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Download Docker image
+        uses: actions/download-artifact@v3
+        with:
+          name: did-resolver-staging
+
+      - name: Load Docker image
+        run: docker image load --input did-resolver-staging.tar
+
+      - name: Push staging image to DOCR
+        run: docker image push --all-tags registry.digitalocean.com/${{ env.IMAGE_NAME }}
