@@ -10,7 +10,6 @@ jobs:
   deploy-staging:
     name: "Staging Deploy"
     runs-on: ubuntu-latest
-    continue-on-error: true
     env: 
       IMAGE_NAME: ${{ github.repository }}
     environment: 
