@@ -14,8 +14,6 @@ jobs:
   release-binary:
     name: "Release Binary"
     runs-on: ubuntu-latest
-    # outputs:
-    #   VERSION: ${{ steps.set-version.outputs.VERSION }}
     
     steps:
       - uses: actions/checkout@v3
@@ -57,12 +55,6 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # - name: Set version number
-      #   id: set-version
-      #   run: |
-      #     VERSION=$( git describe --tags ${{ github.sha }})
-      #     echo ::set-output name=VERSION::"$VERSION"
 
   release-docker:
     name: "Release Docker image"
