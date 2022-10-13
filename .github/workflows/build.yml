@@ -7,20 +7,6 @@ defaults:
 
 jobs:
 
-  unit-tests:
-    name: "Unit Tests"
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      
-      - uses: actions/setup-go@v3
-        with:
-          go-version-file: ./go.mod
-      
-      - name: Run Golang unit tests
-        run: go test -v ./...
-
   build-docker:
     name: "Build Docker image"
     runs-on: ubuntu-latest
@@ -60,24 +46,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Set up Docker container for test
-        run: docker-compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up -d --no-build
-
-      - name: Setup Python environment
-        working-directory: ./tests/pytest
-        run: |
-          set -euo pipefail
-          pip3 install -r requirements.txt >> /dev/null
-          sudo chmod -R 775 /home/runner/
-
-      - name: Run tests
-        working-directory: ./tests/pytest
-        run: |
-          set -euo pipefail
-          pytest -v -rP ./*.py
-
       - name: Save staging Docker image
-        run: docker save registry.digitalocean.com/${{ env.IMAGE_NAME }} > did-resolver-staging.tar
+        run: docker save ${{ env.IMAGE_NAME }} > did-resolver-staging.tar
 
       - name: Upload build image as an artifact
         uses: actions/upload-artifact@v3
