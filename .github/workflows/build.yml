@@ -57,6 +57,8 @@ jobs:
           platforms: linux/amd64
           load: true
           tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Set up Docker container for test
         run: docker-compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up -d --no-build
