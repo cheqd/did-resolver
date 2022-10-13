@@ -14,13 +14,14 @@ jobs:
   release-binary:
     name: "Release Binary"
     runs-on: ubuntu-latest
-    outputs:
-      VERSION: ${{ steps.set-version.outputs.VERSION }}
+    # outputs:
+    #   VERSION: ${{ steps.set-version.outputs.VERSION }}
     
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - uses: actions/setup-go@v3
         with:
@@ -57,16 +58,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set version number
-        id: set-version
-        run: |
-          VERSION=$( git describe --tags ${{ github.sha }})
-          echo ::set-output name=VERSION::"$VERSION"
+      # - name: Set version number
+      #   id: set-version
+      #   run: |
+      #     VERSION=$( git describe --tags ${{ github.sha }})
+      #     echo ::set-output name=VERSION::"$VERSION"
 
   release-docker:
     name: "Release Docker image"
     needs: release-binary
     runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'main' }}
     env:
       IMAGE_NAME: ${{ github.repository }}
     environment: 
@@ -110,7 +112,7 @@ jobs:
           flavor: |
             latest=auto
           tags: |
-            type=semver,pattern={{version}},value=${{ needs.release-binary.outputs.VERSION }}
+            type=semver,pattern={{version}}
             type=raw,value=production-latest
             type=sha,format=long
           labels: |
@@ -130,6 +132,8 @@ jobs:
           load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Push image to GitHub Container Registry
         run: docker image push --all-tags ghcr.io/${{ github.repository}}

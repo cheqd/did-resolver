@@ -7,20 +7,6 @@ defaults:
 
 jobs:
 
-  unit-tests:
-    name: "Unit Tests"
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      
-      - uses: actions/setup-go@v3
-        with:
-          go-version-file: ./go.mod
-      
-      - name: Run Golang unit tests
-        run: go test -v ./...
-
   build-docker:
     name: "Build Docker image"
     runs-on: ubuntu-latest
@@ -57,28 +43,22 @@ jobs:
           platforms: linux/amd64
           load: true
           tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Set up Docker container for test
-        run: docker-compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up -d --no-build
-
-      - name: Setup Python environment
-        working-directory: ./tests/pytest
+      - name: Save Docker images
         run: |
-          set -euo pipefail
-          pip3 install -r requirements.txt >> /dev/null
-          sudo chmod -R 775 /home/runner/
-
-      - name: Run tests
-        working-directory: ./tests/pytest
-        run: |
-          set -euo pipefail
-          pytest -v -rP ./*.py
-
-      - name: Save staging Docker image
-        run: docker save registry.digitalocean.com/${{ env.IMAGE_NAME }} > did-resolver-staging.tar
+          docker save ${{ env.IMAGE_NAME }} > /tmp/did-resolver-build.tar
+          docker save registry.digitalocean.com/${{ env.IMAGE_NAME }} > /tmp/did-resolver-staging.tar
 
       - name: Upload build image as an artifact
         uses: actions/upload-artifact@v3
         with:
+          name: did-resolver-build
+          path: /tmp/did-resolver-build.tar
+      
+      - name: Upload staging image as an artifact
+        uses: actions/upload-artifact@v3
+        with:
           name: did-resolver-staging
-          path: did-resolver-staging.tar
+          path: /tmp/did-resolver-staging.tar
