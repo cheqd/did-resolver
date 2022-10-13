@@ -12,13 +12,13 @@ jobs:
     uses: ./.github/workflows/lint.yml
 
   call-build:
-    name: "Build & Test"
+    name: "Build"
     needs: call-lint
     uses: ./.github/workflows/build.yml
     secrets: inherit
 
   call-test:
-    name: "Build & Test"
+    name: "Test"
     needs: call-build
     uses: ./.github/workflows/test.yml
     secrets: inherit

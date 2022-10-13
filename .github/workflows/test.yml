@@ -22,7 +22,7 @@ jobs:
         run: go test -v ./...
 
   integration-tests:
-    name: "Build Docker image"
+    name: "Integration Tests"
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME: ${{ github.repository }}
