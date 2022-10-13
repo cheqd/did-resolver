@@ -46,11 +46,19 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Save staging Docker image
-        run: docker save ${{ env.IMAGE_NAME }} > did-resolver-staging.tar
+      - name: Save Docker images
+        run: |
+          docker save ${{ env.IMAGE_NAME }} > /tmp/did-resolver-build.tar
+          docker save registry.digitalocean.com/${{ env.IMAGE_NAME }} > /tmp/did-resolver-staging.tar
 
       - name: Upload build image as an artifact
         uses: actions/upload-artifact@v3
         with:
+          name: did-resolver-build
+          path: /tmp/did-resolver-build.tar
+      
+      - name: Upload staging image as an artifact
+        uses: actions/upload-artifact@v3
+        with:
           name: did-resolver-staging
-          path: did-resolver-staging.tar
+          path: /tmp/did-resolver-staging.tar
