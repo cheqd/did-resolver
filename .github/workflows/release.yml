@@ -23,10 +23,6 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: actions/setup-go@v3
-        with:
-          go-version-file: ./go.mod
-
       # Node.js setup is needed to run Semantic Release
       - uses: actions/setup-node@v3
         with:
