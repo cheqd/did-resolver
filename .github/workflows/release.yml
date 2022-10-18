@@ -21,10 +21,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      - uses: actions/setup-go@v3
-        with:
-          go-version-file: ./go.mod
+          persist-credentials: false
 
       # Node.js setup is needed to run Semantic Release
       - uses: actions/setup-node@v3
@@ -67,6 +64,7 @@ jobs:
     name: "Release Docker image"
     needs: release-binary
     runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'main' }}
     env:
       IMAGE_NAME: ${{ github.repository }}
     environment: 
@@ -130,6 +128,8 @@ jobs:
           load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Push image to GitHub Container Registry
         run: docker image push --all-tags ghcr.io/${{ github.repository}}
