@@ -1,0 +1,55 @@
+definitions:
+  types.IdentityError:
+    properties:
+      code:
+        type: integer
+      contentType:
+        type: string
+      did:
+        type: string
+      internal: {}
+      isDereferencing:
+        type: boolean
+      message:
+        type: string
+    type: object
+info:
+  contact:
+    name: Cheqd
+    url: https://cheqd.io
+  description: Cheqd DID Resolver API for DID resolution and dereferencing.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Cheqd DID Resolver API
+  version: "1.0"
+paths:
+  /1.0/identifiers/{did}:
+    get:
+      description: get string by ID
+      parameters:
+      - description: DID Doc identifier
+        in: query
+        name: did
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema: {}
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+      summary: Show an account
+swagger: "2.0"

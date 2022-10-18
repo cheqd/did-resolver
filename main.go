@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/cheqd/did-resolver/cmd"
 	"github.com/spf13/cobra"
+	_ "github.com/cheqd/did-resolver/docs"
 )
 
 var version = "dev"
@@ -23,6 +24,15 @@ func printVersion(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
+// @title Cheqd DID Resolver API
+// @version 1.0
+// @description Cheqd DID Resolver API for DID resolution and dereferencing.
+
+// @contact.name Cheqd
+// @contact.url https://cheqd.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 func main() {
 	rootCmd := cmd.GetRootCmd()
 	rootCmd.AddCommand(getVersionCmd())

@@ -11,6 +11,8 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+	echoSwagger "github.com/swaggo/echo-swagger"
+
 )
 
 func getServeCmd() *cobra.Command {
@@ -23,6 +25,15 @@ func getServeCmd() *cobra.Command {
 	}
 }
 
+// @title Cheqd DID Resolver API
+// @version 1.0
+// @description Cheqd DID Resolver API for DID resolution and dereferencing.
+
+// @contact.name Cheqd
+// @contact.url https://cheqd.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 func serve() {
 	log.Info().Msg("Loading configuration")
 	config, err := utils.LoadConfig()
@@ -61,6 +72,7 @@ func serve() {
 	requestService := services.NewRequestService(types.DID_METHOD, ledgerService)
 
 	// Routes
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.GET(types.RESOLVER_PATH+":did", requestService.ResolveDIDDoc)
 	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource", requestService.DereferenceResourceData)
 	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource/metadata", requestService.DereferenceResourceMetadata)
@@ -68,6 +80,7 @@ func serve() {
 	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+"", func(c echo.Context) error {
 		return c.Redirect(http.StatusMovedPermanently, "all")
 	})
+	
 
 	log.Info().Msg("Starting listener")
 	log.Fatal().Err(e.Start(config.ResolverListener))

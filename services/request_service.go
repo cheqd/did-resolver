@@ -25,6 +25,16 @@ func NewRequestService(didMethod string, ledgerService LedgerServiceI) RequestSe
 	}
 }
 
+// ResolveDIDDoc godoc
+// @Summary      Show an account
+// @Description  get string by ID
+// @Produce      json
+// @Param        did query string true "DID Doc identifier" 
+// @Success      200  {object}  types.ResolutionResultI
+// @Failure      400  {object}  types.IdentityError
+// @Failure      404  {object}  types.IdentityError
+// @Failure      500  {object}  types.IdentityError
+// @Router       /1.0/identifiers/{did} [get]
 func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
 	splitedDID := strings.Split(c.Param("did"), "#")
 	did := splitedDID[0]
