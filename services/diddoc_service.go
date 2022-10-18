@@ -62,6 +62,19 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 	return result, nil
 }
 
+// ResolveDIDDoc godoc
+// @Id           ResolveDIDDoc
+// @Summary      Resolve or dereferencing DID Doc
+// @Description  Get DID Doc or its fragment
+// @Tags         Resolution
+// @Produce      json
+// @Param        did path string true "DID Doc Id" example("did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY")
+// @Success      200  {object}  types.DidResolution
+// @Failure      400  {object}  types.DidResolution
+// @Failure      404  {object}  types.DidResolution
+// @Failure      406  {object}  types.DidResolution
+// @Failure      500  {object}  types.DidResolution
+// @Router       /1.0/identifiers/{did} [get]
 // https://w3c-ccg.github.io/did-resolution/#resolving
 func (dds DIDDocService) Resolve(did string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {
 	if !contentType.IsSupported() {
@@ -98,6 +111,21 @@ func (dds DIDDocService) Resolve(did string, contentType types.ContentType) (*ty
 	return &result, nil
 }
 
+// ResolveDIDDocDereferencing godoc
+// @Id           ResolveDIDDocDereferencing
+// @Summary      Resolve or dereferencing DID Doc
+// @Description  Get DID Doc or its fragment
+// @Tags         Dereferencing
+// @Produce      json
+// @Param        did path string true "DID Doc Id" example("did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY")
+// @Param        fragmentId path string false "`#` encodede to URL + DID Doc Verification Method or Service identifier" example("%23key1")
+// @Param        service query string false "Service id" example("service1")
+// @Success      200  {object}  types.DidDereferencing
+// @Failure      400  {object}  types.DidDereferencing
+// @Failure      404  {object}  types.DidDereferencing
+// @Failure      406  {object}  types.DidDereferencing
+// @Failure      500  {object}  types.DidDereferencing
+// @Router       /1.0/identifiers/{did}{fragmentId} [get]
 // https://w3c-ccg.github.io/did-resolution/#dereferencing
 func (dds DIDDocService) dereferenceSecondary(did string, fragmentId string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
 	didResolution, err := dds.Resolve(did, contentType)

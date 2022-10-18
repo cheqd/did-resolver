@@ -25,16 +25,6 @@ func NewRequestService(didMethod string, ledgerService LedgerServiceI) RequestSe
 	}
 }
 
-// ResolveDIDDoc godoc
-// @Summary      Show an account
-// @Description  get string by ID
-// @Produce      json
-// @Param        did query string true "DID Doc identifier" 
-// @Success      200  {object}  types.ResolutionResultI
-// @Failure      400  {object}  types.IdentityError
-// @Failure      404  {object}  types.IdentityError
-// @Failure      500  {object}  types.IdentityError
-// @Router       /1.0/identifiers/{did} [get]
 func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
 	splitedDID := strings.Split(c.Param("did"), "#")
 	did := splitedDID[0]
@@ -58,6 +48,19 @@ func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
 	return c.JSONPretty(http.StatusOK, result, "  ")
 }
 
+// DereferenceResourceMetadata godoc
+// @Summary      Resource metadata
+// @Description  Get resource metadata without value by DID Doc
+// @Tags         Dereferencing
+// @Produce      json
+// @Param        did path string true "Resource collection id. DID Doc Id" example("did:cheqd:testnet:MjYxNzYKMjYxNzYK")
+// @Param        resourceId path string true "DID Resource identifier" example("60ad67be-b65b-40b8-b2f4-3923141ef382")
+// @Success      200  {object}  types.DidDereferencing
+// @Failure      400  {object}  types.DidDereferencing
+// @Failure      404  {object}  types.DidDereferencing
+// @Failure      406  {object}  types.DidDereferencing
+// @Failure      500  {object}  types.DidDereferencing
+// @Router       /1.0/identifiers/{did}/resources/{resourceId}/metadata [get]
 func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 	did := c.Param("did")
 	resourceId := c.Param("resource")
@@ -71,6 +74,19 @@ func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 	return c.JSONPretty(http.StatusOK, result, "  ")
 }
 
+// DereferenceResourceData godoc
+// @Summary      Resource value
+// @Description  Get resource value without dereferencing wrappers
+// @Tags         Dereferencing
+// @Produce      */*
+// @Param        did path string true "Resource collection id. DID Doc Id" example("did:cheqd:testnet:MjYxNzYKMjYxNzYK")
+// @Param        resourceId path string true "DID Resource identifier" example("60ad67be-b65b-40b8-b2f4-3923141ef382")
+// @Success      200  {object}  []byte
+// @Failure      400  {object}  types.DidDereferencing
+// @Failure      404  {object}  types.DidDereferencing
+// @Failure      406  {object}  types.DidDereferencing
+// @Failure      500  {object}  types.DidDereferencing 
+// @Router       /1.0/identifiers/{did}/resources/{resourceId} [get]
 func (rs RequestService) DereferenceResourceData(c echo.Context) error {
 	did := c.Param("did")
 	resourceId := c.Param("resource")
@@ -84,6 +100,18 @@ func (rs RequestService) DereferenceResourceData(c echo.Context) error {
 	return c.Blob(http.StatusOK, result.GetContentType(), result.GetBytes())
 }
 
+// DereferenceCollectionResources godoc
+// @Summary      Collection resources
+// @Description  Get a list of all collection resources metadata
+// @Tags         Dereferencing
+// @Produce      json
+// @Param        did path string true "Resource collection id. DID Doc Id" example("did:cheqd:testnet:MjYxNzYKMjYxNzYK") validate(optional)
+// @Success      200  {object}  types.DidDereferencing
+// @Failure      400  {object}  types.DidDereferencing
+// @Failure      404  {object}  types.DidDereferencing
+// @Failure      406  {object}  types.DidDereferencing
+// @Failure      500  {object}  types.DidDereferencing
+// @Router       /1.0/identifiers/{did}/resources/all [get]
 func (rs RequestService) DereferenceCollectionResources(c echo.Context) error {
 	did := c.Param("did")
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
