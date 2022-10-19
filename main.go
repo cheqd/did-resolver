@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/cheqd/did-resolver/cmd"
-	"github.com/spf13/cobra"
 	_ "github.com/cheqd/did-resolver/docs"
+	"github.com/spf13/cobra"
 )
 
 var version = "dev"

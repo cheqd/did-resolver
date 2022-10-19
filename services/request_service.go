@@ -85,7 +85,7 @@ func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 // @Failure      400  {object}  types.DidDereferencing
 // @Failure      404  {object}  types.DidDereferencing
 // @Failure      406  {object}  types.DidDereferencing
-// @Failure      500  {object}  types.DidDereferencing 
+// @Failure      500  {object}  types.DidDereferencing
 // @Router       /1.0/identifiers/{did}/resources/{resourceId} [get]
 func (rs RequestService) DereferenceResourceData(c echo.Context) error {
 	did := c.Param("did")

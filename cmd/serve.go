@@ -12,7 +12,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	echoSwagger "github.com/swaggo/echo-swagger"
-
 )
 
 func getServeCmd() *cobra.Command {
@@ -80,7 +79,6 @@ func serve() {
 	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+"", func(c echo.Context) error {
 		return c.Redirect(http.StatusMovedPermanently, "all")
 	})
-	
 
 	log.Info().Msg("Starting listener")
 	log.Fatal().Err(e.Start(config.ResolverListener))
