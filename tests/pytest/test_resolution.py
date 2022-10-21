@@ -39,14 +39,17 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
         (FAKE_TESTNET_RESOURCE, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
                                 r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
         # TODO: uncomment after implementing
-        # (MAINNET_SERVICE, fr"\"contentStream\":(.*?)\"serviceEndpoint\"(.*?)contentMetadata"
-        #                   r"(.*?)dereferencingMetadata\""),
-        # (MAINNET_SERVICE + "&relativeRef=%2Fsome%2Fpath%3Fquery",
-        #  fr"\"contentStream\":(.*?)\"serviceEndpoint\"(.*?)/some/path?query(.*?)"
-        #  r"contentMetadata(.*?)dereferencingMetadata\""),
-        # (MAINNET_SERVICE + "&relativeRef=%2Fmyresume%2Fdoc%3Fversion%3Dlatest" + "#flag",
-        #  r"\"contentStream\":(.*?)\"serviceEndpoint\"(.*?)/some/path?query#flag(.*?)"
-        #  r"contentMetadata(.*?)dereferencingMetadata\""),
+        (MAINNET_SERVICE, fr"dereferencingMetadata(.*?)\"contentStream\":(.*?)\"http"
+                          r"(.*?)contentMetadata\""),
+        (MAINNET_SERVICE + "&relativeRef=%2Fsome%2Fpath%3Fquery",
+         fr"dereferencingMetadata(.*?)\"contentStream\":(.*?)\"http(.*?)\/some\/path\?query\"(.*?)"
+         r"(.*?)contentMetadata\""),
+        (MAINNET_SERVICE + "&relativeRef=%2Fsome%2Fpath%3Fquery" + "#flag",
+         r"dereferencingMetadata(.*?)\"contentStream\":(.*?)\"http(.*?)\/some\/path\?query#flag\"(.*?)"
+         r"(.*?)contentMetadata\""),
+        (MAINNET_SERVICE + "%23flag",
+         r"dereferencingMetadata(.*?)\"contentStream\":(.*?)\"http(.*?)#flag\"(.*?)"
+         r"(.*?)contentMetadata\""),
     ]
 )
 def test_resolution(did_url, expected_output):
