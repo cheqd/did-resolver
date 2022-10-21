@@ -28,11 +28,13 @@ type VerificationMethod struct {
 }
 
 type Service struct {
-	Context         []string `json:"@context,omitempty"`
-	Id              string   `json:"id,omitempty"`
-	Type            string   `json:"type,omitempty"`
-	ServiceEndpoint string   `json:"serviceEndpoint,omitempty"`
+	Context         []string        `json:"@context,omitempty"`
+	Id              string          `json:"id,omitempty"`
+	Type            string          `json:"type,omitempty"`
+	ServiceEndpoint ServiceEndpoint `json:"serviceEndpoint,omitempty"`
 }
+
+type ServiceEndpoint string
 
 func NewDidDoc(protoDidDoc cheqd.Did) DidDoc {
 	verificationMethods := []VerificationMethod{}
@@ -73,8 +75,13 @@ func NewService(protoService *cheqd.Service) *Service {
 	return &Service{
 		Id:              protoService.Id,
 		Type:            protoService.Type,
-		ServiceEndpoint: protoService.ServiceEndpoint,
+		ServiceEndpoint: ServiceEndpoint(protoService.ServiceEndpoint),
 	}
+}
+
+func NewServiceEndpoint(protoS string) *ServiceEndpoint {
+	endpoint := ServiceEndpoint(protoS)
+	return &endpoint
 }
 
 func (e *DidDoc) AddContext(newProtocol string) { e.Context = AddElemToSet(e.Context, newProtocol) }
@@ -90,3 +97,7 @@ func (e *VerificationMethod) AddContext(newProtocol string) {
 }
 func (e *VerificationMethod) RemoveContext()   { e.Context = nil }
 func (e *VerificationMethod) GetBytes() []byte { return []byte{} }
+
+func (e *ServiceEndpoint) AddContext(newProtocol string) {}
+func (e *ServiceEndpoint) RemoveContext()                {}
+func (e *ServiceEndpoint) GetBytes() []byte              { return []byte{} }

@@ -179,14 +179,14 @@ func TestDereferencing(t *testing.T) {
 	validResource := utils.ValidResource()
 	validMetadata := utils.ValidMetadata()
 	validFragmentMetadata := types.NewResolutionDidDocMetadata(utils.ValidDid, validMetadata, []*resource.ResourceHeader{})
-	validQuery, _ := url.ParseQuery("attr=value")
 	subtests := []struct {
 		name                  string
 		ledgerService         utils.MockLedgerService
 		dereferencingType     types.ContentType
 		did                   string
 		fragmentId            string
-		queries               url.Values
+		queries               string
+		frag                  string
 		expectedContentStream types.ContentStreamI
 		expectedMetadata      types.ResolutionDidDocMetadata
 		expectedContentType   types.ContentType
@@ -197,7 +197,7 @@ func TestDereferencing(t *testing.T) {
 			ledgerService:         utils.NewMockLedgerService(validDIDDoc, validMetadata, validResource),
 			dereferencingType:     types.DIDJSON,
 			did:                   utils.ValidDid,
-			fragmentId:            validVerificationMethod.Id,
+			fragmentId:            utils.ValidKeyId,
 			expectedContentStream: types.NewVerificationMethod(&validVerificationMethod),
 			expectedMetadata:      validFragmentMetadata,
 			expectedError:         nil,
@@ -207,30 +207,81 @@ func TestDereferencing(t *testing.T) {
 			ledgerService:         utils.NewMockLedgerService(validDIDDoc, validMetadata, validResource),
 			dereferencingType:     types.DIDJSON,
 			did:                   utils.ValidDid,
-			fragmentId:            validService.Id,
+			fragmentId:            utils.ValidServiceId,
 			expectedContentStream: types.NewService(&validService),
 			expectedMetadata:      validFragmentMetadata,
 			expectedError:         nil,
 		},
 		{
 			name:                  "not supported query",
-			ledgerService:         utils.NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
+			ledgerService:         utils.NewMockLedgerService(validDIDDoc, validMetadata, validResource),
 			dereferencingType:     types.DIDJSONLD,
 			did:                   utils.ValidDid,
-			queries:               validQuery,
+			queries:               "attr=val",
 			expectedContentStream: nil,
 			expectedMetadata:      types.ResolutionDidDocMetadata{},
 			expectedError:         types.NewRepresentationNotSupportedError(utils.ValidDid, types.DIDJSONLD, nil, false),
 		},
 		{
 			name:                  "key not found",
-			ledgerService:         utils.NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
+			ledgerService:         utils.NewMockLedgerService(validDIDDoc, validMetadata, validResource),
 			dereferencingType:     types.DIDJSONLD,
 			did:                   utils.ValidDid,
 			fragmentId:            "notFoundKey",
 			expectedContentStream: nil,
 			expectedMetadata:      types.ResolutionDidDocMetadata{},
-			expectedError:         types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, false),
+			expectedError:         types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, true),
+		},
+		{
+			name:                  "successful primary service dereferencing",
+			ledgerService:         utils.NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			dereferencingType:     types.DIDJSONLD,
+			did:                   utils.ValidDid,
+			queries:               "service=" + utils.ValidServiceId,
+			expectedContentStream: types.NewServiceEndpoint(validService.ServiceEndpoint),
+			expectedMetadata:      validFragmentMetadata,
+			expectedError:         nil,
+		},
+		{
+			name:              "Primary service dereferencing(not found)",
+			ledgerService:     utils.NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			dereferencingType: types.DIDJSONLD,
+			did:               utils.ValidDid,
+			queries:           "service=serv",
+			expectedMetadata:  types.ResolutionDidDocMetadata{},
+			expectedError:     types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, true),
+		},
+		{
+			name:                  "Primary service dereferencing(hash simpol)",
+			ledgerService:         utils.NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			dereferencingType:     types.DIDJSONLD,
+			did:                   utils.ValidDid,
+			queries:               "service=" + utils.ValidServiceId,
+			frag:                  "flag",
+			expectedContentStream: types.NewServiceEndpoint(validService.ServiceEndpoint + "#flag"),
+			expectedMetadata:      validFragmentMetadata,
+			expectedError:         nil,
+		},
+		{
+			name:                  "Primary service dereferencing(relativeRef)",
+			ledgerService:         utils.NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			dereferencingType:     types.DIDJSONLD,
+			did:                   utils.ValidDid,
+			queries:               "service=" + utils.ValidServiceId + "&relativeRef=/some/path?some_query",
+			expectedContentStream: types.NewServiceEndpoint(validService.ServiceEndpoint + "/some/path?some_query"),
+			expectedMetadata:      validFragmentMetadata,
+			expectedError:         nil,
+		},
+		{
+			name:                  "Primary dereferencing(relativeRef + hash flag)",
+			ledgerService:         utils.NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			dereferencingType:     types.DIDJSONLD,
+			did:                   utils.ValidDid,
+			queries:               "service=" + utils.ValidServiceId + "&relativeRef=/some/path?some_query",
+			frag:                  "flag",
+			expectedContentStream: types.NewServiceEndpoint(validService.ServiceEndpoint + "/some/path?some_query#flag"),
+			expectedMetadata:      validFragmentMetadata,
+			expectedError:         nil,
 		},
 	}
 
@@ -249,8 +300,14 @@ func TestDereferencing(t *testing.T) {
 			if expectedContentType == "" {
 				expectedContentType = subtest.dereferencingType
 			}
+			queries, pErr := url.ParseQuery(subtest.queries)
+			require.Empty(t, pErr)
+			var frag *string
+			if subtest.frag != "" {
+				frag = &subtest.frag
+			}
 
-			result, err := diddocService.ProcessDIDRequest(subtest.did, subtest.fragmentId, subtest.queries, nil, subtest.dereferencingType)
+			result, err := diddocService.ProcessDIDRequest(subtest.did, subtest.fragmentId, queries, frag, subtest.dereferencingType)
 			dereferencingResult, _ := result.(*types.DidDereferencing)
 
 			fmt.Println(subtest.name + ": dereferencingResult:")
