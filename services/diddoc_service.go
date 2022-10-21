@@ -22,14 +22,21 @@ func NewDIDDocService(didMethod string, ledgerService LedgerServiceI) DIDDocServ
 	}
 }
 
+func IsFragmentId(id string, requestedId string) bool {
+	if strings.Contains(id, "#") {
+		id = strings.Split(id, "#")[1]
+	}
+	return id == requestedId
+}
+
 func (DIDDocService) GetDIDFragment(fragmentId string, didDoc types.DidDoc) types.ContentStreamI {
 	for _, verMethod := range didDoc.VerificationMethod {
-		if strings.Contains(verMethod.Id, fragmentId) {
+		if IsFragmentId(verMethod.Id, fragmentId) {
 			return &verMethod
 		}
 	}
 	for _, service := range didDoc.Service {
-		if strings.Contains(service.Id, fragmentId) {
+		if IsFragmentId(service.Id, fragmentId) {
 			return &service
 		}
 	}
@@ -146,4 +153,21 @@ func (dds DIDDocService) resolveMetadata(did string, metadata cheqdTypes.Metadat
 	}
 	resolvedMetadata := types.NewResolutionDidDocMetadata(did, metadata, resources)
 	return &resolvedMetadata, nil
+}
+
+func (DIDDocService) GetDIDService(queryId string, didDoc cheqd.Did) *cheqd.Service {
+	for _, service := range didDoc.Service {
+		if IsFragmentId(service.Id, queryId) {
+			return service
+		}
+	}
+	return nil
+}
+
+func CreateServiceEndpoint(relativeRef string, fragmentId string, inputServiceEndpoint string) (outputServiceEndpoint string) {
+	outputServiceEndpoint = inputServiceEndpoint + relativeRef
+	if fragmentId != "" {
+		outputServiceEndpoint += "#" + fragmentId
+	}
+	return outputServiceEndpoint
 }

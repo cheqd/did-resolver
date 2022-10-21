@@ -109,3 +109,44 @@ func prepareQueries(c echo.Context) (rawQuery string, flag *string) {
 	queryFlag := rawQuery[flagIndex:]
 	return rawQuery[0:flagIndex], &queryFlag
 }
+
+
+func (rs RequestService) dereferenceService(didUrl string, dereferenceOptions types.DereferencingOption) (types.DidDereferencing, error) {
+	did, _, query, fragmentId, _ := cheqdUtils.TrySplitDIDUrl(didUrl)
+	didResolution := rs.Resolve(did, types.ResolutionOption(dereferenceOptions))
+
+	dereferencingMetadata := types.DereferencingMetadata(didResolution.ResolutionMetadata)
+	if dereferencingMetadata.ResolutionError != "" {
+		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
+	}
+
+	queryUrl, err := url.Parse("?" + query)
+	if err != nil {
+		return types.DidDereferencing{}, err
+	}
+	parseQuery:= queryUrl.Query()
+
+	queryId := parseQuery.Get("service")
+	if queryId == "" {
+		dereferencingMetadata = types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.RepresentationNotSupportedError)
+		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
+	}
+
+	service := rs.didDocService.GetDIDService(queryId, didResolution.Did)
+	if service == nil {
+		dereferencingMetadata = types.NewDereferencingMetadata(didUrl, dereferenceOptions.Accept, types.NotFoundError)
+		return types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
+	}
+
+	serviceEndpoint := CreateServiceEndpoint(parseQuery.Get("relativeRef"), fragmentId, service.ServiceEndpoint)
+	metadata := types.TransformToFragmentMetadata(didResolution.Metadata)
+
+	jsonFragment, err := json.Marshal(serviceEndpoint)
+	if err != nil {
+		return types.DidDereferencing{}, err
+	}
+	contentStream := json.RawMessage(jsonFragment)
+
+	dereferencingMetadata = types.NewDereferencingMetadata(did, dereferenceOptions.Accept, "")
+	return types.DidDereferencing{ContentStream: contentStream, Metadata: metadata, DereferencingMetadata: dereferencingMetadata}, nil
+}
