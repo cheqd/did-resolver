@@ -26,22 +26,35 @@ const docTemplate = `{
         "/1.0/identifiers/{did}": {
             "get": {
                 "description": "Get DID Doc or its fragment",
+                "consumes": [
+                    "*/*"
+                ],
                 "produces": [
-                    "application/json"
+                    "*/*"
                 ],
                 "tags": [
                     "Resolution"
                 ],
                 "summary": "Resolve or dereferencing DID Doc",
-                "operationId": "ResolveDIDDoc",
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "\"did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY\"",
+                        "example": "did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY",
                         "description": "DID Doc Id",
                         "name": "did",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "enum": [
+                            "application/did+ld+json",
+                            "application/ld+json",
+                            "application/did+json"
+                        ],
+                        "type": "string",
+                        "description": "The requested media type of the DID document representation or DID resolution result. ",
+                        "name": "accept",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -82,7 +95,7 @@ const docTemplate = `{
             "get": {
                 "description": "Get a list of all collection resources metadata",
                 "produces": [
-                    "application/json"
+                    "*/*"
                 ],
                 "tags": [
                     "Dereferencing"
@@ -91,11 +104,22 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "\"did:cheqd:testnet:MjYxNzYKMjYxNzYK\"",
+                        "example": "did:cheqd:testnet:MjYxNzYKMjYxNzYK",
                         "description": "Resource collection id. DID Doc Id",
                         "name": "did",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "enum": [
+                            "application/did+ld+json",
+                            "application/ld+json",
+                            "application/did+json"
+                        ],
+                        "type": "string",
+                        "description": "The requested media type of the DID document representation or DID resolution result. ",
+                        "name": "accept",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -145,7 +169,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "\"did:cheqd:testnet:MjYxNzYKMjYxNzYK\"",
+                        "example": "did:cheqd:testnet:MjYxNzYKMjYxNzYK",
                         "description": "Resource collection id. DID Doc Id",
                         "name": "did",
                         "in": "path",
@@ -153,11 +177,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "example": "\"60ad67be-b65b-40b8-b2f4-3923141ef382\"",
+                        "example": "60ad67be-b65b-40b8-b2f4-3923141ef382",
                         "description": "DID Resource identifier",
                         "name": "resourceId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "enum": [
+                            "application/did+ld+json",
+                            "application/ld+json",
+                            "application/did+json"
+                        ],
+                        "type": "string",
+                        "description": "The requested media type of the DID document representation or DID resolution result. ",
+                        "name": "accept",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -201,7 +236,7 @@ const docTemplate = `{
             "get": {
                 "description": "Get resource metadata without value by DID Doc",
                 "produces": [
-                    "application/json"
+                    "*/*"
                 ],
                 "tags": [
                     "Dereferencing"
@@ -210,7 +245,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "\"did:cheqd:testnet:MjYxNzYKMjYxNzYK\"",
+                        "example": "did:cheqd:testnet:MjYxNzYKMjYxNzYK",
                         "description": "Resource collection id. DID Doc Id",
                         "name": "did",
                         "in": "path",
@@ -218,11 +253,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "example": "\"60ad67be-b65b-40b8-b2f4-3923141ef382\"",
+                        "example": "60ad67be-b65b-40b8-b2f4-3923141ef382",
                         "description": "DID Resource identifier",
                         "name": "resourceId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "enum": [
+                            "application/did+ld+json",
+                            "application/ld+json",
+                            "application/did+json"
+                        ],
+                        "type": "string",
+                        "description": "The requested media type of the DID document representation or DID resolution result. ",
+                        "name": "accept",
+                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -262,18 +308,24 @@ const docTemplate = `{
         "/1.0/identifiers/{did}{fragmentId}": {
             "get": {
                 "description": "Get DID Doc or its fragment",
+                "consumes": [
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+json"
+                ],
                 "produces": [
-                    "application/json"
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+json"
                 ],
                 "tags": [
                     "Dereferencing"
                 ],
                 "summary": "Resolve or dereferencing DID Doc",
-                "operationId": "ResolveDIDDocDereferencing",
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "\"did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY\"",
+                        "example": "did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY",
                         "description": "DID Doc Id",
                         "name": "did",
                         "in": "path",
@@ -281,8 +333,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "example": "\"%23key1\"",
-                        "description": "` + "`" + `#` + "`" + ` encodede to URL + DID Doc Verification Method or Service identifier",
+                        "example": "#key1",
+                        "description": "` + "`" + `#` + "`" + ` + DID Doc Verification Method or Service identifier",
                         "name": "fragmentId",
                         "in": "path"
                     },
@@ -292,6 +344,17 @@ const docTemplate = `{
                         "description": "Service id",
                         "name": "service",
                         "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "application/did+ld+json",
+                            "application/ld+json",
+                            "application/did+json"
+                        ],
+                        "type": "string",
+                        "description": "The requested media type of the DID document representation or DID resolution result. ",
+                        "name": "accept",
+                        "in": "header"
                     }
                 ],
                 "responses": {

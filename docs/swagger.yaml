@@ -180,17 +180,27 @@ info:
 paths:
   /1.0/identifiers/{did}:
     get:
+      consumes:
+      - '*/*'
       description: Get DID Doc or its fragment
-      operationId: ResolveDIDDoc
       parameters:
       - description: DID Doc Id
-        example: '"did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY"'
+        example: did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
         in: path
         name: did
         required: true
         type: string
+      - description: 'The requested media type of the DID document representation
+          or DID resolution result. '
+        enum:
+        - application/did+ld+json
+        - application/ld+json
+        - application/did+json
+        in: header
+        name: accept
+        type: string
       produces:
-      - application/json
+      - '*/*'
       responses:
         "200":
           description: OK
@@ -220,16 +230,25 @@ paths:
       description: Get resource value without dereferencing wrappers
       parameters:
       - description: Resource collection id. DID Doc Id
-        example: '"did:cheqd:testnet:MjYxNzYKMjYxNzYK"'
+        example: did:cheqd:testnet:MjYxNzYKMjYxNzYK
         in: path
         name: did
         required: true
         type: string
       - description: DID Resource identifier
-        example: '"60ad67be-b65b-40b8-b2f4-3923141ef382"'
+        example: 60ad67be-b65b-40b8-b2f4-3923141ef382
         in: path
         name: resourceId
         required: true
+        type: string
+      - description: 'The requested media type of the DID document representation
+          or DID resolution result. '
+        enum:
+        - application/did+ld+json
+        - application/ld+json
+        - application/did+json
+        in: header
+        name: accept
         type: string
       produces:
       - '*/*'
@@ -264,19 +283,28 @@ paths:
       description: Get resource metadata without value by DID Doc
       parameters:
       - description: Resource collection id. DID Doc Id
-        example: '"did:cheqd:testnet:MjYxNzYKMjYxNzYK"'
+        example: did:cheqd:testnet:MjYxNzYKMjYxNzYK
         in: path
         name: did
         required: true
         type: string
       - description: DID Resource identifier
-        example: '"60ad67be-b65b-40b8-b2f4-3923141ef382"'
+        example: 60ad67be-b65b-40b8-b2f4-3923141ef382
         in: path
         name: resourceId
         required: true
         type: string
+      - description: 'The requested media type of the DID document representation
+          or DID resolution result. '
+        enum:
+        - application/did+ld+json
+        - application/ld+json
+        - application/did+json
+        in: header
+        name: accept
+        type: string
       produces:
-      - application/json
+      - '*/*'
       responses:
         "200":
           description: OK
@@ -306,13 +334,22 @@ paths:
       description: Get a list of all collection resources metadata
       parameters:
       - description: Resource collection id. DID Doc Id
-        example: '"did:cheqd:testnet:MjYxNzYKMjYxNzYK"'
+        example: did:cheqd:testnet:MjYxNzYKMjYxNzYK
         in: path
         name: did
         required: true
         type: string
+      - description: 'The requested media type of the DID document representation
+          or DID resolution result. '
+        enum:
+        - application/did+ld+json
+        - application/ld+json
+        - application/did+json
+        in: header
+        name: accept
+        type: string
       produces:
-      - application/json
+      - '*/*'
       responses:
         "200":
           description: OK
@@ -339,18 +376,20 @@ paths:
       - Dereferencing
   /1.0/identifiers/{did}{fragmentId}:
     get:
+      consumes:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
       description: Get DID Doc or its fragment
-      operationId: ResolveDIDDocDereferencing
       parameters:
       - description: DID Doc Id
-        example: '"did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY"'
+        example: did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
         in: path
         name: did
         required: true
         type: string
-      - description: '`#` encodede to URL + DID Doc Verification Method or Service
-          identifier'
-        example: '"%23key1"'
+      - description: '`#` + DID Doc Verification Method or Service identifier'
+        example: '#key1'
         in: path
         name: fragmentId
         type: string
@@ -359,8 +398,19 @@ paths:
         in: query
         name: service
         type: string
+      - description: 'The requested media type of the DID document representation
+          or DID resolution result. '
+        enum:
+        - application/did+ld+json
+        - application/ld+json
+        - application/did+json
+        in: header
+        name: accept
+        type: string
       produces:
-      - application/json
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
       responses:
         "200":
           description: OK
