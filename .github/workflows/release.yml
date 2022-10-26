@@ -21,10 +21,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      - uses: actions/setup-go@v3
-        with:
-          go-version-file: ./go.mod
+          persist-credentials: false
 
       # Node.js setup is needed to run Semantic Release
       - uses: actions/setup-node@v3
@@ -67,17 +64,29 @@ jobs:
     name: "Release Docker image"
     needs: release-binary
     runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'main' }}
+    env:
+      IMAGE_NAME: ${{ github.repository }}
+    environment: 
+      name: production
+      url: https://resolver.cheqd.net
 
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          persist-credentials: false
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         id: buildx
         with:
+          install: true
           version: latest
+
+      - name: Install DigitalOcean CLI
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
@@ -86,15 +95,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       
+      - name: Login to DigitalOcean Container Registry
+        run: doctl registry login --expiry-seconds 600
+      
       - name: Configure Docker image metadata
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/${{ github.repository}}
+          images: |
+            ghcr.io/${{ env.IMAGE_NAME }}
+            registry.digitalocean.com/${{ env.IMAGE_NAME }}
           flavor: |
             latest=auto
           tags: |
             type=semver,pattern={{version}},value=${{ needs.release-binary.outputs.VERSION }}
+            type=raw,value=production-latest
+            type=sha,format=long
           labels: |
             org.opencontainers.image.title="cheqd DID Resolver"
             org.opencontainers.image.description="DID Resolver for the did:cheqd method"
@@ -103,12 +119,20 @@ jobs:
             org.opencontainers.image.created={{date 'dddd, MMMM Do YYYY, h:mm:ss a'}}
             org.opencontainers.image.documentation="https://docs.cheqd.io/identity"
 
-      - name: Build and push image
+      - name: Build image with labels
         uses: docker/build-push-action@v3
         with:
           context: .
           file: docker/Dockerfile
           platforms: linux/amd64
-          push: true
+          load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Push image to GitHub Container Registry
+        run: docker image push --all-tags ghcr.io/${{ github.repository}}
+      
+      - name: Push image to DigitalOcean Container Registry
+        run: docker image push --all-tags registry.digitalocean.com/${{ github.repository }}

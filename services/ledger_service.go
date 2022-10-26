@@ -4,9 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
-	"fmt"
 	"strings"
-	"time"
 
 	"google.golang.org/grpc/credentials"
 
@@ -24,38 +22,33 @@ const (
 )
 
 type LedgerServiceI interface {
-	QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool, error)
-	QueryResource(collectionDid string, resourceId string) (*resource.Resource, types.ErrorType)
-	QueryCollectionResources(did string) ([]*resource.ResourceHeader, types.ErrorType)
+	QueryDIDDoc(did string) (*cheqd.Did, *cheqd.Metadata, *types.IdentityError)
+	QueryResource(collectionDid string, resourceId string) (*resource.Resource, *types.IdentityError)
+	QueryCollectionResources(did string) ([]*resource.ResourceHeader, *types.IdentityError)
 	GetNamespaces() []string
 }
 
 type LedgerService struct {
-	ledgers           map[string]string // namespace -> url
-	connectionTimeout time.Duration
-	useTls            bool
+	ledgers map[string]types.Network // namespace -> endpoint with configs
 }
 
-func NewLedgerService(connectionTimeout time.Duration, useTls bool) LedgerService {
-	ls := LedgerService{
-		connectionTimeout: connectionTimeout,
-		useTls:            useTls,
-	}
-	ls.ledgers = make(map[string]string)
+func NewLedgerService() LedgerService {
+	ls := LedgerService{}
+	ls.ledgers = make(map[string]types.Network)
 	return ls
 }
 
-func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool, error) {
+func (ls LedgerService) QueryDIDDoc(did string) (*cheqd.Did, *cheqd.Metadata, *types.IdentityError) {
 	method, namespace, _, _ := cheqdUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
-		return cheqd.Did{}, cheqd.Metadata{}, false, fmt.Errorf("namespace not supported: %s", namespace)
+		return nil, nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
 	}
 
 	conn, err := ls.openGRPCConnection(serverAddr)
 	if err != nil {
 		log.Error().Err(err).Msg("QueryDIDDoc: failed connection")
-		return cheqd.Did{}, cheqd.Metadata{}, false, err
+		return nil, nil, types.NewInternalError(did, types.JSON, err, false)
 	}
 
 	defer mustCloseGRPCConnection(conn)
@@ -64,23 +57,23 @@ func (ls LedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool
 	client := cheqd.NewQueryClient(conn)
 	didDocResponse, err := client.Did(context.Background(), &cheqd.QueryGetDidRequest{Id: did})
 	if err != nil {
-		return cheqd.Did{}, cheqd.Metadata{}, false, nil
+		return nil, nil, types.NewNotFoundError(did, types.JSON, err, false)
 	}
 
-	return *didDocResponse.Did, *didDocResponse.Metadata, true, err
+	return didDocResponse.Did, didDocResponse.Metadata, nil
 }
 
-func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.Resource, types.ErrorType) {
+func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.Resource, *types.IdentityError) {
 	method, namespace, collectionId, _ := cheqdUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
-		return &resource.Resource{}, types.InvalidDIDError
+		return nil, types.NewInvalidDIDError(did, types.JSON, nil, true)
 	}
 
 	conn, err := ls.openGRPCConnection(serverAddr)
 	if err != nil {
 		log.Error().Err(err).Msg("QueryResource: failed connection")
-		return &resource.Resource{}, types.InternalError
+		return nil, types.NewInternalError(did, types.JSON, err, true)
 	}
 
 	defer mustCloseGRPCConnection(conn)
@@ -91,67 +84,67 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.
 	resourceResponse, err := client.Resource(context.Background(), &resource.QueryGetResourceRequest{CollectionId: collectionId, Id: resourceId})
 	if err != nil {
 		log.Info().Msgf("Resource not found %s", err.Error())
-		return &resource.Resource{}, types.NotFoundError
+		return nil, types.NewNotFoundError(did, types.JSON, err, true)
 	}
 
-	return resourceResponse.Resource, ""
+	return resourceResponse.Resource, nil
 }
 
-func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, types.ErrorType) {
+func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, *types.IdentityError) {
 	method, namespace, collectionId, _ := cheqdUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
-		return nil, types.InvalidDIDError
+		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
 	}
 
 	conn, err := ls.openGRPCConnection(serverAddr)
 	if err != nil {
 		log.Error().Err(err).Msg("QueryResource: failed connection")
-		return nil, types.InternalError
+		return nil, types.NewInternalError(did, types.JSON, err, false)
 	}
 
-	log.Info().Msgf("Querying did resource: %s", did)
+	log.Info().Msgf("Querying did resources: %s", did)
 
 	client := resource.NewQueryClient(conn)
 	resourceResponse, err := client.CollectionResources(context.Background(), &resource.QueryGetCollectionResourcesRequest{CollectionId: collectionId})
 	if err != nil {
-		return nil, types.NotFoundError
+		return nil, types.NewNotFoundError(did, types.JSON, err, false)
 	}
 
-	return resourceResponse.Resources, ""
+	return resourceResponse.Resources, nil
 }
 
-func (ls *LedgerService) RegisterLedger(method string, namespace string, url string) error {
-	if namespace == "" || method == "" {
+func (ls *LedgerService) RegisterLedger(method string, endpoint types.Network) error {
+	if endpoint.Namespace == "" || method == "" {
 		err := errors.New("namespace and method cannot be empty")
 		log.Error().Err(err).Msg("RegisterLedger: failed")
 		return err
 	}
 
-	if url == "" {
+	if endpoint.Endpoint == "" {
 		return errors.New("ledger node url cannot be empty")
 	}
 
-	ls.ledgers[method+DELIMITER+namespace] = url
+	ls.ledgers[method+DELIMITER+endpoint.Namespace] = endpoint
 	return nil
 }
 
-func (ls LedgerService) openGRPCConnection(addr string) (conn *grpc.ClientConn, err error) {
+func (ls LedgerService) openGRPCConnection(endpoint types.Network) (conn *grpc.ClientConn, err error) {
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithBlock(),
 	}
 
-	if ls.useTls {
+	if endpoint.UseTls {
 		opts = append(opts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})))
 	} else {
 		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), ls.connectionTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), endpoint.Timeout)
 	defer cancel()
 
-	conn, err = grpc.DialContext(ctx, addr, opts...)
+	conn, err = grpc.DialContext(ctx, endpoint.Endpoint, opts...)
 
 	if err != nil {
 		log.Error().Err(err).Msgf("openGRPCConnection: context failed")

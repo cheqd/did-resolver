@@ -2,9 +2,7 @@ package cmd
 
 import (
 	"net/http"
-	"strings"
 
-	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
@@ -43,67 +41,34 @@ func serve() {
 
 	// Echo instance
 	e := echo.New()
+	e.HTTPErrorHandler = CustomHTTPErrorHandler
 
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	// Services
-	ledgerService := services.NewLedgerService(config.Ledger.Timeout, config.Ledger.UseTls)
+	ledgerService := services.NewLedgerService()
 
-	networks := strings.Split(config.Ledger.Networks, ";")
-	for _, network := range networks {
-		args := strings.Split(network, "=")
-		name, url := args[0], args[1]
-
-		log.Info().Msgf("Registering network. Name: %s, url: %s.", name, url)
-		err := ledgerService.RegisterLedger(config.Resolver.Method, name, url)
+	for _, network := range config.Networks {
+		log.Info().Msgf("Registering network: %s.", network.Namespace)
+		err := ledgerService.RegisterLedger(types.DID_METHOD, network)
 		if err != nil {
 			panic(err)
 		}
 	}
 
-	requestService := services.NewRequestService(config.Resolver.Method, ledgerService)
+	requestService := services.NewRequestService(types.DID_METHOD, ledgerService)
 
 	// Routes
-	e.GET(config.Api.ResolverPath, func(c echo.Context) error {
-		didUrl := c.Param("did")
-		log.Debug().Msgf("DID: %s", didUrl)
-
-		accept := c.Request().Header.Get(echo.HeaderAccept)
-		log.Trace().Msgf("Accept: %s", accept)
-
-		var requestedContentType types.ContentType
-
-		if strings.Contains(accept, "*/*") || strings.Contains(accept, string(types.DIDJSONLD)) {
-			requestedContentType = types.DIDJSONLD
-		} else if strings.Contains(accept, string(types.DIDJSON)) {
-			requestedContentType = types.DIDJSON
-		} else if strings.Contains(accept, string(types.JSONLD)) {
-			requestedContentType = types.JSONLD
-		} else {
-			requestedContentType = types.JSON
-		}
-		log.Debug().Msgf("Requested content type: %s", requestedContentType)
-
-		_, path, _, _, _ := cheqdUtils.TrySplitDIDUrl(didUrl)
-		log.Debug().Msg(path)
-		if utils.IsCollectionResourcesPathRedirect(path) {
-			return c.Redirect(http.StatusMovedPermanently, "all")
-		}
-		resolutionResponse := requestService.ProcessDIDRequest(didUrl, types.ResolutionOption{Accept: requestedContentType})
-
-		c.Response().Header().Set(echo.HeaderContentType, resolutionResponse.GetContentType())
-
-		// if contentType != dereferencingOptions.Accept {
-		// 	return didDereferencing.ContentStream, statusCode, contentType
-		// }
-		if utils.IsResourceDataPath(path) && resolutionResponse.GetStatus() == http.StatusOK {
-			return c.Blob(resolutionResponse.GetStatus(), resolutionResponse.GetContentType(), resolutionResponse.GetBytes())
-		}
-		return c.JSONPretty(resolutionResponse.GetStatus(), resolutionResponse, "  ")
+	e.GET(types.RESOLVER_PATH+":did", requestService.ResolveDIDDoc)
+	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource", requestService.DereferenceResourceData)
+	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource/metadata", requestService.DereferenceResourceMetadata)
+	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+"all", requestService.DereferenceCollectionResources)
+	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+"", func(c echo.Context) error {
+		return c.Redirect(http.StatusMovedPermanently, "all")
 	})
 
 	log.Info().Msg("Starting listener")
-	log.Fatal().Err(e.Start(config.Api.Listener))
+	log.Fatal().Err(e.Start(config.ResolverListener))
 }

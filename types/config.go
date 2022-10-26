@@ -3,45 +3,26 @@ package types
 import (
 	"encoding/json"
 	"time"
-
-	"gopkg.in/yaml.v3"
 )
 
+type RawConfig struct {
+	MainnetEndpoint  string `mapstructure:"MAINNET_ENDPOINT"`
+	TestnetEndpoint  string `mapstructure:"TESTNET_ENDPOINT"`
+	ResolverListener string `mapstructure:"RESOLVER_LISTNER"`
+	LogLevel         string `mapstructure:"LOG_LEVEL"`
+}
+
 type Config struct {
-	Ledger   LedgerConfig
-	Resolver ResolverConfig
-	Api      ApiConfig
-
-	LogLevel string
+	Networks         []Network
+	ResolverListener string
+	LogLevel         string
 }
 
-type LedgerConfig struct {
-	Networks string
-	Timeout  time.Duration
-	UseTls   bool
-}
-
-type ResolverConfig struct {
-	Method string
-}
-
-type ApiConfig struct {
-	Listener     string
-	ResolverPath string
-}
-
-func (c *Config) MarshalYaml() (string, error) {
-	bytes, err := yaml.Marshal(c)
-	return string(bytes), err
-}
-
-func (c *Config) MustMarshalYaml() string {
-	res, err := c.MarshalYaml()
-	if err != nil {
-		panic(err)
-	}
-
-	return res
+type Network struct {
+	Namespace string
+	Endpoint  string
+	UseTls    bool
+	Timeout   time.Duration
 }
 
 func (c *Config) MarshalJson() (string, error) {

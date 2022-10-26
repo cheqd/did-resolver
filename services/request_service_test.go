@@ -1,358 +1,361 @@
 package services
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
+	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/require"
 )
 
-type MockLedgerService struct {
-	Did      cheqd.Did
-	Metadata cheqd.Metadata
-	Resource resource.Resource
-}
+func TestResolveDIDDoc(t *testing.T) {
+	validDIDDoc := utils.ValidDIDDoc()
+	validMetadata := utils.ValidMetadata()
+	validResource := utils.ValidResource()
+	validDIDResolution := types.NewDidDoc(validDIDDoc)
+	subtests := []struct {
+		name                   string
+		ledgerService          utils.MockLedgerService
+		resolutionType         types.ContentType
+		did                    string
+		expectedDID            *types.DidDoc
+		expectedMetadata       types.ResolutionDidDocMetadata
+		expectedResolutionType types.ContentType
+		expectedError          error
+	}{
+		{
+			name:             "successful resolution",
+			ledgerService:    utils.NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			resolutionType:   types.DIDJSONLD,
+			did:              utils.ValidDid,
+			expectedDID:      &validDIDResolution,
+			expectedMetadata: types.NewResolutionDidDocMetadata(utils.ValidDid, validMetadata, []*resource.ResourceHeader{validResource.Header}),
+			expectedError:    nil,
+		},
+		{
+			name:             "DID not found",
+			ledgerService:    utils.NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
+			resolutionType:   types.DIDJSONLD,
+			did:              utils.ValidDid,
+			expectedDID:      nil,
+			expectedMetadata: types.ResolutionDidDocMetadata{},
+			expectedError:    types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, false),
+		},
+	}
 
-func NewMockLedgerService(did cheqd.Did, metadata cheqd.Metadata, resource resource.Resource) MockLedgerService {
-	return MockLedgerService{
-		Did:      did,
-		Metadata: metadata,
-		Resource: resource,
+	for _, subtest := range subtests {
+		t.Run(subtest.name, func(t *testing.T) {
+			context, rec := setupContext("/1.0/identifiers/:did", []string{"did"}, []string{subtest.did}, subtest.resolutionType)
+			requestService := NewRequestService("cheqd", subtest.ledgerService)
+
+			if (subtest.resolutionType == "" || subtest.resolutionType == types.DIDJSONLD) && subtest.expectedError == nil {
+				subtest.expectedDID.Context = []string{types.DIDSchemaJSONLD}
+			} else if subtest.expectedDID != nil {
+				subtest.expectedDID.Context = nil
+			}
+			expectedContentType := defineContentType(subtest.expectedResolutionType, subtest.resolutionType)
+
+			err := requestService.ResolveDIDDoc(context)
+
+			if subtest.expectedError != nil {
+				require.EqualValues(t, subtest.expectedError.Error(), err.Error())
+			} else {
+				var resolutionResult types.DidResolution
+				unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &resolutionResult)
+				require.Empty(t, unmarshalErr)
+				require.Empty(t, err)
+				require.EqualValues(t, subtest.expectedError, err)
+				require.EqualValues(t, subtest.expectedDID, resolutionResult.Did)
+				require.EqualValues(t, subtest.expectedMetadata, resolutionResult.Metadata)
+				require.EqualValues(t, expectedContentType, resolutionResult.ResolutionMetadata.ContentType)
+				require.EqualValues(t, expectedContentType, rec.Header().Get("Content-Type"))
+			}
+		})
 	}
 }
 
-func (ls MockLedgerService) QueryDIDDoc(did string) (cheqd.Did, cheqd.Metadata, bool, error) {
-	isFound := true
-	if ls.Did.Id != did {
-		isFound = false
+func TestRequestService_DereferenceResourceData(t *testing.T) {
+	validDIDDoc := utils.ValidDIDDoc()
+	validMetadata := utils.ValidMetadata()
+	validResource := utils.ValidResource()
+	validResourceDereferencing := types.DereferencedResourceData(validResource.Data)
+	subtests := []struct {
+		name                   string
+		ledgerService          utils.MockLedgerService
+		resolutionType         types.ContentType
+		did                    string
+		resourceId             string
+		expectedResource       types.ContentStreamI
+		expectedMetadata       types.ResolutionDidDocMetadata
+		expectedResolutionType types.ContentType
+		expectedError          error
+	}{
+		{
+			name:             "successful resolution",
+			ledgerService:    utils.NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			resolutionType:   types.DIDJSONLD,
+			did:              utils.ValidDid,
+			resourceId:       utils.ValidResourceId,
+			expectedResource: &validResourceDereferencing,
+			expectedMetadata: types.NewResolutionDidDocMetadata(utils.ValidDid, validMetadata, []*resource.ResourceHeader{validResource.Header}),
+			expectedError:    nil,
+		},
+		{
+			name:             "DID not found",
+			ledgerService:    utils.NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
+			resolutionType:   types.DIDJSONLD,
+			did:              utils.ValidDid,
+			resourceId:       "a86f9cae-0902-4a7c-a144-96b60ced2fc9",
+			expectedResource: nil,
+			expectedMetadata: types.ResolutionDidDocMetadata{},
+			expectedError:    types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, false),
+		},
 	}
-	return ls.Did, ls.Metadata, isFound, nil
-}
 
-func (ls MockLedgerService) QueryResource(did string, resourceId string) (*resource.Resource, types.ErrorType) {
-	if ls.Resource.Header == nil || ls.Resource.Header.Id != resourceId {
-		return &resource.Resource{}, types.NotFoundError
+	for _, subtest := range subtests {
+		t.Run(subtest.name, func(t *testing.T) {
+			context, rec := setupContext(
+				"/1.0/identifiers/:did/resources/:resource",
+				[]string{"did", "resource"},
+				[]string{subtest.did, subtest.resourceId}, subtest.resolutionType)
+			requestService := NewRequestService("cheqd", subtest.ledgerService)
+			expectedContentType := validResource.Header.MediaType
+
+			err := requestService.DereferenceResourceData(context)
+
+			if subtest.expectedError != nil {
+				require.EqualValues(t, subtest.expectedError.Error(), err.Error())
+			} else {
+				require.Empty(t, err)
+				require.EqualValues(t, subtest.expectedError, err)
+				require.EqualValues(t, subtest.expectedResource.GetBytes(), rec.Body.Bytes())
+				require.EqualValues(t, expectedContentType, rec.Header().Get("Content-Type"))
+			}
+		})
 	}
-	return &ls.Resource, ""
 }
 
-func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, types.ErrorType) {
-	if ls.Metadata.Resources == nil {
-		return []*resource.ResourceHeader{}, types.NotFoundError
-	}
-	return []*resource.ResourceHeader{ls.Resource.Header}, ""
-}
-
-func (ls MockLedgerService) GetNamespaces() []string {
-	return []string{"testnet", "mainnet"}
-}
-
-func TestResolve(t *testing.T) {
+func TestRequestService_DereferenceResourceMetadata(t *testing.T) {
 	validDIDDoc := utils.ValidDIDDoc()
 	validMetadata := utils.ValidMetadata()
 	validResource := utils.ValidResource()
 	subtests := []struct {
 		name                   string
-		ledgerService          MockLedgerService
+		ledgerService          utils.MockLedgerService
 		resolutionType         types.ContentType
-		identifier             string
-		method                 string
-		namespace              string
-		expectedDID            *types.DidDoc
+		did                    string
+		resourceId             string
+		expectedResource       *types.DereferencedResourceList
 		expectedMetadata       types.ResolutionDidDocMetadata
 		expectedResolutionType types.ContentType
-		expectedError          types.ErrorType
+		expectedError          error
 	}{
 		{
-			name:             "successful resolution",
-			ledgerService:    NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			resolutionType:   types.DIDJSONLD,
-			identifier:       utils.ValidIdentifier,
-			method:           utils.ValidMethod,
-			namespace:        utils.ValidNamespace,
-			expectedDID:      types.NewDidDoc(validDIDDoc),
-			expectedMetadata: types.NewResolutionDidDocMetadata(utils.ValidDid, validMetadata, []*resource.ResourceHeader{validResource.Header}),
-			expectedError:    "",
+			name:           "successful resolution",
+			ledgerService:  utils.NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			resolutionType: types.DIDJSONLD,
+			did:            utils.ValidDid,
+			resourceId:     utils.ValidResourceId,
+			expectedResource: types.NewDereferencedResourceList(
+				utils.ValidDid,
+				[]*resource.ResourceHeader{validResource.Header},
+			),
+			expectedMetadata: types.ResolutionDidDocMetadata{},
+			expectedError:    nil,
 		},
 		{
 			name:             "DID not found",
-			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
+			ledgerService:    utils.NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
 			resolutionType:   types.DIDJSONLD,
-			identifier:       utils.ValidIdentifier,
-			method:           utils.ValidMethod,
-			namespace:        utils.ValidNamespace,
-			expectedDID:      nil,
+			did:              utils.ValidDid,
+			resourceId:       "a86f9cae-0902-4a7c-a144-96b60ced2fc9",
+			expectedResource: nil,
 			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.NotFoundError,
-		},
-		{
-			name:             "invalid DID",
-			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
-			resolutionType:   types.DIDJSONLD,
-			identifier:       "oooooo0000OOOO_invalid_did",
-			method:           utils.ValidMethod,
-			namespace:        utils.ValidNamespace,
-			expectedDID:      nil,
-			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.InvalidDIDError,
-		},
-		{
-			name:             "invalid method",
-			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
-			resolutionType:   types.DIDJSONLD,
-			identifier:       utils.ValidIdentifier,
-			method:           "not_supported_method",
-			namespace:        utils.ValidNamespace,
-			expectedDID:      nil,
-			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.MethodNotSupportedError,
-		},
-		{
-			name:             "invalid namespace",
-			ledgerService:    NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
-			resolutionType:   types.DIDJSONLD,
-			identifier:       utils.ValidIdentifier,
-			method:           utils.ValidMethod,
-			namespace:        "invalid_namespace",
-			expectedDID:      nil,
-			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.InvalidDIDError,
-		},
-		{
-			name:                   "representation is not supported",
-			ledgerService:          NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			resolutionType:         "text/html,application/xhtml+xml",
-			identifier:             utils.ValidIdentifier,
-			method:                 utils.ValidMethod,
-			namespace:              utils.ValidNamespace,
-			expectedDID:            nil,
-			expectedMetadata:       types.ResolutionDidDocMetadata{},
-			expectedResolutionType: types.JSON,
-			expectedError:          types.RepresentationNotSupportedError,
+			expectedError:    types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, false),
 		},
 	}
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
+			context, rec := setupContext(
+				"/1.0/identifiers/:did/resources/:resource/metadata",
+				[]string{"did", "resource"},
+				[]string{subtest.did, subtest.resourceId}, subtest.resolutionType)
 			requestService := NewRequestService("cheqd", subtest.ledgerService)
-			id := "did:" + subtest.method + ":" + subtest.namespace + ":" + subtest.identifier
-			expectedDIDProperties := types.DidProperties{
-				DidString:        id,
-				MethodSpecificId: subtest.identifier,
-				Method:           subtest.method,
-			}
-			if (subtest.resolutionType == "" || subtest.resolutionType == types.DIDJSONLD) && subtest.expectedError == "" {
-				subtest.expectedDID.Context = []string{types.DIDSchemaJSONLD}
-			} else if subtest.expectedDID != nil {
-				subtest.expectedDID.Context = nil
-			}
-			expectedContentType := subtest.expectedResolutionType
-			if expectedContentType == "" {
-				expectedContentType = subtest.resolutionType
-			}
-			resolutionResult := requestService.Resolve(id, types.ResolutionOption{Accept: subtest.resolutionType})
 
-			require.EqualValues(t, subtest.expectedDID, resolutionResult.Did)
-			require.EqualValues(t, subtest.expectedMetadata, resolutionResult.Metadata)
-			require.EqualValues(t, expectedContentType, resolutionResult.ResolutionMetadata.ContentType)
-			require.EqualValues(t, subtest.expectedError, resolutionResult.ResolutionMetadata.ResolutionError)
-			require.EqualValues(t, expectedDIDProperties, resolutionResult.ResolutionMetadata.DidProperties)
+			if (subtest.resolutionType == "" || subtest.resolutionType == types.DIDJSONLD) && subtest.expectedError == nil {
+				subtest.expectedResource.AddContext(types.DIDSchemaJSONLD)
+			} else if subtest.expectedResource != nil {
+				subtest.expectedResource.RemoveContext()
+			}
+			expectedContentType := defineContentType(subtest.expectedResolutionType, subtest.resolutionType)
+
+			err := requestService.DereferenceResourceMetadata(context)
+
+			if subtest.expectedError != nil {
+				require.EqualValues(t, subtest.expectedError.Error(), err.Error())
+			} else {
+				var dereferencingResult struct {
+					DereferencingMetadata types.DereferencingMetadata    `json:"dereferencingMetadata"`
+					ContentStream         types.DereferencedResourceList `json:"contentStream"`
+					Metadata              types.ResolutionDidDocMetadata `json:"contentMetadata"`
+				}
+				unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &dereferencingResult)
+
+				require.Empty(t, err)
+				require.Empty(t, unmarshalErr)
+				require.EqualValues(t, subtest.expectedError, err)
+				require.EqualValues(t, *subtest.expectedResource, dereferencingResult.ContentStream)
+				require.EqualValues(t, subtest.expectedMetadata, dereferencingResult.Metadata)
+				require.EqualValues(t, expectedContentType, dereferencingResult.DereferencingMetadata.ContentType)
+				require.EqualValues(t, expectedContentType, rec.Header().Get("Content-Type"))
+			}
 		})
 	}
 }
 
-func TestDereferencing(t *testing.T) {
+func TestRequestService_DereferenceCollectionResources(t *testing.T) {
 	validDIDDoc := utils.ValidDIDDoc()
-	validVerificationMethod := utils.ValidVerificationMethod()
-	validService := utils.ValidService()
-	validResource := utils.ValidResource()
-	validResourceData := types.DereferencedResourceData(validResource.Data)
 	validMetadata := utils.ValidMetadata()
-	validFragmentMetadata := types.NewResolutionDidDocMetadata(utils.ValidDid, validMetadata, []*resource.ResourceHeader{})
+	validResource := utils.ValidResource()
 	subtests := []struct {
-		name                  string
-		ledgerService         MockLedgerService
-		dereferencingType     types.ContentType
-		didUrl                string
-		expectedContentStream types.ContentStreamI
-		expectedContentType   types.ContentType
-		expectedMetadata      types.ResolutionDidDocMetadata
-		expectedError         types.ErrorType
+		name                   string
+		ledgerService          utils.MockLedgerService
+		resolutionType         types.ContentType
+		did                    string
+		expectedResource       *types.DereferencedResourceList
+		expectedMetadata       types.ResolutionDidDocMetadata
+		expectedResolutionType types.ContentType
+		expectedError          error
 	}{
 		{
-			name:                  "successful resolution",
-			ledgerService:         NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType:     types.DIDJSON,
-			didUrl:                utils.ValidDid,
-			expectedContentStream: types.NewDidDoc(validDIDDoc),
-			expectedMetadata:      types.NewResolutionDidDocMetadata(utils.ValidDid, validMetadata, []*resource.ResourceHeader{validResource.Header}),
-			expectedError:         "",
+			name:           "successful resolution",
+			ledgerService:  utils.NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			resolutionType: types.DIDJSONLD,
+			did:            utils.ValidDid,
+			expectedResource: types.NewDereferencedResourceList(
+				utils.ValidDid,
+				[]*resource.ResourceHeader{validResource.Header},
+			),
+			expectedMetadata: types.ResolutionDidDocMetadata{},
+			expectedError:    nil,
 		},
 		{
-			name:                  "successful Secondary dereferencing (key)",
-			ledgerService:         NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType:     types.DIDJSON,
-			didUrl:                validVerificationMethod.Id,
-			expectedContentStream: types.NewVerificationMethod(&validVerificationMethod),
-			expectedMetadata:      validFragmentMetadata,
-			expectedError:         "",
+			name:             "DID not found",
+			ledgerService:    utils.NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
+			resolutionType:   types.DIDJSONLD,
+			did:              utils.ValidDid,
+			expectedResource: nil,
+			expectedMetadata: types.ResolutionDidDocMetadata{},
+			expectedError:    types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, false),
 		},
 		{
-			name:                  "successful Secondary dereferencing (service)",
-			ledgerService:         NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType:     types.DIDJSON,
-			didUrl:                validService.Id,
-			expectedContentStream: types.NewService(&validService),
-			expectedMetadata:      validFragmentMetadata,
-			expectedError:         "",
-		},
-		{
-			name:                  "successful Primary dereferencing (resource header)",
-			ledgerService:         NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType:     types.DIDJSON,
-			didUrl:                utils.ValidDid + types.RESOURCE_PATH + utils.ValidResourceId + "/metadata",
-			expectedContentStream: types.NewDereferencedResourceList(utils.ValidDid, []*resource.ResourceHeader{validResource.Header}),
-			expectedMetadata:      types.ResolutionDidDocMetadata{},
-			expectedError:         "",
-		},
-		{
-			name:                  "successful Primary dereferencing (resource list)",
-			ledgerService:         NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType:     types.DIDJSON,
-			didUrl:                utils.ValidDid + types.RESOURCE_PATH + "all",
-			expectedContentStream: types.NewDereferencedResourceList(utils.ValidDid, []*resource.ResourceHeader{validResource.Header}),
-			expectedMetadata:      types.ResolutionDidDocMetadata{},
-			expectedError:         "",
-		},
-		{
-			name:                  "successful Primary dereferencing (resource data)",
+			name:                  "successful primary service dereferencing",
 			ledgerService:         NewMockLedgerService(validDIDDoc, validMetadata, validResource),
 			dereferencingType:     types.DIDJSONLD,
-			didUrl:                utils.ValidDid + types.RESOURCE_PATH + utils.ValidResourceId,
-			expectedContentStream: &validResourceData,
-			expectedContentType:   types.ContentType(validResource.Header.MediaType),
-			expectedMetadata:      types.ResolutionDidDocMetadata{},
+			didUrl:                validDid + "?service=service-1",
+			expectedContentStream: fmt.Sprintf("\"%s\"", validService.ServiceEndpoint),
+			expectedMetadata:      validFragmentMetadata,
 			expectedError:         "",
 		},
 		{
-			name:              "invalid URL",
-			ledgerService:     NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
-			didUrl:            "unutils.Valid_url",
-			dereferencingType: types.DIDJSONLD,
-			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.InvalidDIDUrlError,
-		},
-		{
-			name:              "not supported path",
-			ledgerService:     NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
-			dereferencingType: types.DIDJSONLD,
-			didUrl:            utils.ValidDid + "/unknown_path",
-			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.RepresentationNotSupportedError,
-		},
-		{
-			name:              "not supported query",
+			name:              "Primary service dereferencing(not found)",
 			ledgerService:     NewMockLedgerService(validDIDDoc, validMetadata, validResource),
 			dereferencingType: types.DIDJSONLD,
-			didUrl:            utils.ValidDid + "?unknown_query",
-			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.RepresentationNotSupportedError,
-		},
-		{
-			name:              "key not found",
-			ledgerService:     NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType: types.DIDJSONLD,
-			didUrl:            utils.ValidDid + "#notFoundKey",
+			didUrl:            validDid + "?service=serv",
 			expectedMetadata:  types.ResolutionDidDocMetadata{},
 			expectedError:     types.NotFoundError,
 		},
 		{
-			name:              "resource not found",
-			ledgerService:     NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
-			dereferencingType: types.DIDJSONLD,
-			didUrl:            utils.ValidDid + types.RESOURCE_PATH + "00000000-0000-0000-0000-000000000000",
-			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.NotFoundError,
+			name:                  "Primary service dereferencing(hash simpol)",
+			ledgerService:         NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			dereferencingType:     types.DIDJSONLD,
+			didUrl:                validDid + "?service=service-1#flag",
+			expectedContentStream: fmt.Sprintf("\"%s\"", validService.ServiceEndpoint+"#flag"),
+			expectedMetadata:      validFragmentMetadata,
+			expectedError:         "",
 		},
 		{
-			name: 				"successful primary service dereferencing",
-			ledgerService: 		NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType: 	types.DIDJSONLD,
-			didUrl:            	validDid + "?service=service-1",
-			expectedContentStream: fmt.Sprintf("\"%s\"", validService.ServiceEndpoint),
-			expectedMetadata: 	validFragmentMetadata,
-			expectedError:    	"",
+			name:                  "Primary service dereferencing(relativeRef)",
+			ledgerService:         NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			dereferencingType:     types.DIDJSONLD,
+			didUrl:                validDid + "?service=service-1&relativeRef=/some/path?some_query",
+			expectedContentStream: fmt.Sprintf("\"%s\"", validService.ServiceEndpoint+"/some/path?some_query"),
+			expectedMetadata:      validFragmentMetadata,
+			expectedError:         "",
 		},
 		{
-			name: 				"Primary service dereferencing(not found)",
-			ledgerService: 		NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType: 	types.DIDJSONLD,
-			didUrl:            	validDid + "?service=serv",
-			expectedMetadata:  	types.ResolutionDidDocMetadata{},
-			expectedError:     	types.NotFoundError,
-		},
-		{
-			name: 				"Primary service dereferencing(hash simpol)",
-			ledgerService: 		NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType: 	types.DIDJSONLD,
-			didUrl:            	validDid + "?service=service-1#flag",
-			expectedContentStream: fmt.Sprintf("\"%s\"", validService.ServiceEndpoint + "#flag"),
-			expectedMetadata: 	validFragmentMetadata,
-			expectedError:    	"",
-		},
-		{
-			name: 				"Primary service dereferencing(relativeRef)",
-			ledgerService: 		NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType: 	types.DIDJSONLD,
-			didUrl:            	validDid + "?service=service-1&relativeRef=/some/path?some_query",
-			expectedContentStream: fmt.Sprintf("\"%s\"", validService.ServiceEndpoint + "/some/path?some_query"),
-			expectedMetadata: 	validFragmentMetadata,
-			expectedError:    	"",
-		},
-		{
-			name: 				"Primary dereferencing(relativeRef + hash flag)",
-			ledgerService: 		NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType: 	types.DIDJSONLD,
-			didUrl:            	validDid + "?service=service-1&relativeRef=/some/path?some_query#flag",
-			expectedContentStream: fmt.Sprintf("\"%s\"", validService.ServiceEndpoint + "/some/path?some_query#flag"),
-			expectedMetadata: 	validFragmentMetadata,
-			expectedError:    	"",
+			name:                  "Primary dereferencing(relativeRef + hash flag)",
+			ledgerService:         NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			dereferencingType:     types.DIDJSONLD,
+			didUrl:                validDid + "?service=service-1&relativeRef=/some/path?some_query#flag",
+			expectedContentStream: fmt.Sprintf("\"%s\"", validService.ServiceEndpoint+"/some/path?some_query#flag"),
+			expectedMetadata:      validFragmentMetadata,
+			expectedError:         "",
 		},
 	}
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
+			context, rec := setupContext(
+				"/1.0/identifiers/:did/resources/all",
+				[]string{"did"},
+				[]string{subtest.did}, subtest.resolutionType)
 			requestService := NewRequestService("cheqd", subtest.ledgerService)
-			var expectedDIDProperties types.DidProperties
-			if subtest.expectedError != types.InvalidDIDUrlError {
-				expectedDIDProperties = types.DidProperties{
-					DidString:        utils.ValidDid,
-					MethodSpecificId: utils.ValidIdentifier,
-					Method:           utils.ValidMethod,
+
+			if (subtest.resolutionType == "" || subtest.resolutionType == types.DIDJSONLD) && subtest.expectedError == nil {
+				subtest.expectedResource.AddContext(types.DIDSchemaJSONLD)
+			} else if subtest.expectedResource != nil {
+				subtest.expectedResource.RemoveContext()
+			}
+			expectedContentType := defineContentType(subtest.expectedResolutionType, subtest.resolutionType)
+
+			err := requestService.DereferenceCollectionResources(context)
+
+			if subtest.expectedError != nil {
+				require.EqualValues(t, subtest.expectedError.Error(), err.Error())
+			} else {
+				var dereferencingResult struct {
+					DereferencingMetadata types.DereferencingMetadata    `json:"dereferencingMetadata"`
+					ContentStream         types.DereferencedResourceList `json:"contentStream"`
+					Metadata              types.ResolutionDidDocMetadata `json:"contentMetadata"`
 				}
+				unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &dereferencingResult)
+
+				require.Empty(t, err)
+				require.Empty(t, unmarshalErr)
+				require.EqualValues(t, subtest.expectedError, err)
+				require.EqualValues(t, *subtest.expectedResource, dereferencingResult.ContentStream)
+				require.EqualValues(t, subtest.expectedMetadata, dereferencingResult.Metadata)
+				require.EqualValues(t, expectedContentType, dereferencingResult.DereferencingMetadata.ContentType)
+				require.EqualValues(t, expectedContentType, rec.Header().Get("Content-Type"))
 			}
-			expectedContentType := subtest.expectedContentType
-			if expectedContentType == "" {
-				expectedContentType = subtest.dereferencingType
-			}
-
-			fmt.Println(" dereferencingResult   " + subtest.didUrl)
-
-			dereferencingResult := requestService.Dereference(subtest.didUrl, types.DereferencingOption{Accept: subtest.dereferencingType})
-
-			fmt.Println(subtest.name + ": dereferencingResult:")
-			fmt.Println(dereferencingResult)
-
-			require.EqualValues(t, subtest.expectedContentStream, dereferencingResult.ContentStream)
-			require.EqualValues(t, subtest.expectedMetadata, dereferencingResult.Metadata)
-			require.EqualValues(t, expectedContentType, dereferencingResult.DereferencingMetadata.ContentType)
-			require.EqualValues(t, subtest.expectedError, dereferencingResult.DereferencingMetadata.ResolutionError)
-			require.EqualValues(t, expectedDIDProperties, dereferencingResult.DereferencingMetadata.DidProperties)
-			require.EqualValues(t, subtest.expectedError.GetStatusCode(), dereferencingResult.DereferencingMetadata.ResolutionError.GetStatusCode())
 		})
 	}
+}
+
+func defineContentType(expectedContentType types.ContentType, resolutionType types.ContentType) types.ContentType {
+	if expectedContentType == "" {
+		return resolutionType
+	}
+	return expectedContentType
+}
+
+func setupContext(path string, paramsNames []string, paramsValues []string, resolutionType types.ContentType) (echo.Context, *httptest.ResponseRecorder) {
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	context := e.NewContext(req, rec)
+	context.SetPath(path)
+	context.SetParamNames(paramsNames...)
+	context.SetParamValues(paramsValues...)
+	req.Header.Add("accept", string(resolutionType))
+	return context, rec
 }

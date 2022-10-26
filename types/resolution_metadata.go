@@ -6,13 +6,9 @@ import (
 	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
 )
 
-type ResolutionOption struct {
-	Accept ContentType `json:"accept,omitempty"`
-}
-
 type ResolutionMetadata struct {
 	ContentType     ContentType   `json:"contentType,omitempty"`
-	ResolutionError ErrorType     `json:"error,omitempty"`
+	ResolutionError string        `json:"error,omitempty"`
 	Retrieved       string        `json:"retrieved,omitempty"`
 	DidProperties   DidProperties `json:"did,omitempty"`
 }
@@ -24,12 +20,13 @@ type DidProperties struct {
 }
 
 type DidResolution struct {
+	Context            string                   `json:"@context,omitempty"`
 	ResolutionMetadata ResolutionMetadata       `json:"didResolutionMetadata"`
 	Did                *DidDoc                  `json:"didDocument"`
 	Metadata           ResolutionDidDocMetadata `json:"didDocumentMetadata"`
 }
 
-func NewResolutionMetadata(didUrl string, contentType ContentType, resolutionError ErrorType) ResolutionMetadata {
+func NewResolutionMetadata(didUrl string, contentType ContentType, resolutionError string) ResolutionMetadata {
 	did, _, _, _, err1 := cheqdUtils.TrySplitDIDUrl(didUrl)
 	method, _, id, err2 := cheqdUtils.TrySplitDID(did)
 	var didProperties DidProperties
@@ -46,10 +43,6 @@ func NewResolutionMetadata(didUrl string, contentType ContentType, resolutionErr
 		Retrieved:       time.Now().UTC().Format(time.RFC3339),
 		DidProperties:   didProperties,
 	}
-}
-
-func (r DidResolution) GetStatus() int {
-	return r.ResolutionMetadata.ResolutionError.GetStatusCode()
 }
 
 func (r DidResolution) GetContentType() string {
