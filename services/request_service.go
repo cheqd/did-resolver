@@ -106,6 +106,6 @@ func prepareQueries(c echo.Context) (rawQuery string, flag *string) {
 	if flagIndex == -1 || strings.Contains(rawQuery[flagIndex:], "&") {
 		return rawQuery, nil
 	}
-	queryFlag := rawQuery[flagIndex:]
+	queryFlag := rawQuery[flagIndex+3:]
 	return rawQuery[0:flagIndex], &queryFlag
 }

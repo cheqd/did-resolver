@@ -51,16 +51,18 @@ func (DIDDocService) GetDIDFragment(fragmentId string, didDoc types.DidDoc) type
 	return nil
 }
 
-func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, queries url.Values, flag *string, contentType types.ContentType) (types.ResolutionResultI, *types.IdentityError) {
+func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, queries url.Values, frag *string, contentType types.ContentType) (types.ResolutionResultI, *types.IdentityError) {
 	log.Trace().Msgf("ProcessDIDRequest %s, %s, %s", did, fragmentId, queries)
 	var result types.ResolutionResultI
 	var err *types.IdentityError
 	var isDereferencing bool
 
-	if len(queries) > 0 || flag != nil {
-		return nil, types.NewRepresentationNotSupportedError(did, contentType, nil, true)
+	if len(queries) > 0 || frag != nil  {
+		log.Trace().Msgf("Primary Dereferencing %s, %s, %s", did, fragmentId, queries)
+		result, err = dds.dereferencePrimary(did, queries, frag, contentType)
+		isDereferencing = true
 	} else if fragmentId != "" {
-		log.Trace().Msgf("Dereferencing %s, %s, %s", did, fragmentId, queries)
+		log.Trace().Msgf("Secondary Dereferencing %s, %s, %s", did, fragmentId, queries)
 		result, err = dds.dereferenceSecondary(did, fragmentId, contentType)
 		isDereferencing = true
 	} else {
@@ -149,6 +151,39 @@ func (dds DIDDocService) dereferenceSecondary(did string, fragmentId string, con
 	return &result, nil
 }
 
+
+func (dds DIDDocService) dereferencePrimary(did string, queries url.Values, frag *string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
+	didResolution, err := dds.Resolve(did, contentType)
+	if err != nil {
+		err.IsDereferencing = true
+		return nil, err
+	}
+
+	metadata := types.TransformToFragmentMetadata(didResolution.Metadata)
+
+	dereferencingMetadata := types.DereferencingMetadata(didResolution.ResolutionMetadata)
+	if dereferencingMetadata.ResolutionError != "" {
+		return &types.DidDereferencing{DereferencingMetadata: dereferencingMetadata}, nil
+	}
+
+	queryId := queries.Get("service")
+	if queryId == "" {
+		return nil, types.NewRepresentationNotSupportedError(did, contentType, nil, true)
+	}
+
+	service := dds.GetDIDService(queryId, *didResolution.Did)
+	if service == nil {
+		return nil, types.NewNotFoundError(did, contentType, nil, true)
+	}
+
+	serviceEndpoint := CreateServiceEndpoint(queries.Get("relativeRef"), frag, service.ServiceEndpoint)
+
+	return &types.DidDereferencing{
+		ContentStream: &serviceEndpoint, 
+		Metadata: metadata, 
+		DereferencingMetadata: dereferencingMetadata}, nil
+}
+
 func (dds DIDDocService) resolveMetadata(did string, metadata cheqdTypes.Metadata, contentType types.ContentType) (*types.ResolutionDidDocMetadata, *types.IdentityError) {
 	if metadata.Resources == nil {
 		resolvedMetadata := types.NewResolutionDidDocMetadata(did, metadata, nil)
@@ -160,4 +195,21 @@ func (dds DIDDocService) resolveMetadata(did string, metadata cheqdTypes.Metadat
 	}
 	resolvedMetadata := types.NewResolutionDidDocMetadata(did, metadata, resources)
 	return &resolvedMetadata, nil
+}
+
+func (DIDDocService) GetDIDService(queryId string, didDoc types.DidDoc) *types.Service {
+	for _, service := range didDoc.Service {
+		if IsFragmentId(service.Id, queryId) {
+			return &service
+		}
+	}
+	return nil
+}
+
+func CreateServiceEndpoint(relativeRef string, frag *string, inputServiceEndpoint types.ServiceEndpoint) types.ServiceEndpoint {
+	outputServiceEndpoint := string(inputServiceEndpoint) + relativeRef
+	if frag != nil {
+		outputServiceEndpoint += "#" + *frag
+	}
+	return types.ServiceEndpoint(outputServiceEndpoint)
 }

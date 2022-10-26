@@ -20,11 +20,13 @@ const (
 		"\"kty\":\"OKP\"," +
 		"\"x\":\"VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ\"" +
 		"}"
+	ValidKeyId     = "key-1"
+	ValidServiceId = "service-1"
 )
 
 func ValidVerificationMethod() cheqd.VerificationMethod {
 	return cheqd.VerificationMethod{
-		Id:           ValidDid + "#key-1",
+		Id:           ValidDid + "#" + ValidKeyId,
 		Type:         "JsonWebKey2020",
 		Controller:   ValidDid,
 		PublicKeyJwk: cheqd.JSONToPubKeyJWK(ValidPubKeyJWK),
@@ -33,7 +35,7 @@ func ValidVerificationMethod() cheqd.VerificationMethod {
 
 func ValidService() cheqd.Service {
 	return cheqd.Service{
-		Id:              ValidDid + "#service-1",
+		Id:              ValidDid + "#" + ValidServiceId,
 		Type:            "DIDCommMessaging",
 		ServiceEndpoint: "endpoint",
 	}
