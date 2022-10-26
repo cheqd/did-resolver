@@ -29,6 +29,13 @@ func IsFragmentId(id string, requestedId string) bool {
 	return id == requestedId
 }
 
+func IsFragmentId(id string, requestedId string) bool {
+	if strings.Contains(id, "#") {
+		id = strings.Split(id, "#")[1]
+	}
+	return id == requestedId
+}
+
 func (DIDDocService) GetDIDFragment(fragmentId string, didDoc types.DidDoc) types.ContentStreamI {
 	for _, verMethod := range didDoc.VerificationMethod {
 		if IsFragmentId(verMethod.Id, fragmentId) {
