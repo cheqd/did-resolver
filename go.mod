@@ -1,9 +1,9 @@
 module github.com/cheqd/did-resolver
 
-go 1.17
+go 1.18
 
 require (
-	github.com/cheqd/cheqd-node v0.6.9
+	github.com/cheqd/cheqd-node v0.7.3
 	github.com/labstack/echo/v4 v4.9.1
 	github.com/rs/zerolog v1.28.0
 	github.com/spf13/cobra v1.6.0
@@ -107,6 +107,12 @@ require (
 )
 
 replace (
+	// Dragonberry fix
+	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
+
+	// Fee payer support
+	github.com/cosmos/cosmos-sdk => github.com/cheqd/cosmos-sdk v0.45.9-cheqd-tag
+
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
