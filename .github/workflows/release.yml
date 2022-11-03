@@ -26,7 +26,7 @@ jobs:
       # Node.js setup is needed to run Semantic Release
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
 
@@ -129,10 +129,25 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-to: type=gha,mode=min
 
       - name: Push image to GitHub Container Registry
         run: docker image push --all-tags ghcr.io/${{ github.repository}}
       
       - name: Push image to DigitalOcean Container Registry
         run: docker image push --all-tags registry.digitalocean.com/${{ github.repository }}
+
+  cache-purge:
+    name: "Purge branch Actions cache"
+    needs: [release-binary, release-docker]
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    
+    steps:
+
+      - name: "Delete Branch Cache Action"
+        uses: snnaplab/delete-branch-cache-action@v1.0.0
+        with:
+          # Specify explicitly because the ref at the time of merging will be a branch name such as 'main', 'develop'
+          ref: refs/pull/${{ github.event.number }}/merge
+          github-token: ${{ secrets.GITHUB_TOKEN }}
