@@ -3,7 +3,7 @@ module github.com/cheqd/did-resolver
 go 1.17
 
 require (
-	github.com/cheqd/cheqd-node v0.6.0
+	github.com/cheqd/cheqd-node v1.0.0-develop.10
 	github.com/labstack/echo/v4 v4.9.0
 	github.com/rs/zerolog v1.28.0
 	github.com/spf13/cobra v1.6.1
@@ -98,7 +98,6 @@ require (
 	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
-	github.com/regen-network/cosmos-proto v0.3.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
@@ -111,7 +110,6 @@ require (
 )
 
 replace (
-	github.com/cheqd/cheqd-node => ../cheqd-node
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
