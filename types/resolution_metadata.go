@@ -3,7 +3,7 @@ package types
 import (
 	"time"
 
-	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
+	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
 )
 
 type ResolutionMetadata struct {
@@ -27,8 +27,8 @@ type DidResolution struct {
 }
 
 func NewResolutionMetadata(didUrl string, contentType ContentType, resolutionError string) ResolutionMetadata {
-	did, _, _, _, err1 := cheqdUtils.TrySplitDIDUrl(didUrl)
-	method, _, id, err2 := cheqdUtils.TrySplitDID(did)
+	did, _, _, _, err1 := didUtils.TrySplitDIDUrl(didUrl)
+	method, _, id, err2 := didUtils.TrySplitDID(did)
 	var didProperties DidProperties
 	if err1 == nil && err2 == nil {
 		didProperties = DidProperties{

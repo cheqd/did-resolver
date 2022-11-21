@@ -4,7 +4,7 @@ import (
 	"crypto/sha256"
 	"testing"
 
-	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
+	did "github.com/cheqd/cheqd-node/x/did/types"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/stretchr/testify/require"
 )
@@ -16,7 +16,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 	resourceData := []byte("test_checksum")
 	h := sha256.New()
 	h.Write(resourceData)
-	resourceHeader := resource.ResourceHeader{
+	resourceMetadata := resource.Metadata{
 		CollectionId: validIdentifier,
 		Id:           validResourceId,
 		Name:         "Existing Resource Name",
@@ -26,32 +26,31 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 	}
 
 	validMetadataResource := DereferencedResource{
-		ResourceURI:       validDid + RESOURCE_PATH + resourceHeader.Id,
-		CollectionId:      resourceHeader.CollectionId,
-		ResourceId:        resourceHeader.Id,
-		Name:              resourceHeader.Name,
-		ResourceType:      resourceHeader.ResourceType,
-		MediaType:         resourceHeader.MediaType,
-		Created:           resourceHeader.Created,
-		Checksum:          FixResourceChecksum(resourceHeader.Checksum),
+		ResourceURI:       validDid + RESOURCE_PATH + resourceMetadata.Id,
+		CollectionId:      resourceMetadata.CollectionId,
+		ResourceId:        resourceMetadata.Id,
+		Name:              resourceMetadata.Name,
+		ResourceType:      resourceMetadata.ResourceType,
+		MediaType:         resourceMetadata.MediaType,
+		Created:           resourceMetadata.Created,
+		Checksum:          FixResourceChecksum(resourceMetadata.Checksum),
 		PreviousVersionId: nil,
 		NextVersionId:     nil,
 	}
 
 	subtests := []struct {
 		name           string
-		metadata       cheqd.Metadata
-		resources      []*resource.ResourceHeader
+		metadata       did.Metadata
+		resources      []*resource.Metadata
 		expectedResult ResolutionDidDocMetadata
 	}{
 		{
 			name: "matadata with resource",
-			metadata: cheqd.Metadata{
+			metadata: did.Metadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
-				Resources:   []string{validResourceId},
 			},
-			resources: []*resource.ResourceHeader{&resourceHeader},
+			resources: []*resource.Metadata{&resourceMetadata},
 			expectedResult: ResolutionDidDocMetadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
@@ -60,11 +59,11 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 		},
 		{
 			name: "matadata without resource in metadata",
-			metadata: cheqd.Metadata{
+			metadata: did.Metadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
 			},
-			resources: []*resource.ResourceHeader{&resourceHeader},
+			resources: []*resource.Metadata{&resourceMetadata},
 			expectedResult: ResolutionDidDocMetadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
@@ -72,10 +71,9 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 		},
 		{
 			name: "matadata without resources",
-			metadata: cheqd.Metadata{
+			metadata: did.Metadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
-				Resources:   []string{validResourceId},
 			},
 			expectedResult: ResolutionDidDocMetadata{
 				VersionId:   "test_version_id",

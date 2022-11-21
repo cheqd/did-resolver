@@ -1,9 +1,7 @@
 package utils
 
 import (
-	"crypto/sha256"
-
-	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
+	didTypes "github.com/cheqd/cheqd-node/x/did/types"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
 )
@@ -22,60 +20,61 @@ const (
 		"}"
 )
 
-func ValidVerificationMethod() cheqd.VerificationMethod {
-	return cheqd.VerificationMethod{
-		Id:           ValidDid + "#key-1",
-		Type:         "JsonWebKey2020",
-		Controller:   ValidDid,
-		PublicKeyJwk: cheqd.JSONToPubKeyJWK(ValidPubKeyJWK),
+func ValidVerificationMethod() didTypes.VerificationMethod {
+	return didTypes.VerificationMethod{
+		Id:                   ValidDid + "#key-1",
+		Type:                 "JsonWebKey2020",
+		Controller:           ValidDid,
+		VerificationMaterial: ValidPubKeyJWK,
 	}
 }
 
-func ValidService() cheqd.Service {
-	return cheqd.Service{
+func ValidService() didTypes.Service {
+	return didTypes.Service{
 		Id:              ValidDid + "#service-1",
 		Type:            "DIDCommMessaging",
-		ServiceEndpoint: "endpoint",
+		ServiceEndpoint: []string{"endpoint"},
 	}
 }
 
-func ValidDIDDoc() cheqd.Did {
+func ValidDIDDoc() didTypes.DidDoc {
 	service := ValidService()
 	verificationMethod := ValidVerificationMethod()
 
-	return cheqd.Did{
+	return didTypes.DidDoc{
 		Id:                 ValidDid,
-		VerificationMethod: []*cheqd.VerificationMethod{&verificationMethod},
-		Service:            []*cheqd.Service{&service},
+		VerificationMethod: []*didTypes.VerificationMethod{&verificationMethod},
+		Service:            []*didTypes.Service{&service},
 	}
 }
 
-func ValidResource() resource.Resource {
+func ValidResource() resource.ResourceWithMetadata {
 	data := []byte("{\"attr\":[\"name\",\"age\"]}")
-	return resource.Resource{
-		Header: &resource.ResourceHeader{
+	return resource.ResourceWithMetadata{
+		&resource.Resource{
+			Data: data,
+		},
+		&resource.Metadata{
 			CollectionId: ValidIdentifier,
 			Id:           ValidResourceId,
-			Name:         "Existing_Resource_Name",
-			ResourceType: "CL-Schema",
+			Name:         ValidResourceId,
+			ResourceType: "string",
 			MediaType:    "application/json",
-			Checksum:     sha256.New().Sum(data),
 		},
-		Data: data,
 	}
 }
 
-func ValidMetadata() cheqd.Metadata {
-	return cheqd.Metadata{VersionId: "test_version_id", Deactivated: false, Resources: []string{ValidResourceId}}
+func ValidMetadata() didTypes.Metadata {
+	return didTypes.Metadata{VersionId: "test_version_id", Deactivated: false}
 }
 
 type MockLedgerService struct {
-	Did      cheqd.Did
-	Metadata cheqd.Metadata
-	Resource resource.Resource
+	Did      didTypes.DidDoc
+	Metadata didTypes.Metadata
+	Resource resource.ResourceWithMetadata
 }
 
-func NewMockLedgerService(did cheqd.Did, metadata cheqd.Metadata, resource resource.Resource) MockLedgerService {
+func NewMockLedgerService(did didTypes.DidDoc, metadata didTypes.Metadata, resource resource.ResourceWithMetadata) MockLedgerService {
 	return MockLedgerService{
 		Did:      did,
 		Metadata: metadata,
@@ -83,26 +82,23 @@ func NewMockLedgerService(did cheqd.Did, metadata cheqd.Metadata, resource resou
 	}
 }
 
-func (ls MockLedgerService) QueryDIDDoc(did string) (*cheqd.Did, *cheqd.Metadata, *types.IdentityError) {
+func (ls MockLedgerService) QueryDIDDoc(did string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
 	if did == ls.Did.Id {
 		println("query !!!" + ls.Did.Id)
-		return &ls.Did, &ls.Metadata, nil
+		return &didTypes.DidDocWithMetadata{&ls.Did, &ls.Metadata}, nil
 	}
-	return nil, nil, types.NewNotFoundError(did, types.JSON, nil, true)
+	return nil, types.NewNotFoundError(did, types.JSON, nil, true)
 }
 
-func (ls MockLedgerService) QueryResource(did string, resourceId string) (*resource.Resource, *types.IdentityError) {
-	if ls.Resource.Header == nil || ls.Resource.Header.Id != resourceId {
+func (ls MockLedgerService) QueryResource(did string, resourceId string) (*resource.ResourceWithMetadata, *types.IdentityError) {
+	if ls.Resource.Metadata == nil || ls.Resource.Metadata.Id != resourceId {
 		return nil, types.NewNotFoundError(did, types.JSON, nil, true)
 	}
 	return &ls.Resource, nil
 }
 
-func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, *types.IdentityError) {
-	if ls.Metadata.Resources == nil {
-		return []*resource.ResourceHeader{}, types.NewNotFoundError(did, types.JSON, nil, true)
-	}
-	return []*resource.ResourceHeader{ls.Resource.Header}, nil
+func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resource.Metadata, *types.IdentityError) {
+	return []*resource.Metadata{}, types.NewNotFoundError(did, types.JSON, nil, true)
 }
 
 func (ls MockLedgerService) GetNamespaces() []string {

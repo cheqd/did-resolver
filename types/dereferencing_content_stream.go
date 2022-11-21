@@ -15,7 +15,7 @@ type DereferencedResource struct {
 	NextVersionId     *string `json:"nextVersionId"`
 }
 
-func NewDereferencedResource(did string, resource *resource.ResourceHeader) *DereferencedResource {
+func NewDereferencedResource(did string, resource *resource.Metadata) *DereferencedResource {
 	var previousVersionId, nextVersionId *string
 	if resource.PreviousVersionId != "" {
 		previousVersionId = &resource.PreviousVersionId
@@ -41,7 +41,7 @@ type DereferencedResourceList struct {
 	Resources []DereferencedResource `json:"linkedResourceMetadata,omitempty"`
 }
 
-func NewDereferencedResourceList(did string, protoResources []*resource.ResourceHeader) *DereferencedResourceList {
+func NewDereferencedResourceList(did string, protoResources []*resource.Metadata) *DereferencedResourceList {
 	resourceList := []DereferencedResource{}
 	for _, r := range protoResources {
 		resourceList = append(resourceList, *NewDereferencedResource(did, r))

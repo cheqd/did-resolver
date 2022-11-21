@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
+	didTypes "github.com/cheqd/cheqd-node/x/did/types"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/stretchr/testify/require"
@@ -12,20 +12,18 @@ import (
 
 func TestQueryDIDDoc(t *testing.T) {
 	subtests := []struct {
-		name             string
-		did              string
-		expectedDID      *cheqd.Did
-		expectedMetadata *cheqd.Metadata
-		expectedIsFound  bool
-		expectedError    error
+		name                     string
+		did                      string
+		expectedDidDocWithMetada *didTypes.DidDocWithMetadata
+		expectedIsFound          bool
+		expectedError            error
 	}{
 		{
-			name:             "DeadlineExceeded",
-			did:              "fake did",
-			expectedDID:      nil,
-			expectedMetadata: nil,
-			expectedIsFound:  false,
-			expectedError:    types.NewInvalidDIDError("fake did", types.JSON, nil, false),
+			name:                     "DeadlineExceeded",
+			did:                      "fake did",
+			expectedDidDocWithMetada: nil,
+			expectedIsFound:          false,
+			expectedError:            types.NewInvalidDIDError("fake did", types.JSON, nil, false),
 		},
 	}
 
@@ -35,9 +33,8 @@ func TestQueryDIDDoc(t *testing.T) {
 			require.NoError(t, err)
 
 			ledgerService := NewLedgerService(timeout, false)
-			didDoc, metadata, err := ledgerService.QueryDIDDoc("fake did")
-			require.EqualValues(t, subtest.expectedDID, didDoc)
-			require.EqualValues(t, subtest.expectedMetadata, metadata)
+			didDocWithMetadata, err := ledgerService.QueryDIDDoc("fake did")
+			require.EqualValues(t, subtest.expectedDidDocWithMetada, didDocWithMetadata)
 			require.EqualValues(t, subtest.expectedError.Error(), err.Error())
 		})
 	}

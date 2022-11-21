@@ -1,7 +1,7 @@
 package types
 
 import (
-	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
+	did "github.com/cheqd/cheqd-node/x/did/types"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
 )
 
@@ -13,16 +13,14 @@ type ResolutionDidDocMetadata struct {
 	Resources   []DereferencedResource `json:"linkedResourceMetadata,omitempty"`
 }
 
-func NewResolutionDidDocMetadata(did string, metadata cheqd.Metadata, resources []*resource.ResourceHeader) ResolutionDidDocMetadata {
+func NewResolutionDidDocMetadata(did string, metadata did.Metadata, resources []*resource.Metadata) ResolutionDidDocMetadata {
 	newMetadata := ResolutionDidDocMetadata{
 		Created:     metadata.Created,
 		Updated:     metadata.Updated,
 		Deactivated: metadata.Deactivated,
 		VersionId:   metadata.VersionId,
 	}
-	if metadata.Resources == nil || len(resources) == 0 {
-		return newMetadata
-	}
+
 	newMetadata.Resources = NewDereferencedResourceList(did, resources).Resources
 	return newMetadata
 }

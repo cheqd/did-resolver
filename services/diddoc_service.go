@@ -4,8 +4,8 @@ import (
 	"net/url"
 	"strings"
 
-	cheqdTypes "github.com/cheqd/cheqd-node/x/cheqd/types"
-	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
+	didTypes "github.com/cheqd/cheqd-node/x/did/types"
+	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/rs/zerolog/log"
 )
@@ -69,25 +69,25 @@ func (dds DIDDocService) Resolve(did string, contentType types.ContentType) (*ty
 	}
 	didResolutionMetadata := types.NewResolutionMetadata(did, contentType, "")
 
-	if didMethod, _, _, _ := cheqdUtils.TrySplitDID(did); didMethod != dds.didMethod {
+	if didMethod, _, _, _ := didUtils.TrySplitDID(did); didMethod != dds.didMethod {
 		return nil, types.NewMethodNotSupportedError(did, contentType, nil, false)
 	}
-	if !cheqdUtils.IsValidDID(did, "", dds.ledgerService.GetNamespaces()) {
+	if !didUtils.IsValidDID(did, "", dds.ledgerService.GetNamespaces()) {
 		return nil, types.NewInvalidDIDError(did, contentType, nil, false)
 	}
 
-	protoDidDoc, metadata, err := dds.ledgerService.QueryDIDDoc(did)
+	protoDidDocWithMetadata, err := dds.ledgerService.QueryDIDDoc(did)
 	if err != nil {
 		err.ContentType = contentType
 		return nil, err
 	}
 
-	resolvedMetadata, mErr := dds.resolveMetadata(did, *metadata, contentType)
+	resolvedMetadata, mErr := dds.resolveMetadata(did, *protoDidDocWithMetadata.Metadata, contentType)
 	if mErr != nil {
 		mErr.ContentType = contentType
 		return nil, mErr
 	}
-	didDoc := types.NewDidDoc(*protoDidDoc)
+	didDoc := types.NewDidDoc(*protoDidDocWithMetadata.DidDoc)
 	result := types.DidResolution{Did: &didDoc, Metadata: *resolvedMetadata, ResolutionMetadata: didResolutionMetadata}
 	if didResolutionMetadata.ContentType == types.DIDJSONLD || didResolutionMetadata.ContentType == types.JSONLD {
 		didDoc.AddContext(types.DIDSchemaJSONLD)
@@ -135,11 +135,7 @@ func (dds DIDDocService) dereferenceSecondary(did string, fragmentId string, con
 	return &result, nil
 }
 
-func (dds DIDDocService) resolveMetadata(did string, metadata cheqdTypes.Metadata, contentType types.ContentType) (*types.ResolutionDidDocMetadata, *types.IdentityError) {
-	if metadata.Resources == nil {
-		resolvedMetadata := types.NewResolutionDidDocMetadata(did, metadata, nil)
-		return &resolvedMetadata, nil
-	}
+func (dds DIDDocService) resolveMetadata(did string, metadata didTypes.Metadata, contentType types.ContentType) (*types.ResolutionDidDocMetadata, *types.IdentityError) {
 	resources, err := dds.ledgerService.QueryCollectionResources(did)
 	if err != nil {
 		return nil, err

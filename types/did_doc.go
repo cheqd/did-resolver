@@ -1,7 +1,7 @@
 package types
 
 import (
-	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
+	did "github.com/cheqd/cheqd-node/x/did/types"
 )
 
 type DidDoc struct {
@@ -19,22 +19,21 @@ type DidDoc struct {
 }
 
 type VerificationMethod struct {
-	Context            []string          `json:"@context,omitempty"`
-	Id                 string            `json:"id,omitempty"`
-	Type               string            `json:"type,omitempty"`
-	Controller         string            `json:"controller,omitempty"`
-	PublicKeyJwk       map[string]string `json:"publicKeyJwk,omitempty"`
-	PublicKeyMultibase string            `json:"publicKeyMultibase,omitempty"`
+	Context              []string `json:"@context,omitempty"`
+	Id                   string   `json:"id,omitempty"`
+	Type                 string   `json:"type,omitempty"`
+	Controller           string   `json:"controller,omitempty"`
+	VerificationMaterial string   `json:"verificationMaterial,omitempty"`
 }
 
 type Service struct {
 	Context         []string `json:"@context,omitempty"`
 	Id              string   `json:"id,omitempty"`
 	Type            string   `json:"type,omitempty"`
-	ServiceEndpoint string   `json:"serviceEndpoint,omitempty"`
+	ServiceEndpoint []string `json:"serviceEndpoint,omitempty"`
 }
 
-func NewDidDoc(protoDidDoc cheqd.Did) DidDoc {
+func NewDidDoc(protoDidDoc did.DidDoc) DidDoc {
 	verificationMethods := []VerificationMethod{}
 	for _, vm := range protoDidDoc.VerificationMethod {
 		verificationMethods = append(verificationMethods, *NewVerificationMethod(vm))
@@ -59,17 +58,16 @@ func NewDidDoc(protoDidDoc cheqd.Did) DidDoc {
 	}
 }
 
-func NewVerificationMethod(protoVerificationMethod *cheqd.VerificationMethod) *VerificationMethod {
+func NewVerificationMethod(protoVerificationMethod *did.VerificationMethod) *VerificationMethod {
 	return &VerificationMethod{
-		Id:                 protoVerificationMethod.Id,
-		Type:               protoVerificationMethod.Type,
-		Controller:         protoVerificationMethod.Controller,
-		PublicKeyJwk:       cheqd.PubKeyJWKToMap(protoVerificationMethod.PublicKeyJwk),
-		PublicKeyMultibase: protoVerificationMethod.PublicKeyMultibase,
+		Id:                   protoVerificationMethod.Id,
+		Type:                 protoVerificationMethod.Type,
+		Controller:           protoVerificationMethod.Controller,
+		VerificationMaterial: protoVerificationMethod.VerificationMaterial,
 	}
 }
 
-func NewService(protoService *cheqd.Service) *Service {
+func NewService(protoService *did.Service) *Service {
 	return &Service{
 		Id:              protoService.Id,
 		Type:            protoService.Type,
