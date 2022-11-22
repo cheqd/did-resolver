@@ -1,6 +1,10 @@
 package types
 
-import resource "github.com/cheqd/cheqd-node/x/resource/types"
+import (
+	"fmt"
+
+	resource "github.com/cheqd/cheqd-node/x/resource/types"
+)
 
 type DereferencedResource struct {
 	ResourceURI       string  `json:"resourceURI"`
@@ -31,7 +35,7 @@ func NewDereferencedResource(did string, resource *resource.Metadata) *Dereferen
 		ResourceType:      resource.ResourceType,
 		MediaType:         resource.MediaType,
 		Created:           resource.Created,
-		Checksum:          FixResourceChecksum(resource.Checksum),
+		Checksum:          fmt.Sprintf("%x", resource.Checksum),
 		PreviousVersionId: previousVersionId,
 		NextVersionId:     nextVersionId,
 	}

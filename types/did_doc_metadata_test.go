@@ -2,6 +2,7 @@ package types
 
 import (
 	"crypto/sha256"
+	"fmt"
 	"testing"
 
 	did "github.com/cheqd/cheqd-node/x/did/types"
@@ -10,7 +11,7 @@ import (
 )
 
 func TestNewResolutionDidDocMetadata(t *testing.T) {
-	validIdentifier := "N22KY2Dyvmuu2Pyy"
+	validIdentifier := "0a88fd42-ae6b-4da4-a5ea-36d28e35dde7"
 	validDid := "did:cheqd:mainnet:" + validIdentifier
 	validResourceId := "18e9d838-0bea-435b-964b-c6529ede6d2b"
 	resourceData := []byte("test_checksum")
@@ -33,7 +34,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 		ResourceType:      resourceMetadata.ResourceType,
 		MediaType:         resourceMetadata.MediaType,
 		Created:           resourceMetadata.Created,
-		Checksum:          FixResourceChecksum(resourceMetadata.Checksum),
+		Checksum:          fmt.Sprintf("%x", resourceMetadata.Checksum),
 		PreviousVersionId: nil,
 		NextVersionId:     nil,
 	}
