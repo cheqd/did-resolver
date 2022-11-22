@@ -45,7 +45,7 @@ func TestQueryResource(t *testing.T) {
 		name             string
 		collectionDid    string
 		resourceId       string
-		expectedResource *resource.Resource
+		expectedResource *resource.ResourceWithMetadata
 		expectedError    error
 	}{
 		{

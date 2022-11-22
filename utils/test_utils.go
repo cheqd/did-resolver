@@ -1,13 +1,15 @@
 package utils
 
 import (
+	"crypto/sha256"
+
 	didTypes "github.com/cheqd/cheqd-node/x/did/types"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
 )
 
 const (
-	ValidIdentifier = "N22KY2Dyvmuu2Pyy"
+	ValidIdentifier = "fb53dd05-329b-4614-a3f2-c0a8c7554ee3"
 	ValidMethod     = "cheqd"
 	ValidNamespace  = "mainnet"
 	ValidDid        = "did:" + ValidMethod + ":" + ValidNamespace + ":" + ValidIdentifier
@@ -33,7 +35,7 @@ func ValidService() didTypes.Service {
 	return didTypes.Service{
 		Id:              ValidDid + "#service-1",
 		Type:            "DIDCommMessaging",
-		ServiceEndpoint: []string{"endpoint"},
+		ServiceEndpoint: []string{"http://example.com"},
 	}
 }
 
@@ -50,16 +52,18 @@ func ValidDIDDoc() didTypes.DidDoc {
 
 func ValidResource() resource.ResourceWithMetadata {
 	data := []byte("{\"attr\":[\"name\",\"age\"]}")
+	checksum := sha256.New().Sum(data)
 	return resource.ResourceWithMetadata{
-		&resource.Resource{
+		Resource: &resource.Resource{
 			Data: data,
 		},
-		&resource.Metadata{
+		Metadata: &resource.Metadata{
 			CollectionId: ValidIdentifier,
 			Id:           ValidResourceId,
 			Name:         ValidResourceId,
 			ResourceType: "string",
 			MediaType:    "application/json",
+			Checksum:     checksum,
 		},
 	}
 }
@@ -85,7 +89,7 @@ func NewMockLedgerService(did didTypes.DidDoc, metadata didTypes.Metadata, resou
 func (ls MockLedgerService) QueryDIDDoc(did string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
 	if did == ls.Did.Id {
 		println("query !!!" + ls.Did.Id)
-		return &didTypes.DidDocWithMetadata{&ls.Did, &ls.Metadata}, nil
+		return &didTypes.DidDocWithMetadata{DidDoc: &ls.Did, Metadata: &ls.Metadata}, nil
 	}
 	return nil, types.NewNotFoundError(did, types.JSON, nil, true)
 }

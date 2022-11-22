@@ -139,6 +139,7 @@ func TestResolve(t *testing.T) {
 	}
 
 	for _, subtest := range subtests {
+		fmt.Printf("Testing %s", subtest.name)
 		id := "did:" + subtest.method + ":" + subtest.namespace + ":" + subtest.identifier
 		t.Run(subtest.name, func(t *testing.T) {
 			diddocService := NewDIDDocService("cheqd", subtest.ledgerService)
