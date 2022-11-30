@@ -10,7 +10,6 @@ require (
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
 	google.golang.org/grpc v1.51.0
-	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -106,6 +105,7 @@ require (
 	golang.org/x/sys v0.1.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/time v0.0.0-20220609170525-579cf78fd858 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 replace (

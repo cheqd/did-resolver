@@ -1,0 +1,57 @@
+name: "Build & Test"
+on:
+  workflow_call:
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  unit-tests:
+    name: "Unit Tests"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: ./go.mod
+          cache: true
+      
+      - name: Run Golang unit tests
+        run: go test -v ./...
+
+  integration-tests:
+    name: "Integration Tests"
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: ${{ github.repository }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download Docker image
+        uses: actions/download-artifact@v3
+        with:
+          name: did-resolver-build
+
+      - name: Load Docker image
+        run: docker image load --input did-resolver-build.tar
+
+      - name: Set up Docker container for test
+        run: docker-compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up -d --no-build
+
+      - name: Setup Python environment
+        working-directory: ./tests/pytest
+        run: |
+          set -euo pipefail
+          pip3 install -r requirements.txt >> /dev/null
+          sudo chmod -R 775 /home/runner/
+
+      - name: Run tests
+        working-directory: ./tests/pytest
+        run: |
+          set -euo pipefail
+          pytest -v -rP ./*.py
+

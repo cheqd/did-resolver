@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/cheqd/did-resolver/services"
+	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -48,31 +48,27 @@ func serve() {
 	e.Use(middleware.Recover())
 
 	// Services
-	ledgerService := services.NewLedgerService(config.Ledger.Timeout, config.Ledger.UseTls)
+	ledgerService := services.NewLedgerService()
 
-	networks := strings.Split(config.Ledger.Networks, ";")
-	for _, network := range networks {
-		args := strings.Split(network, "=")
-		name, url := args[0], args[1]
-
-		log.Info().Msgf("Registering network. Name: %s, url: %s.", name, url)
-		err := ledgerService.RegisterLedger(config.Resolver.Method, name, url)
+	for _, network := range config.Networks {
+		log.Info().Msgf("Registering network: %s.", network.Namespace)
+		err := ledgerService.RegisterLedger(types.DID_METHOD, network)
 		if err != nil {
 			panic(err)
 		}
 	}
 
-	requestService := services.NewRequestService(config.Resolver.Method, ledgerService)
+	requestService := services.NewRequestService(types.DID_METHOD, ledgerService)
 
 	// Routes
-	e.GET(config.Api.ResolverPath+":did", requestService.ResolveDIDDoc)
-	e.GET(config.Api.ResolverPath+":did/resources/:resource", requestService.DereferenceResourceData)
-	e.GET(config.Api.ResolverPath+":did/resources/:resource/metadata", requestService.DereferenceResourceMetadata)
-	e.GET(config.Api.ResolverPath+":did/resources/all", requestService.DereferenceCollectionResources)
-	e.GET(config.Api.ResolverPath+":did/resources/", func(c echo.Context) error {
+	e.GET(types.RESOLVER_PATH+":did", requestService.ResolveDIDDoc)
+	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource", requestService.DereferenceResourceData)
+	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource/metadata", requestService.DereferenceResourceMetadata)
+	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+"all", requestService.DereferenceCollectionResources)
+	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+"", func(c echo.Context) error {
 		return c.Redirect(http.StatusMovedPermanently, "all")
 	})
 
 	log.Info().Msg("Starting listener")
-	log.Fatal().Err(e.Start(config.Api.Listener))
+	log.Fatal().Err(e.Start(config.ResolverListener))
 }
