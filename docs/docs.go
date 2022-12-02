@@ -27,10 +27,14 @@ const docTemplate = `{
             "get": {
                 "description": "Get DID Doc or its fragment",
                 "consumes": [
-                    "*/*"
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+json"
                 ],
                 "produces": [
-                    "*/*"
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+json"
                 ],
                 "tags": [
                     "Resolution"
@@ -44,17 +48,6 @@ const docTemplate = `{
                         "name": "did",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "enum": [
-                            "application/did+ld+json",
-                            "application/ld+json",
-                            "application/did+json"
-                        ],
-                        "type": "string",
-                        "description": "The requested media type of the DID document representation or DID resolution result. ",
-                        "name": "accept",
-                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -344,17 +337,6 @@ const docTemplate = `{
                         "description": "Service id",
                         "name": "service",
                         "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "application/did+ld+json",
-                            "application/ld+json",
-                            "application/did+json"
-                        ],
-                        "type": "string",
-                        "description": "The requested media type of the DID document representation or DID resolution result. ",
-                        "name": "accept",
-                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -393,6 +375,21 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "types.ContentType": {
+            "type": "string",
+            "enum": [
+                "application/did+json",
+                "application/did+ld+json",
+                "application/ld+json",
+                "application/json"
+            ],
+            "x-enum-varnames": [
+                "DIDJSON",
+                "DIDJSONLD",
+                "JSONLD",
+                "JSON"
+            ]
+        },
         "types.DereferencedResource": {
             "type": "object",
             "properties": {
@@ -432,7 +429,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "contentType": {
-                    "type": "string"
+                    "$ref": "#/definitions/types.ContentType"
                 },
                 "did": {
                     "$ref": "#/definitions/types.DidProperties"
@@ -587,7 +584,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "contentType": {
-                    "type": "string"
+                    "$ref": "#/definitions/types.ContentType"
                 },
                 "did": {
                     "$ref": "#/definitions/types.DidProperties"
