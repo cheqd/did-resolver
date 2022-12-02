@@ -29,13 +29,6 @@ func IsFragmentId(id string, requestedId string) bool {
 	return id == requestedId
 }
 
-func IsFragmentId(id string, requestedId string) bool {
-	if strings.Contains(id, "#") {
-		id = strings.Split(id, "#")[1]
-	}
-	return id == requestedId
-}
-
 func (DIDDocService) GetDIDFragment(fragmentId string, didDoc types.DidDoc) types.ContentStreamI {
 	for _, verMethod := range didDoc.VerificationMethod {
 		if IsFragmentId(verMethod.Id, fragmentId) {
@@ -57,7 +50,7 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 	var err *types.IdentityError
 	var isDereferencing bool
 
-	if len(queries) > 0 || frag != nil  {
+	if len(queries) > 0 || frag != nil {
 		log.Trace().Msgf("Primary Dereferencing %s, %s, %s", did, fragmentId, queries)
 		result, err = dds.dereferencePrimary(did, queries, frag, contentType)
 		isDereferencing = true
@@ -151,7 +144,6 @@ func (dds DIDDocService) dereferenceSecondary(did string, fragmentId string, con
 	return &result, nil
 }
 
-
 func (dds DIDDocService) dereferencePrimary(did string, queries url.Values, frag *string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
 	didResolution, err := dds.Resolve(did, contentType)
 	if err != nil {
@@ -179,9 +171,10 @@ func (dds DIDDocService) dereferencePrimary(did string, queries url.Values, frag
 	serviceEndpoint := CreateServiceEndpoint(queries.Get("relativeRef"), frag, service.ServiceEndpoint)
 
 	return &types.DidDereferencing{
-		ContentStream: &serviceEndpoint, 
-		Metadata: metadata, 
-		DereferencingMetadata: dereferencingMetadata}, nil
+		ContentStream:         &serviceEndpoint,
+		Metadata:              metadata,
+		DereferencingMetadata: dereferencingMetadata,
+	}, nil
 }
 
 func (dds DIDDocService) resolveMetadata(did string, metadata cheqdTypes.Metadata, contentType types.ContentType) (*types.ResolutionDidDocMetadata, *types.IdentityError) {
