@@ -2,7 +2,7 @@
 ###    STAGE 1: Build cheqd did-resolver binary pre-requisites    ###
 #####################################################################
 
-FROM golang:1.17-alpine AS builder
+FROM golang:1.18-alpine AS builder
 
 WORKDIR /builder
 COPY . ./
