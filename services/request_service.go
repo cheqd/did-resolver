@@ -56,8 +56,8 @@ func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
 // @Description  Get resource metadata without value by DID Doc
 // @Tags         Dereferencing
 // @Produce      */*
-// @Param        did path string true "Resource collection id. DID Doc Id" example(did:cheqd:testnet:MjYxNzYKMjYxNzYK)
-// @Param        resourceId path string true "DID Resource identifier" example(60ad67be-b65b-40b8-b2f4-3923141ef382)
+// @Param        did path string true "Resource collection id. DID Doc Id" ResourceCollectionId(did:cheqd:testnet:MjYxNzYKMjYxNzYK)
+// @Param        resourceId path string true "Resource identifier" ResourceId(60ad67be-b65b-40b8-b2f4-3923141ef382)
 // @Param        accept header string false "The requested media type of the DID document representation or DID resolution result. " Enums(application/did+ld+json, application/ld+json, application/did+json)
 // @Success      200  {object}  types.DidDereferencing
 // @Failure      400  {object}  types.DidDereferencing
@@ -86,8 +86,8 @@ func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 // @Description  Get resource value without dereferencing wrappers
 // @Tags         Dereferencing
 // @Produce      */*
-// @Param        did path string true "Resource collection id. DID Doc Id" example(did:cheqd:testnet:MjYxNzYKMjYxNzYK)
-// @Param        resourceId path string true "DID Resource identifier" example(60ad67be-b65b-40b8-b2f4-3923141ef382)
+// @Param        did path string true "Resource collection id. DID Doc Id" ResourceCollectionId(did:cheqd:testnet:MjYxNzYKMjYxNzYK)
+// @Param        resourceId path string true "DID Resource identifier" ResourceId(60ad67be-b65b-40b8-b2f4-3923141ef382)
 // @Param        accept header string false "The requested media type of the DID document representation or DID resolution result. " Enums(application/did+ld+json, application/ld+json, application/did+json)
 // @Success      200  {object}  []byte
 // @Failure      400  {object}  types.DidDereferencing
@@ -116,8 +116,8 @@ func (rs RequestService) DereferenceResourceData(c echo.Context) error {
 // @Description  Get a list of all collection resources metadata
 // @Tags         Dereferencing
 // @Produce      */*
-// @Param        did path string true "Resource collection id. DID Doc Id" example(did:cheqd:testnet:MjYxNzYKMjYxNzYK)
-// @Param        accept header string false "The requested media type of the DID document representation or DID resolution result. " Enums(application/did+ld+json, application/ld+json, application/did+json)
+// @Param        did path string true "Resource collection id. DID Doc Id" ResourceCollectionId(did:cheqd:testnet:MjYxNzYKMjYxNzYK)
+// @Param        accept header string false "The requested media type of the DID document representation or DID resolution result. " ResourceId(application/did+ld+json, application/ld+json, application/did+json)
 // @Success      200  {object}  types.DidDereferencing
 // @Failure      400  {object}  types.DidDereferencing
 // @Failure      404  {object}  types.DidDereferencing

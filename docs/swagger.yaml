@@ -1,0 +1,424 @@
+definitions:
+  types.ContentType:
+    enum:
+    - application/did+json
+    - application/did+ld+json
+    - application/ld+json
+    - application/json
+    type: string
+    x-enum-varnames:
+    - DIDJSON
+    - DIDJSONLD
+    - JSONLD
+    - JSON
+  types.DereferencedResource:
+    properties:
+      checksum:
+        type: string
+      created:
+        type: string
+      mediaType:
+        type: string
+      nextVersionId:
+        type: string
+      previousVersionId:
+        type: string
+      resourceCollectionId:
+        type: string
+      resourceId:
+        type: string
+      resourceName:
+        type: string
+      resourceType:
+        type: string
+      resourceURI:
+        type: string
+    type: object
+  types.DereferencingMetadata:
+    properties:
+      contentType:
+        $ref: '#/definitions/types.ContentType'
+      did:
+        $ref: '#/definitions/types.DidProperties'
+      error:
+        type: string
+      retrieved:
+        type: string
+    type: object
+  types.DidDereferencing:
+    properties:
+      '@context':
+        example: https://w3id.org/did-resolution/v1
+        type: string
+      contentMetadata:
+        $ref: '#/definitions/types.ResolutionDidDocMetadata'
+      contentStream: {}
+      dereferencingMetadata:
+        $ref: '#/definitions/types.DereferencingMetadata'
+    type: object
+  types.DidDoc:
+    properties:
+      '@context':
+        items:
+          type: string
+        type: array
+      alsoKnownAs:
+        items:
+          type: string
+        type: array
+      assertionMethod:
+        items:
+          type: string
+        type: array
+      authentication:
+        items:
+          type: string
+        type: array
+      capability_delegation:
+        items:
+          type: string
+        type: array
+      capabilityInvocation:
+        items:
+          type: string
+        type: array
+      controller:
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      keyAgreement:
+        items:
+          type: string
+        type: array
+      service:
+        items:
+          $ref: '#/definitions/types.Service'
+        type: array
+      verificationMethod:
+        items:
+          $ref: '#/definitions/types.VerificationMethod'
+        type: array
+    type: object
+  types.DidProperties:
+    properties:
+      didString:
+        type: string
+      method:
+        type: string
+      methodSpecificId:
+        type: string
+    type: object
+  types.DidResolution:
+    properties:
+      '@context':
+        type: string
+      didDocument:
+        $ref: '#/definitions/types.DidDoc'
+      didDocumentMetadata:
+        $ref: '#/definitions/types.ResolutionDidDocMetadata'
+      didResolutionMetadata:
+        $ref: '#/definitions/types.ResolutionMetadata'
+    type: object
+  types.ResolutionDidDocMetadata:
+    properties:
+      created:
+        type: string
+      deactivated:
+        type: boolean
+      linkedResourceMetadata:
+        items:
+          $ref: '#/definitions/types.DereferencedResource'
+        type: array
+      updated:
+        type: string
+      versionId:
+        type: string
+    type: object
+  types.ResolutionMetadata:
+    properties:
+      contentType:
+        $ref: '#/definitions/types.ContentType'
+      did:
+        $ref: '#/definitions/types.DidProperties'
+      error:
+        type: string
+      retrieved:
+        type: string
+    type: object
+  types.Service:
+    properties:
+      '@context':
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      serviceEndpoint:
+        type: string
+      type:
+        type: string
+    type: object
+  types.VerificationMethod:
+    properties:
+      '@context':
+        items:
+          type: string
+        type: array
+      controller:
+        type: string
+      id:
+        type: string
+      publicKeyJwk:
+        additionalProperties:
+          type: string
+        type: object
+      publicKeyMultibase:
+        type: string
+      type:
+        type: string
+    type: object
+info:
+  contact:
+    name: Cheqd
+    url: https://cheqd.io
+  description: Cheqd DID Resolver API for DID resolution and dereferencing.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Cheqd DID Resolver API
+  version: "1.0"
+paths:
+  /1.0/identifiers/{did}:
+    get:
+      consumes:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      description: Get DID Doc or its fragment
+      parameters:
+      - description: DID Doc Id
+        in: path
+        name: did
+        required: true
+        type: string
+      produces:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DidResolution'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.DidResolution'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.DidResolution'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.DidResolution'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.DidResolution'
+      summary: Resolve or dereferencing DID Doc
+      tags:
+      - Resolution
+  /1.0/identifiers/{did}/resources/{resourceId}:
+    get:
+      description: Get resource value without dereferencing wrappers
+      parameters:
+      - description: Resource collection id. DID Doc Id
+        in: path
+        name: did
+        required: true
+        type: string
+      - description: DID Resource identifier
+        in: path
+        name: resourceId
+        required: true
+        type: string
+      - description: 'The requested media type of the DID document representation
+          or DID resolution result. '
+        enum:
+        - application/did+ld+json
+        - application/ld+json
+        - application/did+json
+        in: header
+        name: accept
+        type: string
+      produces:
+      - '*/*'
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+      summary: Resource value
+      tags:
+      - Dereferencing
+  /1.0/identifiers/{did}/resources/{resourceId}/metadata:
+    get:
+      description: Get resource metadata without value by DID Doc
+      parameters:
+      - description: Resource collection id. DID Doc Id
+        in: path
+        name: did
+        required: true
+        type: string
+      - description: Resource identifier
+        in: path
+        name: resourceId
+        required: true
+        type: string
+      - description: 'The requested media type of the DID document representation
+          or DID resolution result. '
+        enum:
+        - application/did+ld+json
+        - application/ld+json
+        - application/did+json
+        in: header
+        name: accept
+        type: string
+      produces:
+      - '*/*'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+      summary: Resource metadata
+      tags:
+      - Dereferencing
+  /1.0/identifiers/{did}/resources/all:
+    get:
+      description: Get a list of all collection resources metadata
+      parameters:
+      - description: Resource collection id. DID Doc Id
+        in: path
+        name: did
+        required: true
+        type: string
+      - description: 'The requested media type of the DID document representation
+          or DID resolution result. '
+        in: header
+        name: accept
+        type: string
+      produces:
+      - '*/*'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+      summary: Collection resources
+      tags:
+      - Dereferencing
+  /1.0/identifiers/{did}{fragmentId}:
+    get:
+      consumes:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      description: Get DID Doc or its fragment
+      parameters:
+      - description: DID Doc Id
+        in: path
+        name: did
+        required: true
+        type: string
+      - description: '`#` + DID Doc Verification Method or Service identifier'
+        in: path
+        name: fragmentId
+        required: true
+        type: string
+      - description: Service id
+        in: query
+        name: service
+        type: string
+      produces:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+      summary: Resolve or dereferencing DID Doc
+      tags:
+      - Dereferencing
+swagger: "2.0"
