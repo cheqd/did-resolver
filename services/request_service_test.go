@@ -2,7 +2,6 @@ package services
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -255,50 +254,6 @@ func TestRequestService_DereferenceCollectionResources(t *testing.T) {
 			expectedResource: nil,
 			expectedMetadata: types.ResolutionDidDocMetadata{},
 			expectedError:    types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, false),
-		},
-		{
-			name:                  "successful primary service dereferencing",
-			ledgerService:         NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType:     types.DIDJSONLD,
-			didUrl:                validDid + "?service=service-1",
-			expectedContentStream: fmt.Sprintf("\"%s\"", validService.ServiceEndpoint),
-			expectedMetadata:      validFragmentMetadata,
-			expectedError:         "",
-		},
-		{
-			name:              "Primary service dereferencing(not found)",
-			ledgerService:     NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType: types.DIDJSONLD,
-			didUrl:            validDid + "?service=serv",
-			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.NotFoundError,
-		},
-		{
-			name:                  "Primary service dereferencing(hash simpol)",
-			ledgerService:         NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType:     types.DIDJSONLD,
-			didUrl:                validDid + "?service=service-1#flag",
-			expectedContentStream: fmt.Sprintf("\"%s\"", validService.ServiceEndpoint+"#flag"),
-			expectedMetadata:      validFragmentMetadata,
-			expectedError:         "",
-		},
-		{
-			name:                  "Primary service dereferencing(relativeRef)",
-			ledgerService:         NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType:     types.DIDJSONLD,
-			didUrl:                validDid + "?service=service-1&relativeRef=/some/path?some_query",
-			expectedContentStream: fmt.Sprintf("\"%s\"", validService.ServiceEndpoint+"/some/path?some_query"),
-			expectedMetadata:      validFragmentMetadata,
-			expectedError:         "",
-		},
-		{
-			name:                  "Primary dereferencing(relativeRef + hash flag)",
-			ledgerService:         NewMockLedgerService(validDIDDoc, validMetadata, validResource),
-			dereferencingType:     types.DIDJSONLD,
-			didUrl:                validDid + "?service=service-1&relativeRef=/some/path?some_query#flag",
-			expectedContentStream: fmt.Sprintf("\"%s\"", validService.ServiceEndpoint+"/some/path?some_query#flag"),
-			expectedMetadata:      validFragmentMetadata,
-			expectedError:         "",
 		},
 	}
 
