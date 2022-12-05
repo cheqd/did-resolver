@@ -26,15 +26,15 @@ func NewRequestService(didMethod string, ledgerService LedgerServiceI) RequestSe
 }
 
 func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
-	splitedDID := strings.Split(c.Param("did"), "#")
+	splitDID := strings.Split(c.Param("did"), "#")
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
-	did, err := url.QueryUnescape(splitedDID[0])
+	did, err := url.QueryUnescape(splitDID[0])
 	if err != nil {
-		return types.NewInvalidDIDUrlError(splitedDID[0], requestedContentType, err, true)
+		return types.NewInvalidDIDUrlError(splitDID[0], requestedContentType, err, true)
 	}
 	var fragmentId string
-	if len(splitedDID) == 2 {
-		fragmentId = splitedDID[1]
+	if len(splitDID) == 2 {
+		fragmentId = splitDID[1]
 	}
 
 	queryRaw, flag := prepareQueries(c)
