@@ -84,8 +84,8 @@ github.com/cespare/xxhash v1.1.0/go.mod h1:XrSqR1VqqWfGrhpAt58auRo0WTKS1nRRg3ghf
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/cespare/xxhash/v2 v2.1.2 h1:YRXhKfTDauu4ajMg1TPgFO5jnlC2HCbmLXMcTG5cbYE=
 github.com/cespare/xxhash/v2 v2.1.2/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
-github.com/cheqd/cheqd-node v0.7.3 h1:ELllyb+4HCCEsBnAEruQeJD292jP2CcfTlmXDTZI2vA=
-github.com/cheqd/cheqd-node v0.7.3/go.mod h1:QssvmpF/YRCxb8mkxAAZOuGq5wbnkYdQlDu0LILQNV0=
+github.com/cheqd/cheqd-node v0.7.4 h1:2lvUlf3T5jDEOekPu/GuPxKE2+NV03j9MWiyGV+nQKc=
+github.com/cheqd/cheqd-node v0.7.4/go.mod h1:VLG/tRi05u/Qcu9khOBUb+f//+pLnfTB/SX6KoN0fJU=
 github.com/cheqd/cosmos-sdk v0.45.9-cheqd-tag h1:K1eIYxqaQ5aFSVAnPNOeU12U0B3mStYN0vrawMoUkCY=
 github.com/cheqd/cosmos-sdk v0.45.9-cheqd-tag/go.mod h1:Z5M4TX7PsHNHlF/1XanI2DIpORQ+Q/st7oaeufEjnvU=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
