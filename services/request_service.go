@@ -52,19 +52,19 @@ func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
 }
 
 // DereferenceResourceMetadata godoc
-// @Summary      Resource metadata
-// @Description  Get resource metadata without value by DID Doc
-// @Tags         Dereferencing
-// @Produce      */*
-// @Param        did path string true "Resource collection id. DID Doc Id" ResourceCollectionId(did:cheqd:testnet:MjYxNzYKMjYxNzYK)
-// @Param        resourceId path string true "Resource identifier" ResourceId(60ad67be-b65b-40b8-b2f4-3923141ef382)
-// @Param        accept header string false "The requested media type of the DID document representation or DID resolution result. " Enums(application/did+ld+json, application/ld+json, application/did+json)
+// @Summary      Fetch Resource-specific metadata
+// @Description  Get metadata for a specific Resource within a DIDoc Resource Collection
+// @Tags         Resource Resolution
+// @Accept       application/did+ld+json,application/ld+json,application/did+json
+// @Produce      application/did+ld+json,application/ld+json,application/did+json
+// @Param        did path string true "Full DID with unique identifier" example(did:cheqd:testnet:MjYxNzYKMjYxNzYK)
+// @Param        resourceId path string true "Resource-specific unique identifier" example(60ad67be-b65b-40b8-b2f4-3923141ef382)
 // @Success      200  {object}  types.DidDereferencing
 // @Failure      400  {object}  types.DidDereferencing
 // @Failure      404  {object}  types.DidDereferencing
 // @Failure      406  {object}  types.DidDereferencing
 // @Failure      500  {object}  types.DidDereferencing
-// @Router       /1.0/identifiers/{did}/resources/{resourceId}/metadata [get]
+// @Router       /{did}/resources/{resourceId}/metadata [get]
 func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
 	did, err := getDidParam(c)
@@ -82,11 +82,11 @@ func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 }
 
 // DereferenceResourceData godoc
-// @Summary      Resource value
-// @Description  Get resource value without dereferencing wrappers
-// @Tags         Dereferencing
+// @Summary      Fetch specific Resource
+// @Description  Get specific Resource within a DIDoc Resource Collection
+// @Tags         Resource Resolution
 // @Produce      */*
-// @Param        did path string true "Resource collection id. DID Doc Id" ResourceCollectionId(did:cheqd:testnet:MjYxNzYKMjYxNzYK)
+// @Param        did path string true "DID Unique" ResourceCollectionId(did:cheqd:testnet:MjYxNzYKMjYxNzYK)
 // @Param        resourceId path string true "DID Resource identifier" ResourceId(60ad67be-b65b-40b8-b2f4-3923141ef382)
 // @Param        accept header string false "The requested media type of the DID document representation or DID resolution result. " Enums(application/did+ld+json, application/ld+json, application/did+json)
 // @Success      200  {object}  []byte
