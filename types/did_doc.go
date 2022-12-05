@@ -5,11 +5,11 @@ import (
 )
 
 type DidDoc struct {
-	Context              []string             `json:"@context,omitempty"`
-	Id                   string               `json:"id,omitempty"`
-	Controller           []string             `json:"controller,omitempty"`
+	Context              []string             `json:"@context,omitempty" example:"https://www.w3.org/ns/did/v1"`
+	Id                   string               `json:"id,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47"`
+	Controller           []string             `json:"controller,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47"`
 	VerificationMethod   []VerificationMethod `json:"verificationMethod,omitempty"`
-	Authentication       []string             `json:"authentication,omitempty"`
+	Authentication       []string             `json:"authentication,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#key-1"`
 	AssertionMethod      []string             `json:"assertionMethod,omitempty"`
 	CapabilityInvocation []string             `json:"capabilityInvocation,omitempty"`
 	CapabilityDelegation []string             `json:"capability_delegation,omitempty"`
