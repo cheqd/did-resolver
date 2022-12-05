@@ -34,10 +34,9 @@ func getServeCmd() *cobra.Command {
 //	@license.name	Apache 2.0
 //	@license.url	https://github.com/cheqd/did-resolver/blob/main/LICENSE
 
-//	@host		resolver.cheqd.net
-//	@BasePath	/1.0/identifiers
-//	@schemes	https http
-
+// @host		resolver.cheqd.net
+// @BasePath	/1.0/identifiers
+// @schemes	https http
 func serve() {
 	log.Info().Msg("Loading configuration")
 	config, err := utils.LoadConfig()
@@ -76,7 +75,7 @@ func serve() {
 	requestService := services.NewRequestService(types.DID_METHOD, ledgerService)
 
 	// Routes
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
+	e.GET(types.SWAGGER_PATH, echoSwagger.WrapHandler)
 	e.GET(types.RESOLVER_PATH+":did", requestService.ResolveDIDDoc)
 	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource", requestService.DereferenceResourceData)
 	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource/metadata", requestService.DereferenceResourceMetadata)
