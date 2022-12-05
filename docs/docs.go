@@ -11,12 +11,12 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {
-            "name": "Cheqd",
+            "name": "Cheqd Foundation Limited",
             "url": "https://cheqd.io"
         },
         "license": {
             "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+            "url": "https://github.com/cheqd/did-resolver/blob/main/LICENSE"
         },
         "version": "{{.Version}}"
     },
@@ -25,7 +25,7 @@ const docTemplate = `{
     "paths": {
         "/1.0/identifiers/{did}": {
             "get": {
-                "description": "Get DID Doc or its fragment",
+                "description": "Fetch DID Document (\"DIDDoc\") from cheqd network ledger",
                 "consumes": [
                     "application/did+ld+json",
                     "application/ld+json",
@@ -37,13 +37,13 @@ const docTemplate = `{
                     "application/did+json"
                 ],
                 "tags": [
-                    "Resolution"
+                    "DID Resolution"
                 ],
-                "summary": "Resolve or dereferencing DID Doc",
+                "summary": "Resolve DID Document on did:cheqd",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "DID Doc Id",
+                        "description": "DID Unique Identifier",
                         "name": "did",
                         "in": "path",
                         "required": true
@@ -144,18 +144,18 @@ const docTemplate = `{
         },
         "/1.0/identifiers/{did}/resources/{resourceId}": {
             "get": {
-                "description": "Get resource value without dereferencing wrappers",
+                "description": "Get specific Resource within a DIDoc Resource Collection",
                 "produces": [
                     "*/*"
                 ],
                 "tags": [
-                    "Dereferencing"
+                    "Resource Resolution"
                 ],
-                "summary": "Resource value",
+                "summary": "Fetch specific Resource",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Resource collection id. DID Doc Id",
+                        "description": "DID Unique",
                         "name": "did",
                         "in": "path",
                         "required": true
@@ -218,25 +218,25 @@ const docTemplate = `{
         },
         "/1.0/identifiers/{did}/resources/{resourceId}/metadata": {
             "get": {
-                "description": "Get resource metadata without value by DID Doc",
+                "description": "Get metadata for a specific Resource within a DIDoc Resource Collection",
                 "produces": [
                     "*/*"
                 ],
                 "tags": [
-                    "Dereferencing"
+                    "Resource Resolution"
                 ],
-                "summary": "Resource metadata",
+                "summary": "Fetch specific Resource metadata",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Resource collection id. DID Doc Id",
+                        "description": "DID Unique Identifier",
                         "name": "did",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Resource identifier",
+                        "description": "Resource Unique Identifier",
                         "name": "resourceId",
                         "in": "path",
                         "required": true
@@ -248,7 +248,7 @@ const docTemplate = `{
                             "application/did+json"
                         ],
                         "type": "string",
-                        "description": "The requested media type of the DID document representation or DID resolution result. ",
+                        "description": "Accept header",
                         "name": "accept",
                         "in": "header"
                     }
@@ -289,7 +289,7 @@ const docTemplate = `{
         },
         "/1.0/identifiers/{did}{fragmentId}": {
             "get": {
-                "description": "Get DID Doc or its fragment",
+                "description": "Fetch DID Document (\"DIDDoc\") from cheqd network ledger with dereferencing",
                 "consumes": [
                     "application/did+ld+json",
                     "application/ld+json",
@@ -301,27 +301,27 @@ const docTemplate = `{
                     "application/did+json"
                 ],
                 "tags": [
-                    "Dereferencing"
+                    "DID Resolution"
                 ],
-                "summary": "Resolve or dereferencing DID Doc",
+                "summary": "Resolve DID Document with dereferencing on did:cheqd",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "DID Doc Id",
+                        "description": "DID Unique Identifier",
                         "name": "did",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "` + "`" + `#` + "`" + ` + DID Doc Verification Method or Service identifier",
+                        "description": "` + "`" + `#` + "`" + ` + Fragment Identifier",
                         "name": "fragmentId",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Service id",
+                        "description": "Service Identifier",
                         "name": "service",
                         "in": "query"
                     }
@@ -638,12 +638,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
-	Host:             "",
-	BasePath:         "",
-	Schemes:          []string{},
-	Title:            "Cheqd DID Resolver API",
-	Description:      "Cheqd DID Resolver API for DID resolution and dereferencing.",
+	Version:          "1.x",
+	Host:             "https://resolver.cheqd.net",
+	BasePath:         "/1.0/identifiers",
+	Schemes:          []string{"http", "https"},
+	Title:            "DID Resolver for did:cheqd method",
+	Description:      "Universal Resolver driver for did:cheqd method",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

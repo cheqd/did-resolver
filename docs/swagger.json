@@ -1,22 +1,28 @@
 {
+    "schemes": [
+        "http",
+        "https"
+    ],
     "swagger": "2.0",
     "info": {
-        "description": "Cheqd DID Resolver API for DID resolution and dereferencing.",
-        "title": "Cheqd DID Resolver API",
+        "description": "Universal Resolver driver for did:cheqd method",
+        "title": "DID Resolver for did:cheqd method",
         "contact": {
-            "name": "Cheqd",
+            "name": "Cheqd Foundation Limited",
             "url": "https://cheqd.io"
         },
         "license": {
             "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+            "url": "https://github.com/cheqd/did-resolver/blob/main/LICENSE"
         },
-        "version": "1.0"
+        "version": "1.x"
     },
+    "host": "https://resolver.cheqd.net",
+    "basePath": "/1.0/identifiers",
     "paths": {
         "/1.0/identifiers/{did}": {
             "get": {
-                "description": "Get DID Doc or its fragment",
+                "description": "Fetch DID Document (\"DIDDoc\") from cheqd network ledger",
                 "consumes": [
                     "application/did+ld+json",
                     "application/ld+json",
@@ -28,13 +34,13 @@
                     "application/did+json"
                 ],
                 "tags": [
-                    "Resolution"
+                    "DID Resolution"
                 ],
-                "summary": "Resolve or dereferencing DID Doc",
+                "summary": "Resolve DID Document on did:cheqd",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "DID Doc Id",
+                        "description": "DID Unique Identifier",
                         "name": "did",
                         "in": "path",
                         "required": true
@@ -135,18 +141,18 @@
         },
         "/1.0/identifiers/{did}/resources/{resourceId}": {
             "get": {
-                "description": "Get resource value without dereferencing wrappers",
+                "description": "Get specific Resource within a DIDoc Resource Collection",
                 "produces": [
                     "*/*"
                 ],
                 "tags": [
-                    "Dereferencing"
+                    "Resource Resolution"
                 ],
-                "summary": "Resource value",
+                "summary": "Fetch specific Resource",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Resource collection id. DID Doc Id",
+                        "description": "DID Unique",
                         "name": "did",
                         "in": "path",
                         "required": true
@@ -209,25 +215,25 @@
         },
         "/1.0/identifiers/{did}/resources/{resourceId}/metadata": {
             "get": {
-                "description": "Get resource metadata without value by DID Doc",
+                "description": "Get metadata for a specific Resource within a DIDoc Resource Collection",
                 "produces": [
                     "*/*"
                 ],
                 "tags": [
-                    "Dereferencing"
+                    "Resource Resolution"
                 ],
-                "summary": "Resource metadata",
+                "summary": "Fetch specific Resource metadata",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Resource collection id. DID Doc Id",
+                        "description": "DID Unique Identifier",
                         "name": "did",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Resource identifier",
+                        "description": "Resource Unique Identifier",
                         "name": "resourceId",
                         "in": "path",
                         "required": true
@@ -239,7 +245,7 @@
                             "application/did+json"
                         ],
                         "type": "string",
-                        "description": "The requested media type of the DID document representation or DID resolution result. ",
+                        "description": "Accept header",
                         "name": "accept",
                         "in": "header"
                     }
@@ -280,7 +286,7 @@
         },
         "/1.0/identifiers/{did}{fragmentId}": {
             "get": {
-                "description": "Get DID Doc or its fragment",
+                "description": "Fetch DID Document (\"DIDDoc\") from cheqd network ledger with dereferencing",
                 "consumes": [
                     "application/did+ld+json",
                     "application/ld+json",
@@ -292,27 +298,27 @@
                     "application/did+json"
                 ],
                 "tags": [
-                    "Dereferencing"
+                    "DID Resolution"
                 ],
-                "summary": "Resolve or dereferencing DID Doc",
+                "summary": "Resolve DID Document with dereferencing on did:cheqd",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "DID Doc Id",
+                        "description": "DID Unique Identifier",
                         "name": "did",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "`#` + DID Doc Verification Method or Service identifier",
+                        "description": "`#` + Fragment Identifier",
                         "name": "fragmentId",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Service id",
+                        "description": "Service Identifier",
                         "name": "service",
                         "in": "query"
                     }

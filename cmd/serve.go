@@ -34,9 +34,9 @@ func getServeCmd() *cobra.Command {
 // @license.name Apache 2.0
 // @license.url https://github.com/cheqd/did-resolver/blob/main/LICENSE
 
-// host https://resolver.cheqd.net
-// basePath /1.0/identifiers
-// schemes http https
+// @host https://resolver.cheqd.net
+// @BasePath /1.0/identifiers
+// @schemes http https
 
 func serve() {
 	log.Info().Msg("Loading configuration")

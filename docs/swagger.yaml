@@ -1,3 +1,4 @@
+basePath: /1.0/identifiers
 definitions:
   types.ContentType:
     enum:
@@ -179,16 +180,17 @@ definitions:
       type:
         type: string
     type: object
+host: https://resolver.cheqd.net
 info:
   contact:
-    name: Cheqd
+    name: Cheqd Foundation Limited
     url: https://cheqd.io
-  description: Cheqd DID Resolver API for DID resolution and dereferencing.
+  description: Universal Resolver driver for did:cheqd method
   license:
     name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  title: Cheqd DID Resolver API
-  version: "1.0"
+    url: https://github.com/cheqd/did-resolver/blob/main/LICENSE
+  title: DID Resolver for did:cheqd method
+  version: 1.x
 paths:
   /1.0/identifiers/{did}:
     get:
@@ -196,9 +198,9 @@ paths:
       - application/did+ld+json
       - application/ld+json
       - application/did+json
-      description: Get DID Doc or its fragment
+      description: Fetch DID Document ("DIDDoc") from cheqd network ledger
       parameters:
-      - description: DID Doc Id
+      - description: DID Unique Identifier
         in: path
         name: did
         required: true
@@ -228,14 +230,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.DidResolution'
-      summary: Resolve or dereferencing DID Doc
+      summary: Resolve DID Document on did:cheqd
       tags:
-      - Resolution
+      - DID Resolution
   /1.0/identifiers/{did}/resources/{resourceId}:
     get:
-      description: Get resource value without dereferencing wrappers
+      description: Get specific Resource within a DIDoc Resource Collection
       parameters:
-      - description: Resource collection id. DID Doc Id
+      - description: DID Unique
         in: path
         name: did
         required: true
@@ -279,25 +281,24 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.DidDereferencing'
-      summary: Resource value
+      summary: Fetch specific Resource
       tags:
-      - Dereferencing
+      - Resource Resolution
   /1.0/identifiers/{did}/resources/{resourceId}/metadata:
     get:
-      description: Get resource metadata without value by DID Doc
+      description: Get metadata for a specific Resource within a DIDoc Resource Collection
       parameters:
-      - description: Resource collection id. DID Doc Id
+      - description: DID Unique Identifier
         in: path
         name: did
         required: true
         type: string
-      - description: Resource identifier
+      - description: Resource Unique Identifier
         in: path
         name: resourceId
         required: true
         type: string
-      - description: 'The requested media type of the DID document representation
-          or DID resolution result. '
+      - description: Accept header
         enum:
         - application/did+ld+json
         - application/ld+json
@@ -328,9 +329,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.DidDereferencing'
-      summary: Resource metadata
+      summary: Fetch specific Resource metadata
       tags:
-      - Dereferencing
+      - Resource Resolution
   /1.0/identifiers/{did}/resources/all:
     get:
       description: Get a list of all collection resources metadata
@@ -377,19 +378,19 @@ paths:
       - application/did+ld+json
       - application/ld+json
       - application/did+json
-      description: Get DID Doc or its fragment
+      description: Fetch DID Document ("DIDDoc") from cheqd network ledger with dereferencing
       parameters:
-      - description: DID Doc Id
+      - description: DID Unique Identifier
         in: path
         name: did
         required: true
         type: string
-      - description: '`#` + DID Doc Verification Method or Service identifier'
+      - description: '`#` + Fragment Identifier'
         in: path
         name: fragmentId
         required: true
         type: string
-      - description: Service id
+      - description: Service Identifier
         in: query
         name: service
         type: string
@@ -418,7 +419,10 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.DidDereferencing'
-      summary: Resolve or dereferencing DID Doc
+      summary: Resolve DID Document with dereferencing on did:cheqd
       tags:
-      - Dereferencing
+      - DID Resolution
+schemes:
+- http
+- https
 swagger: "2.0"
