@@ -68,13 +68,13 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 // @Tags         DID Resolution
 // @Accept       application/did+ld+json,application/ld+json,application/did+json
 // @Produce      application/did+ld+json,application/ld+json,application/did+json
-// @Param        did path string true "Full DID with unique identifier" example(did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY)
+// @Param        id path types.DidDoc true "Full DID with unique identifier" example(did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY)
 // @Success      200  {object}  types.DidResolution
 // @Failure      400  {object}  types.DidResolution
 // @Failure      404  {object}  types.DidResolution
 // @Failure      406  {object}  types.DidResolution
 // @Failure      500  {object}  types.DidResolution
-// @Router       /{did} [get]
+// @Router       /{id} [get]
 func (dds DIDDocService) Resolve(did string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {
 	if !contentType.IsSupported() {
 		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, false)
