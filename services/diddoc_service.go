@@ -65,16 +65,16 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 // ResolveDIDDoc godoc
 // @Summary      Resolve DID Document on did:cheqd
 // @Description  Fetch DID Document ("DIDDoc") from cheqd network ledger
-// @Tags         Resolution
+// @Tags         DID Resolution
 // @Accept       application/did+ld+json,application/ld+json,application/did+json
 // @Produce      application/did+ld+json,application/ld+json,application/did+json
-// @Param        did path string true "DID Unique Identifier" Did(did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY)
+// @Param        did path string true "Full DID with unique identifier" example(did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY)
 // @Success      200  {object}  types.DidResolution
 // @Failure      400  {object}  types.DidResolution
 // @Failure      404  {object}  types.DidResolution
 // @Failure      406  {object}  types.DidResolution
 // @Failure      500  {object}  types.DidResolution
-// @Router       /1.0/identifiers/{did} [get]
+// @Router       /{did} [get]
 func (dds DIDDocService) Resolve(did string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {
 	if !contentType.IsSupported() {
 		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, false)
@@ -113,18 +113,18 @@ func (dds DIDDocService) Resolve(did string, contentType types.ContentType) (*ty
 // ResolveDIDDocDereferencing godoc
 // @Summary      Resolve DID Document with dereferencing on did:cheqd
 // @Description  Fetch DID Document ("DIDDoc") from cheqd network ledger with dereferencing
-// @Tags         Dereferencing
+// @Tags         DID Resolution
 // @Accept       application/did+ld+json,application/ld+json,application/did+json
 // @Produce      application/did+ld+json,application/ld+json,application/did+json
-// @Param        did path string true "DID Unique Identifier" Did(did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY)
-// @Param        fragmentId path string true "`#` + Fragment Identifier" FragmentId(#key1)
-// @Param        service query string false "Service Identifier" ServiceId("service1")
+// @Param        did path string true "Full DID with unique identifier" example(did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY)
+// @Param        fragmentId path string true "`#` + Fragment Identifier" example(#key1)
+// @Param        service query string false "Service Identifier" example(service1)
 // @Success      200  {object}  types.DidDereferencing
 // @Failure      400  {object}  types.DidDereferencing
 // @Failure      404  {object}  types.DidDereferencing
 // @Failure      406  {object}  types.DidDereferencing
 // @Failure      500  {object}  types.DidDereferencing
-// @Router       /1.0/identifiers/{did}{fragmentId} [get]
+// @Router       /{did}{fragmentId} [get]
 func (dds DIDDocService) dereferenceSecondary(did string, fragmentId string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
 	didResolution, err := dds.Resolve(did, contentType)
 	if err != nil {
