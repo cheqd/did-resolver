@@ -23,7 +23,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/1.0/identifiers/{did}": {
+        "/{did}": {
             "get": {
                 "description": "Fetch DID Document (\"DIDDoc\") from cheqd network ledger",
                 "consumes": [
@@ -43,7 +43,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "DID Unique Identifier",
+                        "example": "did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY",
+                        "description": "Full DID with unique identifier",
                         "name": "did",
                         "in": "path",
                         "required": true
@@ -83,29 +84,31 @@ const docTemplate = `{
                 }
             }
         },
-        "/1.0/identifiers/{did}/resources/all": {
+        "/{did}/resources/all": {
             "get": {
-                "description": "Get a list of all collection resources metadata",
+                "description": "Get metadata for all Resources within a DID Resource Collection",
+                "consumes": [
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+json"
+                ],
                 "produces": [
-                    "*/*"
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+json"
                 ],
                 "tags": [
-                    "Dereferencing"
+                    "Resource Resolution"
                 ],
-                "summary": "Collection resources",
+                "summary": "Fetch metadata for all Resources",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Resource collection id. DID Doc Id",
+                        "example": "did:cheqd:testnet:MjYxNzYKMjYxNzYK",
+                        "description": "Full DID with unique identifier",
                         "name": "did",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "The requested media type of the DID document representation or DID resolution result. ",
-                        "name": "accept",
-                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -142,9 +145,12 @@ const docTemplate = `{
                 }
             }
         },
-        "/1.0/identifiers/{did}/resources/{resourceId}": {
+        "/{did}/resources/{resourceId}": {
             "get": {
-                "description": "Get specific Resource within a DIDoc Resource Collection",
+                "description": "Get specific Resource within a DID Resource Collection",
+                "consumes": [
+                    "*/*"
+                ],
                 "produces": [
                     "*/*"
                 ],
@@ -155,28 +161,19 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "DID Unique",
+                        "example": "did:cheqd:testnet:MjYxNzYKMjYxNzYK",
+                        "description": "Full DID with unique identifier",
                         "name": "did",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "DID Resource identifier",
+                        "example": "60ad67be-b65b-40b8-b2f4-3923141ef382",
+                        "description": "Resource-specific unique-identifier",
                         "name": "resourceId",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "enum": [
-                            "application/did+ld+json",
-                            "application/ld+json",
-                            "application/did+json"
-                        ],
-                        "type": "string",
-                        "description": "The requested media type of the DID document representation or DID resolution result. ",
-                        "name": "accept",
-                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -216,41 +213,39 @@ const docTemplate = `{
                 }
             }
         },
-        "/1.0/identifiers/{did}/resources/{resourceId}/metadata": {
+        "/{did}/resources/{resourceId}/metadata": {
             "get": {
-                "description": "Get metadata for a specific Resource within a DIDoc Resource Collection",
+                "description": "Get metadata for a specific Resource within a DID Resource Collection",
+                "consumes": [
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+json"
+                ],
                 "produces": [
-                    "*/*"
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+json"
                 ],
                 "tags": [
                     "Resource Resolution"
                 ],
-                "summary": "Fetch specific Resource metadata",
+                "summary": "Fetch Resource-specific metadata",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "DID Unique Identifier",
+                        "example": "did:cheqd:testnet:MjYxNzYKMjYxNzYK",
+                        "description": "Full DID with unique identifier",
                         "name": "did",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Resource Unique Identifier",
+                        "example": "60ad67be-b65b-40b8-b2f4-3923141ef382",
+                        "description": "Resource-specific unique identifier",
                         "name": "resourceId",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "enum": [
-                            "application/did+ld+json",
-                            "application/ld+json",
-                            "application/did+json"
-                        ],
-                        "type": "string",
-                        "description": "Accept header",
-                        "name": "accept",
-                        "in": "header"
                     }
                 ],
                 "responses": {
@@ -287,7 +282,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/1.0/identifiers/{did}{fragmentId}": {
+        "/{did}{fragmentId}": {
             "get": {
                 "description": "Fetch DID Document (\"DIDDoc\") from cheqd network ledger with dereferencing",
                 "consumes": [
@@ -307,13 +302,15 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "DID Unique Identifier",
+                        "example": "did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY",
+                        "description": "Full DID with unique identifier",
                         "name": "did",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
+                        "example": "#key1",
                         "description": "` + "`" + `#` + "`" + ` + Fragment Identifier",
                         "name": "fragmentId",
                         "in": "path",
@@ -321,6 +318,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "example": "service1",
                         "description": "Service Identifier",
                         "name": "service",
                         "in": "query"
@@ -639,7 +637,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.x",
-	Host:             "https://resolver.cheqd.net",
+	Host:             "resolver.cheqd.net",
 	BasePath:         "/1.0/identifiers",
 	Schemes:          []string{"http", "https"},
 	Title:            "DID Resolver for did:cheqd method",

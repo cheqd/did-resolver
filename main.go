@@ -34,9 +34,9 @@ func printVersion(cmd *cobra.Command, args []string) error {
 // @license.name Apache 2.0
 // @license.url https://github.com/cheqd/did-resolver/blob/main/LICENSE
 
-// @host https://resolver.cheqd.net
+// @host resolver.cheqd.net
 // @BasePath /1.0/identifiers
-// @schemes http https
+// @schemes https http
 
 func main() {
 	rootCmd := cmd.GetRootCmd()

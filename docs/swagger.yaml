@@ -180,7 +180,7 @@ definitions:
       type:
         type: string
     type: object
-host: https://resolver.cheqd.net
+host: resolver.cheqd.net
 info:
   contact:
     name: Cheqd Foundation Limited
@@ -192,7 +192,7 @@ info:
   title: DID Resolver for did:cheqd method
   version: 1.x
 paths:
-  /1.0/identifiers/{did}:
+  /{did}:
     get:
       consumes:
       - application/did+ld+json
@@ -200,7 +200,8 @@ paths:
       - application/did+json
       description: Fetch DID Document ("DIDDoc") from cheqd network ledger
       parameters:
-      - description: DID Unique Identifier
+      - description: Full DID with unique identifier
+        example: did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
         in: path
         name: did
         required: true
@@ -233,28 +234,23 @@ paths:
       summary: Resolve DID Document on did:cheqd
       tags:
       - DID Resolution
-  /1.0/identifiers/{did}/resources/{resourceId}:
+  /{did}/resources/{resourceId}:
     get:
-      description: Get specific Resource within a DIDoc Resource Collection
+      consumes:
+      - '*/*'
+      description: Get specific Resource within a DID Resource Collection
       parameters:
-      - description: DID Unique
+      - description: Full DID with unique identifier
+        example: did:cheqd:testnet:MjYxNzYKMjYxNzYK
         in: path
         name: did
         required: true
         type: string
-      - description: DID Resource identifier
+      - description: Resource-specific unique-identifier
+        example: 60ad67be-b65b-40b8-b2f4-3923141ef382
         in: path
         name: resourceId
         required: true
-        type: string
-      - description: 'The requested media type of the DID document representation
-          or DID resolution result. '
-        enum:
-        - application/did+ld+json
-        - application/ld+json
-        - application/did+json
-        in: header
-        name: accept
         type: string
       produces:
       - '*/*'
@@ -284,30 +280,30 @@ paths:
       summary: Fetch specific Resource
       tags:
       - Resource Resolution
-  /1.0/identifiers/{did}/resources/{resourceId}/metadata:
+  /{did}/resources/{resourceId}/metadata:
     get:
-      description: Get metadata for a specific Resource within a DIDoc Resource Collection
+      consumes:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      description: Get metadata for a specific Resource within a DID Resource Collection
       parameters:
-      - description: DID Unique Identifier
+      - description: Full DID with unique identifier
+        example: did:cheqd:testnet:MjYxNzYKMjYxNzYK
         in: path
         name: did
         required: true
         type: string
-      - description: Resource Unique Identifier
+      - description: Resource-specific unique identifier
+        example: 60ad67be-b65b-40b8-b2f4-3923141ef382
         in: path
         name: resourceId
         required: true
         type: string
-      - description: Accept header
-        enum:
-        - application/did+ld+json
-        - application/ld+json
-        - application/did+json
-        in: header
-        name: accept
-        type: string
       produces:
-      - '*/*'
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
       responses:
         "200":
           description: OK
@@ -329,25 +325,27 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.DidDereferencing'
-      summary: Fetch specific Resource metadata
+      summary: Fetch Resource-specific metadata
       tags:
       - Resource Resolution
-  /1.0/identifiers/{did}/resources/all:
+  /{did}/resources/all:
     get:
-      description: Get a list of all collection resources metadata
+      consumes:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      description: Get metadata for all Resources within a DID Resource Collection
       parameters:
-      - description: Resource collection id. DID Doc Id
+      - description: Full DID with unique identifier
+        example: did:cheqd:testnet:MjYxNzYKMjYxNzYK
         in: path
         name: did
         required: true
         type: string
-      - description: 'The requested media type of the DID document representation
-          or DID resolution result. '
-        in: header
-        name: accept
-        type: string
       produces:
-      - '*/*'
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
       responses:
         "200":
           description: OK
@@ -369,10 +367,10 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.DidDereferencing'
-      summary: Collection resources
+      summary: Fetch metadata for all Resources
       tags:
-      - Dereferencing
-  /1.0/identifiers/{did}{fragmentId}:
+      - Resource Resolution
+  /{did}{fragmentId}:
     get:
       consumes:
       - application/did+ld+json
@@ -380,17 +378,20 @@ paths:
       - application/did+json
       description: Fetch DID Document ("DIDDoc") from cheqd network ledger with dereferencing
       parameters:
-      - description: DID Unique Identifier
+      - description: Full DID with unique identifier
+        example: did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
         in: path
         name: did
         required: true
         type: string
       - description: '`#` + Fragment Identifier'
+        example: '#key1'
         in: path
         name: fragmentId
         required: true
         type: string
       - description: Service Identifier
+        example: service1
         in: query
         name: service
         type: string
