@@ -38,6 +38,22 @@ func NewLedgerService() LedgerService {
 	return ls
 }
 
+// QueryDIDDoc godoc
+//
+//	@Summary		Resolve DID Document on did:cheqd
+//	@Description	Fetch DID Document ("DIDDoc") from cheqd network
+//	@Tags			DID Resolution
+//	@Accept			application/did+ld+json,application/ld+json,application/did+json
+//	@Produce		application/did+ld+json,application/ld+json,application/did+json
+//	@Param			did			path		string	true	"Full DID with unique identifier"	example(did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY)
+//	@Param			service		query		string	false	"Service Type"						example(did-communication)
+//	@Param			fragmentId	query		string	false	"# + Fragment ID"					example(#key1)
+//	@Success		200			{object}	types.DidResolution
+//	@Failure		400			{object}	types.IdentityError
+//	@Failure		404			{object}	types.IdentityError
+//	@Failure		406			{object}	types.IdentityError
+//	@Failure		500			{object}	types.IdentityError
+//	@Router			/{did} [get]
 func (ls LedgerService) QueryDIDDoc(did string) (*cheqd.Did, *cheqd.Metadata, *types.IdentityError) {
 	method, namespace, _, _ := cheqdUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
