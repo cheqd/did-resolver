@@ -63,12 +63,12 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 }
 
 // ResolveDIDDoc godoc
-// @Summary      Resolve or dereferencing DID Doc
-// @Description  Get DID Doc or its fragment
+// @Summary      Resolve DID Document on did:cheqd
+// @Description  Fetch DID Document ("DIDDoc") from cheqd network ledger
 // @Tags         Resolution
 // @Accept       application/did+ld+json,application/ld+json,application/did+json
 // @Produce      application/did+ld+json,application/ld+json,application/did+json
-// @Param        did path string true "DID Doc Id" Did(did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY)
+// @Param        did path string true "DID Unique Identifier" Did(did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY)
 // @Success      200  {object}  types.DidResolution
 // @Failure      400  {object}  types.DidResolution
 // @Failure      404  {object}  types.DidResolution
@@ -111,14 +111,14 @@ func (dds DIDDocService) Resolve(did string, contentType types.ContentType) (*ty
 }
 
 // ResolveDIDDocDereferencing godoc
-// @Summary      Resolve or dereferencing DID Doc
-// @Description  Get DID Doc or its fragment
+// @Summary      Resolve DID Document with dereferencing on did:cheqd
+// @Description  Fetch DID Document ("DIDDoc") from cheqd network ledger with dereferencing
 // @Tags         Dereferencing
 // @Accept       application/did+ld+json,application/ld+json,application/did+json
 // @Produce      application/did+ld+json,application/ld+json,application/did+json
-// @Param        did path string true "DID Doc Id" Did(did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY)
-// @Param        fragmentId path string true "`#` + DID Doc Verification Method or Service identifier" FragmentId(#key1)
-// @Param        service query string false "Service id" ServiceId("service1")
+// @Param        did path string true "DID Unique Identifier" Did(did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY)
+// @Param        fragmentId path string true "`#` + Fragment Identifier" FragmentId(#key1)
+// @Param        service query string false "Service Identifier" ServiceId("service1")
 // @Success      200  {object}  types.DidDereferencing
 // @Failure      400  {object}  types.DidDereferencing
 // @Failure      404  {object}  types.DidDereferencing
