@@ -29,9 +29,9 @@ type VerificationMethod struct {
 
 type Service struct {
 	Context         []string `json:"@context,omitempty"`
-	Id              string   `json:"id,omitempty"`
-	Type            string   `json:"type,omitempty"`
-	ServiceEndpoint string   `json:"serviceEndpoint,omitempty"`
+	Id              string   `json:"id,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#service-1"`
+	Type            string   `json:"type,omitempty" example:"did-communication"`
+	ServiceEndpoint string   `json:"serviceEndpoint,omitempty" example:"https://example.com/endpoint/8377464"`
 }
 
 func NewDidDoc(protoDidDoc cheqd.Did) DidDoc {
