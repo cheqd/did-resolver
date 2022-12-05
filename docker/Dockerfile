@@ -14,7 +14,7 @@ RUN go mod download && go build -o did-resolver main.go
 ###    STAGE 2: Build cheqd did-resolver container image          ###
 #####################################################################
 
-FROM alpine:3.16 AS resolver
+FROM alpine:3.17 AS resolver
 
 # Install pre-requisites
 RUN apk update && apk add --no-cache bash ca-certificates
