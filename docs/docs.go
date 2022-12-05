@@ -10,14 +10,7 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {
-            "name": "Cheqd Foundation Limited",
-            "url": "https://cheqd.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "https://github.com/cheqd/did-resolver/blob/main/LICENSE"
-        },
+        "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -25,7 +18,7 @@ const docTemplate = `{
     "paths": {
         "/{did}": {
             "get": {
-                "description": "Fetch DID Document (\"DIDDoc\") from cheqd network ledger",
+                "description": "Fetch DID Document (\"DIDDoc\") from cheqd network",
                 "consumes": [
                     "application/did+ld+json",
                     "application/ld+json",
@@ -43,11 +36,22 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY",
                         "description": "Full DID with unique identifier",
                         "name": "did",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Service Type",
+                        "name": "service",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "# + Fragment ID",
+                        "name": "fragmentId",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -60,25 +64,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/types.DidResolution"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/types.DidResolution"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     },
                     "406": {
                         "description": "Not Acceptable",
                         "schema": {
-                            "$ref": "#/definitions/types.DidResolution"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/types.DidResolution"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     }
                 }
@@ -104,7 +108,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "did:cheqd:testnet:MjYxNzYKMjYxNzYK",
                         "description": "Full DID with unique identifier",
                         "name": "did",
                         "in": "path",
@@ -121,25 +124,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     },
                     "406": {
                         "description": "Not Acceptable",
                         "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     }
                 }
@@ -161,7 +164,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "did:cheqd:testnet:MjYxNzYKMjYxNzYK",
                         "description": "Full DID with unique identifier",
                         "name": "did",
                         "in": "path",
@@ -169,7 +171,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "example": "60ad67be-b65b-40b8-b2f4-3923141ef382",
                         "description": "Resource-specific unique-identifier",
                         "name": "resourceId",
                         "in": "path",
@@ -189,25 +190,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     },
                     "406": {
                         "description": "Not Acceptable",
                         "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     }
                 }
@@ -233,7 +234,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "did:cheqd:testnet:MjYxNzYKMjYxNzYK",
                         "description": "Full DID with unique identifier",
                         "name": "did",
                         "in": "path",
@@ -241,7 +241,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "example": "60ad67be-b65b-40b8-b2f4-3923141ef382",
                         "description": "Resource-specific unique identifier",
                         "name": "resourceId",
                         "in": "path",
@@ -258,101 +257,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     },
                     "406": {
                         "description": "Not Acceptable",
                         "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
-                        }
-                    }
-                }
-            }
-        },
-        "/{did}{fragmentId}": {
-            "get": {
-                "description": "Fetch DID Document (\"DIDDoc\") from cheqd network ledger with dereferencing",
-                "consumes": [
-                    "application/did+ld+json",
-                    "application/ld+json",
-                    "application/did+json"
-                ],
-                "produces": [
-                    "application/did+ld+json",
-                    "application/ld+json",
-                    "application/did+json"
-                ],
-                "tags": [
-                    "DID Resolution"
-                ],
-                "summary": "Resolve DID Document with dereferencing on did:cheqd",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY",
-                        "description": "Full DID with unique identifier",
-                        "name": "did",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "example": "#key1",
-                        "description": "` + "`" + `#` + "`" + ` + Fragment Identifier",
-                        "name": "fragmentId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "example": "service1",
-                        "description": "Service Identifier",
-                        "name": "service",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
-                        }
-                    },
-                    "406": {
-                        "description": "Not Acceptable",
-                        "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
+                            "$ref": "#/definitions/types.IdentityError"
                         }
                     }
                 }
@@ -379,34 +302,44 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "checksum": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "a95380f460e63ad939541a57aecbfd795fcd37c6d78ee86c885340e33a91b559"
                 },
                 "created": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2021-09-01T12:00:00Z"
                 },
                 "mediaType": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "image/png"
                 },
                 "nextVersionId": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "d4829ac7-4566-478c-a408-b44767eddadc"
                 },
                 "previousVersionId": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "ad7a8442-3531-46eb-a024-53953ec6e4ff"
                 },
                 "resourceCollectionId": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "55dbc8bf-fba3-4117-855c-1e0dc1d3bb47"
                 },
                 "resourceId": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "398cee0a-efac-4643-9f4c-74c48c72a14b"
                 },
                 "resourceName": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Image Resource"
                 },
                 "resourceType": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Image"
                 },
                 "resourceURI": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47/resources/398cee0a-efac-4643-9f4c-74c48c72a14b"
                 }
             }
         },
@@ -414,7 +347,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "contentType": {
-                    "$ref": "#/definitions/types.ContentType"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/types.ContentType"
+                        }
+                    ],
+                    "example": "application/did+ld+json"
                 },
                 "did": {
                     "$ref": "#/definitions/types.DidProperties"
@@ -423,7 +361,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "retrieved": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2021-09-01T12:00:00Z"
                 }
             }
         },
@@ -450,7 +389,10 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "example": [
+                        "https://www.w3.org/ns/did/v1"
+                    ]
                 },
                 "alsoKnownAs": {
                     "type": "array",
@@ -468,7 +410,10 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "example": [
+                        "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#key-1"
+                    ]
                 },
                 "capabilityInvocation": {
                     "type": "array",
@@ -486,10 +431,14 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "example": [
+                        "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47"
+                    ]
                 },
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47"
                 },
                 "keyAgreement": {
                     "type": "array",
@@ -542,14 +491,37 @@ const docTemplate = `{
                 }
             }
         },
+        "types.IdentityError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "contentType": {
+                    "$ref": "#/definitions/types.ContentType"
+                },
+                "did": {
+                    "type": "string"
+                },
+                "internal": {},
+                "isDereferencing": {
+                    "type": "boolean"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "types.ResolutionDidDocMetadata": {
             "type": "object",
             "properties": {
                 "created": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2021-09-01T12:00:00Z"
                 },
                 "deactivated": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "example": false
                 },
                 "linkedResourceMetadata": {
                     "type": "array",
@@ -558,10 +530,12 @@ const docTemplate = `{
                     }
                 },
                 "updated": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2021-09-10T12:00:00Z"
                 },
                 "versionId": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "4979BAF49599FEF0BAD5ED0849FDD708156761EBBC8EBE78D0907F8BECC9CB2E"
                 }
             }
         },
@@ -569,7 +543,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "contentType": {
-                    "$ref": "#/definitions/types.ContentType"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/types.ContentType"
+                        }
+                    ],
+                    "example": "application/did+ld+json"
                 },
                 "did": {
                     "$ref": "#/definitions/types.DidProperties"
@@ -578,7 +557,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "retrieved": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2021-09-01T12:00:00Z"
                 }
             }
         },
@@ -592,13 +572,16 @@ const docTemplate = `{
                     }
                 },
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#service-1"
                 },
                 "serviceEndpoint": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "https://example.com/endpoint/8377464"
                 },
                 "type": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "did-communication"
                 }
             }
         },
@@ -636,12 +619,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.x",
-	Host:             "resolver.cheqd.net",
-	BasePath:         "/1.0/identifiers",
-	Schemes:          []string{"http", "https"},
-	Title:            "DID Resolver for did:cheqd method",
-	Description:      "Universal Resolver driver for did:cheqd method",
+	Version:          "",
+	Host:             "",
+	BasePath:         "",
+	Schemes:          []string{},
+	Title:            "",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }
