@@ -52,19 +52,20 @@ func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
 }
 
 // DereferenceResourceMetadata godoc
-// @Summary      Fetch Resource-specific metadata
-// @Description  Get metadata for a specific Resource within a DID Resource Collection
-// @Tags         Resource Resolution
-// @Accept       application/did+ld+json,application/ld+json,application/did+json
-// @Produce      application/did+ld+json,application/ld+json,application/did+json
-// @Param        did path string true "Full DID with unique identifier" example(did:cheqd:testnet:MjYxNzYKMjYxNzYK)
-// @Param        resourceId path string true "Resource-specific unique identifier" example(60ad67be-b65b-40b8-b2f4-3923141ef382)
-// @Success      200  {object}  types.DidDereferencing
-// @Failure      400  {object}  types.DidDereferencing
-// @Failure      404  {object}  types.DidDereferencing
-// @Failure      406  {object}  types.DidDereferencing
-// @Failure      500  {object}  types.DidDereferencing
-// @Router       /{did}/resources/{resourceId}/metadata [get]
+//
+//	@Summary		Fetch Resource-specific metadata
+//	@Description	Get metadata for a specific Resource within a DID Resource Collection
+//	@Tags			Resource Resolution
+//	@Accept			application/did+ld+json,application/ld+json,application/did+json
+//	@Produce		application/did+ld+json,application/ld+json,application/did+json
+//	@Param			did			path		string	true	"Full DID with unique identifier"
+//	@Param			resourceId	path		string	true	"Resource-specific unique identifier"
+//	@Success		200			{object}	types.DidDereferencing
+//	@Failure		400			{object}	types.IdentityError
+//	@Failure		404			{object}	types.IdentityError
+//	@Failure		406			{object}	types.IdentityError
+//	@Failure		500			{object}	types.IdentityError
+//	@Router			/{did}/resources/{resourceId}/metadata [get]
 func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
 	did, err := getDidParam(c)
@@ -81,20 +82,6 @@ func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 	return c.JSONPretty(http.StatusOK, result, "  ")
 }
 
-// DereferenceResourceData godoc
-// @Summary      Fetch specific Resource
-// @Description  Get specific Resource within a DID Resource Collection
-// @Tags         Resource Resolution
-// @Accept       */*
-// @Produce      */*
-// @Param        did path string true "Full DID with unique identifier" example(did:cheqd:testnet:MjYxNzYKMjYxNzYK)
-// @Param        resourceId path string true "Resource-specific unique-identifier" example(60ad67be-b65b-40b8-b2f4-3923141ef382)
-// @Success      200  {object}  []byte
-// @Failure      400  {object}  types.DidDereferencing
-// @Failure      404  {object}  types.DidDereferencing
-// @Failure      406  {object}  types.DidDereferencing
-// @Failure      500  {object}  types.DidDereferencing
-// @Router       /{did}/resources/{resourceId} [get]
 func (rs RequestService) DereferenceResourceData(c echo.Context) error {
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
 	did, err := getDidParam(c)
@@ -111,19 +98,6 @@ func (rs RequestService) DereferenceResourceData(c echo.Context) error {
 	return c.Blob(http.StatusOK, result.GetContentType(), result.GetBytes())
 }
 
-// DereferenceCollectionResources godoc
-// @Summary      Fetch metadata for all Resources
-// @Description  Get metadata for all Resources within a DID Resource Collection
-// @Tags         Resource Resolution
-// @Accept       application/did+ld+json,application/ld+json,application/did+json
-// @Produce      application/did+ld+json,application/ld+json,application/did+json
-// @Param        did path string true "Full DID with unique identifier" example(did:cheqd:testnet:MjYxNzYKMjYxNzYK)
-// @Success      200  {object}  types.DidDereferencing
-// @Failure      400  {object}  types.DidDereferencing
-// @Failure      404  {object}  types.DidDereferencing
-// @Failure      406  {object}  types.DidDereferencing
-// @Failure      500  {object}  types.DidDereferencing
-// @Router       /{did}/resources/all [get]
 func (rs RequestService) DereferenceCollectionResources(c echo.Context) error {
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
 	did, err := getDidParam(c)
