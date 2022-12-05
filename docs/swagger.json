@@ -1,8 +1,17 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "title": "DID Resolver for did:cheqd method",
+        "contact": {
+            "name": "Cheqd Foundation Limited"
+        },
+        "license": {
+            "name": "Apache 2.0"
+        },
+        "version": "1.0"
     },
+    "host": "resolver.cheqd.net",
+    "basePath": "/1.0/identifiers",
     "paths": {
         "/{did}": {
             "get": {

@@ -1,3 +1,4 @@
+basePath: /1.0/identifiers
 definitions:
   types.ContentType:
     enum:
@@ -223,8 +224,14 @@ definitions:
       type:
         type: string
     type: object
+host: resolver.cheqd.net
 info:
-  contact: {}
+  contact:
+    name: Cheqd Foundation Limited
+  license:
+    name: Apache 2.0
+  title: DID Resolver for did:cheqd method
+  version: "1.0"
 paths:
   /{did}:
     get:

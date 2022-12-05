@@ -10,7 +10,12 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "contact": {
+            "name": "Cheqd Foundation Limited"
+        },
+        "license": {
+            "name": "Apache 2.0"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -619,11 +624,11 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
-	Host:             "",
-	BasePath:         "",
+	Version:          "1.0",
+	Host:             "resolver.cheqd.net",
+	BasePath:         "/1.0/identifiers",
 	Schemes:          []string{},
-	Title:            "",
+	Title:            "DID Resolver for did:cheqd method",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
