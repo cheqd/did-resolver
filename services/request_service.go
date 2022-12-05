@@ -85,16 +85,16 @@ func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 // @Summary      Fetch specific Resource
 // @Description  Get specific Resource within a DIDoc Resource Collection
 // @Tags         Resource Resolution
+// @Accept       */*
 // @Produce      */*
-// @Param        did path string true "DID Unique" ResourceCollectionId(did:cheqd:testnet:MjYxNzYKMjYxNzYK)
-// @Param        resourceId path string true "DID Resource identifier" ResourceId(60ad67be-b65b-40b8-b2f4-3923141ef382)
-// @Param        accept header string false "The requested media type of the DID document representation or DID resolution result. " Enums(application/did+ld+json, application/ld+json, application/did+json)
+// @Param        did path string true "Full DID with unique identifier" example(did:cheqd:testnet:MjYxNzYKMjYxNzYK)
+// @Param        resourceId path string true "Resource-specific unique-identifier" example(60ad67be-b65b-40b8-b2f4-3923141ef382)
 // @Success      200  {object}  []byte
 // @Failure      400  {object}  types.DidDereferencing
 // @Failure      404  {object}  types.DidDereferencing
 // @Failure      406  {object}  types.DidDereferencing
 // @Failure      500  {object}  types.DidDereferencing
-// @Router       /1.0/identifiers/{did}/resources/{resourceId} [get]
+// @Router       /{did}/resources/{resourceId} [get]
 func (rs RequestService) DereferenceResourceData(c echo.Context) error {
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
 	did, err := getDidParam(c)
