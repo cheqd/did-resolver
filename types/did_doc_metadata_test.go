@@ -11,9 +11,9 @@ import (
 )
 
 func TestNewResolutionDidDocMetadata(t *testing.T) {
-	validIdentifier := "0a88fd42-ae6b-4da4-a5ea-36d28e35dde7"
+	validIdentifier := "fb53dd05-329b-4614-a3f2-c0a8c7554ee3"
 	validDid := "did:cheqd:mainnet:" + validIdentifier
-	validResourceId := "18e9d838-0bea-435b-964b-c6529ede6d2b"
+	validResourceId := "a09abea0-22e0-4b35-8f70-9cc3a6d0b5fd"
 	resourceData := []byte("test_checksum")
 	h := sha256.New()
 	h.Write(resourceData)
@@ -56,18 +56,6 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 				VersionId:   "test_version_id",
 				Deactivated: false,
 				Resources:   []DereferencedResource{validMetadataResource},
-			},
-		},
-		{
-			name: "matadata without resource in metadata",
-			metadata: did.Metadata{
-				VersionId:   "test_version_id",
-				Deactivated: false,
-			},
-			resources: []*resource.Metadata{&resourceMetadata},
-			expectedResult: ResolutionDidDocMetadata{
-				VersionId:   "test_version_id",
-				Deactivated: false,
 			},
 		},
 		{

@@ -21,6 +21,10 @@ func NewResolutionDidDocMetadata(did string, metadata did.Metadata, resources []
 		VersionId:   metadata.VersionId,
 	}
 
+	if len(resources) == 0 {
+		return newMetadata
+	}
+
 	newMetadata.Resources = NewDereferencedResourceList(did, resources).Resources
 	return newMetadata
 }
