@@ -47,7 +47,7 @@ func NewLedgerService() LedgerService {
 //	@Produce		application/did+ld+json,application/ld+json,application/did+json
 //	@Param			did			path		string	true	"Full DID with unique identifier"
 //	@Param			service		query		string	false	"Service Type"
-//	@Param			fragmentId	query		string	false	"# + Fragment ID"
+//	@Param			fragmentId	query		string	false	"#Fragment"
 //	@Success		200			{object}	types.DidResolution
 //	@Failure		400			{object}	types.IdentityError
 //	@Failure		404			{object}	types.IdentityError

@@ -54,7 +54,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "# + Fragment ID",
+                        "description": "#Fragment",
                         "name": "fragmentId",
                         "in": "query"
                     }

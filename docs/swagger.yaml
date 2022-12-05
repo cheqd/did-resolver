@@ -250,7 +250,7 @@ paths:
         in: query
         name: service
         type: string
-      - description: '# + Fragment ID'
+      - description: '#Fragment'
         in: query
         name: fragmentId
         type: string
