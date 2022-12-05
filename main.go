@@ -24,15 +24,15 @@ func printVersion(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-// @title Cheqd DID Resolver API
-// @version 1.0
-// @description Cheqd DID Resolver API for DID resolution and dereferencing.
+// @title DID Resolver for did:cheqd method
+// @version 1.x
+// @description Universal Resolver driver for did:cheqd method
 
-// @contact.name Cheqd
+// @contact.name Cheqd Foundation Limited
 // @contact.url https://cheqd.io
 
 // @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @license.url https://github.com/cheqd/did-resolver/blob/main/LICENSE
 func main() {
 	rootCmd := cmd.GetRootCmd()
 	rootCmd.AddCommand(getVersionCmd())
