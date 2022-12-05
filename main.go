@@ -25,7 +25,7 @@ func printVersion(cmd *cobra.Command, args []string) error {
 }
 
 // @title DID Resolver for did:cheqd method
-// @version 1.x
+// @version 1.0
 // @description Universal Resolver driver for did:cheqd method
 
 // @contact.name Cheqd Foundation Limited
