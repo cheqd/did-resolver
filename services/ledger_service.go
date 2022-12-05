@@ -38,6 +38,22 @@ func NewLedgerService() LedgerService {
 	return ls
 }
 
+// QueryDIDDoc godoc
+//
+//	@Summary		Resolve DID Document on did:cheqd
+//	@Description	Fetch DID Document ("DIDDoc") from cheqd network
+//	@Tags			DID Resolution
+//	@Accept			application/did+ld+json,application/ld+json,application/did+json
+//	@Produce		application/did+ld+json,application/ld+json,application/did+json
+//	@Param			did			path		string	true	"Full DID with unique identifier"
+//	@Param			service		query		string	false	"Service Type"
+//	@Param			fragmentId	query		string	false	"#Fragment"
+//	@Success		200			{object}	types.DidResolution
+//	@Failure		400			{object}	types.IdentityError
+//	@Failure		404			{object}	types.IdentityError
+//	@Failure		406			{object}	types.IdentityError
+//	@Failure		500			{object}	types.IdentityError
+//	@Router			/{did} [get]
 func (ls LedgerService) QueryDIDDoc(did string) (*cheqd.Did, *cheqd.Metadata, *types.IdentityError) {
 	method, namespace, _, _ := cheqdUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
@@ -63,6 +79,21 @@ func (ls LedgerService) QueryDIDDoc(did string) (*cheqd.Did, *cheqd.Metadata, *t
 	return didDocResponse.Did, didDocResponse.Metadata, nil
 }
 
+// QueryResource godoc
+//
+//	@Summary		Fetch specific Resource
+//	@Description	Get specific Resource within a DID Resource Collection
+//	@Tags			Resource Resolution
+//	@Accept			*/*
+//	@Produce		*/*
+//	@Param			did			path		string	true	"Full DID with unique identifier"
+//	@Param			resourceId	path		string	true	"Resource-specific unique-identifier"
+//	@Success		200			{object}	[]byte
+//	@Failure		400			{object}	types.IdentityError
+//	@Failure		404			{object}	types.IdentityError
+//	@Failure		406			{object}	types.IdentityError
+//	@Failure		500			{object}	types.IdentityError
+//	@Router			/{did}/resources/{resourceId} [get]
 func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.Resource, *types.IdentityError) {
 	method, namespace, collectionId, _ := cheqdUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
@@ -90,6 +121,20 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.
 	return resourceResponse.Resource, nil
 }
 
+// QueryCollectionResources godoc
+//
+//	@Summary		Fetch metadata for all Resources
+//	@Description	Get metadata for all Resources within a DID Resource Collection
+//	@Tags			Resource Resolution
+//	@Accept			application/did+ld+json,application/ld+json,application/did+json
+//	@Produce		application/did+ld+json,application/ld+json,application/did+json
+//	@Param			did	path		string	true	"Full DID with unique identifier"
+//	@Success		200	{object}	types.DidDereferencing
+//	@Failure		400	{object}	types.IdentityError
+//	@Failure		404	{object}	types.IdentityError
+//	@Failure		406	{object}	types.IdentityError
+//	@Failure		500	{object}	types.IdentityError
+//	@Router			/{did}/resources/all [get]
 func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, *types.IdentityError) {
 	method, namespace, collectionId, _ := cheqdUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]

@@ -6,10 +6,10 @@ import (
 )
 
 type ResolutionDidDocMetadata struct {
-	Created     string                 `json:"created,omitempty"`
-	Updated     string                 `json:"updated,omitempty"`
-	Deactivated bool                   `json:"deactivated,omitempty"`
-	VersionId   string                 `json:"versionId,omitempty"`
+	Created     string                 `json:"created,omitempty" example:"2021-09-01T12:00:00Z"`
+	Updated     string                 `json:"updated,omitempty" example:"2021-09-10T12:00:00Z"`
+	Deactivated bool                   `json:"deactivated,omitempty" example:"false"`
+	VersionId   string                 `json:"versionId,omitempty" example:"4979BAF49599FEF0BAD5ED0849FDD708156761EBBC8EBE78D0907F8BECC9CB2E"`
 	Resources   []DereferencedResource `json:"linkedResourceMetadata,omitempty"`
 }
 

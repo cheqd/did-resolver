@@ -11,6 +11,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 func getServeCmd() *cobra.Command {
@@ -61,6 +62,7 @@ func serve() {
 	requestService := services.NewRequestService(types.DID_METHOD, ledgerService)
 
 	// Routes
+	e.GET(types.SWAGGER_PATH, echoSwagger.WrapHandler)
 	e.GET(types.RESOLVER_PATH+":did", requestService.ResolveDIDDoc)
 	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource", requestService.DereferenceResourceData)
 	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource/metadata", requestService.DereferenceResourceMetadata)
