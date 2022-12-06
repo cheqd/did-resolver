@@ -2,6 +2,7 @@ package utils
 
 import (
 	"crypto/sha256"
+	"fmt"
 
 	didTypes "github.com/cheqd/cheqd-node/x/did/types"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
@@ -63,7 +64,7 @@ func ValidResource() resource.ResourceWithMetadata {
 			Name:         ValidResourceId,
 			ResourceType: "string",
 			MediaType:    "application/json",
-			Checksum:     checksum,
+			Checksum:     fmt.Sprintf("%x", checksum),
 		},
 	}
 }

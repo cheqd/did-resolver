@@ -23,7 +23,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 		Name:         "Existing Resource Name",
 		ResourceType: "CL-Schema",
 		MediaType:    "application/json",
-		Checksum:     h.Sum(nil),
+		Checksum:     fmt.Sprintf("%x", h.Sum(nil)),
 	}
 
 	validMetadataResource := DereferencedResource{
@@ -34,7 +34,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 		ResourceType:      resourceMetadata.ResourceType,
 		MediaType:         resourceMetadata.MediaType,
 		Created:           resourceMetadata.Created,
-		Checksum:          fmt.Sprintf("%x", resourceMetadata.Checksum),
+		Checksum:          resourceMetadata.Checksum,
 		PreviousVersionId: nil,
 		NextVersionId:     nil,
 	}

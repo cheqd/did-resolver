@@ -5,11 +5,11 @@ import (
 )
 
 type DidDoc struct {
-	Context              []string             `json:"@context,omitempty"`
-	Id                   string               `json:"id,omitempty"`
-	Controller           []string             `json:"controller,omitempty"`
+	Context              []string             `json:"@context,omitempty" example:"https://www.w3.org/ns/did/v1"`
+	Id                   string               `json:"id,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47"`
+	Controller           []string             `json:"controller,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47"`
 	VerificationMethod   []VerificationMethod `json:"verificationMethod,omitempty"`
-	Authentication       []string             `json:"authentication,omitempty"`
+	Authentication       []string             `json:"authentication,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#key-1"`
 	AssertionMethod      []string             `json:"assertionMethod,omitempty"`
 	CapabilityInvocation []string             `json:"capabilityInvocation,omitempty"`
 	CapabilityDelegation []string             `json:"capability_delegation,omitempty"`
@@ -28,9 +28,9 @@ type VerificationMethod struct {
 
 type Service struct {
 	Context         []string `json:"@context,omitempty"`
-	Id              string   `json:"id,omitempty"`
-	Type            string   `json:"type,omitempty"`
-	ServiceEndpoint []string `json:"serviceEndpoint,omitempty"`
+	Id              string   `json:"id,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#service-1"`
+	Type            string   `json:"type,omitempty" example:"did-communication"`
+	ServiceEndpoint []string `json:"serviceEndpoint,omitempty" example:"https://example.com/endpoint/8377464"`
 }
 
 func NewDidDoc(protoDidDoc did.DidDoc) DidDoc {

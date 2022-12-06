@@ -62,7 +62,6 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 	return result, nil
 }
 
-// https://w3c-ccg.github.io/did-resolution/#resolving
 func (dds DIDDocService) Resolve(did string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {
 	if !contentType.IsSupported() {
 		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, false)
@@ -98,7 +97,6 @@ func (dds DIDDocService) Resolve(did string, contentType types.ContentType) (*ty
 	return &result, nil
 }
 
-// https://w3c-ccg.github.io/did-resolution/#dereferencing
 func (dds DIDDocService) dereferenceSecondary(did string, fragmentId string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
 	didResolution, err := dds.Resolve(did, contentType)
 	if err != nil {
