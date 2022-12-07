@@ -72,21 +72,21 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 	log.Info().Msgf("Querying did doc: %s", did)
 	client := didTypes.NewQueryClient(conn)
 
-	// if versionId == "" {
-	didDocResponse, err := client.DidDoc(context.Background(), &didTypes.QueryGetDidDocRequest{Id: did})
-	if err != nil {
-		return nil, types.NewNotFoundError(did, types.JSON, err, false)
+	if version == "" {
+		didDocResponse, err := client.DidDoc(context.Background(), &didTypes.QueryGetDidDocRequest{Id: did})
+		if err != nil {
+			return nil, types.NewNotFoundError(did, types.JSON, err, false)
+		}
+
+		return didDocResponse.Value, nil
+	} else {
+		didDocResponse, err := client.DidDocVersion(context.Background(), &didTypes.QueryGetDidDocVersionRequest{Id: did, Version: version})
+		if err != nil {
+			return nil, types.NewNotFoundError(did, types.JSON, err, false)
+		}
+
+		return didDocResponse.Value, nil
 	}
-
-	return didDocResponse.Value, nil
-	// } else {
-	// 	didDocResponse, err := client.DidDocVersion(context.Background(), &didTypes.QueryGetDidDocVersionRequest{Id: did, Version: versionId})
-	// 	if err != nil {
-	// 		return nil, types.NewNotFoundError(did, types.JSON, err, false)
-	// 	}
-
-	// 	return didDocResponse.Value, nil
-	// }
 }
 
 // QueryResource godoc

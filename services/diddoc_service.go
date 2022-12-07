@@ -6,7 +6,10 @@ import (
 
 	didTypes "github.com/cheqd/cheqd-node/x/did/types"
 	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
+	"github.com/google/uuid"
+
 	"github.com/cheqd/did-resolver/types"
+	"github.com/cheqd/did-resolver/utils"
 	"github.com/rs/zerolog/log"
 )
 
@@ -76,17 +79,34 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 	}
 	didResolutionMetadata := types.NewResolutionMetadata(did, contentType, "")
 
-	if didMethod, _, _, _ := didUtils.TrySplitDID(did); didMethod != dds.didMethod {
+	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+
+	if didMethod != dds.didMethod {
 		return nil, types.NewMethodNotSupportedError(did, contentType, nil, false)
 	}
+
 	if !didUtils.IsValidDID(did, "", dds.ledgerService.GetNamespaces()) {
-		return nil, types.NewInvalidDIDError(did, contentType, nil, false)
+		if utils.IsValidV1ID(identifier) {
+			did = utils.MigrateIndyStyleDid(did)
+		} else {
+			return nil, types.NewInvalidDIDError(did, contentType, nil, false)
+		}
 	}
 
 	protoDidDocWithMetadata, err := dds.ledgerService.QueryDIDDoc(did, version)
 	if err != nil {
-		err.ContentType = contentType
-		return nil, err
+		_, parsingerr := uuid.Parse(identifier)
+		if parsingerr == nil {
+			did = utils.MigrateUUIDDid(did)
+			protoDidDocWithMetadata, err = dds.ledgerService.QueryDIDDoc(did, version)
+			if err != nil {
+				err.ContentType = contentType
+				return nil, err
+			}
+		} else {
+			err.ContentType = contentType
+			return nil, err
+		}
 	}
 
 	resolvedMetadata, mErr := dds.resolveMetadata(did, *protoDidDocWithMetadata.Metadata, contentType)
