@@ -1,6 +1,8 @@
 package types
 
 import (
+	"encoding/json"
+
 	did "github.com/cheqd/cheqd-node/x/did/types"
 )
 
@@ -19,11 +21,17 @@ type DidDoc struct {
 }
 
 type VerificationMethod struct {
-	Context              []string `json:"@context,omitempty"`
-	Id                   string   `json:"id,omitempty"`
-	Type                 string   `json:"type,omitempty"`
-	Controller           string   `json:"controller,omitempty"`
-	VerificationMaterial string   `json:"verificationMaterial,omitempty"`
+	Context            []string          `json:"@context,omitempty"`
+	Id                 string            `json:"id,omitempty"`
+	Type               string            `json:"type,omitempty"`
+	Controller         string            `json:"controller,omitempty"`
+	PublicKeyJwk       map[string]string `json:"publicKeyJwk,omitempty"`
+	PublicKeyMultibase string            `json:"publicKeyMultibase,omitempty"`
+}
+
+type VerificationMaterial struct {
+	PublicKeyJwk       map[string]string `json:"publicKeyJwk,omitempty"`
+	PublicKeyMultibase string            `json:"publicKeyMultibase,omitempty"`
 }
 
 type Service struct {
@@ -59,11 +67,19 @@ func NewDidDoc(protoDidDoc did.DidDoc) DidDoc {
 }
 
 func NewVerificationMethod(protoVerificationMethod *did.VerificationMethod) *VerificationMethod {
+	var verificationMaterial *VerificationMaterial
+	err := json.Unmarshal([]byte(protoVerificationMethod.VerificationMaterial), &verificationMaterial)
+	if err != nil {
+		println("Invalid verification material !!!")
+		panic(err)
+	}
+
 	return &VerificationMethod{
-		Id:                   protoVerificationMethod.Id,
-		Type:                 protoVerificationMethod.Type,
-		Controller:           protoVerificationMethod.Controller,
-		VerificationMaterial: protoVerificationMethod.VerificationMaterial,
+		Id:                 protoVerificationMethod.Id,
+		Type:               protoVerificationMethod.Type,
+		Controller:         protoVerificationMethod.Controller,
+		PublicKeyJwk:       verificationMaterial.PublicKeyJwk,
+		PublicKeyMultibase: verificationMaterial.PublicKeyMultibase,
 	}
 }
 

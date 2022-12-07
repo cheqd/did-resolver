@@ -19,10 +19,10 @@ func LoadConfig() (types.Config, error) {
 			return types.Config{}, fmt.Errorf("error reading config.env: %v", err)
 		}
 	}
-	viper.SetDefault("MAINNET_ENDPOINT", "localhost:9090,false,5s")
-	viper.SetDefault("TESTNET_ENDPOINT", "localhost:9090,false,5s")
-	viper.SetDefault("LOG_LEVEL", "debug")
-	viper.SetDefault("RESOLVER_LISTNER", "0.0.0.0:8080")
+	viper.SetDefault("MAINNET_ENDPOINT", "")
+	viper.SetDefault("TESTNET_ENDPOINT", "")
+	viper.SetDefault("LOG_LEVEL", "")
+	viper.SetDefault("RESOLVER_LISTNER", "")
 	viper.AutomaticEnv()
 
 	rawConf := &types.RawConfig{}
