@@ -43,15 +43,23 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 	var err *types.IdentityError
 	var isDereferencing bool
 
-	if len(queries) > 0 || flag != nil {
+	version := ""
+	if len(queries) > 0 {
+		version = queries.Get("versionId")
+		if version == "" {
+			return nil, types.NewRepresentationNotSupportedError(did, contentType, nil, true)
+		}
+	}
+
+	if flag != nil {
 		return nil, types.NewRepresentationNotSupportedError(did, contentType, nil, true)
 	} else if fragmentId != "" {
 		log.Trace().Msgf("Dereferencing %s, %s, %s", did, fragmentId, queries)
-		result, err = dds.dereferenceSecondary(did, fragmentId, contentType)
+		result, err = dds.dereferenceSecondary(did, version, fragmentId, contentType)
 		isDereferencing = true
 	} else {
 		log.Trace().Msgf("Resolving %s", did)
-		result, err = dds.Resolve(did, contentType)
+		result, err = dds.Resolve(did, version, contentType)
 		isDereferencing = false
 	}
 
@@ -62,7 +70,7 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 	return result, nil
 }
 
-func (dds DIDDocService) Resolve(did string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {
+func (dds DIDDocService) Resolve(did string, version string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {
 	if !contentType.IsSupported() {
 		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, false)
 	}
@@ -75,7 +83,7 @@ func (dds DIDDocService) Resolve(did string, contentType types.ContentType) (*ty
 		return nil, types.NewInvalidDIDError(did, contentType, nil, false)
 	}
 
-	protoDidDocWithMetadata, err := dds.ledgerService.QueryDIDDoc(did)
+	protoDidDocWithMetadata, err := dds.ledgerService.QueryDIDDoc(did, version)
 	if err != nil {
 		err.ContentType = contentType
 		return nil, err
@@ -97,8 +105,8 @@ func (dds DIDDocService) Resolve(did string, contentType types.ContentType) (*ty
 	return &result, nil
 }
 
-func (dds DIDDocService) dereferenceSecondary(did string, fragmentId string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
-	didResolution, err := dds.Resolve(did, contentType)
+func (dds DIDDocService) dereferenceSecondary(did string, version string, fragmentId string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
+	didResolution, err := dds.Resolve(did, version, contentType)
 	if err != nil {
 		err.IsDereferencing = true
 		return nil, err

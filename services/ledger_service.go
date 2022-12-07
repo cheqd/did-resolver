@@ -22,7 +22,7 @@ const (
 )
 
 type LedgerServiceI interface {
-	QueryDIDDoc(did string) (*didTypes.DidDocWithMetadata, *types.IdentityError)
+	QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError)
 	QueryResource(collectionDid string, resourceId string) (*resource.ResourceWithMetadata, *types.IdentityError)
 	QueryCollectionResources(did string) ([]*resource.Metadata, *types.IdentityError)
 	GetNamespaces() []string
@@ -54,7 +54,7 @@ func NewLedgerService() LedgerService {
 //	@Failure		406			{object}	types.IdentityError
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did} [get]
-func (ls LedgerService) QueryDIDDoc(did string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
+func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
 	method, namespace, _, _ := didUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
@@ -71,12 +71,22 @@ func (ls LedgerService) QueryDIDDoc(did string) (*didTypes.DidDocWithMetadata, *
 
 	log.Info().Msgf("Querying did doc: %s", did)
 	client := didTypes.NewQueryClient(conn)
+
+	// if versionId == "" {
 	didDocResponse, err := client.DidDoc(context.Background(), &didTypes.QueryGetDidDocRequest{Id: did})
 	if err != nil {
 		return nil, types.NewNotFoundError(did, types.JSON, err, false)
 	}
 
 	return didDocResponse.Value, nil
+	// } else {
+	// 	didDocResponse, err := client.DidDocVersion(context.Background(), &didTypes.QueryGetDidDocVersionRequest{Id: did, Version: versionId})
+	// 	if err != nil {
+	// 		return nil, types.NewNotFoundError(did, types.JSON, err, false)
+	// 	}
+
+	// 	return didDocResponse.Value, nil
+	// }
 }
 
 // QueryResource godoc

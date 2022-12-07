@@ -87,7 +87,7 @@ func NewMockLedgerService(did didTypes.DidDoc, metadata didTypes.Metadata, resou
 	}
 }
 
-func (ls MockLedgerService) QueryDIDDoc(did string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
+func (ls MockLedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
 	if did == ls.Did.Id {
 		println("query !!!" + ls.Did.Id)
 		return &didTypes.DidDocWithMetadata{DidDoc: &ls.Did, Metadata: &ls.Metadata}, nil
@@ -103,7 +103,10 @@ func (ls MockLedgerService) QueryResource(did string, resourceId string) (*resou
 }
 
 func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resource.Metadata, *types.IdentityError) {
-	return []*resource.Metadata{}, types.NewNotFoundError(did, types.JSON, nil, true)
+	if ls.Resource.Metadata == nil {
+		return []*resource.Metadata{}, types.NewNotFoundError(did, types.JSON, nil, true)
+	}
+	return []*resource.Metadata{ls.Resource.Metadata}, nil
 }
 
 func (ls MockLedgerService) GetNamespaces() []string {

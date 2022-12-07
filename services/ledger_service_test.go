@@ -29,7 +29,7 @@ func TestQueryDIDDoc(t *testing.T) {
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
 			ledgerService := NewLedgerService()
-			didDocWithMetadata, err := ledgerService.QueryDIDDoc("fake did")
+			didDocWithMetadata, err := ledgerService.QueryDIDDoc("fake did", "")
 			require.EqualValues(t, subtest.expectedDidDocWithMetada, didDocWithMetadata)
 			require.EqualValues(t, subtest.expectedError.Error(), err.Error())
 		})
