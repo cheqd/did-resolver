@@ -21,17 +21,17 @@ type DidDoc struct {
 }
 
 type VerificationMethod struct {
-	Context            []string          `json:"@context,omitempty"`
-	Id                 string            `json:"id,omitempty"`
-	Type               string            `json:"type,omitempty"`
-	Controller         string            `json:"controller,omitempty"`
-	PublicKeyJwk       map[string]string `json:"publicKeyJwk,omitempty"`
-	PublicKeyMultibase string            `json:"publicKeyMultibase,omitempty"`
+	Context            []string    `json:"@context,omitempty"`
+	Id                 string      `json:"id,omitempty"`
+	Type               string      `json:"type,omitempty"`
+	Controller         string      `json:"controller,omitempty"`
+	PublicKeyJwk       interface{} `json:"publicKeyJwk,omitempty"`
+	PublicKeyMultibase string      `json:"publicKeyMultibase,omitempty"`
 }
 
 type VerificationMaterial struct {
-	PublicKeyJwk       map[string]string `json:"publicKeyJwk,omitempty"`
-	PublicKeyMultibase string            `json:"publicKeyMultibase,omitempty"`
+	PublicKeyJwk       interface{} `json:"publicKeyJwk,omitempty"`
+	PublicKeyMultibase string      `json:"publicKeyMultibase,omitempty"`
 }
 
 type Service struct {
