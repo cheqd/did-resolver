@@ -3,7 +3,7 @@ module github.com/cheqd/did-resolver
 go 1.18
 
 require (
-	github.com/cheqd/cheqd-node v1.0.0
+	github.com/cheqd/cheqd-node v1.0.3
 	github.com/labstack/echo/v4 v4.9.1
 	github.com/mr-tron/base58 v1.2.0
 	github.com/rs/zerolog v1.28.0
@@ -111,7 +111,7 @@ require (
 	go.etcd.io/bbolt v1.3.6 // indirect
 	golang.org/x/crypto v0.1.0 // indirect
 	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
-	golang.org/x/net v0.1.0 // indirect
+	golang.org/x/net v0.2.0 // indirect
 	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/time v0.0.0-20220609170525-579cf78fd858 // indirect
