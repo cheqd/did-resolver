@@ -13,4 +13,4 @@ services:
         mode: host
     restart: on-failure
     env_file:
-      - ../../docker/container.env
+      - container-test.env
