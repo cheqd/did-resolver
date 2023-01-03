@@ -1,0 +1,33 @@
+{
+    "payload": {
+        "context": [],
+        "id": "did:cheqd:testnet:76471e8c-0d1c-4b97-9b11-17b65e024333",
+        "controller": [
+          "did:cheqd:testnet:76471e8c-0d1c-4b97-9b11-17b65e024333"
+        ],
+        "verificationMethod": [
+          {
+            "id": "did:cheqd:testnet:76471e8c-0d1c-4b97-9b11-17b65e024333#key-1",
+            "type": "Ed25519VerificationKey2020",
+            "controller": "did:cheqd:testnet:76471e8c-0d1c-4b97-9b11-17b65e024333",
+            "verificationMaterial": "{\"publicKeyMultibase\":\"z8mKMLKbEn3eKAeCa9h7bgDWGW1eRsYLB431UuBk6819C\"}"
+          }
+        ],
+        "authentication": [
+          "did:cheqd:testnet:76471e8c-0d1c-4b97-9b11-17b65e024333#key-1"
+        ],
+        "assertionMethod": [],
+        "capabilityInvocation": [],
+        "capabilityDelegation": [],
+        "keyAgreement": [],
+        "alsoKnownAs": [],
+        "service": [],
+        "versionId": "58d258b0-2965-4444-83f7-81c551104f16"
+      },
+      "signInputs": [
+        {
+            "verificationMethodId": "did:cheqd:testnet:76471e8c-0d1c-4b97-9b11-17b65e024333#key-1",
+            "privKey": "DaOAdvf0ZOvhBJa8ZUzYad2zkjBXbXBnBpY1EbjUeMdzXBz2xZXseKoSqKAmplaZ7txlMZdr3bDMg64VhHxXow=="
+          }
+      ]
+}

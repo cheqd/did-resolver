@@ -24,7 +24,7 @@ jobs:
 
   integration-tests:
     name: "Integration Tests"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       IMAGE_NAME: ${{ github.repository }}
       RUNNER_BIN_DIR: /home/runner/.local/bin
@@ -73,9 +73,13 @@ jobs:
 
       - name: Import keys
         working-directory: ./tests/docker/cheqd-node/localnet
-        run: |
-          bash import-keys.sh
+        run: bash import-keys.sh
 
+      - name: Publish test data
+        working-directory: ./tests/docker/cheqd-node/scripts
+        run: |
+          bash generate.sh
+          
       - name: Run tests
         working-directory: ./tests/pytest
         run: |
