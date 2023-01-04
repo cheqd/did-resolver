@@ -73,7 +73,8 @@ jobs:
 
       - name: Import keys
         working-directory: ./tests/docker/cheqd-node/localnet
-        run: bash import-keys.sh
+        run: |
+          bash import-keys.sh
 
       - name: Publish test data
         working-directory: ./tests/docker/cheqd-node/scripts
