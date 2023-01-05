@@ -7,7 +7,7 @@ import json
 RESOLVER_URL = "http://localhost:8080"
 PATH = "/1.0/identifiers/"
 
-TESTNET_DID = "did:cheqd:testnet:76471e8c-0d1c-4b97-9b11-17b65e024333"
+TESTNET_DID = "did:cheqd:testnet:305b4368-87ee-4690-874e-52f628dbd902"
 TESTNET_FRAGMENT = TESTNET_DID + "#key1"
 FAKE_TESTNET_DID = "did:cheqd:testnet:76471e8c-0d1c-4b97-9b11-17b65e024133"
 TESTNET_RESOURCE = TESTNET_DID + "/resources/44547089-170b-4f5a-bcbc-06e46e0089e4"
