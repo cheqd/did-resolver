@@ -69,7 +69,7 @@ jobs:
       - name: Set up Docker localnet
         working-directory: ./tests/docker/cheqd-node/localnet
         run: |
-          docker compose --env-file build-latest.env up
+          docker compose --env-file build-latest.env up -d
 
       - name: Import keys
         working-directory: ./tests/docker/cheqd-node/localnet
