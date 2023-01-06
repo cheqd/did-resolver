@@ -31,16 +31,16 @@ function configure_node() {
   APP_TOML="${NODE_HOME}/config/app.toml"
   CONFIG_TOML="${NODE_HOME}/config/config.toml"
 
-  sed 's/minimum-gas-prices = ""/minimum-gas-prices = "25ncheq"/g' "${APP_TOML}"
-  sed 's/enable = false/enable = true/g' "${APP_TOML}"
+  sed -i  's/minimum-gas-prices = ""/minimum-gas-prices = "25ncheq"/g' "${APP_TOML}"
+  sed -i  's/enable = false/enable = true/g' "${APP_TOML}"
 
-  sed 's|laddr = "tcp://127.0.0.1:26657"|laddr = "tcp://0.0.0.0:26657"|g' "${CONFIG_TOML}"
-  sed 's|addr_book_strict = true|addr_book_strict = false|g' "${CONFIG_TOML}"
+  sed -i  's|laddr = "tcp://127.0.0.1:26657"|laddr = "tcp://0.0.0.0:26657"|g' "${CONFIG_TOML}"
+  sed -i  's|addr_book_strict = true|addr_book_strict = false|g' "${CONFIG_TOML}"
 
-  sed 's/timeout_propose = "3s"/timeout_propose = "500ms"/g' "${CONFIG_TOML}"
-  sed 's/timeout_prevote = "1s"/timeout_prevote = "500ms"/g' "${CONFIG_TOML}"
-  sed 's/timeout_precommit = "1s"/timeout_precommit = "500ms"/g' "${CONFIG_TOML}"
-  sed 's/timeout_commit = "5s"/timeout_commit = "500ms"/g' "${CONFIG_TOML}"
+  sed -i  's/timeout_propose = "3s"/timeout_propose = "500ms"/g' "${CONFIG_TOML}"
+  sed -i  's/timeout_prevote = "1s"/timeout_prevote = "500ms"/g' "${CONFIG_TOML}"
+  sed -i  's/timeout_precommit = "1s"/timeout_precommit = "500ms"/g' "${CONFIG_TOML}"
+  sed -i  's/timeout_commit = "5s"/timeout_commit = "500ms"/g' "${CONFIG_TOML}"
 }
 
 function configure_genesis() {
@@ -53,10 +53,10 @@ function configure_genesis() {
   GENESIS_TMP="${NODE_HOME}/config/genesis_tmp.json"
 
   # Default denom
-  sed 's/"stake"/"ncheq"/' "${GENESIS}"
+  sed -i  's/"stake"/"ncheq"/' "${GENESIS}"
 
   # Short voting period
-  sed 's/"voting_period": "172800s"/"voting_period": "12s"/' "${GENESIS}"
+  sed -i  's/"voting_period": "172800s"/"voting_period": "12s"/' "${GENESIS}"
 
   # Test accounts
   BASE_ACCOUNT_1="cheqd1rnr5jrt4exl0samwj0yegv99jeskl0hsxmcz96"
