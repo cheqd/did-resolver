@@ -28,7 +28,8 @@ jobs:
     env:
       IMAGE_NAME: ${{ github.repository }}
       RUNNER_BIN_DIR: /home/runner/.local/bin
-
+      CHEQD_NODE_VERSION: cut -c2- <<< $(jq -r 'map(select(.prerelease)) | first | .tag_name ' <<< $(curl --silent https://api.github.com/repos/cheqd/cheqd-node/releases))
+      BUILD_IMAGE: ghcr.io/cheqd/cheqd-node:${{ env.CHEQD_NODE_VERSION }}
     steps:
       - uses: actions/checkout@v3
 
@@ -53,8 +54,8 @@ jobs:
       - name: Download binary artifact
         run: |
           mkdir -p ${{ env.RUNNER_BIN_DIR }}
-          wget -c https://github.com/cheqd/cheqd-node/releases/download/v1.0.4-develop.1/cheqd-noded-1.0.4-develop.1-Linux-x86_64.tar.gz
-          tar -xvf cheqd-noded-1.0.4-develop.1-Linux-x86_64.tar.gz -C ${{ env.RUNNER_BIN_DIR }}
+          wget -c https://github.com/cheqd/cheqd-node/releases/download/v${{ env.CHEQD_NODE_VERSION }}/cheqd-noded-${{ env.CHEQD_NODE_VERSION }}-Linux-x86_64.tar.gz
+          tar -xvf cheqd-noded-${{ env.CHEQD_NODE_VERSION }}-Linux-x86_64.tar.gz -C ${{ env.RUNNER_BIN_DIR }}
           sudo chmod +x ${{ env.RUNNER_BIN_DIR }}/cheqd-noded
 
       - name: Restore binary permissions
@@ -69,7 +70,7 @@ jobs:
       - name: Set up Docker localnet
         working-directory: ./tests/docker/cheqd-node/localnet
         run: |
-          docker compose --env-file build-latest.env up -d
+          docker compose up -d
 
       - name: Import keys
         working-directory: ./tests/docker/cheqd-node/localnet
