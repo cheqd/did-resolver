@@ -25,17 +25,17 @@ const (
 
 func ValidVerificationMethod() didTypes.VerificationMethod {
 	return didTypes.VerificationMethod{
-		Id:                   ValidDid + "#key-1",
-		Type:                 "JsonWebKey2020",
-		Controller:           ValidDid,
-		VerificationMaterial: ValidPubKeyJWK,
+		Id:                     ValidDid + "#key-1",
+		VerificationMethodType: "JsonWebKey2020",
+		Controller:             ValidDid,
+		VerificationMaterial:   ValidPubKeyJWK,
 	}
 }
 
 func ValidService() didTypes.Service {
 	return didTypes.Service{
 		Id:              ValidDid + "#service-1",
-		Type:            "DIDCommMessaging",
+		ServiceType:     "DIDCommMessaging",
 		ServiceEndpoint: []string{"http://example.com"},
 	}
 }
