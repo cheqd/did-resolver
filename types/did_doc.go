@@ -27,12 +27,10 @@ type VerificationMethod struct {
 	Controller         string      `json:"controller,omitempty"`
 	PublicKeyJwk       interface{} `json:"publicKeyJwk,omitempty"`
 	PublicKeyMultibase string      `json:"publicKeyMultibase,omitempty"`
+	PublicKeyBase58    string      `json:"publicKeyBase58,omitempty"`
 }
 
-type VerificationMaterial struct {
-	PublicKeyJwk       interface{} `json:"publicKeyJwk,omitempty"`
-	PublicKeyMultibase string      `json:"publicKeyMultibase,omitempty"`
-}
+type VerificationMaterial interface{}
 
 type Service struct {
 	Context         []string `json:"@context,omitempty"`
@@ -67,20 +65,28 @@ func NewDidDoc(protoDidDoc did.DidDoc) DidDoc {
 }
 
 func NewVerificationMethod(protoVerificationMethod *did.VerificationMethod) *VerificationMethod {
-	var verificationMaterial *VerificationMaterial
-	err := json.Unmarshal([]byte(protoVerificationMethod.VerificationMaterial), &verificationMaterial)
-	if err != nil {
-		println("Invalid verification material !!!")
-		panic(err)
+	verificationMethod := &VerificationMethod{
+		Id:         protoVerificationMethod.Id,
+		Type:       protoVerificationMethod.VerificationMethodType,
+		Controller: protoVerificationMethod.Controller,
 	}
 
-	return &VerificationMethod{
-		Id:                 protoVerificationMethod.Id,
-		Type:               protoVerificationMethod.VerificationMethodType,
-		Controller:         protoVerificationMethod.Controller,
-		PublicKeyJwk:       verificationMaterial.PublicKeyJwk,
-		PublicKeyMultibase: verificationMaterial.PublicKeyMultibase,
+	switch protoVerificationMethod.VerificationMethodType {
+	case "Ed25519VerificationKey2020":
+		verificationMethod.PublicKeyMultibase = protoVerificationMethod.VerificationMaterial
+	case "Ed25519VerificationKey2018":
+		verificationMethod.PublicKeyBase58 = protoVerificationMethod.VerificationMaterial
+	case "JsonWebKey2020":
+		var publicKeyJwk interface{}
+		err := json.Unmarshal([]byte(protoVerificationMethod.VerificationMaterial), &publicKeyJwk)
+		if err != nil {
+			println("Invalid verification material !!!")
+			panic(err)
+		}
+		verificationMethod.PublicKeyJwk = publicKeyJwk
 	}
+
+	return verificationMethod
 }
 
 func NewService(protoService *did.Service) *Service {
