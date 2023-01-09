@@ -8,9 +8,9 @@
       "verificationMethod": [
         {
           "id": "did:cheqd:testnet:305b4368-87ee-4690-874e-52f628dbd902#key-1",
-          "type": "Ed25519VerificationKey2020",
+          "verificationMethodType": "Ed25519VerificationKey2020",
           "controller": "did:cheqd:testnet:305b4368-87ee-4690-874e-52f628dbd902",
-          "verificationMaterial": "{\"publicKeyMultibase\":\"z8mKMLKbEn3eKAeCa9h7bgDWGW1eRsYLB431UuBk6819C\"}"
+          "verificationMaterial": "z8mKMLKbEn3eKAeCa9h7bgDWGW1eRsYLB431UuBk6819C"
         }
       ],
       "authentication": [
