@@ -76,7 +76,7 @@ func NewVerificationMethod(protoVerificationMethod *did.VerificationMethod) *Ver
 
 	return &VerificationMethod{
 		Id:                 protoVerificationMethod.Id,
-		Type:               protoVerificationMethod.Type,
+		Type:               protoVerificationMethod.VerificationMethodType,
 		Controller:         protoVerificationMethod.Controller,
 		PublicKeyJwk:       verificationMaterial.PublicKeyJwk,
 		PublicKeyMultibase: verificationMaterial.PublicKeyMultibase,
@@ -86,7 +86,7 @@ func NewVerificationMethod(protoVerificationMethod *did.VerificationMethod) *Ver
 func NewService(protoService *did.Service) *Service {
 	return &Service{
 		Id:              protoService.Id,
-		Type:            protoService.Type,
+		Type:            protoService.ServiceType,
 		ServiceEndpoint: protoService.ServiceEndpoint,
 	}
 }
