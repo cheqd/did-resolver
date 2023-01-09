@@ -10,7 +10,7 @@
           "id": "did:cheqd:testnet:305b4368-87ee-4690-874e-52f628dbd902#key-1",
           "verificationMethodType": "Ed25519VerificationKey2020",
           "controller": "did:cheqd:testnet:305b4368-87ee-4690-874e-52f628dbd902",
-          "verificationMaterial": "z8mKMLKbEn3eKAeCa9h7bgDWGW1eRsYLB431UuBk6819C"
+          "verificationMaterial": "z6MknJes8wdLGWUiuFXkXqqrgJvk6ngLK9o9aGaA8eEV1eK8"
         }
       ],
       "authentication": [
@@ -27,7 +27,7 @@
     "signInputs": [
       {
           "verificationMethodId": "did:cheqd:testnet:305b4368-87ee-4690-874e-52f628dbd902#key-1",
-          "privKey": "DaOAdvf0ZOvhBJa8ZUzYad2zkjBXbXBnBpY1EbjUeMdzXBz2xZXseKoSqKAmplaZ7txlMZdr3bDMg64VhHxXow=="
+          "privKey": "zbGjoztHy44TrGPdohadUbsCKPIUdvaCR7FlaAWQdTN0qRINudm7wlh7W2m+C1Nu1OR+DEx7a8p+nUQnvjQo7w=="
         }
     ]
 }
