@@ -1,15 +1,15 @@
 {
     "payload": {
-        "collectionId": "76471e8c-0d1c-4b97-9b11-17b65e024333",
-        "id": "44547089-170b-4f5a-bcbc-06e46e0089e4",
-        "name": "TestResource",
-        "resourceType": "TextDocument",
-        "data": "InsgXCJjb250ZW50XCI6IFwidGVzdCBkYXRhXCIgfSI="
+        "collection_id": "76471e8c-0d1c-4b97-9b11-17b65e024333",
+        "resource_id": "44547089-170b-4f5a-bcbc-06e46e0089e4",
+        "resource_name": "TestResource",
+        "resource_type": "TextDocument",
+        "resource_file": "resource.txt"
     },
     "signInputs": [
-      {
-          "verificationMethodId": "did:cheqd:testnet:76471e8c-0d1c-4b97-9b11-17b65e024333#key-1",
-          "privKey": "DaOAdvf0ZOvhBJa8ZUzYad2zkjBXbXBnBpY1EbjUeMdzXBz2xZXseKoSqKAmplaZ7txlMZdr3bDMg64VhHxXow=="
-        }
+        {
+            "verificationMethodId": "did:cheqd:testnet:305b4368-87ee-4690-874e-52f628dbd902#key-1",
+            "privKey": "zbGjoztHy44TrGPdohadUbsCKPIUdvaCR7FlaAWQdTN0qRINudm7wlh7W2m+C1Nu1OR+DEx7a8p+nUQnvjQo7w=="
+          }
     ]
 }

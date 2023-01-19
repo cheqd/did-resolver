@@ -83,6 +83,7 @@ jobs:
       - name: Publish test data
         working-directory: ./tests/docker/cheqd-node/scripts
         run: |
+          sleep 2m
           bash generate.sh
           
       - name: Run tests
