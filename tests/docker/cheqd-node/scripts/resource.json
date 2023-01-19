@@ -1,8 +1,8 @@
 {
     "payload": {
-        "collection_id": "76471e8c-0d1c-4b97-9b11-17b65e024333",
+        "collection_id": "305b4368-87ee-4690-874e-52f628dbd902",
         "resource_id": "44547089-170b-4f5a-bcbc-06e46e0089e4",
-        "resource_name": "TestResource",
+        "resource_name": "Demo Resource",
         "resource_type": "TextDocument",
         "resource_file": "resource.txt"
     },
