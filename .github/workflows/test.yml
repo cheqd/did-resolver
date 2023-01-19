@@ -40,9 +40,6 @@ jobs:
       - name: Load Docker image
         run: docker image load --input did-resolver-build.tar
 
-      - name: Set up Docker container for test
-        run: docker-compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up -d --no-build
-
       - name: Setup Python environment
         working-directory: ./tests/pytest
         run: |
@@ -73,7 +70,7 @@ jobs:
           CHEQD_NODE_VERSION="$(cut -c2- <<< "$(jq -r 'map(select(.prerelease)) | first | .tag_name' <<< "$(curl --silent https://api.github.com/repos/cheqd/cheqd-node/releases)")")"
           BUILD_IMAGE="ghcr.io/cheqd/cheqd-node:$CHEQD_NODE_VERSION"
           export BUILD_IMAGE
-          docker compose up --detach
+          docker compose --env-file build-latest.env up --detach
 
       - name: Import keys
         working-directory: ./tests/docker/cheqd-node/localnet
