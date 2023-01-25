@@ -7,10 +7,10 @@ import json
 RESOLVER_URL = "http://localhost:8080"
 PATH = "/1.0/identifiers/"
 
-TESTNET_DID = "did:cheqd:testnet:76471e8c-0d1c-4b97-9b11-17b65e024333"
-TESTNET_FRAGMENT = TESTNET_DID + "#key1"
+TESTNET_DID = "did:cheqd:testnet:c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0"
+TESTNET_FRAGMENT = TESTNET_DID + "#key-1"
 FAKE_TESTNET_DID = "did:cheqd:testnet:76471e8c-0d1c-4b97-9b11-17b65e024133"
-TESTNET_RESOURCE = TESTNET_DID + "/resources/44547089-170b-4f5a-bcbc-06e46e0089e4"
+TESTNET_RESOURCE = TESTNET_DID + "/resources/9ba3922e-d5f5-4f53-b265-fc0d4e988c77"
 TESTNET_RESOURCE_METADATA = TESTNET_RESOURCE + "/metadata"
 TESTNET_RESOURCE_LIST = TESTNET_DID + "/resources/all"
 TESTNET_RESOURCE_LIST_REDIRECT = TESTNET_DID + "/resources/"

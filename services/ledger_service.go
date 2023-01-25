@@ -74,14 +74,14 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 	client := didTypes.NewQueryClient(conn)
 
 	if version == "" {
-		didDocResponse, err := client.DidDoc(context.Background(), &didTypes.QueryGetDidDocRequest{Id: did})
+		didDocResponse, err := client.DidDoc(context.Background(), &didTypes.QueryDidDocRequest{Id: did})
 		if err != nil {
 			return nil, types.NewNotFoundError(did, types.JSON, err, false)
 		}
 
 		return didDocResponse.Value, nil
 	} else {
-		didDocResponse, err := client.DidDocVersion(context.Background(), &didTypes.QueryGetDidDocVersionRequest{Id: did, Version: version})
+		didDocResponse, err := client.DidDocVersion(context.Background(), &didTypes.QueryDidDocVersionRequest{Id: did, Version: version})
 		if err != nil {
 			return nil, types.NewNotFoundError(did, types.JSON, err, false)
 		}
@@ -123,7 +123,7 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.
 	log.Info().Msgf("Querying did resource: %s, %s", collectionId, resourceId)
 
 	client := resource.NewQueryClient(conn)
-	resourceResponse, err := client.Resource(context.Background(), &resource.QueryGetResourceRequest{CollectionId: collectionId, Id: resourceId})
+	resourceResponse, err := client.Resource(context.Background(), &resource.QueryResourceRequest{CollectionId: collectionId, Id: resourceId})
 	if err != nil {
 		log.Info().Msgf("Resource not found %s", err.Error())
 		return nil, types.NewNotFoundError(did, types.JSON, err, true)
@@ -162,7 +162,7 @@ func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.Metada
 	log.Info().Msgf("Querying did resources: %s", did)
 
 	client := resource.NewQueryClient(conn)
-	resourceResponse, err := client.CollectionResources(context.Background(), &resource.QueryGetCollectionResourcesRequest{CollectionId: collectionId})
+	resourceResponse, err := client.CollectionResources(context.Background(), &resource.QueryCollectionResourcesRequest{CollectionId: collectionId})
 	if err != nil {
 		return nil, types.NewNotFoundError(did, types.JSON, err, false)
 	}
