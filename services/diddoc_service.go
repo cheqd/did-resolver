@@ -87,7 +87,7 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 
 	if !didUtils.IsValidDID(did, "", dds.ledgerService.GetNamespaces()) {
 		err := didUtils.ValidateDID(did, "", dds.ledgerService.GetNamespaces())
-		if err == types.NewInvalidIdentifierError() && utils.IsValidV1ID(identifier) {
+		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsValidV1ID(identifier) {
 			did = utils.MigrateIndyStyleDid(did)
 		} else {
 			return nil, types.NewInvalidDIDError(did, contentType, nil, false)
