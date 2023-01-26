@@ -46,7 +46,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 		expectedResult ResolutionDidDocMetadata
 	}{
 		{
-			name: "matadata with resource",
+			name: "metadata with resource",
 			metadata: did.Metadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
@@ -59,7 +59,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 			},
 		},
 		{
-			name: "matadata without resources",
+			name: "metadata without resources",
 			metadata: did.Metadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
