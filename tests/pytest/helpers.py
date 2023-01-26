@@ -15,7 +15,7 @@ TESTNET_RESOURCE_METADATA = TESTNET_RESOURCE + "/metadata"
 TESTNET_RESOURCE_LIST = TESTNET_DID + "/resources/all"
 TESTNET_RESOURCE_LIST_REDIRECT = TESTNET_DID + "/resources/"
 TESTNET_RESOURCE_NAME = "Demo Resource"
-RESOURCE_DATA = "{ \"content\": \"test data\" }"
+RESOURCE_DATA = "{ \r\n    \"content\": \"test data\"\r\n}"
 FAKE_TESTNET_FRAGMENT = TESTNET_DID + "#fake_key"
 FAKE_TESTNET_RESOURCE = TESTNET_DID + "/resources/76471e8c-0d1c-4b97-9b11-17b65e024334"
 
