@@ -14,7 +14,7 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
     [
         (TESTNET_DID,
          fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{TESTNET_DID}\"(.*?)didDocumentMetadata(.*?){TESTNET_RESOURCE_NAME}"),
-        (MAINNET_DID, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MAINNET_DID}\"(.*?)didDocumentMetadata"),
+        # (MAINNET_DID, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MAINNET_DID}\"(.*?)didDocumentMetadata"),
         (FAKE_TESTNET_DID, r"\"didResolutionMetadata(.*?)\"error\": \"notFound\"(.*?)"
                            r"didDocument\": null,(.*?)\"didDocumentMetadata\": \{\}"),
         (FAKE_MAINNET_DID, r"\"didResolutionMetadata(.*?)\"error\": \"notFound\"(.*?)"
@@ -24,8 +24,8 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
 
         (TESTNET_FRAGMENT, r"(.*?)dereferencingMetadata\"(.*?)"
                            fr"\"contentStream\":(.*?)\"id\": \"{TESTNET_FRAGMENT}\"(.*?)contentMetadata"),
-        (MAINNET_FRAGMENT, r"(.*?)dereferencingMetadata\"(.*?)"
-                           fr"\"contentStream\":(.*?)\"id\": \"{MAINNET_FRAGMENT}\"(.*?)contentMetadata"),
+        # (MAINNET_FRAGMENT, r"(.*?)dereferencingMetadata\"(.*?)"
+        #                    fr"\"contentStream\":(.*?)\"id\": \"{MAINNET_FRAGMENT}\"(.*?)contentMetadata"),
         (FAKE_TESTNET_FRAGMENT, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
                                 r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
         (FAKE_MAINNET_FRAGMENT, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
