@@ -55,7 +55,7 @@ func TestResolveDIDDoc(t *testing.T) {
 			requestService := NewRequestService("cheqd", subtest.ledgerService)
 
 			if (subtest.resolutionType == "" || subtest.resolutionType == types.DIDJSONLD) && subtest.expectedError == nil {
-				subtest.expectedDID.Context = []string{types.DIDSchemaJSONLD}
+				subtest.expectedDID.Context = []string{types.DIDSchemaJSONLD, types.JsonWebKey2020JSONLD}
 			} else if subtest.expectedDID != nil {
 				subtest.expectedDID.Context = nil
 			}
