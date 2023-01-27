@@ -119,6 +119,16 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 	result := types.DidResolution{Did: &didDoc, Metadata: *resolvedMetadata, ResolutionMetadata: didResolutionMetadata}
 	if didResolutionMetadata.ContentType == types.DIDJSONLD || didResolutionMetadata.ContentType == types.JSONLD {
 		didDoc.AddContext(types.DIDSchemaJSONLD)
+		for _, method := range didDoc.VerificationMethod {
+			switch method.Type {
+			case "Ed25519VerificationKey2020":
+				didDoc.AddContext(types.Ed25519VerificationKey2020JSONLD)
+			case "Ed25519VerificationKey2018":
+				didDoc.AddContext(types.Ed25519VerificationKey2018JSONLD)
+			case "JsonWebKey2020":
+				didDoc.AddContext(types.JsonWebKey2020JSONLD)
+			}
+		}
 		result.Context = types.ResolutionSchemaJSONLD
 	} else {
 		didDoc.RemoveContext()
