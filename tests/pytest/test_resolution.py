@@ -6,7 +6,7 @@ import requests
 from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRAGMENT, \
     FAKE_TESTNET_DID, FAKE_MAINNET_DID, FAKE_TESTNET_FRAGMENT, FAKE_MAINNET_FRAGMENT, RESOLVER_URL, PATH, \
     LDJSON, DIDJSON, DIDLDJSON, HTML, FAKE_TESTNET_RESOURCE, TESTNET_RESOURCE_METADATA, TESTNET_RESOURCE_NAME, JSON, \
-    TESTNET_RESOURCE, RESOURCE_DATA, TESTNET_RESOURCE_LIST, TESTNET_RESOURCE_LIST_REDIRECT
+    TESTNET_RESOURCE, RESOURCE_DATA, TESTNET_RESOURCE_LIST, TESTNET_RESOURCE_LIST_REDIRECT, INDY_TESTNET_DID, MIGRATED_INDY_TESTNET_DID
 
 
 @pytest.mark.parametrize(
@@ -38,6 +38,8 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
         (TESTNET_RESOURCE, RESOURCE_DATA),
         (FAKE_TESTNET_RESOURCE, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
                                 r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
+        (INDY_TESTNET_DID, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID}\""),
+        (MIGRATED_INDY_TESTNET_DID, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID}\"")
     ]
 )
 def test_resolution(did_url, expected_output):

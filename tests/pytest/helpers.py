@@ -18,6 +18,8 @@ TESTNET_RESOURCE_NAME = "Demo Resource"
 RESOURCE_DATA = "{ \r\n    \"content\": \"test data\"\r\n}"
 FAKE_TESTNET_FRAGMENT = TESTNET_DID + "#fake_key"
 FAKE_TESTNET_RESOURCE = TESTNET_DID + "/resources/76471e8c-0d1c-4b97-9b11-17b65e024334"
+INDY_TESTNET_DID = "did:cheqd:testnet:zHqbcXb3irKRCMst"
+MIGRATED_INDY_TESTNET_DID = "did:cheqd:testnet:CpeMubv5yw63jXyrgRRsxR"
 
 MAINNET_DID = "did:cheqd:mainnet:76471e8c-0d1c-4b97-9b11-17b65e024335"
 MAINNET_FRAGMENT = MAINNET_DID + "#key1"
