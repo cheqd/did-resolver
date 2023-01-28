@@ -8,6 +8,8 @@ RESOLVER_URL = "http://localhost:8080"
 PATH = "/1.0/identifiers/"
 
 TESTNET_DID = "did:cheqd:testnet:c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0"
+TESTNET_DID_VERSION_ID = "e5615fc2-6f13-42b1-989c-49576a574cef"
+TESTNET_DID_VERSION = TESTNET_DID + "/version/" + TESTNET_DID_VERSION_ID
 TESTNET_FRAGMENT = TESTNET_DID + "#key-1"
 FAKE_TESTNET_DID = "did:cheqd:testnet:76471e8c-0d1c-4b97-9b11-17b65e024133"
 TESTNET_RESOURCE = TESTNET_DID + "/resources/9ba3922e-d5f5-4f53-b265-fc0d4e988c77"
