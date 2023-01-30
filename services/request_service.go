@@ -71,6 +71,23 @@ func (rs RequestService) ResolveDIDDocVersion(c echo.Context) error {
 	return c.JSONPretty(http.StatusOK, result, "  ")
 }
 
+func (rs RequestService) ResolveAllDidDocVersionsMetadata(c echo.Context) error {
+	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
+	did, err := getDidParam(c)
+	if err != nil {
+		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
+	}
+
+	result, rErr := rs.didDocService.GetAllDidDocVersionsMetadata(did, requestedContentType)
+	if err != nil {
+		return rErr
+	}
+
+	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
+
+	return c.JSONPretty(http.StatusOK, result, "  ")
+}
+
 // DereferenceResourceMetadata godoc
 //
 //	@Summary		Fetch Resource-specific metadata

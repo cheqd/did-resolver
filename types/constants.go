@@ -27,9 +27,10 @@ const (
 )
 
 const (
-	DID_METHOD       = "cheqd"
-	RESOLVER_PATH    = "/1.0/identifiers/"
-	DID_VERSION_PATH = "/version/"
-	RESOURCE_PATH    = "/resources/"
-	SWAGGER_PATH     = "/swagger/"
+	DID_METHOD        = "cheqd"
+	RESOLVER_PATH     = "/1.0/identifiers/"
+	DID_VERSION_PATH  = "/version/"
+	DID_VERSIONS_PATH = "/versions"
+	RESOURCE_PATH     = "/resources/"
+	SWAGGER_PATH      = "/swagger/"
 )

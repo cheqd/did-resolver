@@ -23,6 +23,7 @@ const (
 
 type LedgerServiceI interface {
 	QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError)
+	QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError)
 	QueryResource(collectionDid string, resourceId string) (*resource.ResourceWithMetadata, *types.IdentityError)
 	QueryCollectionResources(did string) ([]*resource.Metadata, *types.IdentityError)
 	GetNamespaces() []string
@@ -88,6 +89,31 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 
 		return didDocResponse.Value, nil
 	}
+}
+
+func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError) {
+	method, namespace, _, _ := didUtils.TrySplitDID(did)
+	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
+	if !namespaceFound {
+		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
+	}
+
+	conn, err := ls.openGRPCConnection(serverAddr)
+	if err != nil {
+		log.Error().Err(err).Msg("QueryAllDidDocVersionsMetadata: failed connection")
+		return nil, types.NewInternalError(did, types.JSON, err, false)
+	}
+	defer mustCloseGRPCConnection(conn)
+
+	log.Info().Msgf("Querying all did doc versions metadata: %s", did)
+	client := didTypes.NewQueryClient(conn)
+
+	response, err := client.AllDidDocVersionsMetadata(context.Background(), &didTypes.QueryAllDidDocVersionsMetadataRequest{Id: did})
+	if err != nil {
+		return nil, types.NewNotFoundError(did, types.JSON, err, false)
+	}
+
+	return response.Versions, nil
 }
 
 // QueryResource godoc
