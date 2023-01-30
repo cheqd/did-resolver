@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
+	did "github.com/cheqd/cheqd-node/x/did/types"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
@@ -35,12 +35,12 @@ func TestResolveDIDDoc(t *testing.T) {
 			resolutionType:   types.DIDJSONLD,
 			did:              utils.ValidDid,
 			expectedDID:      &validDIDResolution,
-			expectedMetadata: types.NewResolutionDidDocMetadata(utils.ValidDid, validMetadata, []*resource.ResourceHeader{validResource.Header}),
+			expectedMetadata: types.NewResolutionDidDocMetadata(utils.ValidDid, validMetadata, []*resource.Metadata{validResource.Metadata}),
 			expectedError:    nil,
 		},
 		{
 			name:             "DID not found",
-			ledgerService:    utils.NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
+			ledgerService:    utils.NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
 			did:              utils.ValidDid,
 			expectedDID:      nil,
@@ -55,7 +55,7 @@ func TestResolveDIDDoc(t *testing.T) {
 			requestService := NewRequestService("cheqd", subtest.ledgerService)
 
 			if (subtest.resolutionType == "" || subtest.resolutionType == types.DIDJSONLD) && subtest.expectedError == nil {
-				subtest.expectedDID.Context = []string{types.DIDSchemaJSONLD}
+				subtest.expectedDID.Context = []string{types.DIDSchemaJSONLD, types.JsonWebKey2020JSONLD}
 			} else if subtest.expectedDID != nil {
 				subtest.expectedDID.Context = nil
 			}
@@ -84,7 +84,7 @@ func TestRequestService_DereferenceResourceData(t *testing.T) {
 	validDIDDoc := utils.ValidDIDDoc()
 	validMetadata := utils.ValidMetadata()
 	validResource := utils.ValidResource()
-	validResourceDereferencing := types.DereferencedResourceData(validResource.Data)
+	validResourceDereferencing := types.DereferencedResourceData(validResource.Resource.Data)
 	subtests := []struct {
 		name                   string
 		ledgerService          utils.MockLedgerService
@@ -103,12 +103,12 @@ func TestRequestService_DereferenceResourceData(t *testing.T) {
 			did:              utils.ValidDid,
 			resourceId:       utils.ValidResourceId,
 			expectedResource: &validResourceDereferencing,
-			expectedMetadata: types.NewResolutionDidDocMetadata(utils.ValidDid, validMetadata, []*resource.ResourceHeader{validResource.Header}),
+			expectedMetadata: types.NewResolutionDidDocMetadata(utils.ValidDid, validMetadata, []*resource.Metadata{validResource.Metadata}),
 			expectedError:    nil,
 		},
 		{
 			name:             "DID not found",
-			ledgerService:    utils.NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
+			ledgerService:    utils.NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
 			did:              utils.ValidDid,
 			resourceId:       "a86f9cae-0902-4a7c-a144-96b60ced2fc9",
@@ -125,7 +125,7 @@ func TestRequestService_DereferenceResourceData(t *testing.T) {
 				[]string{"did", "resource"},
 				[]string{subtest.did, subtest.resourceId}, subtest.resolutionType)
 			requestService := NewRequestService("cheqd", subtest.ledgerService)
-			expectedContentType := validResource.Header.MediaType
+			expectedContentType := validResource.Metadata.MediaType
 
 			err := requestService.DereferenceResourceData(context)
 
@@ -164,14 +164,14 @@ func TestRequestService_DereferenceResourceMetadata(t *testing.T) {
 			resourceId:     utils.ValidResourceId,
 			expectedResource: types.NewDereferencedResourceList(
 				utils.ValidDid,
-				[]*resource.ResourceHeader{validResource.Header},
+				[]*resource.Metadata{validResource.Metadata},
 			),
 			expectedMetadata: types.ResolutionDidDocMetadata{},
 			expectedError:    nil,
 		},
 		{
 			name:             "DID not found",
-			ledgerService:    utils.NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
+			ledgerService:    utils.NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
 			did:              utils.ValidDid,
 			resourceId:       "a86f9cae-0902-4a7c-a144-96b60ced2fc9",
@@ -241,14 +241,14 @@ func TestRequestService_DereferenceCollectionResources(t *testing.T) {
 			did:            utils.ValidDid,
 			expectedResource: types.NewDereferencedResourceList(
 				utils.ValidDid,
-				[]*resource.ResourceHeader{validResource.Header},
+				[]*resource.Metadata{validResource.Metadata},
 			),
 			expectedMetadata: types.ResolutionDidDocMetadata{},
 			expectedError:    nil,
 		},
 		{
 			name:             "DID not found",
-			ledgerService:    utils.NewMockLedgerService(cheqd.Did{}, cheqd.Metadata{}, resource.Resource{}),
+			ledgerService:    utils.NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
 			did:              utils.ValidDid,
 			expectedResource: nil,
@@ -260,7 +260,7 @@ func TestRequestService_DereferenceCollectionResources(t *testing.T) {
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
 			context, rec := setupContext(
-				"/1.0/identifiers/:did/resources/all",
+				"/1.0/identifiers/:did/metadata",
 				[]string{"did"},
 				[]string{subtest.did}, subtest.resolutionType)
 			requestService := NewRequestService("cheqd", subtest.ledgerService)

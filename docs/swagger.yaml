@@ -199,8 +199,11 @@ definitions:
         example: did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#service-1
         type: string
       serviceEndpoint:
-        example: https://example.com/endpoint/8377464
-        type: string
+        example:
+        - https://example.com/endpoint/8377464
+        items:
+          type: string
+        type: array
       type:
         example: did-communication
         type: string
@@ -253,6 +256,10 @@ paths:
       - description: '#Fragment'
         in: query
         name: fragmentId
+        type: string
+      - description: Version
+        in: query
+        name: versionId
         type: string
       produces:
       - application/did+ld+json
