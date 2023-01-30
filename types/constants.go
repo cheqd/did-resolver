@@ -31,6 +31,7 @@ const (
 	RESOLVER_PATH     = "/1.0/identifiers/"
 	DID_VERSION_PATH  = "/version/"
 	DID_VERSIONS_PATH = "/versions"
+	DID_METADATA      = "/metadata"
 	RESOURCE_PATH     = "/resources/"
 	SWAGGER_PATH      = "/swagger/"
 )

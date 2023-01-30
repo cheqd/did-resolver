@@ -260,7 +260,7 @@ func TestRequestService_DereferenceCollectionResources(t *testing.T) {
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
 			context, rec := setupContext(
-				"/1.0/identifiers/:did/resources/all",
+				"/1.0/identifiers/:did/metadata",
 				[]string{"did"},
 				[]string{subtest.did}, subtest.resolutionType)
 			requestService := NewRequestService("cheqd", subtest.ledgerService)

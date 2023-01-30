@@ -171,7 +171,7 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.
 //	@Failure		404	{object}	types.IdentityError
 //	@Failure		406	{object}	types.IdentityError
 //	@Failure		500	{object}	types.IdentityError
-//	@Router			/{did}/resources/all [get]
+//	@Router			/{did}/metadata [get]
 func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.Metadata, *types.IdentityError) {
 	method, namespace, collectionId, _ := didUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]

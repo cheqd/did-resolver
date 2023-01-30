@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"net/http"
-
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
@@ -68,10 +66,7 @@ func serve() {
 	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSIONS_PATH, requestService.ResolveAllDidDocVersionsMetadata)
 	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource", requestService.DereferenceResourceData)
 	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource/metadata", requestService.DereferenceResourceMetadata)
-	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+"all", requestService.DereferenceCollectionResources)
-	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+"", func(c echo.Context) error {
-		return c.Redirect(http.StatusMovedPermanently, "all")
-	})
+	e.GET(types.RESOLVER_PATH+":did"+types.DID_METADATA, requestService.DereferenceCollectionResources)
 
 	log.Info().Msg("Starting listener")
 	log.Fatal().Err(e.Start(config.ResolverListener))
