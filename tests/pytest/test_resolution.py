@@ -7,7 +7,7 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
     FAKE_TESTNET_DID, FAKE_MAINNET_DID, FAKE_TESTNET_FRAGMENT, FAKE_MAINNET_FRAGMENT, RESOLVER_URL, PATH, \
     LDJSON, DIDJSON, DIDLDJSON, HTML, FAKE_TESTNET_RESOURCE, TESTNET_RESOURCE_METADATA, TESTNET_RESOURCE_NAME, JSON, \
     TESTNET_RESOURCE, RESOURCE_DATA, TESTNET_RESOURCE_LIST, TESTNET_RESOURCE_LIST_REDIRECT, INDY_TESTNET_DID, MIGRATED_INDY_TESTNET_DID, \
-    TESTNET_DID_VERSION, TESTNET_DID_VERSION_ID, FAKE_TESTNET_VERSION
+    TESTNET_DID_VERSION, TESTNET_DID_VERSION_ID, FAKE_TESTNET_VERSION, TESTNET_DID_VERSIONS, FAKE_TESTNET_DID_VERSIONS
 
 
 @pytest.mark.parametrize(
@@ -50,6 +50,9 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
         (TESTNET_DID_VERSION, 
             fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{TESTNET_DID}\"(.*?)didDocumentMetadata(.*?)\"versionId\": \"{TESTNET_DID_VERSION_ID}\""),
         (FAKE_TESTNET_VERSION, r"\"didResolutionMetadata(.*?)\"error\": \"notFound\"(.*?)"
+                           r"didDocument\": null,(.*?)\"didDocumentMetadata\": \{\}"),
+        (TESTNET_DID_VERSIONS, r"\"dereferencingMetadata(.*?)\"contentStream\":(.*?)\"contentMetadata\":(.*?)"),
+        (FAKE_TESTNET_DID_VERSIONS, r"\"didResolutionMetadata(.*?)\"error\": \"notFound\"(.*?)"
                            r"didDocument\": null,(.*?)\"didDocumentMetadata\": \{\}"),
     ]
 )
