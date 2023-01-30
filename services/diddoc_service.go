@@ -167,6 +167,10 @@ func (dds DIDDocService) GetAllDidDocVersionsMetadata(did string, contentType ty
 		}
 	}
 
+	if len(versions) == 0 {
+		return nil, types.NewNotFoundError(did, contentType, err, false)
+	}
+
 	var context string
 	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
 		context = types.ResolutionSchemaJSONLD
