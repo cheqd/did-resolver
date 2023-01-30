@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"strings"
 
+	migrations "github.com/cheqd/cheqd-node/app/migrations/helpers"
 	didTypes "github.com/cheqd/cheqd-node/x/did/types"
 	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
 	"github.com/google/uuid"
@@ -88,7 +89,7 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 	if !didUtils.IsValidDID(did, "", dds.ledgerService.GetNamespaces()) {
 		err := didUtils.ValidateDID(did, "", dds.ledgerService.GetNamespaces())
 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsValidV1ID(identifier) {
-			did = utils.MigrateIndyStyleDid(did)
+			did = migrations.MigrateIndyStyleDid(did)
 		} else {
 			return nil, types.NewInvalidDIDError(did, contentType, nil, false)
 		}
@@ -98,7 +99,7 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 	if err != nil {
 		_, parsingerr := uuid.Parse(identifier)
 		if parsingerr == nil {
-			did = utils.MigrateUUIDDid(did)
+			did = migrations.MigrateUUIDDid(did)
 			protoDidDocWithMetadata, err = dds.ledgerService.QueryDIDDoc(did, version)
 			if err != nil {
 				err.ContentType = contentType
@@ -147,7 +148,7 @@ func (dds DIDDocService) GetAllDidDocVersionsMetadata(did string, contentType ty
 	if !didUtils.IsValidDID(did, "", dds.ledgerService.GetNamespaces()) {
 		err := didUtils.ValidateDID(did, "", dds.ledgerService.GetNamespaces())
 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsValidV1ID(identifier) {
-			did = utils.MigrateIndyStyleDid(did)
+			did = migrations.MigrateIndyStyleDid(did)
 		} else {
 			return nil, types.NewMethodNotSupportedError(did, contentType, nil, false)
 		}
@@ -157,7 +158,7 @@ func (dds DIDDocService) GetAllDidDocVersionsMetadata(did string, contentType ty
 	if err != nil {
 		_, parsingerr := uuid.Parse(identifier)
 		if parsingerr == nil {
-			did = utils.MigrateUUIDDid(did)
+			did = migrations.MigrateUUIDDid(did)
 			versions, err = dds.ledgerService.QueryAllDidDocVersionsMetadata(did)
 			if err != nil {
 				return nil, err
