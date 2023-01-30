@@ -8,8 +8,8 @@ import (
 
 	"google.golang.org/grpc/credentials"
 
-	cheqd "github.com/cheqd/cheqd-node/x/cheqd/types"
-	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
+	didTypes "github.com/cheqd/cheqd-node/x/did/types"
+	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
 	resource "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/rs/zerolog/log"
@@ -22,9 +22,10 @@ const (
 )
 
 type LedgerServiceI interface {
-	QueryDIDDoc(did string) (*cheqd.Did, *cheqd.Metadata, *types.IdentityError)
-	QueryResource(collectionDid string, resourceId string) (*resource.Resource, *types.IdentityError)
-	QueryCollectionResources(did string) ([]*resource.ResourceHeader, *types.IdentityError)
+	QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError)
+	QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError)
+	QueryResource(collectionDid string, resourceId string) (*resource.ResourceWithMetadata, *types.IdentityError)
+	QueryCollectionResources(did string) ([]*resource.Metadata, *types.IdentityError)
 	GetNamespaces() []string
 }
 
@@ -40,43 +41,79 @@ func NewLedgerService() LedgerService {
 
 // QueryDIDDoc godoc
 //
-//	@Summary		Resolve DID Document on did:cheqd
-//	@Description	Fetch DID Document ("DIDDoc") from cheqd network
-//	@Tags			DID Resolution
-//	@Accept			application/did+ld+json,application/ld+json,application/did+json
-//	@Produce		application/did+ld+json,application/ld+json,application/did+json
-//	@Param			did			path		string	true	"Full DID with unique identifier"
-//	@Param			service		query		string	false	"Service Type"
-//	@Param			fragmentId	query		string	false	"#Fragment"
-//	@Success		200			{object}	types.DidResolution
-//	@Failure		400			{object}	types.IdentityError
-//	@Failure		404			{object}	types.IdentityError
-//	@Failure		406			{object}	types.IdentityError
-//	@Failure		500			{object}	types.IdentityError
-//	@Router			/{did} [get]
-func (ls LedgerService) QueryDIDDoc(did string) (*cheqd.Did, *cheqd.Metadata, *types.IdentityError) {
-	method, namespace, _, _ := cheqdUtils.TrySplitDID(did)
+//		@Summary		Resolve DID Document on did:cheqd
+//		@Description	Fetch DID Document ("DIDDoc") from cheqd network
+//		@Tags			DID Resolution
+//		@Accept			application/did+ld+json,application/ld+json,application/did+json
+//		@Produce		application/did+ld+json,application/ld+json,application/did+json
+//		@Param			did			path		string	true	"Full DID with unique identifier"
+//		@Param			service		query		string	false	"Service Type"
+//		@Param			fragmentId	query		string	false	"#Fragment"
+//	 	@Param 			versionId 	query 		string 	false 	"Version"
+//		@Success		200			{object}	types.DidResolution
+//		@Failure		400			{object}	types.IdentityError
+//		@Failure		404			{object}	types.IdentityError
+//		@Failure		406			{object}	types.IdentityError
+//		@Failure		500			{object}	types.IdentityError
+//		@Router			/{did} [get]
+func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
+	method, namespace, _, _ := didUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
-		return nil, nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
+		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
 	}
 
 	conn, err := ls.openGRPCConnection(serverAddr)
 	if err != nil {
 		log.Error().Err(err).Msg("QueryDIDDoc: failed connection")
-		return nil, nil, types.NewInternalError(did, types.JSON, err, false)
+		return nil, types.NewInternalError(did, types.JSON, err, false)
 	}
 
 	defer mustCloseGRPCConnection(conn)
 
 	log.Info().Msgf("Querying did doc: %s", did)
-	client := cheqd.NewQueryClient(conn)
-	didDocResponse, err := client.Did(context.Background(), &cheqd.QueryGetDidRequest{Id: did})
-	if err != nil {
-		return nil, nil, types.NewNotFoundError(did, types.JSON, err, false)
+	client := didTypes.NewQueryClient(conn)
+
+	if version == "" {
+		didDocResponse, err := client.DidDoc(context.Background(), &didTypes.QueryDidDocRequest{Id: did})
+		if err != nil {
+			return nil, types.NewNotFoundError(did, types.JSON, err, false)
+		}
+
+		return didDocResponse.Value, nil
+	} else {
+		didDocResponse, err := client.DidDocVersion(context.Background(), &didTypes.QueryDidDocVersionRequest{Id: did, Version: version})
+		if err != nil {
+			return nil, types.NewNotFoundError(did, types.JSON, err, false)
+		}
+
+		return didDocResponse.Value, nil
+	}
+}
+
+func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError) {
+	method, namespace, _, _ := didUtils.TrySplitDID(did)
+	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
+	if !namespaceFound {
+		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
 	}
 
-	return didDocResponse.Did, didDocResponse.Metadata, nil
+	conn, err := ls.openGRPCConnection(serverAddr)
+	if err != nil {
+		log.Error().Err(err).Msg("QueryAllDidDocVersionsMetadata: failed connection")
+		return nil, types.NewInternalError(did, types.JSON, err, false)
+	}
+	defer mustCloseGRPCConnection(conn)
+
+	log.Info().Msgf("Querying all did doc versions metadata: %s", did)
+	client := didTypes.NewQueryClient(conn)
+
+	response, err := client.AllDidDocVersionsMetadata(context.Background(), &didTypes.QueryAllDidDocVersionsMetadataRequest{Id: did})
+	if err != nil {
+		return nil, types.NewNotFoundError(did, types.JSON, err, false)
+	}
+
+	return response.Versions, nil
 }
 
 // QueryResource godoc
@@ -94,8 +131,8 @@ func (ls LedgerService) QueryDIDDoc(did string) (*cheqd.Did, *cheqd.Metadata, *t
 //	@Failure		406			{object}	types.IdentityError
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did}/resources/{resourceId} [get]
-func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.Resource, *types.IdentityError) {
-	method, namespace, collectionId, _ := cheqdUtils.TrySplitDID(did)
+func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.ResourceWithMetadata, *types.IdentityError) {
+	method, namespace, collectionId, _ := didUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDIDError(did, types.JSON, nil, true)
@@ -112,7 +149,7 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.
 	log.Info().Msgf("Querying did resource: %s, %s", collectionId, resourceId)
 
 	client := resource.NewQueryClient(conn)
-	resourceResponse, err := client.Resource(context.Background(), &resource.QueryGetResourceRequest{CollectionId: collectionId, Id: resourceId})
+	resourceResponse, err := client.Resource(context.Background(), &resource.QueryResourceRequest{CollectionId: collectionId, Id: resourceId})
 	if err != nil {
 		log.Info().Msgf("Resource not found %s", err.Error())
 		return nil, types.NewNotFoundError(did, types.JSON, err, true)
@@ -134,9 +171,9 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.
 //	@Failure		404	{object}	types.IdentityError
 //	@Failure		406	{object}	types.IdentityError
 //	@Failure		500	{object}	types.IdentityError
-//	@Router			/{did}/resources/all [get]
-func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.ResourceHeader, *types.IdentityError) {
-	method, namespace, collectionId, _ := cheqdUtils.TrySplitDID(did)
+//	@Router			/{did}/metadata [get]
+func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.Metadata, *types.IdentityError) {
+	method, namespace, collectionId, _ := didUtils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
@@ -151,7 +188,7 @@ func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.Resour
 	log.Info().Msgf("Querying did resources: %s", did)
 
 	client := resource.NewQueryClient(conn)
-	resourceResponse, err := client.CollectionResources(context.Background(), &resource.QueryGetCollectionResourcesRequest{CollectionId: collectionId})
+	resourceResponse, err := client.CollectionResources(context.Background(), &resource.QueryCollectionResourcesRequest{CollectionId: collectionId})
 	if err != nil {
 		return nil, types.NewNotFoundError(did, types.JSON, err, false)
 	}

@@ -1,5 +1,9 @@
 package types
 
+import (
+	didTypes "github.com/cheqd/cheqd-node/x/did/types"
+)
+
 type DereferencingMetadata ResolutionMetadata
 
 type DidDereferencing struct {
@@ -23,3 +27,17 @@ func (d DidDereferencing) GetBytes() []byte {
 	}
 	return d.ContentStream.GetBytes()
 }
+
+type DereferencedDidVersionsList struct {
+	Versions []*didTypes.Metadata `json:"versions,omitempty"`
+}
+
+func NewDereferencedDidVersionsList(versions []*didTypes.Metadata) *DereferencedDidVersionsList {
+	return &DereferencedDidVersionsList{
+		Versions: versions,
+	}
+}
+
+func (e *DereferencedDidVersionsList) AddContext(newProtocol string) {}
+func (e *DereferencedDidVersionsList) RemoveContext()                {}
+func (e *DereferencedDidVersionsList) GetBytes() []byte              { return []byte{} }

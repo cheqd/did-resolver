@@ -6,7 +6,7 @@ import (
 
 	"strings"
 
-	cheqdUtils "github.com/cheqd/cheqd-node/x/cheqd/utils"
+	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
 	resourceTypes "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
@@ -38,7 +38,7 @@ func (rds ResourceService) DereferenceResourceMetadata(resourceId string, did st
 	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
 		context = types.ResolutionSchemaJSONLD
 	}
-	contentStream := types.NewDereferencedResourceList(did, []*resourceTypes.ResourceHeader{resource.Header})
+	contentStream := types.NewDereferencedResourceList(did, []*resourceTypes.Metadata{resource.Metadata})
 	return &types.DidDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
@@ -73,8 +73,8 @@ func (rds ResourceService) DereferenceResourceData(resourceId string, did string
 		err.ContentType = contentType
 		return nil, err
 	}
-	result := types.DereferencedResourceData(resource.Data)
-	dereferenceMetadata.ContentType = types.ContentType(resource.Header.MediaType)
+	result := types.DereferencedResourceData(resource.Resource.Data)
+	dereferenceMetadata.ContentType = types.ContentType(resource.Metadata.MediaType)
 	return &types.DidDereferencing{ContentStream: &result, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
@@ -82,7 +82,7 @@ func (rds ResourceService) validateResourceRequest(did string, resourceId *strin
 	if !contentType.IsSupported() {
 		return types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
 	}
-	if !cheqdUtils.IsValidDID(did, rds.didMethod, rds.ledgerService.GetNamespaces()) || (resourceId != nil && !utils.IsValidResourceId(*resourceId)) {
+	if !didUtils.IsValidDID(did, rds.didMethod, rds.ledgerService.GetNamespaces()) || (resourceId != nil && !utils.IsValidResourceId(*resourceId)) {
 		return types.NewInvalidDIDUrlError(did, contentType, nil, true)
 	}
 	return nil
