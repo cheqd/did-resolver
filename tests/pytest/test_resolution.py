@@ -5,9 +5,10 @@ import requests
 
 from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRAGMENT, \
     FAKE_TESTNET_DID, FAKE_MAINNET_DID, FAKE_TESTNET_FRAGMENT, FAKE_MAINNET_FRAGMENT, RESOLVER_URL, PATH, \
-    LDJSON, DIDJSON, DIDLDJSON, HTML, FAKE_TESTNET_RESOURCE, TESTNET_RESOURCE_METADATA, TESTNET_RESOURCE_NAME, JSON, \
-    TESTNET_RESOURCE, RESOURCE_DATA, TESTNET_RESOURCE_LIST, INDY_TESTNET_DID, MIGRATED_INDY_TESTNET_DID, \
-    TESTNET_DID_VERSION, TESTNET_DID_VERSION_ID, FAKE_TESTNET_VERSION, TESTNET_DID_VERSIONS, FAKE_TESTNET_DID_VERSIONS
+    LDJSON, DIDJSON, DIDLDJSON, HTML, FAKE_TESTNET_RESOURCE, TESTNET_RESOURCE_METADATA_1, TESTNET_RESOURCE_NAME, JSON, \
+    TESTNET_RESOURCE_1, RESOURCE_DATA_1, TESTNET_RESOURCE_LIST, INDY_TESTNET_DID_1, MIGRATED_INDY_TESTNET_DID_1, \
+    INDY_TESTNET_DID_2, MIGRATED_INDY_TESTNET_DID_2, TESTNET_DID_VERSION, TESTNET_DID_VERSION_ID, FAKE_TESTNET_VERSION, \
+    TESTNET_DID_VERSIONS, FAKE_TESTNET_DID_VERSIONS, TESTNET_RESOURCE_2, TESTNET_RESOURCE_METADATA_2
 
 
 @pytest.mark.parametrize(
@@ -37,16 +38,17 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
                                 r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
         (FAKE_MAINNET_FRAGMENT, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
                                 r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
-
-        (TESTNET_RESOURCE_METADATA, r"\"dereferencingMetadata(.*?)\"contentStream\":(.*?)linkedResourceMetadata(.*?)"
+        (TESTNET_RESOURCE_METADATA_1, r"\"dereferencingMetadata(.*?)\"contentStream\":(.*?)linkedResourceMetadata(.*?)"
                                     "resourceCollectionId(.*?)\"contentMetadata\":(.*?)"),
         (TESTNET_RESOURCE_LIST, r"\"dereferencingMetadata(.*?)\"contentStream\":(.*?)linkedResourceMetadata(.*?)"
                                 "resourceCollectionId(.*?)\"contentMetadata\":(.*?)"),
-        (TESTNET_RESOURCE, RESOURCE_DATA),
+        (TESTNET_RESOURCE_1, RESOURCE_DATA_1),
         (FAKE_TESTNET_RESOURCE, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
                                 r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
-        (INDY_TESTNET_DID, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID}\""),
-        (MIGRATED_INDY_TESTNET_DID, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID}\""),
+        (INDY_TESTNET_DID_1, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID_1}\""),
+        (MIGRATED_INDY_TESTNET_DID_1, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID_1}\""),
+        (INDY_TESTNET_DID_2, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID_2}\""),
+        (MIGRATED_INDY_TESTNET_DID_2, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID_2}\""),
         (TESTNET_DID_VERSION, 
             fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{TESTNET_DID}\"(.*?)didDocumentMetadata(.*?)\"versionId\": \"{TESTNET_DID_VERSION_ID}\""),
         (FAKE_TESTNET_VERSION, r"\"didResolutionMetadata(.*?)\"error\": \"notFound\"(.*?)"
@@ -157,7 +159,7 @@ primary_dereferencing_content_type_test_set = [
 )
 def test_dereferencing_content_type_resource_metadata(accept, expected_header, expected_body, has_context,
                                                       expected_status_code):
-    url = RESOLVER_URL + PATH + TESTNET_RESOURCE_METADATA
+    url = RESOLVER_URL + PATH + TESTNET_RESOURCE_METADATA_1
     header = {"Accept": accept} if accept else {}
 
     r = requests.get(url, headers=header)
@@ -175,7 +177,7 @@ def test_dereferencing_content_type_resource_metadata(accept, expected_header, e
     [(LDJSON, JSON, 200), ]
 )
 def test_dereferencing_content_type_resource(accept, expected_header, expected_status_code):
-    url = RESOLVER_URL + PATH + TESTNET_RESOURCE
+    url = RESOLVER_URL + PATH + TESTNET_RESOURCE_1
     header = {"Accept": accept} if accept else {}
     r = requests.get(url, headers=header)
     assert r.headers["Content-Type"] == expected_header
@@ -185,7 +187,9 @@ def test_dereferencing_content_type_resource(accept, expected_header, expected_s
     [
         (TESTNET_DID, 200),
         (TESTNET_FRAGMENT, 200),
-        (TESTNET_RESOURCE_METADATA, 200),
+        (TESTNET_RESOURCE_2, 200),
+        (TESTNET_RESOURCE_METADATA_1, 200),
+        (TESTNET_RESOURCE_METADATA_2, 200),
         (FAKE_TESTNET_DID, 404),
         (FAKE_TESTNET_FRAGMENT, 404),
         (FAKE_TESTNET_RESOURCE, 404),
