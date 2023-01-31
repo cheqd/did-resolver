@@ -16,10 +16,10 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
     [
         (TESTNET_DID,
          fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{TESTNET_DID}\"(.*?)didDocumentMetadata(.*?){TESTNET_RESOURCE_NAME}"),
-        
+
         # mainnet DID currently use another format of DID, when mainnet network will be same like testnet network you can run this test too.
         # (MAINNET_DID, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MAINNET_DID}\"(.*?)didDocumentMetadata"),
-        
+
         (FAKE_TESTNET_DID, r"\"didResolutionMetadata(.*?)\"error\": \"notFound\"(.*?)"
                            r"didDocument\": null,(.*?)\"didDocumentMetadata\": \{\}"),
         (FAKE_MAINNET_DID, r"\"didResolutionMetadata(.*?)\"error\": \"notFound\"(.*?)"
@@ -29,33 +29,38 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
 
         (TESTNET_FRAGMENT, r"(.*?)dereferencingMetadata\"(.*?)"
                            fr"\"contentStream\":(.*?)\"id\": \"{TESTNET_FRAGMENT}\"(.*?)contentMetadata"),
-        
+
         # mainnet DID currently use another format of DID, when mainnet network will be same like testnet network you can run this test too.
         # (MAINNET_FRAGMENT, r"(.*?)dereferencingMetadata\"(.*?)"
         #                    fr"\"contentStream\":(.*?)\"id\": \"{MAINNET_FRAGMENT}\"(.*?)contentMetadata"),
-        
+
         (FAKE_TESTNET_FRAGMENT, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
                                 r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
         (FAKE_MAINNET_FRAGMENT, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
                                 r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
         (TESTNET_RESOURCE_METADATA_1, r"\"dereferencingMetadata(.*?)\"contentStream\":(.*?)linkedResourceMetadata(.*?)"
-                                    "resourceCollectionId(.*?)\"contentMetadata\":(.*?)"),
+         "resourceCollectionId(.*?)\"contentMetadata\":(.*?)"),
         (TESTNET_RESOURCE_LIST, r"\"dereferencingMetadata(.*?)\"contentStream\":(.*?)linkedResourceMetadata(.*?)"
                                 "resourceCollectionId(.*?)\"contentMetadata\":(.*?)"),
         (TESTNET_RESOURCE_1, RESOURCE_DATA_1),
         (FAKE_TESTNET_RESOURCE, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
                                 r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
-        (INDY_TESTNET_DID_1, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID_1}\""),
-        (MIGRATED_INDY_TESTNET_DID_1, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID_1}\""),
-        (INDY_TESTNET_DID_2, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID_2}\""),
-        (MIGRATED_INDY_TESTNET_DID_2, fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID_2}\""),
-        (TESTNET_DID_VERSION, 
+        (INDY_TESTNET_DID_1,
+         fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID_1}\""),
+        (MIGRATED_INDY_TESTNET_DID_1,
+         fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID_1}\""),
+        (INDY_TESTNET_DID_2,
+         fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID_2}\""),
+        (MIGRATED_INDY_TESTNET_DID_2,
+         fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{MIGRATED_INDY_TESTNET_DID_2}\""),
+        (TESTNET_DID_VERSION,
             fr"didResolutionMetadata(.*?)didDocument(.*?)\"id\": \"{TESTNET_DID}\"(.*?)didDocumentMetadata(.*?)\"versionId\": \"{TESTNET_DID_VERSION_ID}\""),
         (FAKE_TESTNET_VERSION, r"\"didResolutionMetadata(.*?)\"error\": \"notFound\"(.*?)"
-                           r"didDocument\": null,(.*?)\"didDocumentMetadata\": \{\}"),
-        (TESTNET_DID_VERSIONS, r"\"dereferencingMetadata(.*?)\"contentStream\":(.*?)\"contentMetadata\":(.*?)"),
+         r"didDocument\": null,(.*?)\"didDocumentMetadata\": \{\}"),
+        (TESTNET_DID_VERSIONS,
+         r"\"dereferencingMetadata(.*?)\"contentStream\":(.*?)\"contentMetadata\":(.*?)"),
         (FAKE_TESTNET_DID_VERSIONS, r"\"didResolutionMetadata(.*?)\"error\": \"notFound\"(.*?)"
-                           r"didDocument\": null,(.*?)\"didDocumentMetadata\": \{\}"),
+         r"didDocument\": null,(.*?)\"didDocumentMetadata\": \{\}"),
     ]
 )
 def test_resolution(did_url, expected_output):
@@ -89,11 +94,14 @@ def test_resolution_content_type(accept, expected_header, expected_body, has_con
     print(r.text.replace("\n", "\\n"))
     assert r.headers["Content-Type"] == expected_header
     assert r.status_code == expected_status_code
-    assert re.match(expected_body, r.text.replace("\n", "\\n").replace("\n", "\\n"))
+    assert re.match(expected_body, r.text.replace(
+        "\n", "\\n").replace("\n", "\\n"))
     if has_context:
-        assert re.findall(r"context", r.text.replace("\n", "\\n").replace("\n", "\\n"))
+        assert re.findall(r"context", r.text.replace(
+            "\n", "\\n").replace("\n", "\\n"))
     else:
-        assert not re.findall(r"context", r.text.replace("\n", "\\n").replace("\n", "\\n"))
+        assert not re.findall(r"context", r.text.replace(
+            "\n", "\\n").replace("\n", "\\n"))
 
 
 secondary_dereferencing_content_type_test_set = [
@@ -181,6 +189,7 @@ def test_dereferencing_content_type_resource(accept, expected_header, expected_s
     header = {"Accept": accept} if accept else {}
     r = requests.get(url, headers=header)
     assert r.headers["Content-Type"] == expected_header
+
 
 @pytest.mark.parametrize(
     "did_url, expected_status_code",
