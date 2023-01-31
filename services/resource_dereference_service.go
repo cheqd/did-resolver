@@ -27,44 +27,102 @@ func NewResourceService(didMethod string, ledgerService LedgerServiceI) Resource
 }
 
 func (rds ResourceService) DereferenceResourceMetadata(resourceId string, did string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
-	if err := rds.validateResourceRequest(did, &resourceId, contentType); err != nil {
-		return nil, err
+	if !contentType.IsSupported() {
+		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
 	}
+
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
+
+	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	if didMethod != rds.didMethod {
+		return nil, types.NewMethodNotSupportedError(did, contentType, nil, false)
+	}
+
+	if !didUtils.IsValidDID(did, "", rds.ledgerService.GetNamespaces()) {
+		err := didUtils.ValidateDID(did, "", rds.ledgerService.GetNamespaces())
+		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsValidV1ID(identifier) {
+			did = migrations.MigrateIndyStyleDid(did)
+		} else {
+			return nil, types.NewInvalidDIDError(did, contentType, nil, false)
+		}
+	}
+
 	resource, err := rds.ledgerService.QueryResource(did, strings.ToLower(resourceId))
 	if err != nil {
-		err.ContentType = contentType
-		return nil, err
+		_, parsingerr := uuid.Parse(identifier)
+		if parsingerr == nil {
+			did = migrations.MigrateUUIDDid(did)
+			resource, err = rds.ledgerService.QueryResource(did, strings.ToLower(resourceId))
+			if err != nil {
+				err.ContentType = contentType
+				return nil, err
+			}
+		} else {
+			err.ContentType = contentType
+			return nil, err
+		}
 	}
+
 	var context string
 	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
 		context = types.ResolutionSchemaJSONLD
 	}
+
 	contentStream := types.NewDereferencedResourceList(did, []*resourceTypes.Metadata{resource.Metadata})
+
 	return &types.DidDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
 func (rds ResourceService) DereferenceCollectionResources(did string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
-	if err := rds.validateResourceRequest(did, nil, contentType); err != nil {
-		return nil, err
+	if !contentType.IsSupported() {
+		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
 	}
+
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
+
+	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	if didMethod != rds.didMethod {
+		return nil, types.NewMethodNotSupportedError(did, contentType, nil, false)
+	}
+
+	if !didUtils.IsValidDID(did, "", rds.ledgerService.GetNamespaces()) {
+		err := didUtils.ValidateDID(did, "", rds.ledgerService.GetNamespaces())
+		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsValidV1ID(identifier) {
+			did = migrations.MigrateIndyStyleDid(did)
+		} else {
+			return nil, types.NewInvalidDIDError(did, contentType, nil, false)
+		}
+	}
+
 	resources, err := rds.ledgerService.QueryCollectionResources(did)
 	if err != nil {
-		err.ContentType = contentType
-		return nil, err
+		_, parsingerr := uuid.Parse(identifier)
+		if parsingerr == nil {
+			did = migrations.MigrateUUIDDid(did)
+			resources, err = rds.ledgerService.QueryCollectionResources(did)
+			if err != nil {
+				err.ContentType = contentType
+				return nil, err
+			}
+		} else {
+			err.ContentType = contentType
+			return nil, err
+		}
 	}
+
 	var context string
 	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
 		context = types.ResolutionSchemaJSONLD
 	}
+
 	contentStream := types.NewDereferencedResourceList(did, resources)
+
 	return &types.DidDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
 func (rds ResourceService) DereferenceResourceData(resourceId string, did string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
-	if err := rds.validateResourceRequest(did, &resourceId, contentType); err != nil {
-		return nil, err
+	if !contentType.IsSupported() {
+		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
 	}
 
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
@@ -106,14 +164,4 @@ func (rds ResourceService) DereferenceResourceData(resourceId string, did string
 	dereferenceMetadata.ContentType = types.ContentType(resource.Metadata.MediaType)
 
 	return &types.DidDereferencing{ContentStream: &result, DereferencingMetadata: dereferenceMetadata}, nil
-}
-
-func (rds ResourceService) validateResourceRequest(did string, resourceId *string, contentType types.ContentType) *types.IdentityError {
-	if !contentType.IsSupported() {
-		return types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
-	}
-	if !didUtils.IsValidDID(did, rds.didMethod, rds.ledgerService.GetNamespaces()) || (resourceId != nil && !utils.IsValidResourceId(*resourceId)) {
-		return types.NewInvalidDIDUrlError(did, contentType, nil, true)
-	}
-	return nil
 }
