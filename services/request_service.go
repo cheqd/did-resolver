@@ -61,7 +61,7 @@ func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
 			path := types.RESOLVER_PATH + did
 
 			if fragmentId != "" {
-				path += fmt.Sprintf("#%s", fragmentId)
+				path += url.PathEscape(fmt.Sprintf("#%s", fragmentId))
 			}
 
 			if queryRaw != "" {
