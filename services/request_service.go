@@ -1,11 +1,14 @@
 package services
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
 
+	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
 	"github.com/cheqd/did-resolver/types"
+	"github.com/cheqd/did-resolver/utils"
 	"github.com/labstack/echo/v4"
 )
 
@@ -28,10 +31,12 @@ func NewRequestService(didMethod string, ledgerService LedgerServiceI) RequestSe
 func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
 	splitDID := strings.Split(c.Param("did"), "#")
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
+
 	did, err := url.QueryUnescape(splitDID[0])
 	if err != nil {
 		return types.NewInvalidDIDUrlError(splitDID[0], requestedContentType, err, true)
 	}
+
 	var fragmentId string
 	if len(splitDID) == 2 {
 		fragmentId = splitDID[1]
@@ -43,11 +48,38 @@ func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
 		return err
 	}
 
+	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	if didMethod != rs.didDocService.didMethod {
+		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
+	}
+
+	if !didUtils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+		err := didUtils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
+			did = utils.MigrateDID(did)
+			path := types.RESOLVER_PATH + did
+
+			if fragmentId != "" {
+				path += fmt.Sprintf("#%s", fragmentId)
+			}
+
+			if queryRaw != "" {
+				path += fmt.Sprintf("?%s", queryRaw)
+			}
+
+			return c.Redirect(http.StatusMovedPermanently, path)
+		} else {
+			return types.NewInvalidDIDError(did, requestedContentType, nil, false)
+		}
+	}
+
 	result, rErr := rs.didDocService.ProcessDIDRequest(did, fragmentId, queries, flag, requestedContentType)
 	if rErr != nil {
 		return rErr
 	}
+
 	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
+
 	return c.JSONPretty(http.StatusOK, result, "  ")
 }
 
@@ -60,6 +92,23 @@ func (rs RequestService) ResolveDIDDocVersion(c echo.Context) error {
 	}
 
 	version := c.Param("version")
+
+	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	if didMethod != rs.didDocService.didMethod {
+		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
+	}
+
+	if !didUtils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+		err := didUtils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
+			did = utils.MigrateDID(did)
+			path := types.RESOLVER_PATH + did + types.DID_VERSION_PATH + version
+
+			return c.Redirect(http.StatusMovedPermanently, path)
+		} else {
+			return types.NewInvalidDIDError(did, requestedContentType, nil, false)
+		}
+	}
 
 	result, rErr := rs.didDocService.Resolve(did, version, requestedContentType)
 	if rErr != nil {
@@ -76,6 +125,23 @@ func (rs RequestService) ResolveAllDidDocVersionsMetadata(c echo.Context) error 
 	did, err := getDidParam(c)
 	if err != nil {
 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
+	}
+
+	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	if didMethod != rs.didDocService.didMethod {
+		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
+	}
+
+	if !didUtils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+		err := didUtils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
+			did = utils.MigrateDID(did)
+			path := types.RESOLVER_PATH + did + types.DID_VERSIONS_PATH
+
+			return c.Redirect(http.StatusMovedPermanently, path)
+		} else {
+			return types.NewInvalidDIDError(did, requestedContentType, nil, false)
+		}
 	}
 
 	result, rErr := rs.didDocService.GetAllDidDocVersionsMetadata(did, requestedContentType)
@@ -110,12 +176,32 @@ func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
 	}
 	resourceId := c.Param("resource")
+
+	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	if didMethod != rs.didDocService.didMethod {
+		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
+	}
+
+	if !didUtils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+		err := didUtils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
+			did = utils.MigrateDID(did)
+			path := types.RESOLVER_PATH + did + types.RESOURCE_PATH + resourceId + "/metadata"
+
+			return c.Redirect(http.StatusMovedPermanently, path)
+		} else {
+			return types.NewInvalidDIDError(did, requestedContentType, nil, false)
+		}
+	}
+
 	result, errI := rs.resourceDereferenceService.DereferenceResourceMetadata(resourceId, did, requestedContentType)
 	if errI != nil {
 		errI.IsDereferencing = true
 		return errI
 	}
+
 	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
+
 	return c.JSONPretty(http.StatusOK, result, "  ")
 }
 
@@ -126,12 +212,32 @@ func (rs RequestService) DereferenceResourceData(c echo.Context) error {
 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
 	}
 	resourceId := c.Param("resource")
+
+	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	if didMethod != rs.didDocService.didMethod {
+		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
+	}
+
+	if !didUtils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+		err := didUtils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
+			did = utils.MigrateDID(did)
+			path := types.RESOLVER_PATH + did + types.RESOURCE_PATH + resourceId
+
+			return c.Redirect(http.StatusMovedPermanently, path)
+		} else {
+			return types.NewInvalidDIDError(did, requestedContentType, nil, false)
+		}
+	}
+
 	result, errI := rs.resourceDereferenceService.DereferenceResourceData(resourceId, did, requestedContentType)
 	if errI != nil {
 		errI.IsDereferencing = true
 		return errI
 	}
+
 	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
+
 	return c.Blob(http.StatusOK, result.GetContentType(), result.GetBytes())
 }
 
@@ -141,12 +247,32 @@ func (rs RequestService) DereferenceCollectionResources(c echo.Context) error {
 	if err != nil {
 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
 	}
+
+	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	if didMethod != rs.didDocService.didMethod {
+		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
+	}
+
+	if !didUtils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+		err := didUtils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
+			did = utils.MigrateDID(did)
+			path := types.RESOLVER_PATH + did + types.DID_METADATA
+
+			return c.Redirect(http.StatusMovedPermanently, path)
+		} else {
+			return types.NewInvalidDIDError(did, requestedContentType, nil, false)
+		}
+	}
+
 	resolutionResponse, errI := rs.resourceDereferenceService.DereferenceCollectionResources(did, requestedContentType)
 	if errI != nil {
 		errI.IsDereferencing = true
 		return errI
 	}
+
 	c.Response().Header().Set(echo.HeaderContentType, resolutionResponse.GetContentType())
+
 	return c.JSONPretty(http.StatusOK, resolutionResponse, "  ")
 }
 
@@ -161,6 +287,7 @@ func getContentType(accept string) types.ContentType {
 			return result
 		}
 	}
+
 	return ""
 }
 
@@ -171,6 +298,7 @@ func prepareQueries(c echo.Context) (rawQuery string, flag *string) {
 		return rawQuery, nil
 	}
 	queryFlag := rawQuery[flagIndex:]
+
 	return rawQuery[0:flagIndex], &queryFlag
 }
 

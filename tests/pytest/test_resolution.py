@@ -64,7 +64,7 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
     ]
 )
 def test_resolution(did_url, expected_output):
-    run("curl", RESOLVER_URL + PATH + did_url.replace("#", "%23"), expected_output)
+    run("curl -L", RESOLVER_URL + PATH + did_url.replace("#", "%23"), expected_output)
 
 
 @pytest.mark.parametrize(

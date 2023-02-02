@@ -3,7 +3,9 @@ package utils
 import (
 	"errors"
 	"regexp"
+	"strings"
 
+	migrations "github.com/cheqd/cheqd-node/app/migrations/helpers"
 	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
 	"github.com/google/uuid"
 )
@@ -40,4 +42,17 @@ func IsValidV1ID(id string) bool {
 func IsValidIndyV1ID(id string) bool {
 	return len(id) == 16 && didUtils.IsValidBase58(id) ||
 		len(id) == 32 && didUtils.IsValidBase58(id)
+}
+
+func IsMigrationNeeded(id string) bool {
+	return len(id) == 16 && didUtils.IsValidBase58(id) ||
+		len(id) == 32 && didUtils.IsValidBase58(id) ||
+		didUtils.IsValidUUID(id) && strings.ToLower(id) != id
+}
+
+func MigrateDID(did string) string {
+	did = migrations.MigrateIndyStyleDid(did)
+	did = migrations.MigrateUUIDDid(did)
+
+	return did
 }
