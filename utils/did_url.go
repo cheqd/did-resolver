@@ -5,7 +5,6 @@ import (
 	"regexp"
 
 	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
-	didutils "github.com/cheqd/cheqd-node/x/did/utils"
 	"github.com/google/uuid"
 )
 
@@ -22,9 +21,9 @@ func IsValidResourceId(u string) bool {
 }
 
 func ValidateV1ID(id string) error {
-	isValidId := len(id) == 16 && didutils.IsValidBase58(id) ||
-		len(id) == 32 && didutils.IsValidBase58(id) ||
-		didutils.IsValidUUID(id)
+	isValidId := len(id) == 16 && didUtils.IsValidBase58(id) ||
+		len(id) == 32 && didUtils.IsValidBase58(id) ||
+		didUtils.IsValidUUID(id)
 
 	if !isValidId {
 		return errors.New("unique id should be one of: 16 symbols base58 string, 32 symbols base58 string, or UUID")
@@ -36,4 +35,9 @@ func ValidateV1ID(id string) error {
 func IsValidV1ID(id string) bool {
 	err := ValidateV1ID(id)
 	return err == nil
+}
+
+func IsValidIndyV1ID(id string) bool {
+	return len(id) == 16 && didUtils.IsValidBase58(id) ||
+		len(id) == 32 && didUtils.IsValidBase58(id)
 }
