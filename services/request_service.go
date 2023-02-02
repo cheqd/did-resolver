@@ -53,6 +53,7 @@ func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
 		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
 	}
 
+	//nolint: nestif
 	if !didUtils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
 		err := didUtils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
