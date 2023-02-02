@@ -3,12 +3,13 @@ import re
 import pytest
 import requests
 
-from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRAGMENT, \
-    FAKE_TESTNET_DID, FAKE_MAINNET_DID, FAKE_TESTNET_FRAGMENT, FAKE_MAINNET_FRAGMENT, RESOLVER_URL, PATH, \
+from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT_1, MAINNET_FRAGMENT_1, \
+    FAKE_TESTNET_DID, FAKE_MAINNET_DID, FAKE_TESTNET_FRAGMENT_1, FAKE_MAINNET_FRAGMENT_1, FAKE_TESTNET_FRAGMENT_2, RESOLVER_URL, PATH, \
     LDJSON, DIDJSON, DIDLDJSON, HTML, FAKE_TESTNET_RESOURCE, TESTNET_RESOURCE_METADATA_1, TESTNET_RESOURCE_NAME, JSON, \
     TESTNET_RESOURCE_1, RESOURCE_DATA_1, TESTNET_RESOURCE_LIST, INDY_TESTNET_DID_1, MIGRATED_INDY_TESTNET_DID_1, \
     INDY_TESTNET_DID_2, MIGRATED_INDY_TESTNET_DID_2, TESTNET_DID_VERSION, TESTNET_DID_VERSION_ID, FAKE_TESTNET_VERSION, \
-    TESTNET_DID_VERSIONS, FAKE_TESTNET_DID_VERSIONS, TESTNET_RESOURCE_2, TESTNET_RESOURCE_METADATA_2
+    TESTNET_DID_VERSIONS, FAKE_TESTNET_DID_VERSIONS, TESTNET_RESOURCE_2, TESTNET_RESOURCE_METADATA_2, TESTNET_FRAGMENT_2, \
+    MIGRATED_TESTNET_FRAGMENT_2
 
 
 @pytest.mark.parametrize(
@@ -27,17 +28,21 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
         ("did:wrong_method:MTMxDQKMTMxDQKMT", r"\"didResolutionMetadata(.*?)\"error\": \"methodNotSupported\"(.*?)"
                                               r"didDocument\": null,(.*?)\"didDocumentMetadata\": \{\}"),
 
-        (TESTNET_FRAGMENT, r"(.*?)dereferencingMetadata\"(.*?)"
-                           fr"\"contentStream\":(.*?)\"id\": \"{TESTNET_FRAGMENT}\"(.*?)contentMetadata"),
+        (TESTNET_FRAGMENT_1, r"(.*?)dereferencingMetadata\"(.*?)"
+         fr"\"contentStream\":(.*?)\"id\": \"{TESTNET_FRAGMENT_1}\"(.*?)contentMetadata"),
+        (TESTNET_FRAGMENT_2, r"(.*?)dereferencingMetadata\"(.*?)"
+         fr"\"contentStream\":(.*?)\"id\": \"{MIGRATED_TESTNET_FRAGMENT_2}\"(.*?)contentMetadata"),
 
         # mainnet DID currently use another format of DID, when mainnet network will be same like testnet network you can run this test too.
-        # (MAINNET_FRAGMENT, r"(.*?)dereferencingMetadata\"(.*?)"
-        #                    fr"\"contentStream\":(.*?)\"id\": \"{MAINNET_FRAGMENT}\"(.*?)contentMetadata"),
+        # (MAINNET_FRAGMENT_1, r"(.*?)dereferencingMetadata\"(.*?)"
+        #                    fr"\"contentStream\":(.*?)\"id\": \"{MAINNET_FRAGMENT_1}\"(.*?)contentMetadata"),
 
-        (FAKE_TESTNET_FRAGMENT, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
-                                r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
-        (FAKE_MAINNET_FRAGMENT, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
-                                r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
+        (FAKE_TESTNET_FRAGMENT_1, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
+         r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
+        (FAKE_TESTNET_FRAGMENT_2, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
+         r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
+        (FAKE_MAINNET_FRAGMENT_1, r"\"dereferencingMetadata(.*?)\"error\": \"notFound\"(.*?)"
+         r"\"contentStream\": null,(.*?)\"contentMetadata\": \{\}"),
         (TESTNET_RESOURCE_METADATA_1, r"\"dereferencingMetadata(.*?)\"contentStream\":(.*?)linkedResourceMetadata(.*?)"
          "resourceCollectionId(.*?)\"contentMetadata\":(.*?)"),
         (TESTNET_RESOURCE_LIST, r"\"dereferencingMetadata(.*?)\"contentStream\":(.*?)linkedResourceMetadata(.*?)"
@@ -64,7 +69,8 @@ from helpers import run, TESTNET_DID, MAINNET_DID, TESTNET_FRAGMENT, MAINNET_FRA
     ]
 )
 def test_resolution(did_url, expected_output):
-    run("curl -L", RESOLVER_URL + PATH + did_url.replace("#", "%23"), expected_output)
+    run("curl -L", RESOLVER_URL + PATH +
+        did_url.replace("#", "%23"), expected_output)
 
 
 @pytest.mark.parametrize(
@@ -128,7 +134,7 @@ secondary_dereferencing_content_type_test_set = [
     secondary_dereferencing_content_type_test_set
 )
 def test_dereferencing_content_type_fragment(accept, expected_header, expected_body, has_context, expected_status_code):
-    url = RESOLVER_URL + PATH + TESTNET_FRAGMENT.replace("#", "%23")
+    url = RESOLVER_URL + PATH + TESTNET_FRAGMENT_1.replace("#", "%23")
     header = {"Accept": accept} if accept else {}
 
     r = requests.get(url, headers=header)
@@ -195,12 +201,12 @@ def test_dereferencing_content_type_resource(accept, expected_header, expected_s
     "did_url, expected_status_code",
     [
         (TESTNET_DID, 200),
-        (TESTNET_FRAGMENT, 200),
+        (TESTNET_FRAGMENT_1, 200),
         (TESTNET_RESOURCE_2, 200),
         (TESTNET_RESOURCE_METADATA_1, 200),
         (TESTNET_RESOURCE_METADATA_2, 200),
         (FAKE_TESTNET_DID, 404),
-        (FAKE_TESTNET_FRAGMENT, 404),
+        (FAKE_TESTNET_FRAGMENT_1, 404),
         (FAKE_TESTNET_RESOURCE, 404),
         ("did:wrong_method:MTMxDQKMTMxDQKMT", 406),
         (TESTNET_DID + "/", 400),
