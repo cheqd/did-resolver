@@ -97,7 +97,7 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			namespace:         "invalid-namespace",
 			resourceId:        utils.ValidResourceId,
 			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.NewInvalidDIDError(utils.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:     types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, true),
 		},
 		{
 			name:              "invalid method",
@@ -108,7 +108,7 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			namespace:         utils.ValidNamespace,
 			resourceId:        utils.ValidResourceId,
 			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.NewMethodNotSupportedError(utils.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:     types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, true),
 		},
 		{
 			name:              "invalid identifier",
@@ -119,7 +119,7 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			namespace:         utils.ValidNamespace,
 			resourceId:        utils.ValidResourceId,
 			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.NewInvalidDIDError(utils.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:     types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	}
 }
