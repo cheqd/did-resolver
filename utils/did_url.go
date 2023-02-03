@@ -24,7 +24,6 @@ func IsValidUUIDV1ID(id string) bool {
 
 func IsMigrationNeeded(id string) bool {
 	return IsValidIndyV1ID(id) || IsValidUUIDV1ID(id)
-
 }
 
 func MigrateDID(did string) string {

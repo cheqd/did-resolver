@@ -231,7 +231,7 @@ func (rs RequestService) DereferenceResourceData(c echo.Context) error {
 		}
 	}
 
-	result, errI := rs.resourceDereferenceService.DereferenceResourceData(resourceId, did, requestedContentType)
+	result, errI := rs.resourceDereferenceService.DereferenceResourceData(did, resourceId, requestedContentType)
 	if errI != nil {
 		errI.IsDereferencing = true
 		return errI
