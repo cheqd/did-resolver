@@ -2,7 +2,7 @@ version: '3.7'
 
 # CAUTION: Please ensure you edit necessary values in docker-compose.env before using this Docker Compose file.
 
-# SYNTAX: docker-compose -f docker/docker-compose.yml --env-file docker/docker-compose.env up --no-build
+# SYNTAX: docker compose -f docker/docker-compose.yml --env-file docker/docker-compose.env up --no-build
 
 services:
   did_resolver:

@@ -40,7 +40,7 @@ jobs:
         run: docker image load --input did-resolver-build.tar
 
       - name: Set up Docker container for test
-        run: docker-compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up -d --no-build
+        run: docker compose -f tests/docker/docker-compose.yml --env-file tests/docker/docker-compose.env up -d --no-build
 
       - name: Setup Python environment
         working-directory: ./tests/pytest

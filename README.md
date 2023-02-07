@@ -31,7 +31,7 @@ curl -X GET https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDB
 Spinning up a Docker container from the [pre-built `did-resolver` Docker image on Github](https://github.com/cheqd/did-resolver/pkgs/container/did-resolver) is as simple as the command below:
 
 ```bash
-docker-compose -f docker/docker-compose.yml --env-file docker/docker-compose.env up --no-build
+docker compose -f docker/docker-compose.yml --env-file docker/docker-compose.env up --no-build
 ```
 
 #### Docker Compose environment variable configuration

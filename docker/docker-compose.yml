@@ -2,13 +2,13 @@ version: '3.8'
 
 # CAUTION: Please ensure you edit necessary values in docker-compose.env before using this Docker Compose file.
 
-# SYNTAX: docker-compose -f docker/docker-compose.yml --env-file docker/docker-compose.env up --no-build
+# SYNTAX: docker compose -f docker/docker-compose.yml --env-file docker/docker-compose.env up --no-build
 
 services:
   did_resolver:
     # OPTIONAL: Rebuild cheqd did-resolver Docker image, if you want build your own
     # Default is to pull in the pre-published image on GitHub Container Registry
-    # SYNTAX: docker-compose -f docker/docker-compose.yml --env-file docker/docker-compose.env build --no-cache
+    # SYNTAX: docker compose -f docker/docker-compose.yml --env-file docker/docker-compose.env build --no-cache
     # build:
     #   context: ../
     #   dockerfile: docker/Dockerfile
