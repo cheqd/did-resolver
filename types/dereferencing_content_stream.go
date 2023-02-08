@@ -1,9 +1,8 @@
 package types
 
 import (
-	"time"
-
-	resource "github.com/cheqd/cheqd-node/x/resource/types"
+	resource "github.com/cheqd/cheqd-node/api/cheqd/resource/v2"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type DereferencedResource struct {

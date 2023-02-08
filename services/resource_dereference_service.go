@@ -6,8 +6,8 @@ import (
 
 	"strings"
 
+	resourceTypes "github.com/cheqd/cheqd-node/api/cheqd/resource/v2"
 	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
-	resourceTypes "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
 )

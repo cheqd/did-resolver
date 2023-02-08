@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	did "github.com/cheqd/cheqd-node/x/did/types"
-	resource "github.com/cheqd/cheqd-node/x/resource/types"
+	did "github.com/cheqd/cheqd-node/api/cheqd/did/v2"
+	resource "github.com/cheqd/cheqd-node/api/cheqd/resource/v2"
 	"github.com/stretchr/testify/require"
 )
 

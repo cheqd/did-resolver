@@ -3,7 +3,7 @@ package types
 import (
 	"encoding/json"
 
-	did "github.com/cheqd/cheqd-node/x/did/types"
+	did "github.com/cheqd/cheqd-node/api/cheqd/did/v2"
 )
 
 type DidDoc struct {

@@ -6,8 +6,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	did "github.com/cheqd/cheqd-node/x/did/types"
-	resource "github.com/cheqd/cheqd-node/x/resource/types"
+	did "github.com/cheqd/cheqd-node/api/cheqd/did/v2"
+	resource "github.com/cheqd/cheqd-node/api/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
 	"github.com/labstack/echo/v4"

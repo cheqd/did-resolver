@@ -4,8 +4,8 @@ import (
 	"net/url"
 	"strings"
 
+	didTypes "github.com/cheqd/cheqd-node/api/cheqd/did/v2"
 	migrations "github.com/cheqd/cheqd-node/app/migrations/helpers"
-	didTypes "github.com/cheqd/cheqd-node/x/did/types"
 	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
 	"github.com/google/uuid"
 
