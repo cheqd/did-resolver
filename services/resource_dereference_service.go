@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	resourceTypes "github.com/cheqd/cheqd-node/api/cheqd/resource/v2"
-	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
 )
@@ -82,7 +81,7 @@ func (rds ResourceService) validateResourceRequest(did string, resourceId *strin
 	if !contentType.IsSupported() {
 		return types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
 	}
-	if !didUtils.IsValidDID(did, rds.didMethod, rds.ledgerService.GetNamespaces()) || (resourceId != nil && !utils.IsValidResourceId(*resourceId)) {
+	if !utils.IsValidDID(did, rds.didMethod, rds.ledgerService.GetNamespaces()) || (resourceId != nil && !utils.IsValidResourceId(*resourceId)) {
 		return types.NewInvalidDIDUrlError(did, contentType, nil, true)
 	}
 	return nil
