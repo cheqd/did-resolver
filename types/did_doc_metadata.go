@@ -1,10 +1,9 @@
 package types
 
 import (
-	"time"
-
-	did "github.com/cheqd/cheqd-node/x/did/types"
-	resource "github.com/cheqd/cheqd-node/x/resource/types"
+	did "github.com/cheqd/cheqd-node/api/cheqd/did/v2"
+	resource "github.com/cheqd/cheqd-node/api/cheqd/resource/v2"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // Changed "Created time.Time" to "Create *time.Time".
