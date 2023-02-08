@@ -1,8 +1,8 @@
 package types
 
 import (
-	did "github.com/cheqd/cheqd-node/api/cheqd/did/v2"
-	resource "github.com/cheqd/cheqd-node/api/cheqd/resource/v2"
+	did "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
+	resource "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 

@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"strings"
 
-	didTypes "github.com/cheqd/cheqd-node/api/cheqd/did/v2"
+	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	"github.com/google/uuid"
 
 	"github.com/cheqd/did-resolver/migrations"

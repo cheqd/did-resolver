@@ -3,7 +3,7 @@ module github.com/cheqd/did-resolver
 go 1.18
 
 require (
-	github.com/cheqd/cheqd-node/api v0.0.0-20230125173829-33d2b2d84fe8
+	github.com/cheqd/cheqd-node/api/v2 v2.0.0
 	github.com/labstack/echo/v4 v4.9.1
 	github.com/multiformats/go-multibase v0.1.1
 	github.com/rs/zerolog v1.28.0
@@ -25,6 +25,7 @@ require (
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
+	github.com/cheqd/cheqd-node/api v0.0.0-20230125173829-33d2b2d84fe8 // indirect
 	github.com/cosmos/cosmos-sdk/api v0.1.0 // indirect
 	github.com/cosmos/gogoproto v1.4.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -71,6 +72,8 @@ require (
 )
 
 replace (
+
+	github.com/cheqd/cheqd-node/api/v2 => github.com/abdulla-ashurov/cheqd-node/api/v2 v2.0.0
 	// Dragonberry fix
 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
 

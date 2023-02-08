@@ -3,8 +3,8 @@ package tests
 import (
 	"testing"
 
-	didTypes "github.com/cheqd/cheqd-node/api/cheqd/did/v2"
-	resource "github.com/cheqd/cheqd-node/api/cheqd/resource/v2"
+	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
+	resource "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/stretchr/testify/require"

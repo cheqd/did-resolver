@@ -6,7 +6,7 @@ import (
 
 	"strings"
 
-	resourceTypes "github.com/cheqd/cheqd-node/api/cheqd/resource/v2"
+	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
 )
