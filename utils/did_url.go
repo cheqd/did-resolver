@@ -93,7 +93,7 @@ func ValidateDIDUrl(didURL string, method string, allowedNamespaces []string) er
 
 func ValidateFragment(fragment string) error {
 	if !types.DIDFragmentRegexp.MatchString(fragment) {
-		return fmt.Errorf("did url fragmnt must match the following regexp: %s", types.DIDFragmentRegexp)
+		return fmt.Errorf("did url fragment must match the following regexp: %s", types.DIDFragmentRegexp)
 	}
 	return nil
 }
