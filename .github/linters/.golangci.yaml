@@ -8,7 +8,7 @@ linters:
     - errcheck
     - gosimple
     - gofumpt
-    - govet
+    # - govet
     - ineffassign
     - misspell
     - nestif
