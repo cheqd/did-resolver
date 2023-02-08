@@ -1,11 +1,11 @@
-package utils
+package tests
 
 import (
 	"crypto/sha256"
 	"fmt"
 
-	didTypes "github.com/cheqd/cheqd-node/x/did/types"
-	resource "github.com/cheqd/cheqd-node/x/resource/types"
+	didTypes "github.com/cheqd/cheqd-node/api/cheqd/did/v2"
+	resource "github.com/cheqd/cheqd-node/api/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/types"
 )
 

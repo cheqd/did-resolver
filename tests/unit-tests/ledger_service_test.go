@@ -1,10 +1,11 @@
-package services
+package tests
 
 import (
 	"testing"
 
-	didTypes "github.com/cheqd/cheqd-node/x/did/types"
-	resource "github.com/cheqd/cheqd-node/x/resource/types"
+	didTypes "github.com/cheqd/cheqd-node/api/cheqd/did/v2"
+	resource "github.com/cheqd/cheqd-node/api/cheqd/resource/v2"
+	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/stretchr/testify/require"
 )
@@ -28,7 +29,7 @@ func TestQueryDIDDoc(t *testing.T) {
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
-			ledgerService := NewLedgerService()
+			ledgerService := services.NewLedgerService()
 			didDocWithMetadata, err := ledgerService.QueryDIDDoc("fake did", "")
 			require.EqualValues(t, subtest.expectedDidDocWithMetada, didDocWithMetadata)
 			require.EqualValues(t, subtest.expectedError.Error(), err.Error())
@@ -55,7 +56,7 @@ func TestQueryResource(t *testing.T) {
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
-			ledgerService := NewLedgerService()
+			ledgerService := services.NewLedgerService()
 			resource, err := ledgerService.QueryResource(subtest.collectionDid, subtest.resourceId)
 			require.EqualValues(t, subtest.expectedResource, resource)
 			require.EqualValues(t, subtest.expectedError.Error(), err.Error())

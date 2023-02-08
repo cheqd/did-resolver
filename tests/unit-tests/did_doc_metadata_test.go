@@ -1,12 +1,13 @@
-package types
+package tests
 
 import (
 	"crypto/sha256"
 	"fmt"
 	"testing"
 
-	did "github.com/cheqd/cheqd-node/x/did/types"
-	resource "github.com/cheqd/cheqd-node/x/resource/types"
+	did "github.com/cheqd/cheqd-node/api/cheqd/did/v2"
+	resource "github.com/cheqd/cheqd-node/api/cheqd/resource/v2"
+	"github.com/cheqd/did-resolver/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -26,8 +27,8 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 		Checksum:     fmt.Sprintf("%x", h.Sum(nil)),
 	}
 
-	validMetadataResource := DereferencedResource{
-		ResourceURI:       validDid + RESOURCE_PATH + resourceMetadata.Id,
+	validMetadataResource := types.DereferencedResource{
+		ResourceURI:       validDid + types.RESOURCE_PATH + resourceMetadata.Id,
 		CollectionId:      resourceMetadata.CollectionId,
 		ResourceId:        resourceMetadata.Id,
 		Name:              resourceMetadata.Name,
@@ -43,7 +44,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 		name           string
 		metadata       did.Metadata
 		resources      []*resource.Metadata
-		expectedResult ResolutionDidDocMetadata
+		expectedResult types.ResolutionDidDocMetadata
 	}{
 		{
 			name: "metadata with resource",
@@ -52,10 +53,10 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 				Deactivated: false,
 			},
 			resources: []*resource.Metadata{&resourceMetadata},
-			expectedResult: ResolutionDidDocMetadata{
+			expectedResult: types.ResolutionDidDocMetadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
-				Resources:   []DereferencedResource{validMetadataResource},
+				Resources:   []types.DereferencedResource{validMetadataResource},
 			},
 		},
 		{
@@ -64,7 +65,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 				VersionId:   "test_version_id",
 				Deactivated: false,
 			},
-			expectedResult: ResolutionDidDocMetadata{
+			expectedResult: types.ResolutionDidDocMetadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
 			},
@@ -73,7 +74,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
-			result := NewResolutionDidDocMetadata(validDid, subtest.metadata, subtest.resources)
+			result := types.NewResolutionDidDocMetadata(validDid, subtest.metadata, subtest.resources)
 
 			require.EqualValues(t, subtest.expectedResult, result)
 		})
