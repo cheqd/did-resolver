@@ -5,10 +5,9 @@ import (
 	"strings"
 
 	didTypes "github.com/cheqd/cheqd-node/api/cheqd/did/v2"
-	migrations "github.com/cheqd/cheqd-node/app/migrations/helpers"
-	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
 	"github.com/google/uuid"
 
+	"github.com/cheqd/did-resolver/migrations"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
 	"github.com/rs/zerolog/log"
@@ -80,14 +79,14 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 	}
 	didResolutionMetadata := types.NewResolutionMetadata(did, contentType, "")
 
-	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	didMethod, _, identifier, _ := types.TrySplitDID(did)
 
 	if didMethod != dds.didMethod {
 		return nil, types.NewMethodNotSupportedError(did, contentType, nil, false)
 	}
 
-	if !didUtils.IsValidDID(did, "", dds.ledgerService.GetNamespaces()) {
-		err := didUtils.ValidateDID(did, "", dds.ledgerService.GetNamespaces())
+	if !utils.IsValidDID(did, "", dds.ledgerService.GetNamespaces()) {
+		err := utils.ValidateDID(did, "", dds.ledgerService.GetNamespaces())
 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsValidV1ID(identifier) {
 			did = migrations.MigrateIndyStyleDid(did)
 		} else {
@@ -138,15 +137,15 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 }
 
 func (dds DIDDocService) GetAllDidDocVersionsMetadata(did string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
-	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != dds.didMethod {
 		return nil, types.NewMethodNotSupportedError(did, contentType, nil, false)
 	}
 
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 
-	if !didUtils.IsValidDID(did, "", dds.ledgerService.GetNamespaces()) {
-		err := didUtils.ValidateDID(did, "", dds.ledgerService.GetNamespaces())
+	if !utils.IsValidDID(did, "", dds.ledgerService.GetNamespaces()) {
+		err := utils.ValidateDID(did, "", dds.ledgerService.GetNamespaces())
 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsValidV1ID(identifier) {
 			did = migrations.MigrateIndyStyleDid(did)
 		} else {
