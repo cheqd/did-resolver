@@ -8,9 +8,8 @@ import (
 
 	"google.golang.org/grpc/credentials"
 
-	didTypes "github.com/cheqd/cheqd-node/x/did/types"
-	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
-	resource "github.com/cheqd/cheqd-node/x/resource/types"
+	didTypes "github.com/cheqd/cheqd-node/api/cheqd/did/v2"
+	resource "github.com/cheqd/cheqd-node/api/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
@@ -57,7 +56,7 @@ func NewLedgerService() LedgerService {
 //		@Failure		500			{object}	types.IdentityError
 //		@Router			/{did} [get]
 func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
-	method, namespace, _, _ := didUtils.TrySplitDID(did)
+	method, namespace, _, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
@@ -92,7 +91,7 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 }
 
 func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError) {
-	method, namespace, _, _ := didUtils.TrySplitDID(did)
+	method, namespace, _, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
@@ -132,7 +131,7 @@ func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did}/resources/{resourceId} [get]
 func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.ResourceWithMetadata, *types.IdentityError) {
-	method, namespace, collectionId, _ := didUtils.TrySplitDID(did)
+	method, namespace, collectionId, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDIDError(did, types.JSON, nil, true)
@@ -173,7 +172,7 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.
 //	@Failure		500	{object}	types.IdentityError
 //	@Router			/{did}/metadata [get]
 func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.Metadata, *types.IdentityError) {
-	method, namespace, collectionId, _ := didUtils.TrySplitDID(did)
+	method, namespace, collectionId, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)

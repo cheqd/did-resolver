@@ -1,7 +1,7 @@
 package types
 
 import (
-	didTypes "github.com/cheqd/cheqd-node/x/did/types"
+	didTypes "github.com/cheqd/cheqd-node/api/cheqd/did/v2"
 )
 
 type DereferencingMetadata ResolutionMetadata
