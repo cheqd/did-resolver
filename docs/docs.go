@@ -295,11 +295,8 @@ const docTemplate = `{
         },
         "/{did}/version/{versionId}": {
             "get": {
-                "description": "Fetch specific all version of a DID Document (\"DIDDoc\") for a given DID\nFetch specific all versions of a DID Document (\"DIDDoc\") for a given DID",
+                "description": "Fetch specific all version of a DID Document (\"DIDDoc\") for a given DID",
                 "consumes": [
-                    "application/did+ld+json",
-                    "application/ld+json",
-                    "application/did+json",
                     "application/did+ld+json",
                     "application/ld+json",
                     "application/did+json"
@@ -307,16 +304,12 @@ const docTemplate = `{
                 "produces": [
                     "application/did+ld+json",
                     "application/ld+json",
-                    "application/did+json",
-                    "application/did+ld+json",
-                    "application/ld+json",
                     "application/did+json"
                 ],
                 "tags": [
-                    "DID Resolution",
                     "DID Resolution"
                 ],
-                "summary": "Resolve DID Document Versions on did:cheqd",
+                "summary": "Resolve DID Document Version on did:cheqd",
                 "parameters": [
                     {
                         "type": "string",
@@ -331,32 +324,13 @@ const docTemplate = `{
                         "name": "versionId",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Full DID with unique identifier",
-                        "name": "did",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/types.DidDereferencing"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "contentStream": {
-                                            "$ref": "#/definitions/types.DereferencedDidVersionsList"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/types.DidResolution"
                         }
                     },
                     "400": {
@@ -388,11 +362,8 @@ const docTemplate = `{
         },
         "/{did}/versions": {
             "get": {
-                "description": "Fetch specific all version of a DID Document (\"DIDDoc\") for a given DID\nFetch specific all versions of a DID Document (\"DIDDoc\") for a given DID",
+                "description": "Fetch specific all versions of a DID Document (\"DIDDoc\") for a given DID",
                 "consumes": [
-                    "application/did+ld+json",
-                    "application/ld+json",
-                    "application/did+json",
                     "application/did+ld+json",
                     "application/ld+json",
                     "application/did+json"
@@ -400,31 +371,13 @@ const docTemplate = `{
                 "produces": [
                     "application/did+ld+json",
                     "application/ld+json",
-                    "application/did+json",
-                    "application/did+ld+json",
-                    "application/ld+json",
                     "application/did+json"
                 ],
                 "tags": [
-                    "DID Resolution",
                     "DID Resolution"
                 ],
                 "summary": "Resolve DID Document Versions on did:cheqd",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Full DID with unique identifier",
-                        "name": "did",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "version of a DID document",
-                        "name": "versionId",
-                        "in": "path",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "Full DID with unique identifier",
@@ -743,9 +696,6 @@ const docTemplate = `{
                 "@context": {
                     "type": "string",
                     "example": "https://w3id.org/did-resolution/v1"
-                },
-                "contentMetadata": {
-                    "$ref": "#/definitions/types.ResolutionDidDocMetadata"
                 },
                 "contentStream": {},
                 "dereferencingMetadata": {

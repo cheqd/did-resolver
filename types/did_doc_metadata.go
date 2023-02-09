@@ -42,3 +42,7 @@ func TransformToFragmentMetadata(metadata ResolutionDidDocMetadata) ResolutionDi
 	metadata.Resources = nil
 	return metadata
 }
+
+func (dd ResolutionDidDocMetadata) MarshalJSON() ([]byte, error) {
+	return []byte{}, nil
+}

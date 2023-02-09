@@ -23,6 +23,7 @@ const (
 
 type LedgerServiceI interface {
 	QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError)
+	QueryDidDocVersionMetadata(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError)
 	QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError)
 	QueryResource(collectionDid string, resourceId string) (*resource.ResourceWithMetadata, *types.IdentityError)
 	QueryCollectionResources(did string) ([]*resource.Metadata, *types.IdentityError)
@@ -106,7 +107,10 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 //	@Failure		406			{object}	types.IdentityError
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did}/version/{versionId} [get]
-//
+func (ls LedgerService) QueryDidDocVersionMetadata(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
+	return ls.QueryDIDDoc(did, version)
+}
+
 // QueryAllDidDocVersionsMetadata godoc
 //
 //	@Summary		Resolve DID Document Versions on did:cheqd

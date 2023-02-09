@@ -198,8 +198,6 @@ definitions:
       '@context':
         example: https://w3id.org/did-resolution/v1
         type: string
-      contentMetadata:
-        $ref: '#/definitions/types.ResolutionDidDocMetadata'
       contentStream: {}
       dereferencingMetadata:
         $ref: '#/definitions/types.DereferencingMetadata'
@@ -473,12 +471,8 @@ paths:
       - application/did+ld+json
       - application/ld+json
       - application/did+json
-      - application/did+ld+json
-      - application/ld+json
-      - application/did+json
-      description: |-
-        Fetch specific all version of a DID Document ("DIDDoc") for a given DID
-        Fetch specific all versions of a DID Document ("DIDDoc") for a given DID
+      description: Fetch specific all version of a DID Document ("DIDDoc") for a given
+        DID
       parameters:
       - description: Full DID with unique identifier
         in: path
@@ -490,15 +484,7 @@ paths:
         name: versionId
         required: true
         type: string
-      - description: Full DID with unique identifier
-        in: path
-        name: did
-        required: true
-        type: string
       produces:
-      - application/did+ld+json
-      - application/ld+json
-      - application/did+json
       - application/did+ld+json
       - application/ld+json
       - application/did+json
@@ -506,12 +492,7 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/types.DidDereferencing'
-            - properties:
-                contentStream:
-                  $ref: '#/definitions/types.DereferencedDidVersionsList'
-              type: object
+            $ref: '#/definitions/types.DidResolution'
         "400":
           description: Bad Request
           schema:
@@ -528,9 +509,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.IdentityError'
-      summary: Resolve DID Document Versions on did:cheqd
+      summary: Resolve DID Document Version on did:cheqd
       tags:
-      - DID Resolution
       - DID Resolution
   /{did}/versions:
     get:
@@ -538,32 +518,15 @@ paths:
       - application/did+ld+json
       - application/ld+json
       - application/did+json
-      - application/did+ld+json
-      - application/ld+json
-      - application/did+json
-      description: |-
-        Fetch specific all version of a DID Document ("DIDDoc") for a given DID
-        Fetch specific all versions of a DID Document ("DIDDoc") for a given DID
+      description: Fetch specific all versions of a DID Document ("DIDDoc") for a
+        given DID
       parameters:
       - description: Full DID with unique identifier
         in: path
         name: did
         required: true
         type: string
-      - description: version of a DID document
-        in: path
-        name: versionId
-        required: true
-        type: string
-      - description: Full DID with unique identifier
-        in: path
-        name: did
-        required: true
-        type: string
       produces:
-      - application/did+ld+json
-      - application/ld+json
-      - application/did+json
       - application/did+ld+json
       - application/ld+json
       - application/did+json
@@ -595,7 +558,6 @@ paths:
             $ref: '#/definitions/types.IdentityError'
       summary: Resolve DID Document Versions on did:cheqd
       tags:
-      - DID Resolution
       - DID Resolution
 schemes:
 - https
