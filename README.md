@@ -12,7 +12,7 @@ DID methods are expected to provide [standards-compliant methods of DID and DID 
 
 ### 📝 Architecture
 
-The [Architecture Decision Record for the cheqd DID Resolver](https://docs.cheqd.io/identity/architecture/adr-list/adr-001-did-resolver) describes the architecture & design decisions for this software package.
+The [Architecture Decision Record for the cheqd DID Resolver](https://docs.cheqd.io/identity/architecture/adr-list/adr-003-did-resolver) describes the architecture & design decisions for this software package.
 
 ## ✅ Quick Start
 
