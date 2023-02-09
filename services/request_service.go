@@ -121,6 +121,21 @@ func (rs RequestService) ResolveDIDDocVersion(c echo.Context) error {
 	return c.JSONPretty(http.StatusOK, result, "  ")
 }
 
+// ResolveAllDidDocVersionsMetadata godoc
+//
+//	@Summary		Resolve DID Document Version on did:cheqd
+//	@Description	Fetch specific all version of a DID Document ("DIDDoc") for a given DID
+//	@Tags			DID Resolution
+//	@Accept			application/did+ld+json,application/ld+json,application/did+json
+//	@Produce		application/did+ld+json,application/ld+json,application/did+json
+//	@Param			did			path		string	true	"Full DID with unique identifier"
+//	@Param			versionId	path		string	true	"version of a DID document"
+//	@Success		200			{object}	types.DidResolution
+//	@Failure		400			{object}	types.IdentityError
+//	@Failure		404			{object}	types.IdentityError
+//	@Failure		406			{object}	types.IdentityError
+//	@Failure		500			{object}	types.IdentityError
+//	@Router			/{did}/version/{versionId} [get]
 func (rs RequestService) ResolveAllDidDocVersionsMetadata(c echo.Context) error {
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
 	did, err := getDidParam(c)

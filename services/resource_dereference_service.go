@@ -22,7 +22,7 @@ func NewResourceService(didMethod string, ledgerService LedgerServiceI) Resource
 	}
 }
 
-func (rds ResourceService) DereferenceResourceMetadata(resourceId string, did string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
+func (rds ResourceService) DereferenceResourceMetadata(resourceId string, did string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
 	if !contentType.IsSupported() {
 		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
 	}
@@ -42,10 +42,10 @@ func (rds ResourceService) DereferenceResourceMetadata(resourceId string, did st
 
 	contentStream := types.NewDereferencedResourceList(did, []*resourceTypes.Metadata{resource.Metadata})
 
-	return &types.DidDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
+	return &types.ResourceDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
-func (rds ResourceService) DereferenceCollectionResources(did string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
+func (rds ResourceService) DereferenceCollectionResources(did string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
 	if !contentType.IsSupported() {
 		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
 	}
@@ -65,10 +65,10 @@ func (rds ResourceService) DereferenceCollectionResources(did string, contentTyp
 
 	contentStream := types.NewDereferencedResourceList(did, resources)
 
-	return &types.DidDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
+	return &types.ResourceDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
-func (rds ResourceService) DereferenceResourceData(did string, resourceId string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
+func (rds ResourceService) DereferenceResourceData(did string, resourceId string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
 	if !contentType.IsSupported() {
 		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
 	}
@@ -87,5 +87,5 @@ func (rds ResourceService) DereferenceResourceData(did string, resourceId string
 	result := types.DereferencedResourceData(resource.Resource.Data)
 	dereferenceMetadata.ContentType = types.ContentType(resource.Metadata.MediaType)
 
-	return &types.DidDereferencing{ContentStream: &result, DereferencingMetadata: dereferenceMetadata}, nil
+	return &types.ResourceDereferencing{ContentStream: &result, DereferencingMetadata: dereferenceMetadata}, nil
 }

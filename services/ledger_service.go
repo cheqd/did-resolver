@@ -23,7 +23,6 @@ const (
 
 type LedgerServiceI interface {
 	QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError)
-	QueryDidDocVersionMetadata(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError)
 	QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError)
 	QueryResource(collectionDid string, resourceId string) (*resource.ResourceWithMetadata, *types.IdentityError)
 	QueryCollectionResources(did string) ([]*resource.Metadata, *types.IdentityError)
@@ -92,25 +91,6 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 	}
 }
 
-// QueryDidDocVersionMetadata godoc
-//
-//	@Summary		Resolve DID Document Version on did:cheqd
-//	@Description	Fetch specific all version of a DID Document ("DIDDoc") for a given DID
-//	@Tags			DID Resolution
-//	@Accept			application/did+ld+json,application/ld+json,application/did+json
-//	@Produce		application/did+ld+json,application/ld+json,application/did+json
-//	@Param			did			path		string	true	"Full DID with unique identifier"
-//	@Param			versionId	path		string	true	"version of a DID document"
-//	@Success		200			{object}	types.DidResolution
-//	@Failure		400			{object}	types.IdentityError
-//	@Failure		404			{object}	types.IdentityError
-//	@Failure		406			{object}	types.IdentityError
-//	@Failure		500			{object}	types.IdentityError
-//	@Router			/{did}/version/{versionId} [get]
-func (ls LedgerService) QueryDidDocVersionMetadata(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
-	return ls.QueryDIDDoc(did, version)
-}
-
 // QueryAllDidDocVersionsMetadata godoc
 //
 //	@Summary		Resolve DID Document Versions on did:cheqd
@@ -119,7 +99,7 @@ func (ls LedgerService) QueryDidDocVersionMetadata(did string, version string) (
 //	@Accept			application/did+ld+json,application/ld+json,application/did+json
 //	@Produce		application/did+ld+json,application/ld+json,application/did+json
 //	@Param			did	path		string	true	"Full DID with unique identifier"
-//	@Success		200	{object}	types.DidDereferencing{contentStream=types.DereferencedDidVersionsList}
+//	@Success		200	{object}	types.ResourceDereferencing{contentStream=types.DereferencedDidVersionsList}
 //	@Failure		400	{object}	types.IdentityError
 //	@Failure		404	{object}	types.IdentityError
 //	@Failure		406	{object}	types.IdentityError
@@ -200,7 +180,7 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.
 //	@Accept			application/did+ld+json,application/ld+json,application/did+json
 //	@Produce		application/did+ld+json,application/ld+json,application/did+json
 //	@Param			did	path		string	true	"Full DID with unique identifier"
-//	@Success		200	{object}	types.DidDereferencing
+//	@Success		200	{object}	types.ResourceDereferencing
 //	@Failure		400	{object}	types.IdentityError
 //	@Failure		404	{object}	types.IdentityError
 //	@Failure		406	{object}	types.IdentityError

@@ -17,6 +17,9 @@ type ResolutionDidDocMetadata struct {
 	Resources   []DereferencedResource `json:"linkedResourceMetadata,omitempty"`
 }
 
+type ResolutionResourceMetadata struct {
+}
+
 func NewResolutionDidDocMetadata(did string, metadata did.Metadata, resources []*resource.Metadata) ResolutionDidDocMetadata {
 	created := &metadata.Created
 	if created.IsZero() {
@@ -41,8 +44,4 @@ func NewResolutionDidDocMetadata(did string, metadata did.Metadata, resources []
 func TransformToFragmentMetadata(metadata ResolutionDidDocMetadata) ResolutionDidDocMetadata {
 	metadata.Resources = nil
 	return metadata
-}
-
-func (dd ResolutionDidDocMetadata) MarshalJSON() ([]byte, error) {
-	return []byte{}, nil
 }

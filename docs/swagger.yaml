@@ -198,6 +198,8 @@ definitions:
       '@context':
         example: https://w3id.org/did-resolution/v1
         type: string
+      contentMetadata:
+        $ref: '#/definitions/types.ResolutionDidDocMetadata'
       contentStream: {}
       dereferencingMetadata:
         $ref: '#/definitions/types.DereferencingMetadata'
@@ -268,6 +270,19 @@ definitions:
       retrieved:
         example: "2021-09-01T12:00:00Z"
         type: string
+    type: object
+  types.ResolutionResourceMetadata:
+    type: object
+  types.ResourceDereferencing:
+    properties:
+      '@context':
+        example: https://w3id.org/did-resolution/v1
+        type: string
+      contentMetadata:
+        $ref: '#/definitions/types.ResolutionResourceMetadata'
+      contentStream: {}
+      dereferencingMetadata:
+        $ref: '#/definitions/types.DereferencingMetadata'
     type: object
 host: resolver.cheqd.net
 info:
@@ -355,7 +370,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.DidDereferencing'
+            $ref: '#/definitions/types.ResourceDereferencing'
         "400":
           description: Bad Request
           schema:
@@ -535,7 +550,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/types.DidDereferencing'
+            - $ref: '#/definitions/types.ResourceDereferencing'
             - properties:
                 contentStream:
                   $ref: '#/definitions/types.DereferencedDidVersionsList'

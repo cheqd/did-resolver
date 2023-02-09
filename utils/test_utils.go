@@ -95,10 +95,6 @@ func (ls MockLedgerService) QueryDIDDoc(did string, version string) (*didTypes.D
 	return nil, types.NewNotFoundError(did, types.JSON, nil, true)
 }
 
-func (ls MockLedgerService) QueryDidDocVersionMetadata(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
-	return ls.QueryDIDDoc(did, version)
-}
-
 func (ls MockLedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError) {
 	if did == ls.Did.Id {
 		return []*didTypes.Metadata{&ls.Metadata}, nil

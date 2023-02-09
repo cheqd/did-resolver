@@ -130,7 +130,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
+                            "$ref": "#/definitions/types.ResourceDereferencing"
                         }
                     },
                     "400": {
@@ -392,7 +392,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/types.DidDereferencing"
+                                    "$ref": "#/definitions/types.ResourceDereferencing"
                                 },
                                 {
                                     "type": "object",
@@ -697,6 +697,9 @@ const docTemplate = `{
                     "type": "string",
                     "example": "https://w3id.org/did-resolution/v1"
                 },
+                "contentMetadata": {
+                    "$ref": "#/definitions/types.ResolutionDidDocMetadata"
+                },
                 "contentStream": {},
                 "dereferencingMetadata": {
                     "$ref": "#/definitions/types.DereferencingMetadata"
@@ -802,6 +805,25 @@ const docTemplate = `{
                 "retrieved": {
                     "type": "string",
                     "example": "2021-09-01T12:00:00Z"
+                }
+            }
+        },
+        "types.ResolutionResourceMetadata": {
+            "type": "object"
+        },
+        "types.ResourceDereferencing": {
+            "type": "object",
+            "properties": {
+                "@context": {
+                    "type": "string",
+                    "example": "https://w3id.org/did-resolution/v1"
+                },
+                "contentMetadata": {
+                    "$ref": "#/definitions/types.ResolutionResourceMetadata"
+                },
+                "contentStream": {},
+                "dereferencingMetadata": {
+                    "$ref": "#/definitions/types.DereferencingMetadata"
                 }
             }
         }
