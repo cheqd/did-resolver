@@ -72,8 +72,6 @@ require (
 )
 
 replace (
-
-	github.com/cheqd/cheqd-node/api/v2 => github.com/abdulla-ashurov/cheqd-node/api/v2 v2.0.0
 	// Dragonberry fix
 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
 

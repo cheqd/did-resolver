@@ -42,12 +42,12 @@ github.com/KyleBanks/depth v1.2.1 h1:5h8fQADFrWtarTdtDudMmGsC7GPbOAu6RVB3ffsVFHc
 github.com/KyleBanks/depth v1.2.1/go.mod h1:jzSb9d0L43HxTQfT+oSA1EEp2q+ne2uh6XgeJcm8brE=
 github.com/PuerkitoBio/purell v1.1.1/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
 github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdkoq3SwY9Y+13GIhn11/XLaGBb4BfwItxLd5jeuXE=
-github.com/abdulla-ashurov/cheqd-node/api/v2 v2.0.0 h1:OTdvEkp6f2gilejtXDPY2QYncjzXukDNifwJQg0UHl8=
-github.com/abdulla-ashurov/cheqd-node/api/v2 v2.0.0/go.mod h1:yuTgWNrTtx83JmzL5oY56RTujA13UDO8xib/X9ctp1Q=
 github.com/agiledragon/gomonkey/v2 v2.3.1/go.mod h1:ap1AmDzcVOAz1YpeJ3TCzIgstoaWLA6jbbgxfB4w2iY=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cheqd/cheqd-node/api v0.0.0-20230125173829-33d2b2d84fe8 h1:ZqVleiPqeO+VCk+NKOlySqH839Yb0vIwSF4wJRUc8+A=
 github.com/cheqd/cheqd-node/api v0.0.0-20230125173829-33d2b2d84fe8/go.mod h1:OWDpRUoNoK5xGZWLtqRfOsI900YnFo/DZB7qRYPPZtA=
+github.com/cheqd/cheqd-node/api/v2 v2.0.0 h1:yHrFiWXxDRC7/ckp55NeERQgS6bO9CD1NdUIJyAiaHA=
+github.com/cheqd/cheqd-node/api/v2 v2.0.0/go.mod h1:yuTgWNrTtx83JmzL5oY56RTujA13UDO8xib/X9ctp1Q=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
