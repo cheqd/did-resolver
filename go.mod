@@ -17,7 +17,7 @@ require (
 require github.com/cosmos/cosmos-proto v1.0.0-alpha8 // indirect
 
 require (
-	github.com/cheqd/cheqd-node/api/v2 v2.0.0
+	github.com/cheqd/cheqd-node/api/v2 v2.0.1
 	github.com/google/uuid v1.3.0
 	github.com/mr-tron/base58 v1.2.0
 	google.golang.org/protobuf v1.28.2-0.20220831092852-f930b1dc76e8
@@ -25,7 +25,6 @@ require (
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
-	github.com/cheqd/cheqd-node/api v0.0.0-20230125173829-33d2b2d84fe8 // indirect
 	github.com/cosmos/cosmos-sdk/api v0.1.0 // indirect
 	github.com/cosmos/gogoproto v1.4.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
