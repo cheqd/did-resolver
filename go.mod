@@ -3,7 +3,6 @@ module github.com/cheqd/did-resolver
 go 1.18
 
 require (
-	github.com/cheqd/cheqd-node/api/v2 v2.0.0
 	github.com/labstack/echo/v4 v4.9.1
 	github.com/multiformats/go-multibase v0.1.1
 	github.com/rs/zerolog v1.28.0
@@ -18,6 +17,7 @@ require (
 require github.com/cosmos/cosmos-proto v1.0.0-alpha8 // indirect
 
 require (
+	github.com/cheqd/cheqd-node/api/v2 v2.0.0
 	github.com/google/uuid v1.3.0
 	github.com/mr-tron/base58 v1.2.0
 	google.golang.org/protobuf v1.28.2-0.20220831092852-f930b1dc76e8
