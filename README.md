@@ -50,7 +50,7 @@ To configure the resolver, use environment variables or edit them in the `contai
    2. `useTls`: Specify whether gRPC connection to ledger should use secure or insecure pulls. Default is `true` since gRPC uses HTTP/2 with TLS as the transport mechanism.
    3. `timeout`: Timeout (in seconds) to wait for before any ledger requests are considered to have time out.
 2. **`TESTNET_ENDPOINT`** : Testnet Network endpoint as string with the following format" `<networks>,<useTls>,<timeout>`. Example: `grpc.cheqd.network:443,true,5s`
-3. **`RESOLVER_LISTNER`**`: A string with address and port where the resolver listens for requests from clients.
+3. **`RESOLVER_LISTENER`**`: A string with address and port where the resolver listens for requests from clients.
 4. **`LOG_LEVEL`**: `debug`/`warn`/`info`/`error` - to define the application log level
 
 #### Example `container.env` file
@@ -66,7 +66,7 @@ TESTNET_ENDPOINT=grpc.cheqd.network:443,true,5s
 # Sets Echo logging level
 LOG_LEVEL="warn"
 
-RESOLVER_LISTNER="0.0.0.0:8080"
+RESOLVER_LISTENER="0.0.0.0:8080"
 ```
 
 ## 📖 Documentation

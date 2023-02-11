@@ -7,7 +7,7 @@ import (
 func GetRootCmd() *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:   "cheqd-did-resolver",
-		Short: "Did resolver for the cheqd method",
+		Short: "DID resolver for the cheqd method",
 	}
 
 	rootCmd.AddCommand(getServeCmd(), getPrintConfigCmd())
