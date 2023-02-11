@@ -10,7 +10,7 @@ func GetRootCmd() *cobra.Command {
 		Short: "DID resolver for the cheqd method",
 	}
 
-	rootCmd.AddCommand(getServeCmd(), getPrintConfigCmd())
+	rootCmd.AddCommand(getServeCmd(), getPrintConfigCmd(), getVersionCmd())
 
 	return rootCmd
 }
