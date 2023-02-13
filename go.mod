@@ -3,9 +3,8 @@ module github.com/cheqd/did-resolver
 go 1.18
 
 require (
-	github.com/cheqd/cheqd-node v1.2.2
+	github.com/cheqd/cheqd-node v1.2.5
 	github.com/labstack/echo/v4 v4.9.1
-	github.com/mr-tron/base58 v1.2.0
 	github.com/rs/zerolog v1.28.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.14.0
@@ -84,6 +83,7 @@ require (
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
 	github.com/mimoo/StrobeGo v0.0.0-20210601165009-122bf33a46e0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
+	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/multiformats/go-base32 v0.0.3 // indirect
 	github.com/multiformats/go-base36 v0.1.0 // indirect
 	github.com/multiformats/go-multibase v0.1.1 // indirect
