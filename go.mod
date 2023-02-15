@@ -3,15 +3,15 @@ module github.com/cheqd/did-resolver
 go 1.18
 
 require (
-	github.com/cheqd/cheqd-node v1.2.5
+	github.com/cheqd/cheqd-node v1.2.2
 	github.com/labstack/echo/v4 v4.9.1
-	github.com/rs/zerolog v1.29.0
+	github.com/rs/zerolog v1.28.0
 	github.com/spf13/cobra v1.6.1
-	github.com/spf13/viper v1.15.0
+	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
 	github.com/swaggo/echo-swagger v1.3.5
-	github.com/swaggo/swag v1.8.10
-	google.golang.org/grpc v1.53.0
+	github.com/swaggo/swag v1.8.9
+	google.golang.org/grpc v1.51.0
 )
 
 require (
@@ -33,6 +33,7 @@ require (
 	github.com/hdevalence/ed25519consensus v0.0.0-20220222234857-c00d1f31bab3 // indirect
 	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/mtibben/percent v0.2.1 // indirect
+	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/tidwall/btree v1.5.0 // indirect
 	github.com/zondax/hid v0.9.1 // indirect
