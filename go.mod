@@ -10,7 +10,7 @@ require (
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.1
 	github.com/swaggo/echo-swagger v1.3.5
-	github.com/swaggo/swag v1.8.9
+	github.com/swaggo/swag v1.8.10
 	google.golang.org/grpc v1.53.0
 )
 
