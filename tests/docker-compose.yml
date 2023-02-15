@@ -1,0 +1,31 @@
+version: '3.8'
+
+# CAUTION: Please ensure you edit necessary values in docker-compose.env before using this Docker Compose file.
+
+# SYNTAX: docker compose -f docker/docker-compose.yml up --detach
+
+services:
+  did_resolver:
+    # OPTIONAL: Rebuild cheqd did-resolver Docker image, if you want build your own
+    # Default is to pull in the pre-published image on GitHub Container Registry
+    # SYNTAX: docker compose -f docker/docker-compose.yml build
+    # build:
+    #   context: ../
+    #   dockerfile: docker/Dockerfile
+    #   target: resolver
+    # CAUTION: Change IMAGE_VERSION to local in docker-compose.env if building your own image in section below
+    image: cheqd/did-resolver:staging-latest
+    ports:
+      - target: 8080
+        published: 8080
+        mode: host
+    restart: on-failure
+    environment:
+      # Syntax: <grpc-endpoint-url:port>,boolean,time
+      # 1st parameter is gRPC endpoint
+      # 2nd (Boolean) parameter is whether to use TLS or not
+      # 3nd connection timeout
+      - MAINNET_ENDPOINT: "grpc.cheqd.net:443,true,5s"
+      - TESTNET_ENDPOINT: "grpc.cheqd.network:443,true,5s"
+      - LOG_LEVEL: "warn"
+      - RESOLVER_LISTENER: "0.0.0.0:8080"
