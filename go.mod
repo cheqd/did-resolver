@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/cheqd/cheqd-node v1.2.5
-	github.com/labstack/echo/v4 v4.10.0
+	github.com/labstack/echo/v4 v4.9.1
 	github.com/rs/zerolog v1.29.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.15.0
