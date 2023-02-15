@@ -31,6 +31,12 @@ SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 RUN addgroup --system $USER \
     && adduser $USER --system --home $HOME_DIR --shell /bin/bash
 
+# Set environment variables with default values
+ENV MAINNET_ENDPOINT="grpc.cheqd.net:443,true,5s"
+ENV TESTNET_ENDPOINT="grpc.cheqd.network:443,true,5s"
+ENV LOG_LEVEL="warn"
+ENV RESOLVER_LISTENER="0.0.0.0:8080"
+
 # Set working directory & bash defaults
 WORKDIR $HOME_DIR
 USER $USER
