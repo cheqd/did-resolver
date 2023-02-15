@@ -57,6 +57,12 @@ const docTemplate = `{
                         "description": "#Fragment",
                         "name": "fragmentId",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Version",
+                        "name": "versionId",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -581,8 +587,13 @@ const docTemplate = `{
                     "example": "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#service-1"
                 },
                 "serviceEndpoint": {
-                    "type": "string",
-                    "example": "https://example.com/endpoint/8377464"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "https://example.com/endpoint/8377464"
+                    ]
                 },
                 "type": {
                     "type": "string",

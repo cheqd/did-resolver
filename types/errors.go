@@ -1,6 +1,9 @@
 package types
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type IdentityError struct {
 	Code            int
@@ -67,4 +70,8 @@ func NewMethodNotSupportedError(did string, contentType ContentType, err error, 
 
 func NewInternalError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
 	return NewIdentityError(500, "internalError", isDereferencing, did, contentType, err)
+}
+
+func NewInvalidIdentifierError() error {
+	return errors.New("unique id should be one of: 16 bytes of decoded base58 string or UUID")
 }
