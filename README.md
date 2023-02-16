@@ -21,7 +21,7 @@ If you do not want to install anything and just want to resolve a `did:cheqd` en
 Or, make a request from terminal to this hosted REST API:
 
 ```bash
-curl -X GET https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY
+curl -X GET https://resolver.cheqd.net/1.0/identifiers/did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47
 ```
 
 ### Running your own cheqd DID Resolver using Docker
@@ -31,19 +31,12 @@ curl -X GET https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDB
 Spinning up a Docker container from the [pre-built `did-resolver` Docker image on Github](https://github.com/cheqd/did-resolver/pkgs/container/did-resolver) is as simple as the command below:
 
 ```bash
-docker compose -f docker/docker-compose.yml --env-file docker/docker-compose.env up --no-build
+docker compose -f docker/docker-compose.yml up --detach
 ```
-
-#### Docker Compose environment variable configuration
-
-Environment variables needed in Docker Compose are defined in the `docker/docker-compose.env` file. There are defaults already specified, but you can edit these.
-
-1. `IMAGE_VERSION` (default: `latest`): Version number / tag of the Docker image to run. By default, this is set to pull images from Github Container Registry.
-2. `RESOLVER_PORT` (default: `8080`): Port on which the Resolver service is published/exposed on the host machine. Internally mapped to port 8080 in the container.
 
 #### Configure resolver settings
 
-To configure the resolver, use environment variables or edit them in the `container.env` file in the root of the `@cheqd/did-resolver` repository. The values that can be edited are as follows:
+To configure the resolver, modify the values under the `environment` section of the [Docker Compose file](docker/docker-compose.yml). The values that can be edited are as follows:
 
 1. **`MAINNET_ENDPOINT`** : Mainnet Network endpoint as string with the following format" `<networks>,<useTls>,<timeout>`. Example: `grpc.cheqd.net:443,true,5s`
    1. `networks`: A string specifying the Cosmos SDK gRPC endpoint from which the Resolver pulls data. Format: `<resource_url>:<resource_port>`
@@ -51,23 +44,7 @@ To configure the resolver, use environment variables or edit them in the `contai
    3. `timeout`: Timeout (in seconds) to wait for before any ledger requests are considered to have time out.
 2. **`TESTNET_ENDPOINT`** : Testnet Network endpoint as string with the following format" `<networks>,<useTls>,<timeout>`. Example: `grpc.cheqd.network:443,true,5s`
 3. **`RESOLVER_LISTENER`**`: A string with address and port where the resolver listens for requests from clients.
-4. **`LOG_LEVEL`**: `debug`/`warn`/`info`/`error` - to define the application log level
-
-#### Example `container.env` file
-
-```bash
-# Syntax: <grpc-endpoint-url:port>,boolean,time
-# 1st parameter is gRPC endpoint
-# 2nd (Boolean) parameter is whether to use TLS or not
-# 3nd connection timeout 
-MAINNET_ENDPOINT=grpc.cheqd.net:443,true,5s
-TESTNET_ENDPOINT=grpc.cheqd.network:443,true,5s
-
-# Sets Echo logging level
-LOG_LEVEL="warn"
-
-RESOLVER_LISTENER="0.0.0.0:8080"
-```
+4. **`LOG_LEVEL`**: `debug`/`warn`/`info`/`error` - to define the application log level.
 
 ## 📖 Documentation
 
