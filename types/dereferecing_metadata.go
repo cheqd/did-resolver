@@ -47,13 +47,17 @@ func (d ResourceDereferencing) GetBytes() []byte {
 }
 
 type DereferencedDidVersionsList struct {
-	Versions []*didTypes.Metadata `json:"versions,omitempty"`
+	Versions []*ResolutionDidDocMetadata `json:"versions,omitempty"`
 }
 
-func NewDereferencedDidVersionsList(versions []*didTypes.Metadata) *DereferencedDidVersionsList {
-	return &DereferencedDidVersionsList{
-		Versions: versions,
+func NewDereferencedDidVersionsList(versions []*didTypes.Metadata) DereferencedDidVersionsList {
+	var result DereferencedDidVersionsList
+	for _, version := range versions {
+		val := NewResolutionDidDocMetadata("", *version, nil)
+		result.Versions = append(result.Versions, &val)
 	}
+
+	return result
 }
 
 func (e *DereferencedDidVersionsList) AddContext(newProtocol string) {}
