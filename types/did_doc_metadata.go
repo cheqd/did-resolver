@@ -23,9 +23,14 @@ func NewResolutionDidDocMetadata(did string, metadata did.Metadata, resources []
 		created = nil
 	}
 
+	updated := metadata.Updated
+	if updated.IsZero() {
+		updated = nil
+	}
+
 	newMetadata := ResolutionDidDocMetadata{
 		Created:     created,
-		Updated:     metadata.Updated,
+		Updated:     updated,
 		Deactivated: metadata.Deactivated,
 		VersionId:   metadata.VersionId,
 	}
