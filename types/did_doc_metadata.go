@@ -19,13 +19,17 @@ type ResolutionDidDocMetadata struct {
 
 func NewResolutionDidDocMetadata(did string, metadata did.Metadata, resources []*resource.Metadata) ResolutionDidDocMetadata {
 	created := &metadata.Created
-	if created.IsZero() {
-		created = nil
+	if created != nil {
+		if created.IsZero() {
+			created = nil
+		}
 	}
 
 	updated := metadata.Updated
-	if updated.IsZero() {
-		updated = nil
+	if updated != nil {
+		if updated.IsZero() {
+			updated = nil
+		}
 	}
 
 	newMetadata := ResolutionDidDocMetadata{
