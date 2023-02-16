@@ -1,7 +1,7 @@
 package types
 
 import (
-	resource "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -18,7 +18,7 @@ type DereferencedResource struct {
 	NextVersionId     *string                `json:"nextVersionId" example:"d4829ac7-4566-478c-a408-b44767eddadc"`
 }
 
-func NewDereferencedResource(did string, resource *resource.Metadata) *DereferencedResource {
+func NewDereferencedResource(did string, resource *resourceTypes.Metadata) *DereferencedResource {
 	var previousVersionId, nextVersionId *string
 	if resource.PreviousVersionId != "" {
 		previousVersionId = &resource.PreviousVersionId
@@ -44,7 +44,7 @@ type DereferencedResourceList struct {
 	Resources []DereferencedResource `json:"linkedResourceMetadata,omitempty"`
 }
 
-func NewDereferencedResourceList(did string, protoResources []*resource.Metadata) *DereferencedResourceList {
+func NewDereferencedResourceList(did string, protoResources []*resourceTypes.Metadata) *DereferencedResourceList {
 	resourceList := []DereferencedResource{}
 	for _, r := range protoResources {
 		resourceList = append(resourceList, *NewDereferencedResource(did, r))

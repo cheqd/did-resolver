@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	did "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
-	resource "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
+	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/stretchr/testify/require"
 )
@@ -18,7 +18,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 	resourceData := []byte("test_checksum")
 	h := sha256.New()
 	h.Write(resourceData)
-	resourceMetadata := resource.Metadata{
+	resourceMetadata := resourceTypes.Metadata{
 		CollectionId: validIdentifier,
 		Id:           validResourceId,
 		Name:         "Existing Resource Name",
@@ -42,17 +42,17 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 
 	subtests := []struct {
 		name           string
-		metadata       did.Metadata
-		resources      []*resource.Metadata
+		metadata       didTypes.Metadata
+		resources      []*resourceTypes.Metadata
 		expectedResult types.ResolutionDidDocMetadata
 	}{
 		{
 			name: "metadata with resource",
-			metadata: did.Metadata{
+			metadata: didTypes.Metadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
 			},
-			resources: []*resource.Metadata{&resourceMetadata},
+			resources: []*resourceTypes.Metadata{&resourceMetadata},
 			expectedResult: types.ResolutionDidDocMetadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
@@ -61,7 +61,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 		},
 		{
 			name: "metadata without resources",
-			metadata: did.Metadata{
+			metadata: didTypes.Metadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
 			},

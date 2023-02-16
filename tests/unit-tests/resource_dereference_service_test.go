@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	did "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
-	resource "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
+	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
@@ -58,7 +58,7 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 		},
 		{
 			name:              "resource not found",
-			ledgerService:     NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
+			ledgerService:     NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
 			identifier:        ValidIdentifier,
 			method:            ValidMethod,
@@ -69,7 +69,7 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 		},
 		{
 			name:              "invalid resource id",
-			ledgerService:     NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
+			ledgerService:     NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
 			identifier:        ValidIdentifier,
 			method:            ValidMethod,
@@ -80,7 +80,7 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 		},
 		{
 			name:              "invalid type",
-			ledgerService:     NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
+			ledgerService:     NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.JSON,
 			identifier:        ValidIdentifier,
 			method:            ValidMethod,
@@ -91,7 +91,7 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 		},
 		{
 			name:              "invalid namespace",
-			ledgerService:     NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
+			ledgerService:     NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
 			identifier:        ValidIdentifier,
 			method:            ValidMethod,
@@ -102,7 +102,7 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 		},
 		{
 			name:              "invalid method",
-			ledgerService:     NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
+			ledgerService:     NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
 			identifier:        ValidIdentifier,
 			method:            "invalid-method",
@@ -113,7 +113,7 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 		},
 		{
 			name:              "invalid identifier",
-			ledgerService:     NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
+			ledgerService:     NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
 			identifier:        "invalid-identifier",
 			method:            ValidMethod,
@@ -127,7 +127,7 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 
 func TestDereferenceResourceMetadata(t *testing.T) {
 	validResource := ValidResource()
-	subtests := getSubtest(types.NewDereferencedResourceList(ValidDid, []*resource.Metadata{validResource.Metadata}))
+	subtests := getSubtest(types.NewDereferencedResourceList(ValidDid, []*resourceTypes.Metadata{validResource.Metadata}))
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
@@ -167,7 +167,7 @@ func TestDereferenceResourceMetadata(t *testing.T) {
 
 func TestDereferenceCollectionResources(t *testing.T) {
 	validResource := ValidResource()
-	subtests := getSubtest(types.NewDereferencedResourceList(ValidDid, []*resource.Metadata{validResource.Metadata}))
+	subtests := getSubtest(types.NewDereferencedResourceList(ValidDid, []*resourceTypes.Metadata{validResource.Metadata}))
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {

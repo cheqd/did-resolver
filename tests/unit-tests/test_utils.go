@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
-	resource "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/types"
 )
 
@@ -51,14 +51,14 @@ func ValidDIDDoc() didTypes.DidDoc {
 	}
 }
 
-func ValidResource() resource.ResourceWithMetadata {
+func ValidResource() resourceTypes.ResourceWithMetadata {
 	data := []byte("{\"attr\":[\"name\",\"age\"]}")
 	checksum := sha256.New().Sum(data)
-	return resource.ResourceWithMetadata{
-		Resource: &resource.Resource{
+	return resourceTypes.ResourceWithMetadata{
+		Resource: &resourceTypes.Resource{
 			Data: data,
 		},
-		Metadata: &resource.Metadata{
+		Metadata: &resourceTypes.Metadata{
 			CollectionId: ValidIdentifier,
 			Id:           ValidResourceId,
 			Name:         ValidResourceId,
@@ -76,10 +76,10 @@ func ValidMetadata() didTypes.Metadata {
 type MockLedgerService struct {
 	Did      didTypes.DidDoc
 	Metadata didTypes.Metadata
-	Resource resource.ResourceWithMetadata
+	Resource resourceTypes.ResourceWithMetadata
 }
 
-func NewMockLedgerService(did didTypes.DidDoc, metadata didTypes.Metadata, resource resource.ResourceWithMetadata) MockLedgerService {
+func NewMockLedgerService(did didTypes.DidDoc, metadata didTypes.Metadata, resource resourceTypes.ResourceWithMetadata) MockLedgerService {
 	return MockLedgerService{
 		Did:      did,
 		Metadata: metadata,
@@ -103,18 +103,18 @@ func (ls MockLedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTy
 	return nil, types.NewNotFoundError(did, types.JSON, nil, true)
 }
 
-func (ls MockLedgerService) QueryResource(did string, resourceId string) (*resource.ResourceWithMetadata, *types.IdentityError) {
+func (ls MockLedgerService) QueryResource(did string, resourceId string) (*resourceTypes.ResourceWithMetadata, *types.IdentityError) {
 	if ls.Resource.Metadata == nil || ls.Resource.Metadata.Id != resourceId {
 		return nil, types.NewNotFoundError(did, types.JSON, nil, true)
 	}
 	return &ls.Resource, nil
 }
 
-func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resource.Metadata, *types.IdentityError) {
+func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resourceTypes.Metadata, *types.IdentityError) {
 	if ls.Resource.Metadata == nil {
-		return []*resource.Metadata{}, types.NewNotFoundError(did, types.JSON, nil, true)
+		return []*resourceTypes.Metadata{}, types.NewNotFoundError(did, types.JSON, nil, true)
 	}
-	return []*resource.Metadata{ls.Resource.Metadata}, nil
+	return []*resourceTypes.Metadata{ls.Resource.Metadata}, nil
 }
 
 func (ls MockLedgerService) GetNamespaces() []string {

@@ -1,8 +1,8 @@
 package types
 
 import (
-	did "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
-	resource "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
+	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -14,7 +14,7 @@ type ResolutionDidDocMetadata struct {
 	Resources   []DereferencedResource `json:"linkedResourceMetadata,omitempty"`
 }
 
-func NewResolutionDidDocMetadata(did string, metadata did.Metadata, resources []*resource.Metadata) ResolutionDidDocMetadata {
+func NewResolutionDidDocMetadata(did string, metadata didTypes.Metadata, resources []*resourceTypes.Metadata) ResolutionDidDocMetadata {
 	newMetadata := ResolutionDidDocMetadata{
 		Created:     metadata.Created,
 		Updated:     metadata.Updated,

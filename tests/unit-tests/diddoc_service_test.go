@@ -5,8 +5,8 @@ import (
 	"net/url"
 	"testing"
 
-	did "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
-	resource "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
+	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/stretchr/testify/require"
@@ -77,12 +77,12 @@ func TestResolve(t *testing.T) {
 			method:           ValidMethod,
 			namespace:        ValidNamespace,
 			expectedDID:      &validDIDDocResolution,
-			expectedMetadata: types.NewResolutionDidDocMetadata(ValidDid, validMetadata, []*resource.Metadata{validResource.Metadata}),
+			expectedMetadata: types.NewResolutionDidDocMetadata(ValidDid, validMetadata, []*resourceTypes.Metadata{validResource.Metadata}),
 			expectedError:    nil,
 		},
 		{
 			name:             "DID not found",
-			ledgerService:    NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
+			ledgerService:    NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
 			identifier:       ValidIdentifier,
 			method:           ValidMethod,
@@ -93,7 +93,7 @@ func TestResolve(t *testing.T) {
 		},
 		{
 			name:             "invalid DID",
-			ledgerService:    NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
+			ledgerService:    NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
 			identifier:       "oooooo0000OOOO_invalid_did",
 			method:           ValidMethod,
@@ -104,7 +104,7 @@ func TestResolve(t *testing.T) {
 		},
 		{
 			name:             "invalid method",
-			ledgerService:    NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
+			ledgerService:    NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
 			identifier:       ValidIdentifier,
 			method:           "not_supported_method",
@@ -115,7 +115,7 @@ func TestResolve(t *testing.T) {
 		},
 		{
 			name:             "invalid namespace",
-			ledgerService:    NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
+			ledgerService:    NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
 			identifier:       ValidIdentifier,
 			method:           ValidMethod,
@@ -179,7 +179,7 @@ func TestDereferencing(t *testing.T) {
 	validService := ValidService()
 	validResource := ValidResource()
 	validMetadata := ValidMetadata()
-	validFragmentMetadata := types.NewResolutionDidDocMetadata(ValidDid, validMetadata, []*resource.Metadata{})
+	validFragmentMetadata := types.NewResolutionDidDocMetadata(ValidDid, validMetadata, []*resourceTypes.Metadata{})
 	validQuery, _ := url.ParseQuery("attr=value")
 	subtests := []struct {
 		name                  string
@@ -215,7 +215,7 @@ func TestDereferencing(t *testing.T) {
 		},
 		{
 			name:                  "not supported query",
-			ledgerService:         NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
+			ledgerService:         NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
 			dereferencingType:     types.DIDJSONLD,
 			did:                   ValidDid,
 			queries:               validQuery,
@@ -225,7 +225,7 @@ func TestDereferencing(t *testing.T) {
 		},
 		{
 			name:                  "key not found",
-			ledgerService:         NewMockLedgerService(did.DidDoc{}, did.Metadata{}, resource.ResourceWithMetadata{}),
+			ledgerService:         NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
 			dereferencingType:     types.DIDJSONLD,
 			did:                   ValidDid,
 			fragmentId:            "notFoundKey",

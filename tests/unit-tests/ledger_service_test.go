@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
-	resource "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/stretchr/testify/require"
@@ -42,7 +42,7 @@ func TestQueryResource(t *testing.T) {
 		name             string
 		collectionDid    string
 		resourceId       string
-		expectedResource *resource.ResourceWithMetadata
+		expectedResource *resourceTypes.ResourceWithMetadata
 		expectedError    error
 	}{
 		{
