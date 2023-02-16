@@ -25,7 +25,11 @@ services:
       # 1st parameter is gRPC endpoint
       # 2nd (Boolean) parameter is whether to use TLS or not
       # 3nd connection timeout
-      - MAINNET_ENDPOINT: "grpc.cheqd.net:443,true,5s"
-      - TESTNET_ENDPOINT: "grpc.cheqd.network:443,true,5s"
-      - LOG_LEVEL: "warn"
-      - RESOLVER_LISTENER: "0.0.0.0:8080"
+      MAINNET_ENDPOINT: "grpc.cheqd.net:443,true,5s"
+      TESTNET_ENDPOINT: "grpc.cheqd.network:443,true,5s"
+
+      # Logging level
+      LOG_LEVEL: "warn"
+
+      # Interface and port to listen on in the container
+      RESOLVER_LISTENER: "0.0.0.0:8080"
