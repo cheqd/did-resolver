@@ -1,5 +1,7 @@
 ### APP-SPECIFIC EXCLUSIONS ###
 
+# Files to ignore
+did-resolver
 
 ### GENERAL EXCLUSIONS ###
 
