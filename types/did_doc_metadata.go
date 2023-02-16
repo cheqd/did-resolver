@@ -49,3 +49,7 @@ func TransformToFragmentMetadata(metadata ResolutionDidDocMetadata) ResolutionDi
 	metadata.Resources = nil
 	return metadata
 }
+
+func (e *ResolutionDidDocMetadata) AddContext(newProtocol string) {}
+func (e *ResolutionDidDocMetadata) RemoveContext()                {}
+func (e *ResolutionDidDocMetadata) GetBytes() []byte              { return []byte{} }
