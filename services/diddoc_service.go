@@ -157,7 +157,7 @@ func (dds DIDDocService) GetAllDidDocVersionsMetadata(did string, contentType ty
 
 	contentStream := types.NewDereferencedDidVersionsList(versions)
 
-	return &types.DidDereferencing{Context: context, ContentStream: &contentStream, DereferencingMetadata: dereferenceMetadata}, nil
+	return &types.DidDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
 func (dds DIDDocService) dereferenceSecondary(did string, version string, fragmentId string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
