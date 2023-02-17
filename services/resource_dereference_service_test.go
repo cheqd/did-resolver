@@ -166,7 +166,8 @@ func TestDereferenceResourceMetadata(t *testing.T) {
 
 func TestDereferenceCollectionResources(t *testing.T) {
 	validResource := utils.ValidResource()
-	subtests := getSubtest(types.NewDereferencedResourceList(utils.ValidDid, []*resource.Metadata{validResource.Metadata}))
+	content := types.NewResolutionDidDocMetadata(utils.ValidDid, utils.ValidMetadata(), []*resource.Metadata{validResource.Metadata})
+	subtests := getSubtest(&content)
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
