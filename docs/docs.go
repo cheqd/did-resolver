@@ -434,168 +434,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "github_com_cheqd_cheqd-node_x_did_types.Metadata": {
-            "type": "object",
-            "properties": {
-                "created": {
-                    "description": "created is the timestamp of the creation of the DID Document.\nFormat: RFC3339\nExample: 2021-03-10T15:16:17Z",
-                    "type": "string"
-                },
-                "deactivated": {
-                    "description": "deactivated is a flag that indicates whether the DID Document is deactivated.\nDefault: false",
-                    "type": "boolean"
-                },
-                "next_version_id": {
-                    "description": "next_version_id is the version identifier of the next version of the DID Document.\nFormat: UUID\nExample: 123e4567-e89b-12d3-a456-426655440000",
-                    "type": "string"
-                },
-                "previous_version_id": {
-                    "description": "previous_version_id is the version identifier of the previous version of the DID Document.\nFormat: UUID\nExample: 123e4567-e89b-12d3-a456-426655440000",
-                    "type": "string"
-                },
-                "updated": {
-                    "description": "updated is the timestamp of the last update of the DID Document.\nFormat: RFC3339\nExample: 2021-03-10T15:16:17Z",
-                    "type": "string"
-                },
-                "version_id": {
-                    "description": "version_id is the version identifier of the DID Document.\nFormat: UUID\nExample: 123e4567-e89b-12d3-a456-426655440000",
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_cheqd_did-resolver_types.DidDoc": {
-            "type": "object",
-            "properties": {
-                "@context": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "example": [
-                        "https://www.w3.org/ns/did/v1"
-                    ]
-                },
-                "alsoKnownAs": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "assertionMethod": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "authentication": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "example": [
-                        "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#key-1"
-                    ]
-                },
-                "capabilityInvocation": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "capability_delegation": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "controller": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "example": [
-                        "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47"
-                    ]
-                },
-                "id": {
-                    "type": "string",
-                    "example": "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47"
-                },
-                "keyAgreement": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "service": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_cheqd_did-resolver_types.Service"
-                    }
-                },
-                "verificationMethod": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_cheqd_did-resolver_types.VerificationMethod"
-                    }
-                }
-            }
-        },
-        "github_com_cheqd_did-resolver_types.Service": {
-            "type": "object",
-            "properties": {
-                "@context": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "id": {
-                    "type": "string",
-                    "example": "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#service-1"
-                },
-                "serviceEndpoint": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "example": [
-                        "https://example.com/endpoint/8377464"
-                    ]
-                },
-                "type": {
-                    "type": "string",
-                    "example": "did-communication"
-                }
-            }
-        },
-        "github_com_cheqd_did-resolver_types.VerificationMethod": {
-            "type": "object",
-            "properties": {
-                "@context": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "controller": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "publicKeyBase58": {
-                    "type": "string"
-                },
-                "publicKeyJwk": {},
-                "publicKeyMultibase": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
         "types.ContentType": {
             "type": "string",
             "enum": [
@@ -617,7 +455,7 @@ const docTemplate = `{
                 "versions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_cheqd_cheqd-node_x_did_types.Metadata"
+                        "$ref": "#/definitions/types.ResolutionDidDocMetadata"
                     }
                 }
             }
@@ -706,6 +544,84 @@ const docTemplate = `{
                 }
             }
         },
+        "types.DidDoc": {
+            "type": "object",
+            "properties": {
+                "@context": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "https://www.w3.org/ns/did/v1"
+                    ]
+                },
+                "alsoKnownAs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "assertionMethod": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "authentication": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#key-1"
+                    ]
+                },
+                "capabilityInvocation": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "capability_delegation": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "controller": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47"
+                    ]
+                },
+                "id": {
+                    "type": "string",
+                    "example": "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47"
+                },
+                "keyAgreement": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "service": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.Service"
+                    }
+                },
+                "verificationMethod": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.VerificationMethod"
+                    }
+                }
+            }
+        },
         "types.DidProperties": {
             "type": "object",
             "properties": {
@@ -727,7 +643,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "didDocument": {
-                    "$ref": "#/definitions/github_com_cheqd_did-resolver_types.DidDoc"
+                    "$ref": "#/definitions/types.DidDoc"
                 },
                 "didDocumentMetadata": {
                     "$ref": "#/definitions/types.ResolutionDidDocMetadata"
@@ -824,6 +740,61 @@ const docTemplate = `{
                 "contentStream": {},
                 "dereferencingMetadata": {
                     "$ref": "#/definitions/types.DereferencingMetadata"
+                }
+            }
+        },
+        "types.Service": {
+            "type": "object",
+            "properties": {
+                "@context": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "string",
+                    "example": "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#service-1"
+                },
+                "serviceEndpoint": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "https://example.com/endpoint/8377464"
+                    ]
+                },
+                "type": {
+                    "type": "string",
+                    "example": "did-communication"
+                }
+            }
+        },
+        "types.VerificationMethod": {
+            "type": "object",
+            "properties": {
+                "@context": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "controller": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "publicKeyBase58": {
+                    "type": "string"
+                },
+                "publicKeyJwk": {},
+                "publicKeyMultibase": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
                 }
             }
         }

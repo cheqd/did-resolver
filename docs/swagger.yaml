@@ -1,132 +1,5 @@
 basePath: /1.0/identifiers
 definitions:
-  github_com_cheqd_cheqd-node_x_did_types.Metadata:
-    properties:
-      created:
-        description: |-
-          created is the timestamp of the creation of the DID Document.
-          Format: RFC3339
-          Example: 2021-03-10T15:16:17Z
-        type: string
-      deactivated:
-        description: |-
-          deactivated is a flag that indicates whether the DID Document is deactivated.
-          Default: false
-        type: boolean
-      next_version_id:
-        description: |-
-          next_version_id is the version identifier of the next version of the DID Document.
-          Format: UUID
-          Example: 123e4567-e89b-12d3-a456-426655440000
-        type: string
-      previous_version_id:
-        description: |-
-          previous_version_id is the version identifier of the previous version of the DID Document.
-          Format: UUID
-          Example: 123e4567-e89b-12d3-a456-426655440000
-        type: string
-      updated:
-        description: |-
-          updated is the timestamp of the last update of the DID Document.
-          Format: RFC3339
-          Example: 2021-03-10T15:16:17Z
-        type: string
-      version_id:
-        description: |-
-          version_id is the version identifier of the DID Document.
-          Format: UUID
-          Example: 123e4567-e89b-12d3-a456-426655440000
-        type: string
-    type: object
-  github_com_cheqd_did-resolver_types.DidDoc:
-    properties:
-      '@context':
-        example:
-        - https://www.w3.org/ns/did/v1
-        items:
-          type: string
-        type: array
-      alsoKnownAs:
-        items:
-          type: string
-        type: array
-      assertionMethod:
-        items:
-          type: string
-        type: array
-      authentication:
-        example:
-        - did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#key-1
-        items:
-          type: string
-        type: array
-      capability_delegation:
-        items:
-          type: string
-        type: array
-      capabilityInvocation:
-        items:
-          type: string
-        type: array
-      controller:
-        example:
-        - did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47
-        items:
-          type: string
-        type: array
-      id:
-        example: did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47
-        type: string
-      keyAgreement:
-        items:
-          type: string
-        type: array
-      service:
-        items:
-          $ref: '#/definitions/github_com_cheqd_did-resolver_types.Service'
-        type: array
-      verificationMethod:
-        items:
-          $ref: '#/definitions/github_com_cheqd_did-resolver_types.VerificationMethod'
-        type: array
-    type: object
-  github_com_cheqd_did-resolver_types.Service:
-    properties:
-      '@context':
-        items:
-          type: string
-        type: array
-      id:
-        example: did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#service-1
-        type: string
-      serviceEndpoint:
-        example:
-        - https://example.com/endpoint/8377464
-        items:
-          type: string
-        type: array
-      type:
-        example: did-communication
-        type: string
-    type: object
-  github_com_cheqd_did-resolver_types.VerificationMethod:
-    properties:
-      '@context':
-        items:
-          type: string
-        type: array
-      controller:
-        type: string
-      id:
-        type: string
-      publicKeyBase58:
-        type: string
-      publicKeyJwk: {}
-      publicKeyMultibase:
-        type: string
-      type:
-        type: string
-    type: object
   types.ContentType:
     enum:
     - application/did+json
@@ -143,7 +16,7 @@ definitions:
     properties:
       versions:
         items:
-          $ref: '#/definitions/github_com_cheqd_cheqd-node_x_did_types.Metadata'
+          $ref: '#/definitions/types.ResolutionDidDocMetadata'
         type: array
     type: object
   types.DereferencedResource:
@@ -204,6 +77,58 @@ definitions:
       dereferencingMetadata:
         $ref: '#/definitions/types.DereferencingMetadata'
     type: object
+  types.DidDoc:
+    properties:
+      '@context':
+        example:
+        - https://www.w3.org/ns/did/v1
+        items:
+          type: string
+        type: array
+      alsoKnownAs:
+        items:
+          type: string
+        type: array
+      assertionMethod:
+        items:
+          type: string
+        type: array
+      authentication:
+        example:
+        - did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#key-1
+        items:
+          type: string
+        type: array
+      capability_delegation:
+        items:
+          type: string
+        type: array
+      capabilityInvocation:
+        items:
+          type: string
+        type: array
+      controller:
+        example:
+        - did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47
+        items:
+          type: string
+        type: array
+      id:
+        example: did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47
+        type: string
+      keyAgreement:
+        items:
+          type: string
+        type: array
+      service:
+        items:
+          $ref: '#/definitions/types.Service'
+        type: array
+      verificationMethod:
+        items:
+          $ref: '#/definitions/types.VerificationMethod'
+        type: array
+    type: object
   types.DidProperties:
     properties:
       didString:
@@ -218,7 +143,7 @@ definitions:
       '@context':
         type: string
       didDocument:
-        $ref: '#/definitions/github_com_cheqd_did-resolver_types.DidDoc'
+        $ref: '#/definitions/types.DidDoc'
       didDocumentMetadata:
         $ref: '#/definitions/types.ResolutionDidDocMetadata'
       didResolutionMetadata:
@@ -283,6 +208,43 @@ definitions:
       contentStream: {}
       dereferencingMetadata:
         $ref: '#/definitions/types.DereferencingMetadata'
+    type: object
+  types.Service:
+    properties:
+      '@context':
+        items:
+          type: string
+        type: array
+      id:
+        example: did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#service-1
+        type: string
+      serviceEndpoint:
+        example:
+        - https://example.com/endpoint/8377464
+        items:
+          type: string
+        type: array
+      type:
+        example: did-communication
+        type: string
+    type: object
+  types.VerificationMethod:
+    properties:
+      '@context':
+        items:
+          type: string
+        type: array
+      controller:
+        type: string
+      id:
+        type: string
+      publicKeyBase58:
+        type: string
+      publicKeyJwk: {}
+      publicKeyMultibase:
+        type: string
+      type:
+        type: string
     type: object
 host: resolver.cheqd.net
 info:
