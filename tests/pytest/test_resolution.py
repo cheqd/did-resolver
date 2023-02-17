@@ -59,6 +59,8 @@ import helpers
          r"\"dereferencingMetadata(.*?)\"contentStream\":(.*?)\"contentMetadata\":(.*?)"),
         (helpers.FAKE_TESTNET_DID_VERSIONS, r"\"didResolutionMetadata(.*?)\"error\": \"notFound\"(.*?)"
          r"didDocument\": null,(.*?)\"didDocumentMetadata\": \{\}"),
+        (helpers.TESTNET_DID_VERSION_METADATA, r"\"dereferencingMetadata(.*?)\"contentStream\":(.*?)linkedResourceMetadata(.*?)"
+         "resourceCollectionId(.*?)\"contentMetadata\":(.*?)"),
     ]
 )
 def test_resolution(did_url, expected_output):
