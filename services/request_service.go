@@ -121,6 +121,43 @@ func (rs RequestService) ResolveDIDDocVersion(c echo.Context) error {
 	return c.JSONPretty(http.StatusOK, result, "  ")
 }
 
+func (rs RequestService) ResolveDIDDocVersionMetadata(c echo.Context) error {
+	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
+
+	did, err := getDidParam(c)
+	if err != nil {
+		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
+	}
+
+	version := c.Param("version")
+
+	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	if didMethod != rs.didDocService.didMethod {
+		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
+	}
+
+	if !didUtils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+		err := didUtils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
+			did = utils.MigrateDID(did)
+			path := types.RESOLVER_PATH + did + types.DID_VERSION_PATH + version
+
+			return c.Redirect(http.StatusMovedPermanently, path)
+		} else {
+			return types.NewInvalidDIDError(did, requestedContentType, nil, false)
+		}
+	}
+
+	result, rErr := rs.didDocService.GetDIDDocVersionsMetadata(did, version, requestedContentType)
+	if rErr != nil {
+		return rErr
+	}
+
+	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
+
+	return c.JSONPretty(http.StatusOK, result, "  ")
+}
+
 // ResolveAllDidDocVersionsMetadata godoc
 //
 //	@Summary		Resolve DID Document Version on did:cheqd

@@ -63,6 +63,7 @@ func serve() {
 	e.GET(types.SWAGGER_PATH, echoSwagger.WrapHandler)
 	e.GET(types.RESOLVER_PATH+":did", requestService.ResolveDIDDoc)
 	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSION_PATH+":version", requestService.ResolveDIDDocVersion)
+	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSION_PATH+":version/metadata", requestService.ResolveDIDDocVersionMetadata)
 	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSIONS_PATH, requestService.ResolveAllDidDocVersionsMetadata)
 	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource", requestService.DereferenceResourceData)
 	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource/metadata", requestService.DereferenceResourceMetadata)

@@ -109,6 +109,35 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 	return &result, nil
 }
 
+func (dds DIDDocService) GetDIDDocVersionsMetadata(did string, version string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
+	if !contentType.IsSupported() {
+		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, false)
+	}
+
+	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
+
+	protoDidDocWithMetadata, err := dds.ledgerService.QueryDIDDoc(did, version)
+	if err != nil {
+		err.ContentType = contentType
+		return nil, err
+	}
+
+	resources, err := dds.ledgerService.QueryCollectionResources(did)
+	if err != nil {
+		err.ContentType = contentType
+		return nil, err
+	}
+
+	var context string
+	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
+		context = types.ResolutionSchemaJSONLD
+	}
+
+	contentStream := types.NewResolutionDidDocMetadata(did, *protoDidDocWithMetadata.Metadata, resources)
+
+	return &types.ResourceDereferencing{Context: context, ContentStream: &contentStream, DereferencingMetadata: dereferenceMetadata}, nil
+}
+
 func (dds DIDDocService) GetAllDidDocVersionsMetadata(did string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 
