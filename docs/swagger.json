@@ -293,7 +293,7 @@
         },
         "/{did}/version/{versionId}": {
             "get": {
-                "description": "Fetch specific all version of a DID Document (\"DIDDoc\") for a given DID",
+                "description": "Fetch specific all version of a DID Document (\"DIDDoc\") for a given DID and version ID",
                 "consumes": [
                     "application/did+ld+json",
                     "application/ld+json",
@@ -329,6 +329,73 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/types.DidResolution"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    }
+                }
+            }
+        },
+        "/{did}/version/{versionId}/metadata": {
+            "get": {
+                "description": "Fetch metadata of specific a DID Document (\"DIDDoc\") version for a given DID and version ID",
+                "consumes": [
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+jsonww"
+                ],
+                "produces": [
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+json"
+                ],
+                "tags": [
+                    "DID Resolution"
+                ],
+                "summary": "Resolve DID Document Version Metadata on did:cheqd",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Full DID with unique identifier",
+                        "name": "did",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "version of a DID document",
+                        "name": "versionId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.DidDereferencing"
                         }
                     },
                     "400": {
