@@ -180,7 +180,7 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.
 //	@Accept			application/did+ld+json,application/ld+json,application/did+json
 //	@Produce		application/did+ld+json,application/ld+json,application/did+json
 //	@Param			did	path		string	true	"Full DID with unique identifier"
-//	@Success		200	{object}	types.ResourceDereferencing
+//	@Success		200	{object}	types.ResourceDereferencing{contentStream=types.ResolutionDidDocMetadata}
 //	@Failure		400	{object}	types.IdentityError
 //	@Failure		404	{object}	types.IdentityError
 //	@Failure		406	{object}	types.IdentityError

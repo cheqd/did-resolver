@@ -332,7 +332,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.ResourceDereferencing'
+            allOf:
+            - $ref: '#/definitions/types.ResourceDereferencing'
+            - properties:
+                contentStream:
+                  $ref: '#/definitions/types.ResolutionDidDocMetadata'
+              type: object
         "400":
           description: Bad Request
           schema:

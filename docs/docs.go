@@ -130,7 +130,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.ResourceDereferencing"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.ResourceDereferencing"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "contentStream": {
+                                            "$ref": "#/definitions/types.ResolutionDidDocMetadata"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
