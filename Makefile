@@ -127,5 +127,8 @@ clean:
 ###############################################################################
 
 swagger:
+	@echo "Generating Swagger files..."
+	@go install github.com/swaggo/swag/cmd/swag@latest
+	swag fmt
 	swag init -g main.go
 .PHONY: swagger
