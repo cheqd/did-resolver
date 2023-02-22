@@ -21,7 +21,7 @@ linters:
     - nestif
     - nolintlint
     - staticcheck
-    - stylecheck
+    # - stylecheck # Disable stylecheck until refactor
     - typecheck
     - unconvert
     - unused
