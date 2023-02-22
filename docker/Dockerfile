@@ -4,11 +4,18 @@
 
 FROM golang:1.18-alpine AS builder
 
+# Install minimum necessary dependencies
+ENV PACKAGES make git bash linux-headers
+RUN apk update && apk add --no-cache $PACKAGES
+
+# Set working directory for the build
 WORKDIR /builder
-COPY . ./
+
+# Add source files
+COPY . .
 
 # Build did-resolver binary
-RUN go mod download && go build -o did-resolver main.go
+RUN make build 
 
 #####################################################################
 ###    STAGE 2: Build cheqd did-resolver container image          ###
@@ -20,7 +27,7 @@ FROM alpine:3.17 AS resolver
 RUN apk update && apk add --no-cache bash ca-certificates
 
 # Copy did-resolver binary from Stage 1
-COPY --from=builder /builder/did-resolver /usr/local/bin/did-resolver
+COPY --from=builder /builder/build/did-resolver /usr/bin/did-resolver
 
 # Set user directory and details
 ARG HOME_DIR="/resolver"
