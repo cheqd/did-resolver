@@ -22,7 +22,7 @@ func LoadConfig() (types.Config, error) {
 	viper.SetDefault("MAINNET_ENDPOINT", "")
 	viper.SetDefault("TESTNET_ENDPOINT", "")
 	viper.SetDefault("LOG_LEVEL", "")
-	viper.SetDefault("RESOLVER_LISTNER", "")
+	viper.SetDefault("RESOLVER_LISTENER", "")
 	viper.AutomaticEnv()
 
 	rawConf := &types.RawConfig{}

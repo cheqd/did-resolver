@@ -8,7 +8,7 @@ import (
 type RawConfig struct {
 	MainnetEndpoint  string `mapstructure:"MAINNET_ENDPOINT"`
 	TestnetEndpoint  string `mapstructure:"TESTNET_ENDPOINT"`
-	ResolverListener string `mapstructure:"RESOLVER_LISTNER"`
+	ResolverListener string `mapstructure:"RESOLVER_LISTENER"`
 	LogLevel         string `mapstructure:"LOG_LEVEL"`
 }
 

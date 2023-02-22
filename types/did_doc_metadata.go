@@ -23,9 +23,16 @@ func NewResolutionDidDocMetadata(did string, metadata did.Metadata, resources []
 		created = nil
 	}
 
+	updated := metadata.Updated
+	if updated != nil {
+		if updated.IsZero() {
+			updated = nil
+		}
+	}
+
 	newMetadata := ResolutionDidDocMetadata{
 		Created:     created,
-		Updated:     metadata.Updated,
+		Updated:     updated,
 		Deactivated: metadata.Deactivated,
 		VersionId:   metadata.VersionId,
 	}
@@ -42,3 +49,7 @@ func TransformToFragmentMetadata(metadata ResolutionDidDocMetadata) ResolutionDi
 	metadata.Resources = nil
 	return metadata
 }
+
+func (e *ResolutionDidDocMetadata) AddContext(newProtocol string) {}
+func (e *ResolutionDidDocMetadata) RemoveContext()                {}
+func (e *ResolutionDidDocMetadata) GetBytes() []byte              { return []byte{} }

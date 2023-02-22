@@ -14,7 +14,7 @@ services:
     #   dockerfile: docker/Dockerfile
     #   target: resolver
     # CAUTION: Change IMAGE_VERSION to local in docker-compose.env if building your own image in section below
-    image: ghcr.io/cheqd/did-resolver:latest
+    image: cheqd/did-resolver:staging-latest
     ports:
       - target: 8080
         published: 8080

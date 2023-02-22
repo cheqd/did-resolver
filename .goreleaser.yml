@@ -2,16 +2,20 @@
 
 project_name: did-resolver
 
+env:
+  - GO111MODULE=on
+
 before:
   hooks:
-    - go mod tidy
-    - go mod download
+    - make clean
+    - make tidy
+    - make swagger
 
 builds:
   - 
     env:
-      - CGO_ENABLED=0
-    main: .
+      - CGO_ENABLED=1
+    main: main.go
     binary: did-resolver
     goos:
       - linux
@@ -19,16 +23,19 @@ builds:
     goarch:
       - amd64
       - arm64
-
+    flags:
+      - -mod=readonly
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X github.com/cheqd/did-resolver/cmd.version={{ .Version }}
+      - -X github.com/cheqd/did-resolver/cmd.Commit={{ .Commit }}
 
 archives:
-  - 
-    replacements:
-        darwin: Darwin
-        linux: Linux
-        amd64: x86_64
+  - id: release-archives
+    rlcp: true
     format: tar.gz
-    wrap_in_directory: true
+    wrap_in_directory: false
     name_template: "{{ .Binary }}-{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
     files:
       - LICENSE
