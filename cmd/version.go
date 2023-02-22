@@ -9,13 +9,8 @@ func getVersionCmd() *cobra.Command {
 		Use:   "version",
 		Short: "Prints the version of the binary",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return printVersion(cmd, args)
+			println(version)
+			return nil
 		},
 	}
-}
-
-func printVersion(cmd *cobra.Command, args []string) error {
-	println(version)
-
-	return nil
 }
