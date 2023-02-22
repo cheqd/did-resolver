@@ -27,20 +27,6 @@ func getServeCmd() *cobra.Command {
 	}
 }
 
-// @title DID Resolver for cheqd DID method
-// @version v3.0
-// @description	Universal Resolver driver for cheqd DID method
-
-// @contact.name Cheqd Foundation Limited
-// @contact.url	https://cheqd.io
-
-// @license.name Apache 2.0
-// @license.url	https://github.com/cheqd/did-resolver/blob/main/LICENSE
-
-// @host resolver.cheqd.net
-// @BasePath /1.0/identifiers
-// @schemes	https http
-
 func serve() {
 	log.Info().Msg("Loading configuration")
 	config, err := utils.LoadConfig()
