@@ -14,7 +14,7 @@ before:
 builds:
   - 
     env:
-      - CGO_ENABLED=1
+      - CGO_ENABLED=0
     main: main.go
     binary: did-resolver
     goos:
