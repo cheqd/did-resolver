@@ -9,7 +9,12 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+
+	// Import Echo Swagger middleware
 	echoSwagger "github.com/swaggo/echo-swagger"
+
+	// Import generated Swagger docs
+	_ "github.com/cheqd/did-resolver/docs"
 )
 
 func getServeCmd() *cobra.Command {
@@ -21,6 +26,20 @@ func getServeCmd() *cobra.Command {
 		},
 	}
 }
+
+// @title DID Resolver for cheqd DID method
+// @version v3.0
+// @description	Universal Resolver driver for cheqd DID method
+
+// @contact.name Cheqd Foundation Limited
+// @contact.url	https://cheqd.io
+
+// @license.name Apache 2.0
+// @license.url	https://github.com/cheqd/did-resolver/blob/main/LICENSE
+
+// @host resolver.cheqd.net
+// @BasePath /1.0/identifiers
+// @schemes	https http
 
 func serve() {
 	log.Info().Msg("Loading configuration")

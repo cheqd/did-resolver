@@ -1,21 +1,14 @@
 {
-    "schemes": [
-        "https",
-        "http"
-    ],
     "swagger": "2.0",
     "info": {
-        "description": "Universal Resolver driver for did:cheqd method",
-        "title": "DID Resolver for did:cheqd method",
+        "title": "DID Resolver for cheqd DID method",
         "contact": {
-            "name": "Cheqd Foundation Limited",
-            "url": "https://cheqd.io"
+            "name": "Cheqd Foundation Limited"
         },
         "license": {
-            "name": "Apache 2.0",
-            "url": "https://github.com/cheqd/did-resolver/blob/main/LICENSE"
+            "name": "Apache 2.0"
         },
-        "version": "1.0"
+        "version": "v3.0"
     },
     "host": "resolver.cheqd.net",
     "basePath": "/1.0/identifiers",
