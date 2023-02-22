@@ -51,13 +51,14 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 		}
 	}
 
-	if flag != nil {
+	switch {
+	case flag != nil:
 		return nil, types.NewRepresentationNotSupportedError(did, contentType, nil, true)
-	} else if fragmentId != "" {
+	case fragmentId != "":
 		log.Trace().Msgf("Dereferencing %s, %s, %s", did, fragmentId, queries)
 		result, err = dds.dereferenceSecondary(did, version, fragmentId, contentType)
 		isDereferencing = true
-	} else {
+	default:
 		log.Trace().Msgf("Resolving %s", did)
 		result, err = dds.Resolve(did, version, contentType)
 		isDereferencing = false
