@@ -130,11 +130,11 @@ func (rs RequestService) ResolveDIDDocVersion(c echo.Context) error {
 //	@Produce		application/did+ld+json,application/ld+json,application/did+json
 //	@Param			did			path		string	true	"Full DID with unique identifier"
 //	@Param			versionId	path		string	true	"version of a DID document"
-//	@Success		200	{object}	types.DidDereferencing
-//	@Failure		400	{object}	types.IdentityError
-//	@Failure		404	{object}	types.IdentityError
-//	@Failure		406	{object}	types.IdentityError
-//	@Failure		500	{object}	types.IdentityError
+//	@Success		200			{object}	types.DidDereferencing
+//	@Failure		400			{object}	types.IdentityError
+//	@Failure		404			{object}	types.IdentityError
+//	@Failure		406			{object}	types.IdentityError
+//	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did}/version/{versionId}/metadata [get]
 func (rs RequestService) ResolveDIDDocVersionMetadata(c echo.Context) error {
 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
