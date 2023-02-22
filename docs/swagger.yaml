@@ -1,0 +1,594 @@
+basePath: /1.0/identifiers
+definitions:
+  types.ContentType:
+    enum:
+    - application/did+json
+    - application/did+ld+json
+    - application/ld+json
+    - application/json
+    type: string
+    x-enum-varnames:
+    - DIDJSON
+    - DIDJSONLD
+    - JSONLD
+    - JSON
+  types.DereferencedDidVersionsList:
+    properties:
+      versions:
+        items:
+          $ref: '#/definitions/types.ResolutionDidDocMetadata'
+        type: array
+    type: object
+  types.DereferencedResource:
+    properties:
+      checksum:
+        example: a95380f460e63ad939541a57aecbfd795fcd37c6d78ee86c885340e33a91b559
+        type: string
+      created:
+        example: "2021-09-01T12:00:00Z"
+        type: string
+      mediaType:
+        example: image/png
+        type: string
+      nextVersionId:
+        example: d4829ac7-4566-478c-a408-b44767eddadc
+        type: string
+      previousVersionId:
+        example: ad7a8442-3531-46eb-a024-53953ec6e4ff
+        type: string
+      resourceCollectionId:
+        example: 55dbc8bf-fba3-4117-855c-1e0dc1d3bb47
+        type: string
+      resourceId:
+        example: 398cee0a-efac-4643-9f4c-74c48c72a14b
+        type: string
+      resourceName:
+        example: Image Resource
+        type: string
+      resourceType:
+        example: Image
+        type: string
+      resourceURI:
+        example: did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47/resources/398cee0a-efac-4643-9f4c-74c48c72a14b
+        type: string
+    type: object
+  types.DereferencingMetadata:
+    properties:
+      contentType:
+        allOf:
+        - $ref: '#/definitions/types.ContentType'
+        example: application/did+ld+json
+      did:
+        $ref: '#/definitions/types.DidProperties'
+      error:
+        type: string
+      retrieved:
+        example: "2021-09-01T12:00:00Z"
+        type: string
+    type: object
+  types.DidDereferencing:
+    properties:
+      '@context':
+        example: https://w3id.org/did-resolution/v1
+        type: string
+      contentMetadata:
+        $ref: '#/definitions/types.ResolutionDidDocMetadata'
+      contentStream: {}
+      dereferencingMetadata:
+        $ref: '#/definitions/types.DereferencingMetadata'
+    type: object
+  types.DidDoc:
+    properties:
+      '@context':
+        example:
+        - https://www.w3.org/ns/did/v1
+        items:
+          type: string
+        type: array
+      alsoKnownAs:
+        items:
+          type: string
+        type: array
+      assertionMethod:
+        items:
+          type: string
+        type: array
+      authentication:
+        example:
+        - did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#key-1
+        items:
+          type: string
+        type: array
+      capability_delegation:
+        items:
+          type: string
+        type: array
+      capabilityInvocation:
+        items:
+          type: string
+        type: array
+      controller:
+        example:
+        - did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47
+        items:
+          type: string
+        type: array
+      id:
+        example: did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47
+        type: string
+      keyAgreement:
+        items:
+          type: string
+        type: array
+      service:
+        items:
+          $ref: '#/definitions/types.Service'
+        type: array
+      verificationMethod:
+        items:
+          $ref: '#/definitions/types.VerificationMethod'
+        type: array
+    type: object
+  types.DidProperties:
+    properties:
+      didString:
+        type: string
+      method:
+        type: string
+      methodSpecificId:
+        type: string
+    type: object
+  types.DidResolution:
+    properties:
+      '@context':
+        type: string
+      didDocument:
+        $ref: '#/definitions/types.DidDoc'
+      didDocumentMetadata:
+        $ref: '#/definitions/types.ResolutionDidDocMetadata'
+      didResolutionMetadata:
+        $ref: '#/definitions/types.ResolutionMetadata'
+    type: object
+  types.IdentityError:
+    properties:
+      code:
+        type: integer
+      contentType:
+        $ref: '#/definitions/types.ContentType'
+      did:
+        type: string
+      internal: {}
+      isDereferencing:
+        type: boolean
+      message:
+        type: string
+    type: object
+  types.ResolutionDidDocMetadata:
+    properties:
+      created:
+        example: "2021-09-01T12:00:00Z"
+        type: string
+      deactivated:
+        example: false
+        type: boolean
+      linkedResourceMetadata:
+        items:
+          $ref: '#/definitions/types.DereferencedResource'
+        type: array
+      updated:
+        example: "2021-09-10T12:00:00Z"
+        type: string
+      versionId:
+        example: 4979BAF49599FEF0BAD5ED0849FDD708156761EBBC8EBE78D0907F8BECC9CB2E
+        type: string
+    type: object
+  types.ResolutionMetadata:
+    properties:
+      contentType:
+        allOf:
+        - $ref: '#/definitions/types.ContentType'
+        example: application/did+ld+json
+      did:
+        $ref: '#/definitions/types.DidProperties'
+      error:
+        type: string
+      retrieved:
+        example: "2021-09-01T12:00:00Z"
+        type: string
+    type: object
+  types.ResolutionResourceMetadata:
+    type: object
+  types.ResourceDereferencing:
+    properties:
+      '@context':
+        example: https://w3id.org/did-resolution/v1
+        type: string
+      contentMetadata:
+        $ref: '#/definitions/types.ResolutionResourceMetadata'
+      contentStream: {}
+      dereferencingMetadata:
+        $ref: '#/definitions/types.DereferencingMetadata'
+    type: object
+  types.Service:
+    properties:
+      '@context':
+        items:
+          type: string
+        type: array
+      id:
+        example: did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#service-1
+        type: string
+      serviceEndpoint:
+        example:
+        - https://example.com/endpoint/8377464
+        items:
+          type: string
+        type: array
+      type:
+        example: did-communication
+        type: string
+    type: object
+  types.VerificationMethod:
+    properties:
+      '@context':
+        items:
+          type: string
+        type: array
+      controller:
+        type: string
+      id:
+        type: string
+      publicKeyBase58:
+        type: string
+      publicKeyJwk: {}
+      publicKeyMultibase:
+        type: string
+      type:
+        type: string
+    type: object
+host: resolver.cheqd.net
+info:
+  contact:
+    name: Cheqd Foundation Limited
+    url: https://cheqd.io
+  description: Universal Resolver driver for cheqd DID method
+  license:
+    name: Apache 2.0
+    url: https://github.com/cheqd/did-resolver/blob/main/LICENSE
+  title: DID Resolver for cheqd DID method
+  version: v3.0
+paths:
+  /{did}:
+    get:
+      consumes:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      description: Fetch DID Document ("DIDDoc") from cheqd network
+      parameters:
+      - description: Full DID with unique identifier
+        in: path
+        name: did
+        required: true
+        type: string
+      - description: Service Type
+        in: query
+        name: service
+        type: string
+      - description: '#Fragment'
+        in: query
+        name: fragmentId
+        type: string
+      - description: Version
+        in: query
+        name: versionId
+        type: string
+      produces:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DidResolution'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+      summary: Resolve DID Document on did:cheqd
+      tags:
+      - DID Resolution
+  /{did}/metadata:
+    get:
+      consumes:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      description: Get metadata for all Resources within a DID Resource Collection
+      parameters:
+      - description: Full DID with unique identifier
+        in: path
+        name: did
+        required: true
+        type: string
+      produces:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.ResourceDereferencing'
+            - properties:
+                contentStream:
+                  $ref: '#/definitions/types.ResolutionDidDocMetadata'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+      summary: Fetch metadata for all Resources
+      tags:
+      - Resource Resolution
+  /{did}/resources/{resourceId}:
+    get:
+      consumes:
+      - '*/*'
+      description: Get specific Resource within a DID Resource Collection
+      parameters:
+      - description: Full DID with unique identifier
+        in: path
+        name: did
+        required: true
+        type: string
+      - description: Resource-specific unique-identifier
+        in: path
+        name: resourceId
+        required: true
+        type: string
+      produces:
+      - '*/*'
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+      summary: Fetch specific Resource
+      tags:
+      - Resource Resolution
+  /{did}/resources/{resourceId}/metadata:
+    get:
+      consumes:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      description: Get metadata for a specific Resource within a DID Resource Collection
+      parameters:
+      - description: Full DID with unique identifier
+        in: path
+        name: did
+        required: true
+        type: string
+      - description: Resource-specific unique identifier
+        in: path
+        name: resourceId
+        required: true
+        type: string
+      produces:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+      summary: Fetch Resource-specific metadata
+      tags:
+      - Resource Resolution
+  /{did}/version/{versionId}:
+    get:
+      consumes:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      description: Fetch specific all version of a DID Document ("DIDDoc") for a given
+        DID and version ID
+      parameters:
+      - description: Full DID with unique identifier
+        in: path
+        name: did
+        required: true
+        type: string
+      - description: version of a DID document
+        in: path
+        name: versionId
+        required: true
+        type: string
+      produces:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DidResolution'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+      summary: Resolve DID Document Version on did:cheqd
+      tags:
+      - DID Resolution
+  /{did}/version/{versionId}/metadata:
+    get:
+      consumes:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+jsonww
+      description: Fetch metadata of specific a DID Document ("DIDDoc") version for
+        a given DID and version ID
+      parameters:
+      - description: Full DID with unique identifier
+        in: path
+        name: did
+        required: true
+        type: string
+      - description: version of a DID document
+        in: path
+        name: versionId
+        required: true
+        type: string
+      produces:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.DidDereferencing'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+      summary: Resolve DID Document Version Metadata on did:cheqd
+      tags:
+      - DID Resolution
+  /{did}/versions:
+    get:
+      consumes:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      description: Fetch specific all versions of a DID Document ("DIDDoc") for a
+        given DID
+      parameters:
+      - description: Full DID with unique identifier
+        in: path
+        name: did
+        required: true
+        type: string
+      produces:
+      - application/did+ld+json
+      - application/ld+json
+      - application/did+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.ResourceDereferencing'
+            - properties:
+                contentStream:
+                  $ref: '#/definitions/types.DereferencedDidVersionsList'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+      summary: Resolve DID Document Versions on did:cheqd
+      tags:
+      - DID Resolution
+schemes:
+- https
+- http
+swagger: "2.0"
