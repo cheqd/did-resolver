@@ -26,25 +26,48 @@ all: lint build
 ###                                Build flags                              ###
 ###############################################################################
 
-LD_FLAGS = -X github.com/cheqd/did-resolver/cmd.version=$(VERSION) \
-	-X github.com/cheqd/did-resolver/cmd.Commit=$(COMMIT)
-BUILD_FLAGS :=  -ldflags '$(LD_FLAGS)'
+# Process build tags
 
-ifeq ($(LINK_STATICALLY),true)
-  LD_FLAGS += -linkmode=external -extldflags "-Wl,-z,muldefs -static"
-endif
-
+build_tags :=
+empty :=
+whitespace := $(empty) $(empty)
+comma := ,
+build_tags_comma_sep := $(subst $(whitespace),$(comma),$(build_tags))
 build_tags += $(BUILD_TAGS)
 build_tags := $(strip $(build_tags))
 
-BUILD_FLAGS :=  -ldflags '$(LD_FLAGS)' -tags "$(build_tags)"
+# Process linker flags
+
+ldflags = -X github.com/cheqd/did-resolver/cmd.version=$(VERSION) \
+	-X github.com/cheqd/did-resolver/cmd.Commit=$(COMMIT)
+
+ifeq ($(LINK_STATICALLY),true)
+  ldflags += -linkmode=external -extldflags "-Wl,-z,muldefs -static"
+endif
+
+ifeq ($(NO_STRIP),false)
+  ldflags += -w -s
+endif
+
+ldflags += $(LD_FLAGS)
+ldflags := $(strip $(ldflags))
+
+# Set build flags
+
+BUILD_FLAGS := -tags '$(build_tags)' -ldflags '$(ldflags)'
+
+ifeq ($(NO_STRIP),false)
+  BUILD_FLAGS += -trimpath
+endif
 
 ###############################################################################
 ###                                  Build                                  ###
 ###############################################################################
 
-build: go.sum
+build: go.sum go-version
 	@echo "Building DID Resolver binary..."
+	@mkdir -p $(BUILD_DIR)
+	@echo $(BUILD_FLAGS)
 	@go build -mod=readonly $(BUILD_FLAGS) -o build/did-resolver main.go
 .PHONY: build
 
@@ -52,9 +75,9 @@ build: go.sum
 ###                                 Install                                 ###
 ###############################################################################
 
-install: go.sum
-	@echo "Installing DID Resolver dependencies..."
-	@go install -mod=readonly
+install: go.sum go-version
+	@echo "Installing DID Resolver binary..."
+	@go install -mod=readonly $(BUILD_FLAGS)
 .PHONY: install
 
 ###############################################################################
