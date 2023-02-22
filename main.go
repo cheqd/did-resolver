@@ -14,9 +14,9 @@ import (
 //	@license.name	Apache 2.0
 //	@license.url	https://github.com/cheqd/did-resolver/blob/main/LICENSE
 
-// @host		resolver.cheqd.net
-// @BasePath	/1.0/identifiers
-// @schemes	https http
+//	@host		resolver.cheqd.net
+//	@BasePath	/1.0/identifiers
+//	@schemes	https http
 func main() {
 	rootCmd := cmd.GetRootCmd()
 
