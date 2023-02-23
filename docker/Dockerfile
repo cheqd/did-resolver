@@ -4,11 +4,18 @@
 
 FROM golang:1.18-alpine AS builder
 
+# Install minimum necessary dependencies
+ENV PACKAGES make git bash linux-headers
+RUN apk update && apk add --no-cache $PACKAGES
+
+# Set working directory for the build
 WORKDIR /builder
-COPY . ./
+
+# Add source files
+COPY . .
 
 # Build did-resolver binary
-RUN go mod download && go build -o did-resolver main.go
+RUN make build 
 
 #####################################################################
 ###    STAGE 2: Build cheqd did-resolver container image          ###
@@ -20,7 +27,7 @@ FROM alpine:3.17 AS resolver
 RUN apk update && apk add --no-cache bash ca-certificates
 
 # Copy did-resolver binary from Stage 1
-COPY --from=builder /builder/did-resolver /usr/local/bin/did-resolver
+COPY --from=builder /builder/build/did-resolver /usr/bin/did-resolver
 
 # Set user directory and details
 ARG HOME_DIR="/resolver"
@@ -30,6 +37,12 @@ SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 # Add non-root user to use in the container
 RUN addgroup --system $USER \
     && adduser $USER --system --home $HOME_DIR --shell /bin/bash
+
+# Set environment variables with default values
+ENV MAINNET_ENDPOINT="grpc.cheqd.net:443,true,5s"
+ENV TESTNET_ENDPOINT="grpc.cheqd.network:443,true,5s"
+ENV LOG_LEVEL="warn"
+ENV RESOLVER_LISTENER="0.0.0.0:8080"
 
 # Set working directory & bash defaults
 WORKDIR $HOME_DIR

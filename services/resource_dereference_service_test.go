@@ -22,7 +22,7 @@ type TestCase struct {
 	resourceId            string
 	expectedContentStream types.ContentStreamI
 	expectedContentType   types.ContentType
-	expectedMetadata      types.ResolutionDidDocMetadata
+	expectedMetadata      types.ResolutionResourceMetadata
 	expectedError         *types.IdentityError
 }
 
@@ -40,7 +40,7 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			namespace:             utils.ValidNamespace,
 			resourceId:            utils.ValidResourceId,
 			expectedContentStream: validContentStream,
-			expectedMetadata:      types.ResolutionDidDocMetadata{},
+			expectedMetadata:      types.ResolutionResourceMetadata{},
 			expectedError:         nil,
 		},
 		{
@@ -52,7 +52,7 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			namespace:             utils.ValidNamespace,
 			resourceId:            strings.ToUpper(utils.ValidResourceId),
 			expectedContentStream: validContentStream,
-			expectedMetadata:      types.ResolutionDidDocMetadata{},
+			expectedMetadata:      types.ResolutionResourceMetadata{},
 			expectedError:         nil,
 		},
 		{
@@ -63,7 +63,7 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			method:            utils.ValidMethod,
 			namespace:         utils.ValidNamespace,
 			resourceId:        "a86f9cae-0902-4a7c-a144-96b60ced2fc9",
-			expectedMetadata:  types.ResolutionDidDocMetadata{},
+			expectedMetadata:  types.ResolutionResourceMetadata{},
 			expectedError:     types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, true),
 		},
 		{
@@ -74,8 +74,8 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			method:            utils.ValidMethod,
 			namespace:         utils.ValidNamespace,
 			resourceId:        "invalid-resource-id",
-			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.NewInvalidDIDUrlError(utils.ValidDid, types.DIDJSONLD, nil, true),
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, true),
 		},
 		{
 			name:              "invalid type",
@@ -85,7 +85,7 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			method:            utils.ValidMethod,
 			namespace:         utils.ValidNamespace,
 			resourceId:        utils.ValidResourceId,
-			expectedMetadata:  types.ResolutionDidDocMetadata{},
+			expectedMetadata:  types.ResolutionResourceMetadata{},
 			expectedError:     types.NewRepresentationNotSupportedError(utils.ValidDid, types.DIDJSONLD, nil, true),
 		},
 		{
@@ -96,8 +96,8 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			method:            utils.ValidMethod,
 			namespace:         "invalid-namespace",
 			resourceId:        utils.ValidResourceId,
-			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.NewInvalidDIDUrlError(utils.ValidDid, types.DIDJSONLD, nil, true),
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, true),
 		},
 		{
 			name:              "invalid method",
@@ -107,8 +107,8 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			method:            "invalid-method",
 			namespace:         utils.ValidNamespace,
 			resourceId:        utils.ValidResourceId,
-			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.NewInvalidDIDUrlError(utils.ValidDid, types.DIDJSONLD, nil, true),
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, true),
 		},
 		{
 			name:              "invalid identifier",
@@ -118,8 +118,8 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			method:            utils.ValidMethod,
 			namespace:         utils.ValidNamespace,
 			resourceId:        utils.ValidResourceId,
-			expectedMetadata:  types.ResolutionDidDocMetadata{},
-			expectedError:     types.NewInvalidDIDUrlError(utils.ValidDid, types.DIDJSONLD, nil, true),
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(utils.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	}
 }
@@ -166,7 +166,8 @@ func TestDereferenceResourceMetadata(t *testing.T) {
 
 func TestDereferenceCollectionResources(t *testing.T) {
 	validResource := utils.ValidResource()
-	subtests := getSubtest(types.NewDereferencedResourceList(utils.ValidDid, []*resource.Metadata{validResource.Metadata}))
+	content := types.NewResolutionDidDocMetadata(utils.ValidDid, utils.ValidMetadata(), []*resource.Metadata{validResource.Metadata})
+	subtests := getSubtest(&content)
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
@@ -225,7 +226,7 @@ func TestDereferenceResourceData(t *testing.T) {
 				}
 			}
 			expectedContentType := validResource.Metadata.MediaType
-			dereferencingResult, err := resourceService.DereferenceResourceData(subtest.resourceId, id, subtest.dereferencingType)
+			dereferencingResult, err := resourceService.DereferenceResourceData(id, subtest.resourceId, subtest.dereferencingType)
 
 			fmt.Println(subtest.name + ": dereferencingResult:")
 			fmt.Println(dereferencingResult)
