@@ -5,7 +5,7 @@
 FROM golang:1.18-alpine AS builder
 
 # Install minimum necessary dependencies
-ENV PACKAGES make git bash linux-headers
+ENV PACKAGES make git bash linux-headers findutils
 RUN apk update && apk add --no-cache $PACKAGES
 
 # Set working directory for the build
@@ -15,7 +15,7 @@ WORKDIR /builder
 COPY . .
 
 # Build did-resolver binary
-RUN make build 
+RUN make tidy && make build 
 
 #####################################################################
 ###    STAGE 2: Build cheqd did-resolver container image          ###
