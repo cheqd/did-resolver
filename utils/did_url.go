@@ -118,6 +118,10 @@ func IsValidDIDUrl(didURL string, method string, allowedNamespaces []string) boo
 	return nil == err
 }
 
+func IsMigrationNeeded(id string) bool {
+	return IsValidV1ID(id)
+}
+
 // Normalization
 
 func NormalizeDIDUrl(didURL string) string {

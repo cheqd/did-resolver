@@ -6,10 +6,10 @@ import (
 	"net/url"
 	"strings"
 
-	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
+	"github.com/cheqd/did-resolver/migrations"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
-	"github.com/labstack/echo/v4"
+	echo "github.com/labstack/echo/v4"
 )
 
 type RequestService struct {
@@ -48,16 +48,16 @@ func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
 		return err
 	}
 
-	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != rs.didDocService.didMethod {
 		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
 	}
 
 	//nolint: nestif
-	if !didUtils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
-		err := didUtils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+		err := utils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
-			did = utils.MigrateDID(did)
+			did = migrations.MigrateDID(did)
 			path := types.RESOLVER_PATH + did
 
 			if fragmentId != "" {
@@ -94,15 +94,15 @@ func (rs RequestService) ResolveDIDDocVersion(c echo.Context) error {
 
 	version := c.Param("version")
 
-	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != rs.didDocService.didMethod {
 		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
 	}
 
-	if !didUtils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
-		err := didUtils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+		err := utils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
-			did = utils.MigrateDID(did)
+			did = migrations.MigrateDID(did)
 			path := types.RESOLVER_PATH + did + types.DID_VERSION_PATH + version
 
 			return c.Redirect(http.StatusMovedPermanently, path)
@@ -146,15 +146,15 @@ func (rs RequestService) ResolveDIDDocVersionMetadata(c echo.Context) error {
 
 	version := c.Param("version")
 
-	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != rs.didDocService.didMethod {
 		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
 	}
 
-	if !didUtils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
-		err := didUtils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+		err := utils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
-			did = utils.MigrateDID(did)
+			did = migrations.MigrateDID(did)
 			path := types.RESOLVER_PATH + did + types.DID_VERSION_PATH + version
 
 			return c.Redirect(http.StatusMovedPermanently, path)
@@ -163,7 +163,7 @@ func (rs RequestService) ResolveDIDDocVersionMetadata(c echo.Context) error {
 		}
 	}
 
-	result, rErr := rs.didDocService.GetDIDDocVersionsMetadata(did, version, requestedContentType)
+	result, rErr := rs.didDocService.GetAllDidDocVersionsMetadata(did, requestedContentType)
 	if rErr != nil {
 		return rErr
 	}
@@ -195,15 +195,15 @@ func (rs RequestService) ResolveAllDidDocVersionsMetadata(c echo.Context) error 
 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
 	}
 
-	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != rs.didDocService.didMethod {
 		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
 	}
 
-	if !didUtils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
-		err := didUtils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+		err := utils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
-			did = utils.MigrateDID(did)
+			did = migrations.MigrateDID(did)
 			path := types.RESOLVER_PATH + did + types.DID_VERSIONS_PATH
 
 			return c.Redirect(http.StatusMovedPermanently, path)
@@ -245,15 +245,15 @@ func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 	}
 	resourceId := c.Param("resource")
 
-	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != rs.didDocService.didMethod {
 		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
 	}
 
-	if !didUtils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
-		err := didUtils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+		err := utils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
-			did = utils.MigrateDID(did)
+			did = migrations.MigrateDID(did)
 			path := types.RESOLVER_PATH + did + types.RESOURCE_PATH + resourceId + "/metadata"
 
 			return c.Redirect(http.StatusMovedPermanently, path)
@@ -281,15 +281,15 @@ func (rs RequestService) DereferenceResourceData(c echo.Context) error {
 	}
 	resourceId := c.Param("resource")
 
-	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != rs.didDocService.didMethod {
 		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
 	}
 
-	if !didUtils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
-		err := didUtils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+		err := utils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
-			did = utils.MigrateDID(did)
+			did = migrations.MigrateDID(did)
 			path := types.RESOLVER_PATH + did + types.RESOURCE_PATH + resourceId
 
 			return c.Redirect(http.StatusMovedPermanently, path)
@@ -316,15 +316,15 @@ func (rs RequestService) DereferenceCollectionResources(c echo.Context) error {
 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
 	}
 
-	didMethod, _, identifier, _ := didUtils.TrySplitDID(did)
+	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != rs.didDocService.didMethod {
 		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
 	}
 
-	if !didUtils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
-		err := didUtils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+		err := utils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
-			did = utils.MigrateDID(did)
+			did = migrations.MigrateDID(did)
 			path := types.RESOLVER_PATH + did + types.DID_METADATA
 
 			return c.Redirect(http.StatusMovedPermanently, path)
