@@ -38,8 +38,7 @@ jobs:
           queries: security-and-quality
       
       - name: Build
-        run: |
-          go build main.go
+        run: make build
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2

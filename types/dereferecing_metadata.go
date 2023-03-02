@@ -28,13 +28,36 @@ func (d DidDereferencing) GetBytes() []byte {
 	return d.ContentStream.GetBytes()
 }
 
+type ResourceDereferencing struct {
+	Context               string                     `json:"@context,omitempty" example:"https://w3id.org/did-resolution/v1"`
+	DereferencingMetadata DereferencingMetadata      `json:"dereferencingMetadata"`
+	ContentStream         ContentStreamI             `json:"contentStream"`
+	Metadata              ResolutionResourceMetadata `json:"contentMetadata"`
+}
+
+func (d ResourceDereferencing) GetContentType() string {
+	return string(d.DereferencingMetadata.ContentType)
+}
+
+func (d ResourceDereferencing) GetBytes() []byte {
+	if d.ContentStream == nil {
+		return []byte{}
+	}
+	return d.ContentStream.GetBytes()
+}
+
 type DereferencedDidVersionsList struct {
-	Versions []*didTypes.Metadata `json:"versions,omitempty"`
+	Versions []ResolutionDidDocMetadata `json:"versions,omitempty"`
 }
 
 func NewDereferencedDidVersionsList(versions []*didTypes.Metadata) *DereferencedDidVersionsList {
+	didVersionList := []ResolutionDidDocMetadata{}
+	for _, version := range versions {
+		didVersionList = append(didVersionList, NewResolutionDidDocMetadata("", *version, nil))
+	}
+
 	return &DereferencedDidVersionsList{
-		Versions: versions,
+		Versions: didVersionList,
 	}
 }
 

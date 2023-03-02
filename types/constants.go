@@ -33,5 +33,5 @@ const (
 	DID_VERSIONS_PATH = "/versions"
 	DID_METADATA      = "/metadata"
 	RESOURCE_PATH     = "/resources/"
-	SWAGGER_PATH      = "/swagger/"
+	SWAGGER_PATH      = "/swagger/*"
 )

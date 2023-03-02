@@ -1,14 +1,21 @@
 {
+    "schemes": [
+        "https",
+        "http"
+    ],
     "swagger": "2.0",
     "info": {
-        "title": "DID Resolver for did:cheqd method",
+        "description": "Universal Resolver driver for cheqd DID method",
+        "title": "DID Resolver for cheqd DID method",
         "contact": {
-            "name": "Cheqd Foundation Limited"
+            "name": "Cheqd Foundation Limited",
+            "url": "https://cheqd.io"
         },
         "license": {
-            "name": "Apache 2.0"
+            "name": "Apache 2.0",
+            "url": "https://github.com/cheqd/did-resolver/blob/main/LICENSE"
         },
-        "version": "1.0"
+        "version": "v3.0"
     },
     "host": "resolver.cheqd.net",
     "basePath": "/1.0/identifiers",
@@ -91,7 +98,7 @@
                 }
             }
         },
-        "/{did}/resources/all": {
+        "/{did}/metadata": {
             "get": {
                 "description": "Get metadata for all Resources within a DID Resource Collection",
                 "consumes": [
@@ -121,7 +128,19 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.DidDereferencing"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.ResourceDereferencing"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "contentStream": {
+                                            "$ref": "#/definitions/types.ResolutionDidDocMetadata"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -283,6 +302,212 @@
                     }
                 }
             }
+        },
+        "/{did}/version/{versionId}": {
+            "get": {
+                "description": "Fetch specific all version of a DID Document (\"DIDDoc\") for a given DID and version ID",
+                "consumes": [
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+json"
+                ],
+                "produces": [
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+json"
+                ],
+                "tags": [
+                    "DID Resolution"
+                ],
+                "summary": "Resolve DID Document Version on did:cheqd",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Full DID with unique identifier",
+                        "name": "did",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "version of a DID document",
+                        "name": "versionId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.DidResolution"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    }
+                }
+            }
+        },
+        "/{did}/version/{versionId}/metadata": {
+            "get": {
+                "description": "Fetch metadata of specific a DID Document (\"DIDDoc\") version for a given DID and version ID",
+                "consumes": [
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+jsonww"
+                ],
+                "produces": [
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+json"
+                ],
+                "tags": [
+                    "DID Resolution"
+                ],
+                "summary": "Resolve DID Document Version Metadata on did:cheqd",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Full DID with unique identifier",
+                        "name": "did",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "version of a DID document",
+                        "name": "versionId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.DidDereferencing"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    }
+                }
+            }
+        },
+        "/{did}/versions": {
+            "get": {
+                "description": "Fetch specific all versions of a DID Document (\"DIDDoc\") for a given DID",
+                "consumes": [
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+json"
+                ],
+                "produces": [
+                    "application/did+ld+json",
+                    "application/ld+json",
+                    "application/did+json"
+                ],
+                "tags": [
+                    "DID Resolution"
+                ],
+                "summary": "Resolve DID Document Versions on did:cheqd",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Full DID with unique identifier",
+                        "name": "did",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.ResourceDereferencing"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "contentStream": {
+                                            "$ref": "#/definitions/types.DereferencedDidVersionsList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -300,6 +525,17 @@
                 "JSONLD",
                 "JSON"
             ]
+        },
+        "types.DereferencedDidVersionsList": {
+            "type": "object",
+            "properties": {
+                "versions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.ResolutionDidDocMetadata"
+                    }
+                }
+            }
         },
         "types.DereferencedResource": {
             "type": "object",
@@ -565,6 +801,25 @@
                 }
             }
         },
+        "types.ResolutionResourceMetadata": {
+            "type": "object"
+        },
+        "types.ResourceDereferencing": {
+            "type": "object",
+            "properties": {
+                "@context": {
+                    "type": "string",
+                    "example": "https://w3id.org/did-resolution/v1"
+                },
+                "contentMetadata": {
+                    "$ref": "#/definitions/types.ResolutionResourceMetadata"
+                },
+                "contentStream": {},
+                "dereferencingMetadata": {
+                    "$ref": "#/definitions/types.DereferencingMetadata"
+                }
+            }
+        },
         "types.Service": {
             "type": "object",
             "properties": {
@@ -608,12 +863,10 @@
                 "id": {
                     "type": "string"
                 },
-                "publicKeyJwk": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
+                "publicKeyBase58": {
+                    "type": "string"
                 },
+                "publicKeyJwk": {},
                 "publicKeyMultibase": {
                     "type": "string"
                 },
