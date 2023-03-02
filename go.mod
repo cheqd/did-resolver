@@ -3,7 +3,7 @@ module github.com/cheqd/did-resolver
 go 1.18
 
 require (
-	github.com/cheqd/cheqd-node/api/v2 v2.0.1
+	github.com/cheqd/cheqd-node/api/v2 v2.1.0
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.10.2
 	github.com/mr-tron/base58 v1.2.0
@@ -18,12 +18,9 @@ require (
 	google.golang.org/protobuf v1.28.2-0.20220831092852-f930b1dc76e8
 )
 
-require github.com/cosmos/cosmos-proto v1.0.0-alpha8 // indirect
-
-require github.com/google/go-cmp v0.5.9 // indirect
-
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
+	github.com/cosmos/cosmos-proto v1.0.0-alpha8 // indirect
 	github.com/cosmos/cosmos-sdk/api v0.1.0 // indirect
 	github.com/cosmos/gogoproto v1.4.6 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -35,6 +32,7 @@ require (
 	github.com/gogo/protobuf v1.3.3 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
@@ -68,17 +66,5 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace (
-	// cosmos-sdk state sync allow fast forward to latest height version
-	github.com/cosmos/cosmos-sdk => github.com/cheqd/cosmos-sdk v0.46.10-state-sync
-
-	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
-	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
-	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
-
-	// From Cosmos SDK v0.46.8 upstream
-	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-
-	// From Cosmos SDK v0.46.8 upstream
-	github.com/jhump/protoreflect => github.com/jhump/protoreflect v1.9.0
-)
+// From Cosmos SDK upstream
+replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
