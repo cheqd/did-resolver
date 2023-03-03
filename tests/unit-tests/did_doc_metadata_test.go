@@ -9,6 +9,7 @@ import (
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/stretchr/testify/require"
+	// "google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func TestNewResolutionDidDocMetadata(t *testing.T) {
@@ -27,6 +28,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 		Checksum:     fmt.Sprintf("%x", h.Sum(nil)),
 	}
 
+	created := resourceMetadata.Created.AsTime()
 	validMetadataResource := types.DereferencedResource{
 		ResourceURI:       validDid + types.RESOURCE_PATH + resourceMetadata.Id,
 		CollectionId:      resourceMetadata.CollectionId,
@@ -34,7 +36,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 		Name:              resourceMetadata.Name,
 		ResourceType:      resourceMetadata.ResourceType,
 		MediaType:         resourceMetadata.MediaType,
-		Created:           resourceMetadata.Created,
+		Created:           &created,
 		Checksum:          resourceMetadata.Checksum,
 		PreviousVersionId: nil,
 		NextVersionId:     nil,
@@ -54,8 +56,10 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 			},
 			resources: []*resourceTypes.Metadata{&resourceMetadata},
 			expectedResult: types.ResolutionDidDocMetadata{
-				VersionId:   "test_version_id",
+				Created:     &EmptyTime,
+				Updated:     &EmptyTime,
 				Deactivated: false,
+				VersionId:   "test_version_id",
 				Resources:   []types.DereferencedResource{validMetadataResource},
 			},
 		},
@@ -66,6 +70,8 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 				Deactivated: false,
 			},
 			expectedResult: types.ResolutionDidDocMetadata{
+				Created:     &EmptyTime,
+				Updated:     &EmptyTime,
 				VersionId:   "test_version_id",
 				Deactivated: false,
 			},

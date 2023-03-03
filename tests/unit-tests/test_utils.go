@@ -7,6 +7,7 @@ import (
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/types"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -21,6 +22,14 @@ const (
 		"\"kty\":\"OKP\"," +
 		"\"x\":\"VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ\"" +
 		"}"
+)
+
+var (
+	EmptyTimestamp = &timestamppb.Timestamp{
+		Seconds: 0,
+		Nanos:   0,
+	}
+	EmptyTime = EmptyTimestamp.AsTime()
 )
 
 func ValidVerificationMethod() didTypes.VerificationMethod {

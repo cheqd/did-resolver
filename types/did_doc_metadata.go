@@ -7,17 +7,19 @@ import (
 )
 
 type ResolutionDidDocMetadata struct {
-	Created     time.Time              `json:"created,omitempty" example:"2021-09-01T12:00:00Z"`
-	Updated     time.Time              `json:"updated,omitempty" example:"2021-09-10T12:00:00Z"`
+	Created     *time.Time             `json:"created,omitempty" example:"2021-09-01T12:00:00Z"`
+	Updated     *time.Time             `json:"updated,omitempty" example:"2021-09-10T12:00:00Z"`
 	Deactivated bool                   `json:"deactivated,omitempty" example:"false"`
 	VersionId   string                 `json:"versionId,omitempty" example:"4979BAF49599FEF0BAD5ED0849FDD708156761EBBC8EBE78D0907F8BECC9CB2E"`
 	Resources   []DereferencedResource `json:"linkedResourceMetadata,omitempty"`
 }
 
 func NewResolutionDidDocMetadata(did string, metadata didTypes.Metadata, resources []*resourceTypes.Metadata) ResolutionDidDocMetadata {
+	created := metadata.Created.AsTime()
+	updated := metadata.Updated.AsTime()
 	newMetadata := ResolutionDidDocMetadata{
-		Created:     metadata.Created.AsTime(),
-		Updated:     metadata.Updated.AsTime(),
+		Created:     &created,
+		Updated:     &updated,
 		Deactivated: metadata.Deactivated,
 		VersionId:   metadata.VersionId,
 	}
