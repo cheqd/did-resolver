@@ -1,8 +1,8 @@
 package types
 
 import (
+	"time"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type DereferencedResource struct {
@@ -12,7 +12,7 @@ type DereferencedResource struct {
 	Name              string                 `json:"resourceName" example:"Image Resource"`
 	ResourceType      string                 `json:"resourceType" example:"Image"`
 	MediaType         string                 `json:"mediaType" example:"image/png"`
-	Created           *timestamppb.Timestamp `json:"created" example:"2021-09-01T12:00:00Z"`
+	Created           time.Time `json:"created" example:"2021-09-01T12:00:00Z"`
 	Checksum          string                 `json:"checksum" example:"a95380f460e63ad939541a57aecbfd795fcd37c6d78ee86c885340e33a91b559"`
 	PreviousVersionId *string                `json:"previousVersionId" example:"ad7a8442-3531-46eb-a024-53953ec6e4ff"`
 	NextVersionId     *string                `json:"nextVersionId" example:"d4829ac7-4566-478c-a408-b44767eddadc"`
@@ -33,7 +33,7 @@ func NewDereferencedResource(did string, resource *resourceTypes.Metadata) *Dere
 		Name:              resource.Name,
 		ResourceType:      resource.ResourceType,
 		MediaType:         resource.MediaType,
-		Created:           resource.Created,
+		Created:           resource.Created.AsTime(),
 		Checksum:          resource.Checksum,
 		PreviousVersionId: previousVersionId,
 		NextVersionId:     nextVersionId,

@@ -163,7 +163,7 @@ func (rs RequestService) ResolveDIDDocVersionMetadata(c echo.Context) error {
 		}
 	}
 
-	result, rErr := rs.didDocService.GetAllDidDocVersionsMetadata(did, requestedContentType)
+	result, rErr := rs.didDocService.GetDIDDocVersionsMetadata(did, version, requestedContentType)
 	if rErr != nil {
 		return rErr
 	}
