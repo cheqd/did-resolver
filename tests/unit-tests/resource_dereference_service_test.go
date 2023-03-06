@@ -227,7 +227,7 @@ func TestDereferenceResourceData(t *testing.T) {
 				}
 			}
 			expectedContentType := validResource.Metadata.MediaType
-			dereferencingResult, err := resourceService.DereferenceResourceData(subtest.resourceId, id, subtest.dereferencingType)
+			dereferencingResult, err := resourceService.DereferenceResourceData(id, subtest.resourceId, subtest.dereferencingType)
 
 			fmt.Println(subtest.name + ": dereferencingResult:")
 			fmt.Println(dereferencingResult)
