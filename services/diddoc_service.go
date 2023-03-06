@@ -5,11 +5,8 @@ import (
 	"strings"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
-	"github.com/google/uuid"
 
-	"github.com/cheqd/did-resolver/migrations"
 	"github.com/cheqd/did-resolver/types"
-	"github.com/cheqd/did-resolver/utils"
 	"github.com/rs/zerolog/log"
 )
 
@@ -70,6 +67,7 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 		err.IsDereferencing = isDereferencing
 		return nil, err
 	}
+
 	return result, nil
 }
 
@@ -79,35 +77,10 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 	}
 	didResolutionMetadata := types.NewResolutionMetadata(did, contentType, "")
 
-	didMethod, _, identifier, _ := types.TrySplitDID(did)
-
-	if didMethod != dds.didMethod {
-		return nil, types.NewMethodNotSupportedError(did, contentType, nil, false)
-	}
-
-	if !utils.IsValidDID(did, "", dds.ledgerService.GetNamespaces()) {
-		err := utils.ValidateDID(did, "", dds.ledgerService.GetNamespaces())
-		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsValidV1ID(identifier) {
-			did = migrations.MigrateIndyStyleDid(did)
-		} else {
-			return nil, types.NewInvalidDIDError(did, contentType, nil, false)
-		}
-	}
-
 	protoDidDocWithMetadata, err := dds.ledgerService.QueryDIDDoc(did, version)
 	if err != nil {
-		_, parsingerr := uuid.Parse(identifier)
-		if parsingerr == nil {
-			did = migrations.MigrateUUIDDid(did)
-			protoDidDocWithMetadata, err = dds.ledgerService.QueryDIDDoc(did, version)
-			if err != nil {
-				err.ContentType = contentType
-				return nil, err
-			}
-		} else {
-			err.ContentType = contentType
-			return nil, err
-		}
+		err.ContentType = contentType
+		return nil, err
 	}
 
 	resolvedMetadata, mErr := dds.resolveMetadata(did, *protoDidDocWithMetadata.Metadata, contentType)
@@ -133,6 +106,7 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 	} else {
 		didDoc.RemoveContext()
 	}
+
 	return &result, nil
 }
 
@@ -166,34 +140,11 @@ func (dds DIDDocService) GetDIDDocVersionsMetadata(did string, version string, c
 }
 
 func (dds DIDDocService) GetAllDidDocVersionsMetadata(did string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
-	didMethod, _, identifier, _ := types.TrySplitDID(did)
-	if didMethod != dds.didMethod {
-		return nil, types.NewMethodNotSupportedError(did, contentType, nil, false)
-	}
-
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
-
-	if !utils.IsValidDID(did, "", dds.ledgerService.GetNamespaces()) {
-		err := utils.ValidateDID(did, "", dds.ledgerService.GetNamespaces())
-		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsValidV1ID(identifier) {
-			did = migrations.MigrateIndyStyleDid(did)
-		} else {
-			return nil, types.NewMethodNotSupportedError(did, contentType, nil, false)
-		}
-	}
 
 	versions, err := dds.ledgerService.QueryAllDidDocVersionsMetadata(did)
 	if err != nil {
-		_, parsingerr := uuid.Parse(identifier)
-		if parsingerr == nil {
-			did = migrations.MigrateUUIDDid(did)
-			versions, err = dds.ledgerService.QueryAllDidDocVersionsMetadata(did)
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			return nil, err
-		}
+		return nil, err
 	}
 
 	if len(versions) == 0 {
@@ -230,6 +181,7 @@ func (dds DIDDocService) dereferenceSecondary(did string, version string, fragme
 	if contentStream == nil {
 		return nil, types.NewNotFoundError(did, contentType, nil, true)
 	}
+
 	result := types.DidDereferencing{
 		ContentStream:         contentStream,
 		Metadata:              metadata,
@@ -251,6 +203,8 @@ func (dds DIDDocService) resolveMetadata(did string, metadata didTypes.Metadata,
 	if err != nil {
 		return nil, err
 	}
+
 	resolvedMetadata := types.NewResolutionDidDocMetadata(did, metadata, resources)
+
 	return &resolvedMetadata, nil
 }

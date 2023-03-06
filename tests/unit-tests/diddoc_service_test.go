@@ -100,7 +100,7 @@ func TestResolve(t *testing.T) {
 			namespace:        ValidNamespace,
 			expectedDID:      nil,
 			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.NewInvalidDIDError(ValidDid, types.DIDJSONLD, nil, false),
+			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
 		},
 		{
 			name:             "invalid method",
@@ -111,7 +111,7 @@ func TestResolve(t *testing.T) {
 			namespace:        ValidNamespace,
 			expectedDID:      nil,
 			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.NewMethodNotSupportedError(ValidDid, types.DIDJSONLD, nil, false),
+			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
 		},
 		{
 			name:             "invalid namespace",
@@ -122,7 +122,7 @@ func TestResolve(t *testing.T) {
 			namespace:        "invalid_namespace",
 			expectedDID:      nil,
 			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.NewInvalidDIDError(ValidDid, types.DIDJSONLD, nil, false),
+			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
 		},
 		{
 			name:                   "representation is not supported",

@@ -71,7 +71,7 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 
 	defer mustCloseGRPCConnection(conn)
 
-	log.Info().Msgf("Querying did doc: %s", did)
+	log.Info().Msgf("Querying DIDDoc: %s", did)
 	client := didTypes.NewQueryClient(conn)
 
 	if version == "" {
@@ -119,7 +119,7 @@ func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.
 	}
 	defer mustCloseGRPCConnection(conn)
 
-	log.Info().Msgf("Querying all did doc versions metadata: %s", did)
+	log.Info().Msgf("Querying all DIDDoc versions metadata: %s", did)
 	client := didTypes.NewQueryClient(conn)
 
 	response, err := client.AllDidDocVersionsMetadata(context.Background(), &didTypes.QueryAllDidDocVersionsMetadataRequest{Id: did})
@@ -160,7 +160,7 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resourceT
 
 	defer mustCloseGRPCConnection(conn)
 
-	log.Info().Msgf("Querying did resource: %s, %s", collectionId, resourceId)
+	log.Info().Msgf("Querying DID resource: %s, %s", collectionId, resourceId)
 
 	client := resourceTypes.NewQueryClient(conn)
 	resourceResponse, err := client.Resource(context.Background(), &resourceTypes.QueryResourceRequest{CollectionId: collectionId, Id: resourceId})
@@ -199,7 +199,7 @@ func (ls LedgerService) QueryCollectionResources(did string) ([]*resourceTypes.M
 		return nil, types.NewInternalError(did, types.JSON, err, false)
 	}
 
-	log.Info().Msgf("Querying did resources: %s", did)
+	log.Info().Msgf("Querying DID resources: %s", did)
 
 	client := resourceTypes.NewQueryClient(conn)
 	resourceResponse, err := client.CollectionResources(context.Background(), &resourceTypes.QueryCollectionResourcesRequest{CollectionId: collectionId})
@@ -218,7 +218,7 @@ func (ls *LedgerService) RegisterLedger(method string, endpoint types.Network) e
 	}
 
 	if endpoint.Endpoint == "" {
-		return errors.New("ledger node url cannot be empty")
+		return errors.New("ledger node URL cannot be empty")
 	}
 
 	ls.ledgers[method+DELIMITER+endpoint.Namespace] = endpoint
