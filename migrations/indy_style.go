@@ -20,6 +20,7 @@ func MigrateIndyStyleID(id string) string {
 
 	// Get Hash from current id to make a 32-symbol string
 	hash := sha256.Sum256([]byte(id))
+
 	// Indy-style identifier is 16-byte base58 string
 	return base58.Encode(hash[:16])
 }

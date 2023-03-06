@@ -159,7 +159,6 @@ func TestResolve(t *testing.T) {
 				expectedContentType = subtest.resolutionType
 			}
 			resolutionResult, err := diddocService.Resolve(id, "", subtest.resolutionType)
-			// print(resolutionResult.Did.Id)
 			if subtest.expectedError != nil {
 				require.EqualValues(t, subtest.expectedError.Code, err.Code)
 				require.EqualValues(t, subtest.expectedError.Message, err.Message)
