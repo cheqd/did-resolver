@@ -21,25 +21,25 @@ jobs:
           config-file: '.github/linters/mlc_config.json'
           use-quiet-mode: 'yes'
   
-  # go-lint:
+  go-lint:
     # We can't use VALIDATE_GO from super linter because of this issue:
     # https://github.com/github/super-linter/issues/143
-  #   name: "Golang Lint"
-  #   runs-on: ubuntu-latest
+    name: "Golang Lint"
+    runs-on: ubuntu-latest
     
-  #   steps:
-  #     - uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v3
 
-  #     - uses: actions/setup-go@v3
-  #       with:
-  #         go-version-file: ./go.mod
-  #         cache: true
+      - uses: actions/setup-go@v3
+        with:
+          go-version-file: ./go.mod
+          cache: true
       
-  #     - name: Run golangci-lint
-  #       uses: golangci/golangci-lint-action@v3
-  #       with:
-  #         version: latest
-  #         args: --config .github/linters/.golangci.yaml
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          args: --config .github/linters/.golangci.yaml
 
   super-lint:
     name: "Super Linter"
