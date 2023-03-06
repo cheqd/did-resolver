@@ -1,8 +1,9 @@
 package types
 
 import (
-	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"time"
+
+	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 )
 
 type DereferencedResource struct {

@@ -15,7 +15,7 @@ type ResolutionDidDocMetadata struct {
 	Resources   []DereferencedResource `json:"linkedResourceMetadata,omitempty"`
 }
 
-func NewResolutionDidDocMetadata(did string, metadata didTypes.Metadata, resources []*resourceTypes.Metadata) ResolutionDidDocMetadata {
+func NewResolutionDidDocMetadata(did string, metadata *didTypes.Metadata, resources []*resourceTypes.Metadata) ResolutionDidDocMetadata {
 	created := metadata.Created.AsTime()
 	updated := metadata.Updated.AsTime()
 	newMetadata := ResolutionDidDocMetadata{

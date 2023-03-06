@@ -13,7 +13,8 @@ import (
 )
 
 func TestDIDDocFragment(t *testing.T) {
-	validDIDDoc := types.NewDidDoc(ValidDIDDoc())
+	validDIDDoc := ValidDIDDoc()
+	DIDDoc := types.NewDidDoc(&validDIDDoc)
 
 	subtests := []struct {
 		name             string
@@ -23,20 +24,20 @@ func TestDIDDocFragment(t *testing.T) {
 	}{
 		{
 			name:             "successful VerificationMethod finding",
-			fragmentId:       validDIDDoc.VerificationMethod[0].Id,
-			didDoc:           validDIDDoc,
-			expectedFragment: &validDIDDoc.VerificationMethod[0],
+			fragmentId:       DIDDoc.VerificationMethod[0].Id,
+			didDoc:           DIDDoc,
+			expectedFragment: &DIDDoc.VerificationMethod[0],
 		},
 		{
 			name:             "successful Service finding",
-			fragmentId:       validDIDDoc.Service[0].Id,
-			didDoc:           validDIDDoc,
-			expectedFragment: &validDIDDoc.Service[0],
+			fragmentId:       DIDDoc.Service[0].Id,
+			didDoc:           DIDDoc,
+			expectedFragment: &DIDDoc.Service[0],
 		},
 		{
 			name:             "Fragment is not found",
 			fragmentId:       "fake_id",
-			didDoc:           validDIDDoc,
+			didDoc:           DIDDoc,
 			expectedFragment: nil,
 		},
 	}
@@ -54,7 +55,7 @@ func TestDIDDocFragment(t *testing.T) {
 
 func TestResolve(t *testing.T) {
 	validDIDDoc := ValidDIDDoc()
-	validDIDDocResolution := types.NewDidDoc(validDIDDoc)
+	validDIDDocResolution := types.NewDidDoc(&validDIDDoc)
 	validMetadata := ValidMetadata()
 	validResource := ValidResource()
 	subtests := []struct {
@@ -71,18 +72,18 @@ func TestResolve(t *testing.T) {
 	}{
 		{
 			name:             "successful resolution",
-			ledgerService:    NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			ledgerService:    NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
 			resolutionType:   types.DIDJSONLD,
 			identifier:       ValidIdentifier,
 			method:           ValidMethod,
 			namespace:        ValidNamespace,
 			expectedDID:      &validDIDDocResolution,
-			expectedMetadata: types.NewResolutionDidDocMetadata(ValidDid, validMetadata, []*resourceTypes.Metadata{validResource.Metadata}),
+			expectedMetadata: types.NewResolutionDidDocMetadata(ValidDid, &validMetadata, []*resourceTypes.Metadata{validResource.Metadata}),
 			expectedError:    nil,
 		},
 		{
 			name:             "DID not found",
-			ledgerService:    NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
+			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
 			identifier:       ValidIdentifier,
 			method:           ValidMethod,
@@ -93,7 +94,7 @@ func TestResolve(t *testing.T) {
 		},
 		{
 			name:             "invalid DID",
-			ledgerService:    NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
+			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
 			identifier:       "oooooo0000OOOO_invalid_did",
 			method:           ValidMethod,
@@ -104,7 +105,7 @@ func TestResolve(t *testing.T) {
 		},
 		{
 			name:             "invalid method",
-			ledgerService:    NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
+			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
 			identifier:       ValidIdentifier,
 			method:           "not_supported_method",
@@ -115,7 +116,7 @@ func TestResolve(t *testing.T) {
 		},
 		{
 			name:             "invalid namespace",
-			ledgerService:    NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
+			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
 			identifier:       ValidIdentifier,
 			method:           ValidMethod,
@@ -126,7 +127,7 @@ func TestResolve(t *testing.T) {
 		},
 		{
 			name:                   "representation is not supported",
-			ledgerService:          NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			ledgerService:          NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
 			resolutionType:         "text/html,application/xhtml+xml",
 			identifier:             ValidIdentifier,
 			method:                 ValidMethod,
@@ -179,7 +180,7 @@ func TestDereferencing(t *testing.T) {
 	validService := ValidService()
 	validResource := ValidResource()
 	validMetadata := ValidMetadata()
-	validFragmentMetadata := types.NewResolutionDidDocMetadata(ValidDid, validMetadata, []*resourceTypes.Metadata{})
+	validFragmentMetadata := types.NewResolutionDidDocMetadata(ValidDid, &validMetadata, []*resourceTypes.Metadata{})
 	validQuery, _ := url.ParseQuery("attr=value")
 	subtests := []struct {
 		name                  string
@@ -195,7 +196,7 @@ func TestDereferencing(t *testing.T) {
 	}{
 		{
 			name:                  "successful Secondary dereferencing (key)",
-			ledgerService:         NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			ledgerService:         NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
 			dereferencingType:     types.DIDJSON,
 			did:                   ValidDid,
 			fragmentId:            validVerificationMethod.Id,
@@ -205,7 +206,7 @@ func TestDereferencing(t *testing.T) {
 		},
 		{
 			name:                  "successful Secondary dereferencing (service)",
-			ledgerService:         NewMockLedgerService(validDIDDoc, validMetadata, validResource),
+			ledgerService:         NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
 			dereferencingType:     types.DIDJSON,
 			did:                   ValidDid,
 			fragmentId:            validService.Id,
@@ -215,7 +216,7 @@ func TestDereferencing(t *testing.T) {
 		},
 		{
 			name:                  "not supported query",
-			ledgerService:         NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
+			ledgerService:         NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType:     types.DIDJSONLD,
 			did:                   ValidDid,
 			queries:               validQuery,
@@ -225,7 +226,7 @@ func TestDereferencing(t *testing.T) {
 		},
 		{
 			name:                  "key not found",
-			ledgerService:         NewMockLedgerService(didTypes.DidDoc{}, didTypes.Metadata{}, resourceTypes.ResourceWithMetadata{}),
+			ledgerService:         NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType:     types.DIDJSONLD,
 			did:                   ValidDid,
 			fragmentId:            "notFoundKey",

@@ -53,7 +53,7 @@ type DereferencedDidVersionsList struct {
 func NewDereferencedDidVersionsList(versions []*didTypes.Metadata) *DereferencedDidVersionsList {
 	didVersionList := []ResolutionDidDocMetadata{}
 	for _, version := range versions {
-		didVersionList = append(didVersionList, NewResolutionDidDocMetadata("", *version, nil))
+		didVersionList = append(didVersionList, NewResolutionDidDocMetadata("", version, nil))
 	}
 
 	return &DereferencedDidVersionsList{

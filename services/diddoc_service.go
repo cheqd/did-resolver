@@ -53,7 +53,9 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 
 	if flag != nil {
 		return nil, types.NewRepresentationNotSupportedError(did, contentType, nil, true)
-	} else if fragmentId != "" {
+	}
+
+	if fragmentId != "" {
 		log.Trace().Msgf("Dereferencing %s, %s, %s", did, fragmentId, queries)
 		result, err = dds.dereferenceSecondary(did, version, fragmentId, contentType)
 		isDereferencing = true
@@ -83,12 +85,12 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 		return nil, err
 	}
 
-	resolvedMetadata, mErr := dds.resolveMetadata(did, *protoDidDocWithMetadata.Metadata, contentType)
+	resolvedMetadata, mErr := dds.resolveMetadata(did, protoDidDocWithMetadata.Metadata, contentType)
 	if mErr != nil {
 		mErr.ContentType = contentType
 		return nil, mErr
 	}
-	didDoc := types.NewDidDoc(*protoDidDocWithMetadata.DidDoc)
+	didDoc := types.NewDidDoc(protoDidDocWithMetadata.DidDoc)
 	result := types.DidResolution{Did: &didDoc, Metadata: *resolvedMetadata, ResolutionMetadata: didResolutionMetadata}
 	if didResolutionMetadata.ContentType == types.DIDJSONLD || didResolutionMetadata.ContentType == types.JSONLD {
 		didDoc.AddContext(types.DIDSchemaJSONLD)
@@ -134,7 +136,7 @@ func (dds DIDDocService) GetDIDDocVersionsMetadata(did string, version string, c
 		context = types.ResolutionSchemaJSONLD
 	}
 
-	contentStream := types.NewResolutionDidDocMetadata(did, *protoDidDocWithMetadata.Metadata, resources)
+	contentStream := types.NewResolutionDidDocMetadata(did, protoDidDocWithMetadata.Metadata, resources)
 
 	return &types.ResourceDereferencing{Context: context, ContentStream: &contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
@@ -198,7 +200,7 @@ func (dds DIDDocService) dereferenceSecondary(did string, version string, fragme
 	return &result, nil
 }
 
-func (dds DIDDocService) resolveMetadata(did string, metadata didTypes.Metadata, contentType types.ContentType) (*types.ResolutionDidDocMetadata, *types.IdentityError) {
+func (dds DIDDocService) resolveMetadata(did string, metadata *didTypes.Metadata, contentType types.ContentType) (*types.ResolutionDidDocMetadata, *types.IdentityError) {
 	resources, err := dds.ledgerService.QueryCollectionResources(did)
 	if err != nil {
 		return nil, err

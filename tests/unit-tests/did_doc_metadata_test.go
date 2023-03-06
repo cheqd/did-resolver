@@ -44,13 +44,13 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 
 	subtests := []struct {
 		name           string
-		metadata       didTypes.Metadata
+		metadata       *didTypes.Metadata
 		resources      []*resourceTypes.Metadata
 		expectedResult types.ResolutionDidDocMetadata
 	}{
 		{
 			name: "metadata with resource",
-			metadata: didTypes.Metadata{
+			metadata: &didTypes.Metadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
 			},
@@ -65,7 +65,7 @@ func TestNewResolutionDidDocMetadata(t *testing.T) {
 		},
 		{
 			name: "metadata without resources",
-			metadata: didTypes.Metadata{
+			metadata: &didTypes.Metadata{
 				VersionId:   "test_version_id",
 				Deactivated: false,
 			},
