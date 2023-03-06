@@ -93,6 +93,9 @@ func (rs RequestService) ResolveDIDDocVersion(c echo.Context) error {
 	}
 
 	version := c.Param("version")
+	if !utils.IsValidUUID(version) {
+		return types.NewInvalidDIDUrlError(c.Param("version"), requestedContentType, err, true)
+	}
 
 	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != rs.didDocService.didMethod {
@@ -145,6 +148,9 @@ func (rs RequestService) ResolveDIDDocVersionMetadata(c echo.Context) error {
 	}
 
 	version := c.Param("version")
+	if !utils.IsValidUUID(version) {
+		return types.NewInvalidDIDUrlError(c.Param("version"), requestedContentType, err, true)
+	}
 
 	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != rs.didDocService.didMethod {
@@ -243,7 +249,11 @@ func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 	if err != nil {
 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
 	}
+
 	resourceId := c.Param("resource")
+	if !utils.IsValidUUID(resourceId) {
+		return types.NewInvalidDIDUrlError(c.Param("resource"), requestedContentType, err, true)
+	}
 
 	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != rs.didDocService.didMethod {
@@ -279,7 +289,11 @@ func (rs RequestService) DereferenceResourceData(c echo.Context) error {
 	if err != nil {
 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
 	}
+
 	resourceId := c.Param("resource")
+	if !utils.IsValidUUID(resourceId) {
+		return types.NewInvalidDIDUrlError(c.Param("resource"), requestedContentType, err, true)
+	}
 
 	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != rs.didDocService.didMethod {
