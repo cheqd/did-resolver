@@ -25,6 +25,6 @@ func IsValidUUID(u string) bool {
 
 // Normalization
 
-func NormalizeUUID(uuid string) string { // unused function
+func NormalizeUUID(uuid string) string {
 	return strings.ToLower(uuid)
 }

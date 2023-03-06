@@ -3,18 +3,10 @@ package utils
 import (
 	"errors"
 	"fmt"
-	"regexp"
 
 	"github.com/cheqd/did-resolver/types"
 	"github.com/google/uuid"
 )
-
-var ResourceId, _ = regexp.Compile(`[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`)
-
-func IsDidUrl(didUrl string) bool {
-	_, path, query, fragmentId, err := types.TrySplitDIDUrl(didUrl)
-	return err == nil && (path != "" || query != "" || fragmentId != "")
-}
 
 func IsValidResourceId(u string) bool {
 	_, err := uuid.Parse(u)
@@ -120,23 +112,4 @@ func IsValidDIDUrl(didURL string, method string, allowedNamespaces []string) boo
 
 func IsMigrationNeeded(id string) bool {
 	return IsValidV1ID(id)
-}
-
-// Normalization
-
-func NormalizeDIDUrl(didURL string) string {
-	did, path, query, fragment := MustSplitDIDUrl(didURL)
-	did = NormalizeDID(did)
-	return JoinDIDUrl(did, path, query, fragment)
-}
-
-func NormalizeDIDUrlList(didURLs []string) []string {
-	if didURLs == nil {
-		return nil
-	}
-	newDIDURLs := []string{}
-	for _, id := range didURLs {
-		newDIDURLs = append(newDIDURLs, NormalizeDIDUrl(id))
-	}
-	return newDIDURLs
 }

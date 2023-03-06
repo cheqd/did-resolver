@@ -10,6 +10,14 @@ const (
 	IndyIDLength = 16
 )
 
+func IsValidIndyID(data string) bool {
+	bytes, err := base58.Decode(data)
+	if err != nil {
+		return false
+	}
+	return len(bytes) == IndyIDLength
+}
+
 func ValidateID(id string) error {
 	isValidID := IsValidIndyID(id) || IsValidUUID(id)
 
@@ -23,32 +31,4 @@ func ValidateID(id string) error {
 func IsValidID(id string) bool {
 	err := ValidateID(id)
 	return err == nil
-}
-
-func IsValidIndyID(data string) bool {
-	bytes, err := base58.Decode(data)
-	if err != nil {
-		return false
-	}
-	return len(bytes) == IndyIDLength
-}
-
-// Normalization
-
-func NormalizeID(id string) string {
-	if IsValidUUID(id) {
-		return NormalizeUUID(id)
-	}
-	return id
-}
-
-func NormalizeIDList(keys []string) []string {
-	if keys == nil {
-		return nil
-	}
-	newKeys := []string{}
-	for _, id := range keys {
-		newKeys = append(newKeys, NormalizeID(id))
-	}
-	return newKeys
 }

@@ -1,9 +1,10 @@
 package types
 
 import (
+	"time"
+
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
-	"time"
 )
 
 type ResolutionDidDocMetadata struct {

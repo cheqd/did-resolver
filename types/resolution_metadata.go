@@ -87,7 +87,7 @@ func TrySplitDIDUrl(didURL string) (did string, path string, query string, fragm
 
 var (
 	SplitDIDRegexp     = regexp.MustCompile(`^did:([^:]+?)(:([^:]+?))?:([^:]+)$`)
-	DidNamespaceRegexp = regexp.MustCompile(`^[a-zA-Z0-9]*$`) // unused variable
+	DidNamespaceRegexp = regexp.MustCompile(`^[a-zA-Z0-9]*$`)
 )
 
 // TrySplitDID Validates generic format of DID. It doesn't validate method, name and id content.
