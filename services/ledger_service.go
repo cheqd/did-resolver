@@ -54,6 +54,7 @@ func NewLedgerService() LedgerService {
 //	@Failure		400			{object}	types.IdentityError
 //	@Failure		404			{object}	types.IdentityError
 //	@Failure		406			{object}	types.IdentityError
+//	@Failure		501			{object}	types.IdentityError
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did} [get]
 func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
@@ -103,6 +104,7 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 //	@Failure		400	{object}	types.IdentityError
 //	@Failure		404	{object}	types.IdentityError
 //	@Failure		406	{object}	types.IdentityError
+//	@Failure		501	{object}	types.IdentityError
 //	@Failure		500	{object}	types.IdentityError
 //	@Router			/{did}/versions [get]
 func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError) {
@@ -143,6 +145,7 @@ func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.
 //	@Failure		400			{object}	types.IdentityError
 //	@Failure		404			{object}	types.IdentityError
 //	@Failure		406			{object}	types.IdentityError
+//	@Failure		501			{object}	types.IdentityError
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did}/resources/{resourceId} [get]
 func (ls LedgerService) QueryResource(did string, resourceId string) (*resourceTypes.ResourceWithMetadata, *types.IdentityError) {
@@ -184,6 +187,7 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resourceT
 //	@Failure		400	{object}	types.IdentityError
 //	@Failure		404	{object}	types.IdentityError
 //	@Failure		406	{object}	types.IdentityError
+//	@Failure		501	{object}	types.IdentityError
 //	@Failure		500	{object}	types.IdentityError
 //	@Router			/{did}/metadata [get]
 func (ls LedgerService) QueryCollectionResources(did string) ([]*resourceTypes.Metadata, *types.IdentityError) {

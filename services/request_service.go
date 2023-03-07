@@ -137,6 +137,7 @@ func (rs RequestService) ResolveDIDDocVersion(c echo.Context) error {
 //	@Failure		400			{object}	types.IdentityError
 //	@Failure		404			{object}	types.IdentityError
 //	@Failure		406			{object}	types.IdentityError
+//	@Failure		501			{object}	types.IdentityError
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did}/version/{versionId}/metadata [get]
 func (rs RequestService) ResolveDIDDocVersionMetadata(c echo.Context) error {
@@ -192,6 +193,7 @@ func (rs RequestService) ResolveDIDDocVersionMetadata(c echo.Context) error {
 //	@Failure		400			{object}	types.IdentityError
 //	@Failure		404			{object}	types.IdentityError
 //	@Failure		406			{object}	types.IdentityError
+//	@Failure		501			{object}	types.IdentityError
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did}/version/{versionId} [get]
 func (rs RequestService) ResolveAllDidDocVersionsMetadata(c echo.Context) error {
@@ -241,6 +243,7 @@ func (rs RequestService) ResolveAllDidDocVersionsMetadata(c echo.Context) error 
 //	@Failure		400			{object}	types.IdentityError
 //	@Failure		404			{object}	types.IdentityError
 //	@Failure		406			{object}	types.IdentityError
+//	@Failure		501			{object}	types.IdentityError
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did}/resources/{resourceId}/metadata [get]
 func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
