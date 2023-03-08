@@ -30,6 +30,37 @@ var (
 		Nanos:   0,
 	}
 	EmptyTime = EmptyTimestamp.AsTime()
+
+	NotEmptyTimestamp = &timestamppb.Timestamp{
+		Seconds: 123456789,
+		Nanos:   0,
+	}
+	NotEmptyTime = NotEmptyTimestamp.AsTime()
+)
+
+var (
+	ResourceData     = []byte("test_checksum")
+	ResourceMetadata = resourceTypes.Metadata{
+		CollectionId: ValidIdentifier,
+		Id:           ValidResourceId,
+		Name:         "Existing Resource Name",
+		ResourceType: "CL-Schema",
+		MediaType:    "application/json",
+		Checksum:     generateChecksum(ResourceData),
+	}
+
+	ValidMetadataResource = types.DereferencedResource{
+		ResourceURI:       ValidDid + types.RESOURCE_PATH + ResourceMetadata.Id,
+		CollectionId:      ResourceMetadata.CollectionId,
+		ResourceId:        ResourceMetadata.Id,
+		Name:              ResourceMetadata.Name,
+		ResourceType:      ResourceMetadata.ResourceType,
+		MediaType:         ResourceMetadata.MediaType,
+		Created:           &EmptyTime,
+		Checksum:          ResourceMetadata.Checksum,
+		PreviousVersionId: nil,
+		NextVersionId:     nil,
+	}
 )
 
 func ValidVerificationMethod() didTypes.VerificationMethod {
@@ -80,6 +111,13 @@ func ValidResource() resourceTypes.ResourceWithMetadata {
 
 func ValidMetadata() didTypes.Metadata {
 	return didTypes.Metadata{VersionId: "test_version_id", Deactivated: false}
+}
+
+func generateChecksum(data []byte) string {
+	h := sha256.New()
+	h.Write(data)
+
+	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
 type MockLedgerService struct {
