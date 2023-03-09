@@ -1,7 +1,7 @@
 package types
 
 import (
-	didTypes "github.com/cheqd/cheqd-node/x/did/types"
+	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 )
 
 type DereferencingMetadata ResolutionMetadata
@@ -53,7 +53,7 @@ type DereferencedDidVersionsList struct {
 func NewDereferencedDidVersionsList(versions []*didTypes.Metadata) *DereferencedDidVersionsList {
 	didVersionList := []ResolutionDidDocMetadata{}
 	for _, version := range versions {
-		didVersionList = append(didVersionList, NewResolutionDidDocMetadata("", *version, nil))
+		didVersionList = append(didVersionList, NewResolutionDidDocMetadata("", version, nil))
 	}
 
 	return &DereferencedDidVersionsList{

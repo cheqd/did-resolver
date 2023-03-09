@@ -3,12 +3,10 @@ package types
 import (
 	"time"
 
-	did "github.com/cheqd/cheqd-node/x/did/types"
-	resource "github.com/cheqd/cheqd-node/x/resource/types"
+	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
+	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 )
 
-// Changed "Created time.Time" to "Create *time.Time".
-// It needs to skip Created field when is empty.
 type ResolutionDidDocMetadata struct {
 	Created     *time.Time             `json:"created,omitempty" example:"2021-09-01T12:00:00Z"`
 	Updated     *time.Time             `json:"updated,omitempty" example:"2021-09-10T12:00:00Z"`
@@ -17,22 +15,12 @@ type ResolutionDidDocMetadata struct {
 	Resources   []DereferencedResource `json:"linkedResourceMetadata,omitempty"`
 }
 
-func NewResolutionDidDocMetadata(did string, metadata did.Metadata, resources []*resource.Metadata) ResolutionDidDocMetadata {
-	created := &metadata.Created
-	if created.IsZero() {
-		created = nil
-	}
-
-	updated := metadata.Updated
-	if updated != nil {
-		if updated.IsZero() {
-			updated = nil
-		}
-	}
-
+func NewResolutionDidDocMetadata(did string, metadata *didTypes.Metadata, resources []*resourceTypes.Metadata) ResolutionDidDocMetadata {
+	created := metadata.Created.AsTime()
+	updated := metadata.Updated.AsTime()
 	newMetadata := ResolutionDidDocMetadata{
-		Created:     created,
-		Updated:     updated,
+		Created:     &created,
+		Updated:     &updated,
 		Deactivated: metadata.Deactivated,
 		VersionId:   metadata.VersionId,
 	}

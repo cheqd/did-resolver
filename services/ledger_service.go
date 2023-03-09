@@ -8,9 +8,8 @@ import (
 
 	"google.golang.org/grpc/credentials"
 
-	didTypes "github.com/cheqd/cheqd-node/x/did/types"
-	didUtils "github.com/cheqd/cheqd-node/x/did/utils"
-	resource "github.com/cheqd/cheqd-node/x/resource/types"
+	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
+	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
@@ -24,8 +23,8 @@ const (
 type LedgerServiceI interface {
 	QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError)
 	QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError)
-	QueryResource(collectionDid string, resourceId string) (*resource.ResourceWithMetadata, *types.IdentityError)
-	QueryCollectionResources(did string) ([]*resource.Metadata, *types.IdentityError)
+	QueryResource(collectionDid string, resourceId string) (*resourceTypes.ResourceWithMetadata, *types.IdentityError)
+	QueryCollectionResources(did string) ([]*resourceTypes.Metadata, *types.IdentityError)
 	GetNamespaces() []string
 }
 
@@ -36,6 +35,7 @@ type LedgerService struct {
 func NewLedgerService() LedgerService {
 	ls := LedgerService{}
 	ls.ledgers = make(map[string]types.Network)
+
 	return ls
 }
 
@@ -57,7 +57,7 @@ func NewLedgerService() LedgerService {
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did} [get]
 func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
-	method, namespace, _, _ := didUtils.TrySplitDID(did)
+	method, namespace, _, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
@@ -71,7 +71,7 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 
 	defer mustCloseGRPCConnection(conn)
 
-	log.Info().Msgf("Querying did doc: %s", did)
+	log.Info().Msgf("Querying DIDDoc: %s", did)
 	client := didTypes.NewQueryClient(conn)
 
 	if version == "" {
@@ -106,7 +106,7 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 //	@Failure		500	{object}	types.IdentityError
 //	@Router			/{did}/versions [get]
 func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError) {
-	method, namespace, _, _ := didUtils.TrySplitDID(did)
+	method, namespace, _, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
@@ -119,7 +119,7 @@ func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.
 	}
 	defer mustCloseGRPCConnection(conn)
 
-	log.Info().Msgf("Querying all did doc versions metadata: %s", did)
+	log.Info().Msgf("Querying all DIDDoc versions metadata: %s", did)
 	client := didTypes.NewQueryClient(conn)
 
 	response, err := client.AllDidDocVersionsMetadata(context.Background(), &didTypes.QueryAllDidDocVersionsMetadataRequest{Id: did})
@@ -145,8 +145,8 @@ func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.
 //	@Failure		406			{object}	types.IdentityError
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did}/resources/{resourceId} [get]
-func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.ResourceWithMetadata, *types.IdentityError) {
-	method, namespace, collectionId, _ := didUtils.TrySplitDID(did)
+func (ls LedgerService) QueryResource(did string, resourceId string) (*resourceTypes.ResourceWithMetadata, *types.IdentityError) {
+	method, namespace, collectionId, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDIDError(did, types.JSON, nil, true)
@@ -160,10 +160,10 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.
 
 	defer mustCloseGRPCConnection(conn)
 
-	log.Info().Msgf("Querying did resource: %s, %s", collectionId, resourceId)
+	log.Info().Msgf("Querying DID resource: %s, %s", collectionId, resourceId)
 
-	client := resource.NewQueryClient(conn)
-	resourceResponse, err := client.Resource(context.Background(), &resource.QueryResourceRequest{CollectionId: collectionId, Id: resourceId})
+	client := resourceTypes.NewQueryClient(conn)
+	resourceResponse, err := client.Resource(context.Background(), &resourceTypes.QueryResourceRequest{CollectionId: collectionId, Id: resourceId})
 	if err != nil {
 		log.Info().Msgf("Resource not found %s", err.Error())
 		return nil, types.NewNotFoundError(did, types.JSON, err, true)
@@ -186,8 +186,8 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resource.
 //	@Failure		406	{object}	types.IdentityError
 //	@Failure		500	{object}	types.IdentityError
 //	@Router			/{did}/metadata [get]
-func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.Metadata, *types.IdentityError) {
-	method, namespace, collectionId, _ := didUtils.TrySplitDID(did)
+func (ls LedgerService) QueryCollectionResources(did string) ([]*resourceTypes.Metadata, *types.IdentityError) {
+	method, namespace, collectionId, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
@@ -199,10 +199,10 @@ func (ls LedgerService) QueryCollectionResources(did string) ([]*resource.Metada
 		return nil, types.NewInternalError(did, types.JSON, err, false)
 	}
 
-	log.Info().Msgf("Querying did resources: %s", did)
+	log.Info().Msgf("Querying DID resources: %s", did)
 
-	client := resource.NewQueryClient(conn)
-	resourceResponse, err := client.CollectionResources(context.Background(), &resource.QueryCollectionResourcesRequest{CollectionId: collectionId})
+	client := resourceTypes.NewQueryClient(conn)
+	resourceResponse, err := client.CollectionResources(context.Background(), &resourceTypes.QueryCollectionResourcesRequest{CollectionId: collectionId})
 	if err != nil {
 		return nil, types.NewNotFoundError(did, types.JSON, err, false)
 	}
@@ -218,10 +218,11 @@ func (ls *LedgerService) RegisterLedger(method string, endpoint types.Network) e
 	}
 
 	if endpoint.Endpoint == "" {
-		return errors.New("ledger node url cannot be empty")
+		return errors.New("ledger node URL cannot be empty")
 	}
 
 	ls.ledgers[method+DELIMITER+endpoint.Namespace] = endpoint
+
 	return nil
 }
 
@@ -248,6 +249,7 @@ func (ls LedgerService) openGRPCConnection(endpoint types.Network) (conn *grpc.C
 	}
 
 	log.Info().Msg("openGRPCConnection: opened")
+
 	return conn, nil
 }
 
@@ -268,5 +270,6 @@ func (ls LedgerService) GetNamespaces() []string {
 		namespace := strings.Split(k, DELIMITER)[1]
 		keys = append(keys, namespace)
 	}
+
 	return keys
 }

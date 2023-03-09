@@ -3,7 +3,7 @@ package types
 import (
 	"encoding/json"
 
-	did "github.com/cheqd/cheqd-node/x/did/types"
+	did "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 )
 
 type DidDoc struct {
@@ -39,7 +39,7 @@ type Service struct {
 	ServiceEndpoint []string `json:"serviceEndpoint,omitempty" example:"https://example.com/endpoint/8377464"`
 }
 
-func NewDidDoc(protoDidDoc did.DidDoc) DidDoc {
+func NewDidDoc(protoDidDoc *did.DidDoc) DidDoc {
 	verificationMethods := []VerificationMethod{}
 	for _, vm := range protoDidDoc.VerificationMethod {
 		verificationMethods = append(verificationMethods, *NewVerificationMethod(vm))
