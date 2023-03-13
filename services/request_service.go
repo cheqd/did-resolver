@@ -1,7 +1,7 @@
 package services
 
 import (
-	"fmt"
+	// "fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -11,6 +11,47 @@ import (
 	"github.com/cheqd/did-resolver/utils"
 	echo "github.com/labstack/echo/v4"
 )
+
+type RequestServiceI interface {
+	// Fields
+	IsRedirectNeeded(c ResolverContext) bool
+
+	// Methods
+	BasicPrepare(c ResolverContext) error
+	BasicValidation(c ResolverContext) error
+	SpecificValidation(c ResolverContext) error
+	Redirect(c ResolverContext) error
+	Query(c ResolverContext) error
+	MakeAnswer(c ResolverContext) error
+	Respond(c ResolverContext) error
+}
+
+func EchoWrapHandler(controller RequestServiceI) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		rc := c.(*ResolverContext)
+		if err := controller.BasicPrepare(*rc); err != nil {
+			return err
+		}
+		if controller.IsRedirectNeeded(*rc) {
+			return controller.Redirect(*rc)
+		}
+		if err := controller.BasicValidation(*rc); err != nil {
+			return err
+		}
+		if err := controller.SpecificValidation(*rc); err != nil {
+			return err
+		}
+		if err := controller.Query(*rc); err != nil {
+			return err
+		}
+		if err := controller.MakeAnswer(*rc); err != nil {
+			return err
+		}
+		return controller.Respond(*rc)
+	}
+}
+
+///-------------------
 
 type RequestService struct {
 	didMethod                  string
@@ -28,98 +69,42 @@ func NewRequestService(didMethod string, ledgerService LedgerServiceI) RequestSe
 	}
 }
 
-func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
-	splitDID := strings.Split(c.Param("did"), "#")
-	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
+// func (rs RequestService) ResolveDIDDocVersion(c echo.Context) error {
+// 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
 
-	did, err := url.QueryUnescape(splitDID[0])
-	if err != nil {
-		return types.NewInvalidDIDUrlError(splitDID[0], requestedContentType, err, true)
-	}
+// 	did, err := getDidParam(c)
+// 	if err != nil {
+// 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
+// 	}
 
-	var fragmentId string
-	if len(splitDID) == 2 {
-		fragmentId = splitDID[1]
-	}
+// 	version := c.Param("version")
 
-	queryRaw, flag := prepareQueries(c)
-	queries, err := url.ParseQuery(queryRaw)
-	if err != nil {
-		return err
-	}
+// 	didMethod, _, identifier, _ := types.TrySplitDID(did)
+// 	if didMethod != rs.didDocService.didMethod {
+// 		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
+// 	}
 
-	didMethod, _, identifier, _ := types.TrySplitDID(did)
-	if didMethod != rs.didDocService.didMethod {
-		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
-	}
+// 	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+// 		err := utils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+// 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
+// 			did = migrations.MigrateDID(did)
+// 			path := types.RESOLVER_PATH + did + types.DID_VERSION_PATH + version
 
-	//nolint: nestif
-	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
-		err := utils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
-		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
-			did = migrations.MigrateDID(did)
-			path := types.RESOLVER_PATH + did
+// 			return c.Redirect(http.StatusMovedPermanently, path)
+// 		} else {
+// 			return types.NewInvalidDIDError(did, requestedContentType, nil, false)
+// 		}
+// 	}
 
-			if fragmentId != "" {
-				path += url.PathEscape(fmt.Sprintf("#%s", fragmentId))
-			}
+// 	result, rErr := rs.didDocService.Resolve(did, version, requestedContentType)
+// 	if rErr != nil {
+// 		return rErr
+// 	}
 
-			if queryRaw != "" {
-				path += fmt.Sprintf("?%s", queryRaw)
-			}
+// 	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
 
-			return c.Redirect(http.StatusMovedPermanently, path)
-		} else {
-			return types.NewInvalidDIDError(did, requestedContentType, nil, false)
-		}
-	}
-
-	result, rErr := rs.didDocService.ProcessDIDRequest(did, fragmentId, queries, flag, requestedContentType)
-	if rErr != nil {
-		return rErr
-	}
-
-	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
-
-	return c.JSONPretty(http.StatusOK, result, "  ")
-}
-
-func (rs RequestService) ResolveDIDDocVersion(c echo.Context) error {
-	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
-
-	did, err := getDidParam(c)
-	if err != nil {
-		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
-	}
-
-	version := c.Param("version")
-
-	didMethod, _, identifier, _ := types.TrySplitDID(did)
-	if didMethod != rs.didDocService.didMethod {
-		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
-	}
-
-	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
-		err := utils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
-		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
-			did = migrations.MigrateDID(did)
-			path := types.RESOLVER_PATH + did + types.DID_VERSION_PATH + version
-
-			return c.Redirect(http.StatusMovedPermanently, path)
-		} else {
-			return types.NewInvalidDIDError(did, requestedContentType, nil, false)
-		}
-	}
-
-	result, rErr := rs.didDocService.Resolve(did, version, requestedContentType)
-	if rErr != nil {
-		return rErr
-	}
-
-	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
-
-	return c.JSONPretty(http.StatusOK, result, "  ")
-}
+// 	return c.JSONPretty(http.StatusOK, result, "  ")
+// }
 
 // ResolveDIDDocVersionMetadata godoc
 //
