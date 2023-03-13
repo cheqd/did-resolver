@@ -57,7 +57,7 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 
 	if fragmentId != "" {
 		log.Trace().Msgf("Dereferencing %s, %s, %s", did, fragmentId, queries)
-		result, err = dds.dereferenceSecondary(did, version, fragmentId, contentType)
+		result, err = dds.DereferenceSecondary(did, version, fragmentId, contentType)
 		isDereferencing = true
 	} else {
 		log.Trace().Msgf("Resolving %s", did)
@@ -163,7 +163,7 @@ func (dds DIDDocService) GetAllDidDocVersionsMetadata(did string, contentType ty
 	return &types.DidDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
-func (dds DIDDocService) dereferenceSecondary(did string, version string, fragmentId string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
+func (dds DIDDocService) DereferenceSecondary(did string, version string, fragmentId string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
 	didResolution, err := dds.Resolve(did, version, contentType)
 	if err != nil {
 		err.IsDereferencing = true

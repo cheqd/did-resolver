@@ -13,23 +13,38 @@ import (
 )
 
 type RequestServiceI interface {
-	// Fields
+	// Checks
 	IsRedirectNeeded(c ResolverContext) bool
 
 	// Methods
+	// Preparations
 	BasicPrepare(c ResolverContext) error
+	Prepare(c ResolverContext) error
+
+	// Validation
 	BasicValidation(c ResolverContext) error
 	SpecificValidation(c ResolverContext) error
+
+	// Redirect if needed
 	Redirect(c ResolverContext) error
+
+	// Ask ledger for data
 	Query(c ResolverContext) error
-	MakeAnswer(c ResolverContext) error
+
+	// Some kind of postprocessing for response
+	MakeResponse(c ResolverContext) error
+
 	Respond(c ResolverContext) error
 }
 
+// THe main flow for all the requests
 func EchoWrapHandler(controller RequestServiceI) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		rc := c.(*ResolverContext)
 		if err := controller.BasicPrepare(*rc); err != nil {
+			return err
+		}
+		if err := controller.Prepare(*rc); err != nil {
 			return err
 		}
 		if controller.IsRedirectNeeded(*rc) {
@@ -44,7 +59,7 @@ func EchoWrapHandler(controller RequestServiceI) echo.HandlerFunc {
 		if err := controller.Query(*rc); err != nil {
 			return err
 		}
-		if err := controller.MakeAnswer(*rc); err != nil {
+		if err := controller.MakeResponse(*rc); err != nil {
 			return err
 		}
 		return controller.Respond(*rc)
@@ -121,42 +136,42 @@ func NewRequestService(didMethod string, ledgerService LedgerServiceI) RequestSe
 //	@Failure		406			{object}	types.IdentityError
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did}/version/{versionId}/metadata [get]
-func (rs RequestService) ResolveDIDDocVersionMetadata(c echo.Context) error {
-	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
+// func (rs RequestService) ResolveDIDDocVersionMetadata(c echo.Context) error {
+// 	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
 
-	did, err := getDidParam(c)
-	if err != nil {
-		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
-	}
+// 	did, err := getDidParam(c)
+// 	if err != nil {
+// 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
+// 	}
 
-	version := c.Param("version")
+// 	version := c.Param("version")
 
-	didMethod, _, identifier, _ := types.TrySplitDID(did)
-	if didMethod != rs.didDocService.didMethod {
-		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
-	}
+// 	didMethod, _, identifier, _ := types.TrySplitDID(did)
+// 	if didMethod != rs.didDocService.didMethod {
+// 		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
+// 	}
 
-	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
-		err := utils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
-		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
-			did = migrations.MigrateDID(did)
-			path := types.RESOLVER_PATH + did + types.DID_VERSION_PATH + version
+// 	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+// 		err := utils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+// 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
+// 			did = migrations.MigrateDID(did)
+// 			path := types.RESOLVER_PATH + did + types.DID_VERSION_PATH + version
 
-			return c.Redirect(http.StatusMovedPermanently, path)
-		} else {
-			return types.NewInvalidDIDError(did, requestedContentType, nil, false)
-		}
-	}
+// 			return c.Redirect(http.StatusMovedPermanently, path)
+// 		} else {
+// 			return types.NewInvalidDIDError(did, requestedContentType, nil, false)
+// 		}
+// 	}
 
-	result, rErr := rs.didDocService.GetDIDDocVersionsMetadata(did, version, requestedContentType)
-	if rErr != nil {
-		return rErr
-	}
+// 	result, rErr := rs.didDocService.GetDIDDocVersionsMetadata(did, version, requestedContentType)
+// 	if rErr != nil {
+// 		return rErr
+// 	}
 
-	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
+// 	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
 
-	return c.JSONPretty(http.StatusOK, result, "  ")
-}
+// 	return c.JSONPretty(http.StatusOK, result, "  ")
+// }
 
 // ResolveAllDidDocVersionsMetadata godoc
 //
@@ -173,39 +188,39 @@ func (rs RequestService) ResolveDIDDocVersionMetadata(c echo.Context) error {
 //	@Failure		406			{object}	types.IdentityError
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did}/version/{versionId} [get]
-func (rs RequestService) ResolveAllDidDocVersionsMetadata(c echo.Context) error {
-	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
-	did, err := getDidParam(c)
-	if err != nil {
-		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
-	}
+// func (rs RequestService) ResolveAllDidDocVersionsMetadata(c echo.Context) error {
+// 	requestedContentType := GetContentType(c.Request().Header.Get(echo.HeaderAccept))
+// 	did, err := GetDidParam(c)
+// 	if err != nil {
+// 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
+// 	}
 
-	didMethod, _, identifier, _ := types.TrySplitDID(did)
-	if didMethod != rs.didDocService.didMethod {
-		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
-	}
+// 	didMethod, _, identifier, _ := types.TrySplitDID(did)
+// 	if didMethod != rs.didDocService.didMethod {
+// 		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
+// 	}
 
-	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
-		err := utils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
-		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
-			did = migrations.MigrateDID(did)
-			path := types.RESOLVER_PATH + did + types.DID_VERSIONS_PATH
+// 	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
+// 		err := utils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
+// 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
+// 			did = migrations.MigrateDID(did)
+// 			path := types.RESOLVER_PATH + did + types.DID_VERSIONS_PATH
 
-			return c.Redirect(http.StatusMovedPermanently, path)
-		} else {
-			return types.NewInvalidDIDError(did, requestedContentType, nil, false)
-		}
-	}
+// 			return c.Redirect(http.StatusMovedPermanently, path)
+// 		} else {
+// 			return types.NewInvalidDIDError(did, requestedContentType, nil, false)
+// 		}
+// 	}
 
-	result, rErr := rs.didDocService.GetAllDidDocVersionsMetadata(did, requestedContentType)
-	if rErr != nil {
-		return rErr
-	}
+// 	result, rErr := rs.didDocService.GetAllDidDocVersionsMetadata(did, requestedContentType)
+// 	if rErr != nil {
+// 		return rErr
+// 	}
 
-	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
+// 	c.Response().Header().Set(echo.HeaderContentType, result.GetContentType())
 
-	return c.JSONPretty(http.StatusOK, result, "  ")
-}
+// 	return c.JSONPretty(http.StatusOK, result, "  ")
+// }
 
 // DereferenceResourceMetadata godoc
 //
@@ -223,8 +238,8 @@ func (rs RequestService) ResolveAllDidDocVersionsMetadata(c echo.Context) error 
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did}/resources/{resourceId}/metadata [get]
 func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
-	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
-	did, err := getDidParam(c)
+	requestedContentType := GetContentType(c.Request().Header.Get(echo.HeaderAccept))
+	did, err := GetDidParam(c)
 	if err != nil {
 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
 	}
@@ -259,8 +274,8 @@ func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 }
 
 func (rs RequestService) DereferenceResourceData(c echo.Context) error {
-	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
-	did, err := getDidParam(c)
+	requestedContentType := GetContentType(c.Request().Header.Get(echo.HeaderAccept))
+	did, err := GetDidParam(c)
 	if err != nil {
 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
 	}
@@ -295,8 +310,8 @@ func (rs RequestService) DereferenceResourceData(c echo.Context) error {
 }
 
 func (rs RequestService) DereferenceCollectionResources(c echo.Context) error {
-	requestedContentType := getContentType(c.Request().Header.Get(echo.HeaderAccept))
-	did, err := getDidParam(c)
+	requestedContentType := GetContentType(c.Request().Header.Get(echo.HeaderAccept))
+	did, err := GetDidParam(c)
 	if err != nil {
 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
 	}
@@ -329,7 +344,7 @@ func (rs RequestService) DereferenceCollectionResources(c echo.Context) error {
 	return c.JSONPretty(http.StatusOK, resolutionResponse, "  ")
 }
 
-func getContentType(accept string) types.ContentType {
+func GetContentType(accept string) types.ContentType {
 	typeList := strings.Split(accept, ",")
 	for _, cType := range typeList {
 		result := types.ContentType(strings.Split(cType, ";")[0])
@@ -344,7 +359,7 @@ func getContentType(accept string) types.ContentType {
 	return ""
 }
 
-func prepareQueries(c echo.Context) (rawQuery string, flag *string) {
+func PrepareQueries(c echo.Context) (rawQuery string, flag *string) {
 	rawQuery = c.Request().URL.RawQuery
 	flagIndex := strings.LastIndex(rawQuery, "%23")
 	if flagIndex == -1 || strings.Contains(rawQuery[flagIndex:], "&") {
@@ -355,6 +370,6 @@ func prepareQueries(c echo.Context) (rawQuery string, flag *string) {
 	return rawQuery[0:flagIndex], &queryFlag
 }
 
-func getDidParam(c echo.Context) (string, error) {
+func GetDidParam(c echo.Context) (string, error) {
 	return url.QueryUnescape(c.Param("did"))
 }

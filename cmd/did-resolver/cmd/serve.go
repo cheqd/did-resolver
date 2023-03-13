@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/cheqd/did-resolver/services"
+	didDocServices "github.com/cheqd/did-resolver/services/diddoc"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
 	"github.com/labstack/echo/v4"
@@ -71,7 +72,6 @@ func serve() {
 	e.HTTPErrorHandler = CustomHTTPErrorHandler
 
 	// Middleware
-
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			cc := &services.ResolverContext{
@@ -89,12 +89,13 @@ func serve() {
 	requestService := services.NewRequestService(types.DID_METHOD, ledgerService)
 
 	// Routes
+	// Did docs
 	e.GET(types.SWAGGER_PATH, echoSwagger.WrapHandler)
-	e.GET(types.RESOLVER_PATH+":did", services.DidDocEchoHandler)
-	// e.GET(types.RESOLVER_PATH+":did", requestService.ResolveDIDDoc)
-	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSION_PATH+":version", services.DidDocVersionEchoHandler)
-	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSION_PATH+":version/metadata", requestService.ResolveDIDDocVersionMetadata)
-	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSIONS_PATH, requestService.ResolveAllDidDocVersionsMetadata)
+	e.GET(types.RESOLVER_PATH+":did", didDocServices.DidDocEchoHandler)
+	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSION_PATH+":version", didDocServices.DidDocVersionEchoHandler)
+	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSION_PATH+":version/metadata", didDocServices.DidDocVersionMetadataEchoHandler)
+	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSIONS_PATH, didDocServices.DidDocAllVersionMetadataEchoHandler)
+	// Resources
 	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource", requestService.DereferenceResourceData)
 	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource/metadata", requestService.DereferenceResourceMetadata)
 	e.GET(types.RESOLVER_PATH+":did"+types.DID_METADATA, requestService.DereferenceCollectionResources)
