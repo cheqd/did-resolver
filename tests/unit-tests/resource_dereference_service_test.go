@@ -79,17 +79,6 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
 		},
 		{
-			name:              "invalid type",
-			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
-			dereferencingType: types.JSON,
-			identifier:        ValidIdentifier,
-			method:            ValidMethod,
-			namespace:         ValidNamespace,
-			resourceId:        ValidResourceId,
-			expectedMetadata:  types.ResolutionResourceMetadata{},
-			expectedError:     types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
-		},
-		{
 			name:              "invalid namespace",
 			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,

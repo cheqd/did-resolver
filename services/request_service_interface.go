@@ -32,28 +32,28 @@ type RequestServiceI interface {
 // The main flow for all the requests
 func EchoWrapHandler(controller RequestServiceI) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		rc := c.(*ResolverContext)
-		if err := controller.BasicPrepare(*rc); err != nil {
+		rc := c.(ResolverContext)
+		if err := controller.BasicPrepare(rc); err != nil {
 			return err
 		}
-		if err := controller.SpecificPrepare(*rc); err != nil {
+		if err := controller.SpecificPrepare(rc); err != nil {
 			return err
 		}
-		if controller.IsRedirectNeeded(*rc) {
-			return controller.Redirect(*rc)
+		if controller.IsRedirectNeeded(rc) {
+			return controller.Redirect(rc)
 		}
-		if err := controller.BasicValidation(*rc); err != nil {
+		if err := controller.BasicValidation(rc); err != nil {
 			return err
 		}
-		if err := controller.SpecificValidation(*rc); err != nil {
+		if err := controller.SpecificValidation(rc); err != nil {
 			return err
 		}
-		if err := controller.Query(*rc); err != nil {
+		if err := controller.Query(rc); err != nil {
 			return err
 		}
-		if err := controller.MakeResponse(*rc); err != nil {
+		if err := controller.MakeResponse(rc); err != nil {
 			return err
 		}
-		return controller.Respond(*rc)
+		return controller.Respond(rc)
 	}
 }

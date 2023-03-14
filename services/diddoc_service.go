@@ -110,7 +110,6 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 }
 
 func (dds DIDDocService) GetDIDDocVersionsMetadata(did string, version string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
-
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 
 	protoDidDocWithMetadata, err := dds.ledgerService.QueryDIDDoc(did, version)

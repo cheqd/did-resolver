@@ -9,6 +9,8 @@ import (
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/services"
+	didDocServices "github.com/cheqd/did-resolver/services/diddoc"
+	resourceServices "github.com/cheqd/did-resolver/services/resource"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/require"
@@ -51,8 +53,12 @@ func TestResolveDIDDoc(t *testing.T) {
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
-			context, rec := setupContext("/1.0/identifiers/:did", []string{"did"}, []string{subtest.did}, subtest.resolutionType)
-			requestService := services.NewRequestService("cheqd", subtest.ledgerService)
+			context, rec := setupContext(
+				"/1.0/identifiers/:did",
+				[]string{"did"},
+				[]string{subtest.did},
+				subtest.resolutionType,
+				subtest.ledgerService)
 
 			if (subtest.resolutionType == "" || subtest.resolutionType == types.DIDJSONLD) && subtest.expectedError == nil {
 				subtest.expectedDID.Context = []string{types.DIDSchemaJSONLD, types.JsonWebKey2020JSONLD}
@@ -61,7 +67,7 @@ func TestResolveDIDDoc(t *testing.T) {
 			}
 			expectedContentType := defineContentType(subtest.expectedResolutionType, subtest.resolutionType)
 
-			err := requestService.ResolveDIDDoc(context)
+			err := didDocServices.DidDocEchoHandler(context)
 
 			if subtest.expectedError != nil {
 				require.EqualValues(t, subtest.expectedError.Error(), err.Error())
@@ -116,6 +122,15 @@ func TestRequestService_DereferenceResourceData(t *testing.T) {
 			expectedMetadata: types.ResolutionDidDocMetadata{},
 			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
 		},
+		{
+			name:             "invalid representation",
+			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			resolutionType:   types.JSON,
+			did:              ValidDid,
+			expectedResource: nil,
+			expectedMetadata: types.ResolutionDidDocMetadata{},
+			expectedError:    types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
+		},
 	}
 
 	for _, subtest := range subtests {
@@ -123,11 +138,12 @@ func TestRequestService_DereferenceResourceData(t *testing.T) {
 			context, rec := setupContext(
 				"/1.0/identifiers/:did/resources/:resource",
 				[]string{"did", "resource"},
-				[]string{subtest.did, subtest.resourceId}, subtest.resolutionType)
-			requestService := services.NewRequestService("cheqd", subtest.ledgerService)
+				[]string{subtest.did, subtest.resourceId},
+				subtest.resolutionType,
+				subtest.ledgerService)
 			expectedContentType := validResource.Metadata.MediaType
 
-			err := requestService.DereferenceResourceData(context)
+			err := resourceServices.ResourceDataEchoHandler(context)
 
 			if subtest.expectedError != nil {
 				require.EqualValues(t, subtest.expectedError.Error(), err.Error())
@@ -179,6 +195,16 @@ func TestRequestService_DereferenceResourceMetadata(t *testing.T) {
 			expectedMetadata: types.ResolutionDidDocMetadata{},
 			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
 		},
+		{
+			name:             "invalid representation",
+			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			resolutionType:   types.JSON,
+			did:              ValidDid,
+			resourceId:       ValidResourceId,
+			expectedResource: nil,
+			expectedMetadata: types.ResolutionDidDocMetadata{},
+			expectedError:    types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
+		},
 	}
 
 	for _, subtest := range subtests {
@@ -186,8 +212,9 @@ func TestRequestService_DereferenceResourceMetadata(t *testing.T) {
 			context, rec := setupContext(
 				"/1.0/identifiers/:did/resources/:resource/metadata",
 				[]string{"did", "resource"},
-				[]string{subtest.did, subtest.resourceId}, subtest.resolutionType)
-			requestService := services.NewRequestService("cheqd", subtest.ledgerService)
+				[]string{subtest.did, subtest.resourceId},
+				subtest.resolutionType,
+				subtest.ledgerService)
 
 			if (subtest.resolutionType == "" || subtest.resolutionType == types.DIDJSONLD) && subtest.expectedError == nil {
 				subtest.expectedResource.AddContext(types.DIDSchemaJSONLD)
@@ -196,7 +223,7 @@ func TestRequestService_DereferenceResourceMetadata(t *testing.T) {
 			}
 			expectedContentType := defineContentType(subtest.expectedResolutionType, subtest.resolutionType)
 
-			err := requestService.DereferenceResourceMetadata(context)
+			err := resourceServices.ResourceMetadataEchoHandler(context)
 
 			if subtest.expectedError != nil {
 				require.EqualValues(t, subtest.expectedError.Error(), err.Error())
@@ -255,6 +282,15 @@ func TestRequestService_DereferenceCollectionResources(t *testing.T) {
 			expectedMetadata: types.ResolutionDidDocMetadata{},
 			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
 		},
+		{
+			name:             "invalid representation",
+			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			resolutionType:   types.JSON,
+			did:              ValidDid,
+			expectedResource: nil,
+			expectedMetadata: types.ResolutionDidDocMetadata{},
+			expectedError:    types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
+		},
 	}
 
 	for _, subtest := range subtests {
@@ -262,8 +298,9 @@ func TestRequestService_DereferenceCollectionResources(t *testing.T) {
 			context, rec := setupContext(
 				"/1.0/identifiers/:did/metadata",
 				[]string{"did"},
-				[]string{subtest.did}, subtest.resolutionType)
-			requestService := services.NewRequestService("cheqd", subtest.ledgerService)
+				[]string{subtest.did},
+				subtest.resolutionType,
+				subtest.ledgerService)
 
 			if (subtest.resolutionType == "" || subtest.resolutionType == types.DIDJSONLD) && subtest.expectedError == nil {
 				subtest.expectedResource.AddContext(types.DIDSchemaJSONLD)
@@ -272,7 +309,7 @@ func TestRequestService_DereferenceCollectionResources(t *testing.T) {
 			}
 			expectedContentType := defineContentType(subtest.expectedResolutionType, subtest.resolutionType)
 
-			err := requestService.DereferenceCollectionResources(context)
+			err := resourceServices.ResourceCollectionEchoHandler(context)
 
 			if subtest.expectedError != nil {
 				require.EqualValues(t, subtest.expectedError.Error(), err.Error())
@@ -303,14 +340,24 @@ func defineContentType(expectedContentType types.ContentType, resolutionType typ
 	return expectedContentType
 }
 
-func setupContext(path string, paramsNames []string, paramsValues []string, resolutionType types.ContentType) (echo.Context, *httptest.ResponseRecorder) {
+func setupContext(path string, paramsNames []string, paramsValues []string, resolutionType types.ContentType, ledgerService services.LedgerServiceI) (echo.Context, *httptest.ResponseRecorder) {
 	e := echo.New()
+
+	didService := services.NewDIDDocService(types.DID_METHOD, ledgerService)
+	resourceService := services.NewResourceService(types.DID_METHOD, ledgerService)
+
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	rec := httptest.NewRecorder()
 	context := e.NewContext(req, rec)
-	context.SetPath(path)
-	context.SetParamNames(paramsNames...)
-	context.SetParamValues(paramsValues...)
+	rc := services.ResolverContext{
+		Context:         context,
+		LedgerService:   ledgerService,
+		DidDocService:   didService,
+		ResourceService: resourceService,
+	}
+	rc.SetPath(path)
+	rc.SetParamNames(paramsNames...)
+	rc.SetParamValues(paramsValues...)
 	req.Header.Add("accept", string(resolutionType))
-	return context, rec
+	return rc, rec
 }

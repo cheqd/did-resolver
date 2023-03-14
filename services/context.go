@@ -6,7 +6,7 @@ import (
 
 type ResolverContext struct {
 	echo.Context
-	LedgerService LedgerService
-	DidDocService DIDDocService
+	LedgerService   LedgerServiceI
+	DidDocService   DIDDocService
 	ResourceService ResourceService
 }

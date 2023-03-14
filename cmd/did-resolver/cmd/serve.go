@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/cheqd/did-resolver/services"
 	didDocServices "github.com/cheqd/did-resolver/services/diddoc"
-	resourceServices "github.com/cheqd/did-resolver/services/resources"
+	resourceServices "github.com/cheqd/did-resolver/services/resource"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
 	"github.com/labstack/echo/v4"
@@ -49,13 +49,10 @@ func getConfig() types.Config {
 }
 
 func serve() {
-	
 	// Get Config
 	config := getConfig()
 	// Setup logger
 	setupLogger(config)
-
-
 	// Services
 	ledgerService := services.NewLedgerService()
 	didService := services.NewDIDDocService(types.DID_METHOD, ledgerService)
@@ -76,10 +73,10 @@ func serve() {
 	// Middleware
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			cc := &services.ResolverContext{
-				Context: c,
-				LedgerService: ledgerService,
-				DidDocService: didService,
+			cc := services.ResolverContext{
+				Context:         c,
+				LedgerService:   ledgerService,
+				DidDocService:   didService,
 				ResourceService: resourceService,
 			}
 			return next(cc)
