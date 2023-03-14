@@ -13,7 +13,7 @@ func GetContentType(accept string) types.ContentType {
 	for _, cType := range typeList {
 		result := types.ContentType(strings.Split(cType, ";")[0])
 		if result == "*/*" || result == types.JSONLD {
-			result = types.DIDJSONLD
+			return types.DIDJSONLD
 		}
 	}
 

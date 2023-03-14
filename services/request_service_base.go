@@ -56,7 +56,6 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 }
 
 func (dd BaseRequestService) BasicValidation(c ResolverContext) error {
-
 	didMethod, _, _, _ := types.TrySplitDID(dd.Did)
 	if didMethod != types.DID_METHOD {
 		return types.NewMethodNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing())
