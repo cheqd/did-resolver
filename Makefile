@@ -154,5 +154,5 @@ swagger:
 	@echo "Generating Swagger files..."
 	@go install github.com/swaggo/swag/cmd/swag@latest
 	@swag fmt
-	@swag init -g main.go
+	@swag init -g cmd/did-resolver/main.go
 .PHONY: swagger
