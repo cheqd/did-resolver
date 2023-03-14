@@ -27,6 +27,7 @@ func (dd *FragmentDIDDocRequestService) Query(c services.ResolverContext) error 
 	result, err := c.DidDocService.DereferenceSecondary(dd.Did, dd.Version, dd.Fragment, dd.RequestedContentType)
 	if err != nil {
 		err.IsDereferencing = true
+		return err
 	}
 	dd.Result = result
 	return nil
