@@ -14,6 +14,10 @@ type ResourceDataDereferencingService struct {
 	ResourceId string
 }
 
+func (dr *ResourceDataDereferencingService) IsDereferencing() bool {
+	return true
+}
+
 func (dr *ResourceDataDereferencingService) SpecificPrepare(c services.ResolverContext) error {
 	dr.ResourceId = c.Param("resource")
 	return nil
@@ -31,10 +35,10 @@ func (dr *ResourceDataDereferencingService) SpecificValidation(c services.Resolv
 }
 
 func (dr *ResourceDataDereferencingService) Query(c services.ResolverContext) error {
-	result, errI := c.ResourceService.DereferenceResourceData(dr.Did, dr.ResourceId, dr.RequestedContentType)
-	if errI != nil {
-		errI.IsDereferencing = true
-		return errI
+	result, err := c.ResourceService.DereferenceResourceData(dr.Did, dr.ResourceId, dr.RequestedContentType)
+	if err != nil {
+		err.IsDereferencing = dr.IsDereferencing()
+		return err
 	}
 	dr.Result = result
 	return nil

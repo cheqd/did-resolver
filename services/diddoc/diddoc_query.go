@@ -11,6 +11,10 @@ type QueryDIDDocRequestService struct {
 	services.BaseRequestService
 }
 
+func (dd QueryDIDDocRequestService) IsDereferencing() bool {
+	return true
+}
+
 func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
 	return nil
 }
@@ -22,7 +26,7 @@ func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext)
 		return err
 	}
 	if flag != nil {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, true)
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing())
 	}
 	dd.Queries = queries
 

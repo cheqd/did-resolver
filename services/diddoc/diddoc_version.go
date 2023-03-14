@@ -12,6 +12,10 @@ type DIDDocVersionRequestService struct {
 	services.BaseRequestService
 }
 
+func (dd DIDDocVersionRequestService) IsDereferencing() bool {
+	return true
+}
+
 func (dd *DIDDocVersionRequestService) SpecificPrepare(c services.ResolverContext) error {
 	return nil
 }

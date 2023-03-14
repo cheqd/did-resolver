@@ -13,6 +13,10 @@ type ResourceMetadataDereferencingService struct {
 	ResourceId string
 }
 
+func (dr *ResourceMetadataDereferencingService) IsDereferencing() bool {
+	return true
+}
+
 func (dr *ResourceMetadataDereferencingService) SpecificPrepare(c services.ResolverContext) error {
 	dr.ResourceId = c.Param("resource")
 	return nil
@@ -30,10 +34,10 @@ func (dr *ResourceMetadataDereferencingService) SpecificValidation(c services.Re
 }
 
 func (dr *ResourceMetadataDereferencingService) Query(c services.ResolverContext) error {
-	result, errI := c.ResourceService.DereferenceResourceMetadata(dr.ResourceId, dr.Did, dr.RequestedContentType)
-	if errI != nil {
-		errI.IsDereferencing = true
-		return errI
+	result, err := c.ResourceService.DereferenceResourceMetadata(dr.ResourceId, dr.Did, dr.RequestedContentType)
+	if err != nil {
+		err.IsDereferencing = dr.IsDereferencing()
+		return err
 	}
 	dr.Result = result
 	return nil

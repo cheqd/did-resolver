@@ -7,6 +7,7 @@ import (
 type RequestServiceI interface {
 	// Checks
 	IsRedirectNeeded(c ResolverContext) bool
+	IsDereferencing() bool
 
 	// Methods
 	// Preparations

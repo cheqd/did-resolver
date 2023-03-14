@@ -13,6 +13,10 @@ type ResourceCollectionDereferencingService struct {
 	ResourceId string
 }
 
+func (dr *ResourceCollectionDereferencingService) IsDereferencing() bool {
+	return true
+}
+
 func (dr *ResourceCollectionDereferencingService) SpecificPrepare(c services.ResolverContext) error {
 	return nil
 }
@@ -31,7 +35,7 @@ func (dr *ResourceCollectionDereferencingService) SpecificValidation(c services.
 func (dr *ResourceCollectionDereferencingService) Query(c services.ResolverContext) error {
 	result, err := c.ResourceService.DereferenceCollectionResources(dr.Did, dr.RequestedContentType)
 	if err != nil {
-		err.IsDereferencing = true
+		err.IsDereferencing = dr.IsDereferencing()
 		return err
 	}
 	dr.Result = result

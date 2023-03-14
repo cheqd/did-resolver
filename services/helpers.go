@@ -15,9 +15,6 @@ func GetContentType(accept string) types.ContentType {
 		if result == "*/*" || result == types.JSONLD {
 			result = types.DIDJSONLD
 		}
-		if result.IsSupported() {
-			return result
-		}
 	}
 
 	return ""

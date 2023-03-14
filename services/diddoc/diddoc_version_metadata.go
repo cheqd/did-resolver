@@ -12,6 +12,10 @@ type DIDDocVersionMetadataRequestService struct {
 	services.BaseRequestService
 }
 
+func (dd DIDDocVersionMetadataRequestService) IsDereferencing() bool {
+	return true
+}
+
 func (dd *DIDDocVersionMetadataRequestService) SpecificPrepare(c services.ResolverContext) error {
 	return nil
 }
@@ -19,7 +23,7 @@ func (dd *DIDDocVersionMetadataRequestService) SpecificPrepare(c services.Resolv
 func (dd DIDDocVersionMetadataRequestService) Redirect(c services.ResolverContext) error {
 	migratedDid := migrations.MigrateDID(dd.Did)
 
-	path := types.RESOLVER_PATH + migratedDid + types.DID_VERSION_PATH + dd.Version
+	path := types.RESOLVER_PATH + migratedDid + types.DID_VERSION_PATH + dd.Version + types.DID_METADATA
 	return c.Redirect(http.StatusMovedPermanently, path)
 }
 

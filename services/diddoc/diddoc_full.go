@@ -8,6 +8,10 @@ type FullDIDDocRequestService struct {
 	services.BaseRequestService
 }
 
+func (dd FullDIDDocRequestService) IsDereferencing() bool {
+	return false
+}
+
 func (dd *FullDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
 	return nil
 }
