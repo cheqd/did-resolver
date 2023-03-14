@@ -74,9 +74,6 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 }
 
 func (dds DIDDocService) Resolve(did string, version string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {
-	if !contentType.IsSupported() {
-		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, false)
-	}
 	didResolutionMetadata := types.NewResolutionMetadata(did, contentType, "")
 
 	protoDidDocWithMetadata, err := dds.ledgerService.QueryDIDDoc(did, version)
@@ -113,9 +110,6 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 }
 
 func (dds DIDDocService) GetDIDDocVersionsMetadata(did string, version string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
-	if !contentType.IsSupported() {
-		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, false)
-	}
 
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 

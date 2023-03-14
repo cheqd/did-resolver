@@ -7,28 +7,28 @@ import (
 )
 
 type FragmentDIDDocRequestService struct {
-	BaseDidDocRequestService
+	services.BaseRequestService
 }
 
 func (dd *FragmentDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
 	return nil
 }
 
-func (dd *FragmentDIDDocRequestService) Prepare(c services.ResolverContext) error {
+func (dd *FragmentDIDDocRequestService) SpecificPrepare(c services.ResolverContext) error {
 	splitted := strings.Split(c.Param("did"), "#")
 
 	if len(splitted) == 2 {
-		dd.fragment = splitted[1]
+		dd.Fragment = splitted[1]
 	}
 	return nil
 }
 
 func (dd *FragmentDIDDocRequestService) Query(c services.ResolverContext) error {
-	result, err := c.DidDocService.DereferenceSecondary(dd.did, dd.version, dd.fragment, dd.requestedContentType)
+	result, err := c.DidDocService.DereferenceSecondary(dd.Did, dd.Version, dd.Fragment, dd.RequestedContentType)
 	if err != nil {
 		err.IsDereferencing = true
 	}
-	dd.result = result
+	dd.Result = result
 	return nil
 }
 

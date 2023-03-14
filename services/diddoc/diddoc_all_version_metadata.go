@@ -8,15 +8,15 @@ import (
 )
 
 type DIDDocAllVersionMetadataRequestService struct {
-	BaseDidDocRequestService
+	services.BaseRequestService
 }
 
-func (dd *DIDDocAllVersionMetadataRequestService) Prepare(c services.ResolverContext) error {
+func (dd *DIDDocAllVersionMetadataRequestService) SpecificPrepare(c services.ResolverContext) error {
 	return nil
 }
 
 func (dd DIDDocAllVersionMetadataRequestService) Redirect(c services.ResolverContext) error {
-	path := types.RESOLVER_PATH + dd.did + types.DID_VERSIONS_PATH
+	path := types.RESOLVER_PATH + dd.Did + types.DID_VERSIONS_PATH
 	return c.Redirect(http.StatusMovedPermanently, path)
 }
 
@@ -25,11 +25,11 @@ func (dd *DIDDocAllVersionMetadataRequestService) SpecificValidation(c services.
 }
 
 func (dd *DIDDocAllVersionMetadataRequestService) Query(c services.ResolverContext) error {
-	result, rErr := c.DidDocService.GetAllDidDocVersionsMetadata(dd.did, dd.requestedContentType)
+	result, rErr := c.DidDocService.GetAllDidDocVersionsMetadata(dd.Did, dd.RequestedContentType)
 	if rErr != nil {
 		return rErr
 	}
-	dd.result = result
+	dd.Result = result
 	return nil
 }
 

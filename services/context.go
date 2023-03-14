@@ -8,4 +8,5 @@ type ResolverContext struct {
 	echo.Context
 	LedgerService LedgerService
 	DidDocService DIDDocService
+	ResourceService ResourceService
 }

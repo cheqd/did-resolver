@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/cheqd/did-resolver/services"
 	didDocServices "github.com/cheqd/did-resolver/services/diddoc"
+	resourceServices "github.com/cheqd/did-resolver/services/resources"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
 	"github.com/labstack/echo/v4"
@@ -58,6 +59,7 @@ func serve() {
 	// Services
 	ledgerService := services.NewLedgerService()
 	didService := services.NewDIDDocService(types.DID_METHOD, ledgerService)
+	resourceService := services.NewResourceService(types.DID_METHOD, ledgerService)
 
 	for _, network := range config.Networks {
 		log.Info().Msgf("Registering network: %s.", network.Namespace)
@@ -78,15 +80,13 @@ func serve() {
 				Context: c,
 				LedgerService: ledgerService,
 				DidDocService: didService,
+				ResourceService: resourceService,
 			}
 			return next(cc)
 		}
 	})
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-
-
-	requestService := services.NewRequestService(types.DID_METHOD, ledgerService)
 
 	// Routes
 	// Did docs
@@ -96,9 +96,9 @@ func serve() {
 	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSION_PATH+":version/metadata", didDocServices.DidDocVersionMetadataEchoHandler)
 	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSIONS_PATH, didDocServices.DidDocAllVersionMetadataEchoHandler)
 	// Resources
-	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource", requestService.DereferenceResourceData)
-	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource/metadata", requestService.DereferenceResourceMetadata)
-	e.GET(types.RESOLVER_PATH+":did"+types.DID_METADATA, requestService.DereferenceCollectionResources)
+	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource", resourceServices.ResourceDataEchoHandler)
+	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource/metadata", resourceServices.ResourceMetadataEchoHandler)
+	e.GET(types.RESOLVER_PATH+":did"+types.DID_METADATA, resourceServices.ResourceCollectionEchoHandler)
 
 	e.Debug = true
 	log.Info().Msg("Starting listener")

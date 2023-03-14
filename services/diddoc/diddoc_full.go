@@ -5,14 +5,14 @@ import (
 )
 
 type FullDIDDocRequestService struct {
-	BaseDidDocRequestService
+	services.BaseRequestService
 }
 
 func (dd *FullDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
 	return nil
 }
 
-func (dd *FullDIDDocRequestService) Prepare(c services.ResolverContext) error {
+func (dd *FullDIDDocRequestService) SpecificPrepare(c services.ResolverContext) error {
 	return nil
 }
 

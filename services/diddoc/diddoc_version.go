@@ -9,17 +9,17 @@ import (
 )
 
 type DIDDocVersionRequestService struct {
-	BaseDidDocRequestService
+	services.BaseRequestService
 }
 
-func (dd *DIDDocVersionRequestService) Prepare(c services.ResolverContext) error {
+func (dd *DIDDocVersionRequestService) SpecificPrepare(c services.ResolverContext) error {
 	return nil
 }
 
 func (dd DIDDocVersionRequestService) Redirect(c services.ResolverContext) error {
-	migratedDid := migrations.MigrateDID(dd.did)
+	migratedDid := migrations.MigrateDID(dd.Did)
 
-	path := types.RESOLVER_PATH + migratedDid + types.DID_VERSION_PATH + dd.version
+	path := types.RESOLVER_PATH + migratedDid + types.DID_VERSION_PATH + dd.Version
 	return c.Redirect(http.StatusMovedPermanently, path)
 }
 

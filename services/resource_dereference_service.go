@@ -23,9 +23,6 @@ func NewResourceService(didMethod string, ledgerService LedgerServiceI) Resource
 }
 
 func (rds ResourceService) DereferenceResourceMetadata(resourceId string, did string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
-	if !contentType.IsSupported() {
-		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
-	}
 
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 
@@ -46,9 +43,6 @@ func (rds ResourceService) DereferenceResourceMetadata(resourceId string, did st
 }
 
 func (rds ResourceService) DereferenceCollectionResources(did string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
-	if !contentType.IsSupported() {
-		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
-	}
 
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 
@@ -74,14 +68,7 @@ func (rds ResourceService) DereferenceCollectionResources(did string, contentTyp
 }
 
 func (rds ResourceService) DereferenceResourceData(did string, resourceId string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
-	if !contentType.IsSupported() {
-		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
-	}
-
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
-	if !contentType.IsSupported() {
-		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, true)
-	}
 
 	resource, err := rds.ledgerService.QueryResource(did, strings.ToLower(resourceId))
 	if err != nil {

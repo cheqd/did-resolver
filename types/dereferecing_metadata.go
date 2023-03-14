@@ -6,7 +6,7 @@ import (
 
 type DereferencingMetadata ResolutionMetadata
 
-type DereferencingResultI interface {
+type ResultI interface {
 	GetContentType() string
 	GetBytes() []byte
 }

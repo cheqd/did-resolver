@@ -8,27 +8,27 @@ import (
 )
 
 type QueryDIDDocRequestService struct {
-	BaseDidDocRequestService
+	services.BaseRequestService
 }
 
 func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
 	return nil
 }
 
-func (dd *QueryDIDDocRequestService) Prepare(c services.ResolverContext) error {
+func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext) error {
 	queryRaw, flag := services.PrepareQueries(c)
 	queries, err := url.ParseQuery(queryRaw)
 	if err != nil {
 		return err
 	}
 	if flag != nil {
-		return types.NewRepresentationNotSupportedError(dd.did, dd.requestedContentType, nil, true)
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, true)
 	}
-	dd.queries = queries
+	dd.Queries = queries
 
 	version := queries.Get("versionId")
 	if version != "" {
-		dd.version = version
+		dd.Version = version
 	}
 	return nil
 }
