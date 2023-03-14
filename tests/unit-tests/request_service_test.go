@@ -25,9 +25,7 @@ type resolveDIDDocTestCase struct {
 	expectedError          error
 }
 
-var (
-	validDIDResolution = types.NewDidDoc(&validDIDDoc)
-)
+var validDIDResolution = types.NewDidDoc(&validDIDDoc)
 
 var _ = DescribeTable("Test ResolveDIDDoc method", func(testCase resolveDIDDocTestCase) {
 	context, rec := setupContext("/1.0/identifiers/:did", []string{"did"}, []string{testCase.did}, testCase.resolutionType)
@@ -89,9 +87,7 @@ type dereferenceResourceDataTestCase struct {
 	expectedError    error
 }
 
-var (
-	validResourceDereferencing = types.DereferencedResourceData(validResource.Resource.Data)
-)
+var validResourceDereferencing = types.DereferencedResourceData(validResource.Resource.Data)
 
 var _ = DescribeTable("Test DereferenceResourceData method", func(testCase dereferenceResourceDataTestCase) {
 	context, rec := setupContext(
