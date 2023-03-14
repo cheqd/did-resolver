@@ -3,6 +3,7 @@ package tests
 import (
 	"crypto/sha256"
 	"fmt"
+	"net/url"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
@@ -61,6 +62,23 @@ var (
 		PreviousVersionId: nil,
 		NextVersionId:     nil,
 	}
+)
+
+var (
+	validDIDDoc             = ValidDIDDoc()
+	validVerificationMethod = ValidVerificationMethod()
+	validDIDDocResolution   = types.NewDidDoc(&validDIDDoc)
+	validMetadata           = ValidMetadata()
+	validService            = ValidService()
+	validResource           = ValidResource()
+	validFragmentMetadata   = types.NewResolutionDidDocMetadata(ValidDid, &validMetadata, []*resourceTypes.Metadata{})
+	validQuery, _           = url.ParseQuery("attr=value")
+)
+
+var (
+	dereferencedResourceList = types.NewDereferencedResourceList(ValidDid, []*resourceTypes.Metadata{validResource.Metadata})
+	resolutionDIDDocMetadata = types.NewResolutionDidDocMetadata(ValidDid, &validMetadata, []*resourceTypes.Metadata{validResource.Metadata})
+	resourceData             = types.DereferencedResourceData(validResource.Resource.Data)
 )
 
 func ValidVerificationMethod() didTypes.VerificationMethod {

@@ -1,65 +1,57 @@
 package tests
 
 import (
-	"testing"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
-	"github.com/stretchr/testify/require"
 )
 
-func TestQueryDIDDoc(t *testing.T) {
-	subtests := []struct {
-		name                     string
-		did                      string
-		expectedDidDocWithMetada *didTypes.DidDocWithMetadata
-		expectedIsFound          bool
-		expectedError            error
-	}{
-		{
-			name:                     "DeadlineExceeded",
-			did:                      "fake did",
-			expectedDidDocWithMetada: nil,
-			expectedIsFound:          false,
-			expectedError:            types.NewInvalidDIDError("fake did", types.JSON, nil, false),
-		},
+var _ = Describe("Test QueryDIDDoc method", func() {
+	type testCase struct {
+		did                        string
+		expectedDidDocWithMetadata *didTypes.DidDocWithMetadata
+		expectedIsFound            bool
+		expectedError              error
 	}
 
-	for _, subtest := range subtests {
-		t.Run(subtest.name, func(t *testing.T) {
-			ledgerService := services.NewLedgerService()
-			didDocWithMetadata, err := ledgerService.QueryDIDDoc("fake did", "")
-			require.EqualValues(t, subtest.expectedDidDocWithMetada, didDocWithMetadata)
-			require.EqualValues(t, subtest.expectedError.Error(), err.Error())
-		})
-	}
-}
+	It("cannot get DIDDoc with a invalid DID", func() {
+		test := testCase{
+			did:                        "fake did",
+			expectedDidDocWithMetadata: nil,
+			expectedIsFound:            false,
+			expectedError:              types.NewInvalidDIDError("fake did", types.JSON, nil, false),
+		}
 
-func TestQueryResource(t *testing.T) {
-	subtests := []struct {
-		name             string
-		collectionDid    string
+		ledgerService := services.NewLedgerService()
+		didDocWithMetadata, err := ledgerService.QueryDIDDoc("fake did", "")
+		Expect(test.expectedDidDocWithMetadata).To(Equal(didDocWithMetadata))
+		Expect(test.expectedError.Error()).To(Equal(err.Error()))
+	})
+})
+
+var _ = Describe("Test QueryResource method", func() {
+	type testCase struct {
+		collectionId     string
 		resourceId       string
 		expectedResource *resourceTypes.ResourceWithMetadata
 		expectedError    error
-	}{
-		{
-			name:             "DeadlineExceeded",
-			collectionDid:    "321",
+	}
+
+	It("cannot get DIDDoc's resource with a invalid collectionId and resourceID", func() {
+		test := testCase{
+			collectionId:     "321",
 			resourceId:       "123",
 			expectedResource: nil,
 			expectedError:    types.NewInvalidDIDError("321", types.JSON, nil, true),
-		},
-	}
+		}
 
-	for _, subtest := range subtests {
-		t.Run(subtest.name, func(t *testing.T) {
-			ledgerService := services.NewLedgerService()
-			resource, err := ledgerService.QueryResource(subtest.collectionDid, subtest.resourceId)
-			require.EqualValues(t, subtest.expectedResource, resource)
-			require.EqualValues(t, subtest.expectedError.Error(), err.Error())
-		})
-	}
-}
+		ledgerService := services.NewLedgerService()
+		resource, err := ledgerService.QueryResource(test.collectionId, test.resourceId)
+		Expect(test.expectedResource).To(Equal(resource))
+		Expect(test.expectedError.Error()).To(Equal(err.Error()))
+	})
+})

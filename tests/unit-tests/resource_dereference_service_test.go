@@ -1,20 +1,19 @@
 package tests
 
 import (
-	"fmt"
 	"strings"
-	"testing"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
-	"github.com/stretchr/testify/require"
 )
 
 type TestCase struct {
-	name                  string
 	ledgerService         MockLedgerService
 	dereferencingType     types.ContentType
 	identifier            string
@@ -27,37 +26,70 @@ type TestCase struct {
 	expectedError         *types.IdentityError
 }
 
-func getSubtest(validContentStream types.ContentStreamI) []TestCase {
-	validDIDDoc := ValidDIDDoc()
-	validResource := ValidResource()
-	validMetadata := ValidMetadata()
-	return []TestCase{
-		{
-			name:                  "successful dereferencing for resource",
+var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase TestCase) {
+	resourceService := services.NewResourceService(ValidMethod, testCase.ledgerService)
+	id := "did:" + testCase.method + ":" + testCase.namespace + ":" + testCase.identifier
+
+	var expectedDIDProperties types.DidProperties
+	if testCase.expectedError == nil {
+		expectedDIDProperties = types.DidProperties{
+			DidString:        ValidDid,
+			MethodSpecificId: ValidIdentifier,
+			Method:           ValidMethod,
+		}
+	}
+
+	expectedContentType := testCase.expectedContentType
+	if expectedContentType == "" {
+		expectedContentType = testCase.dereferencingType
+	}
+
+	dereferencingResult, err := resourceService.DereferenceResourceMetadata(testCase.resourceId, id, testCase.dereferencingType)
+	if err == nil {
+		Expect(testCase.expectedContentStream).To(Equal(dereferencingResult.ContentStream))
+		Expect(testCase.expectedMetadata).To(Equal(dereferencingResult.Metadata))
+		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
+		Expect(expectedDIDProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
+		Expect(dereferencingResult.DereferencingMetadata.ResolutionError).To(BeEmpty())
+	} else {
+		Expect(testCase.expectedError.Code).To(Equal(err.Code))
+		Expect(testCase.expectedError.Message).To(Equal(err.Message))
+	}
+},
+
+	Entry(
+		"successful dereferencing for resource",
+		TestCase{
 			ledgerService:         NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
 			dereferencingType:     types.DIDJSON,
 			identifier:            ValidIdentifier,
 			method:                ValidMethod,
 			namespace:             ValidNamespace,
 			resourceId:            ValidResourceId,
-			expectedContentStream: validContentStream,
+			expectedContentStream: dereferencedResourceList,
 			expectedMetadata:      types.ResolutionResourceMetadata{},
 			expectedError:         nil,
 		},
-		{
-			name:                  "successful dereferencing for resource (upper case UUID)",
+	),
+
+	Entry(
+		"successful dereferencing for resource (upper case UUID)",
+		TestCase{
 			ledgerService:         NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
 			dereferencingType:     types.DIDJSON,
 			identifier:            ValidIdentifier,
 			method:                ValidMethod,
 			namespace:             ValidNamespace,
 			resourceId:            strings.ToUpper(ValidResourceId),
-			expectedContentStream: validContentStream,
+			expectedContentStream: dereferencedResourceList,
 			expectedMetadata:      types.ResolutionResourceMetadata{},
 			expectedError:         nil,
 		},
-		{
-			name:              "resource not found",
+	),
+
+	Entry(
+		"resource not found",
+		TestCase{
 			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
 			identifier:        ValidIdentifier,
@@ -67,8 +99,11 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			expectedMetadata:  types.ResolutionResourceMetadata{},
 			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
 		},
-		{
-			name:              "invalid resource id",
+	),
+
+	Entry(
+		"invalid resource id",
+		TestCase{
 			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
 			identifier:        ValidIdentifier,
@@ -78,8 +113,25 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			expectedMetadata:  types.ResolutionResourceMetadata{},
 			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
 		},
-		{
-			name:              "invalid type",
+	),
+
+	Entry(
+		"invalid resource id",
+		TestCase{
+			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			dereferencingType: types.DIDJSONLD,
+			identifier:        ValidIdentifier,
+			method:            ValidMethod,
+			namespace:         ValidNamespace,
+			resourceId:        "invalid-resource-id",
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+
+	Entry(
+		"invalid type",
+		TestCase{
 			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.JSON,
 			identifier:        ValidIdentifier,
@@ -89,8 +141,11 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			expectedMetadata:  types.ResolutionResourceMetadata{},
 			expectedError:     types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
 		},
-		{
-			name:              "invalid namespace",
+	),
+
+	Entry(
+		"invalid namespace",
+		TestCase{
 			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
 			identifier:        ValidIdentifier,
@@ -100,8 +155,11 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			expectedMetadata:  types.ResolutionResourceMetadata{},
 			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
 		},
-		{
-			name:              "invalid method",
+	),
+
+	Entry(
+		"invalid method",
+		TestCase{
 			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
 			identifier:        ValidIdentifier,
@@ -111,8 +169,11 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			expectedMetadata:  types.ResolutionResourceMetadata{},
 			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
 		},
-		{
-			name:              "invalid identifier",
+	),
+
+	Entry(
+		"invalid identifier",
+		TestCase{
 			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
 			identifier:        "invalid-identifier",
@@ -122,126 +183,323 @@ func getSubtest(validContentStream types.ContentStreamI) []TestCase {
 			expectedMetadata:  types.ResolutionResourceMetadata{},
 			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
 		},
+	),
+)
+
+var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCase TestCase) {
+	if !utils.IsValidResourceId(testCase.resourceId) {
+		return
 	}
-}
+	resourceService := services.NewResourceService(ValidMethod, testCase.ledgerService)
+	id := "did:" + testCase.method + ":" + testCase.namespace + ":" + testCase.identifier
 
-func TestDereferenceResourceMetadata(t *testing.T) {
-	validResource := ValidResource()
-	subtests := getSubtest(types.NewDereferencedResourceList(ValidDid, []*resourceTypes.Metadata{validResource.Metadata}))
-
-	for _, subtest := range subtests {
-		t.Run(subtest.name, func(t *testing.T) {
-			resourceService := services.NewResourceService(ValidMethod, subtest.ledgerService)
-			id := "did:" + subtest.method + ":" + subtest.namespace + ":" + subtest.identifier
-
-			var expectedDIDProperties types.DidProperties
-			if subtest.expectedError == nil {
-				expectedDIDProperties = types.DidProperties{
-					DidString:        ValidDid,
-					MethodSpecificId: ValidIdentifier,
-					Method:           ValidMethod,
-				}
-			}
-			expectedContentType := subtest.expectedContentType
-			if expectedContentType == "" {
-				expectedContentType = subtest.dereferencingType
-			}
-			dereferencingResult, err := resourceService.DereferenceResourceMetadata(subtest.resourceId, id, subtest.dereferencingType)
-
-			fmt.Println(subtest.name + ": dereferencingResult:")
-			fmt.Println(dereferencingResult)
-			fmt.Println(err)
-			if err == nil {
-				require.EqualValues(t, subtest.expectedContentStream, dereferencingResult.ContentStream)
-				require.EqualValues(t, subtest.expectedMetadata, dereferencingResult.Metadata)
-				require.EqualValues(t, expectedContentType, dereferencingResult.DereferencingMetadata.ContentType)
-				require.EqualValues(t, expectedDIDProperties, dereferencingResult.DereferencingMetadata.DidProperties)
-				require.Empty(t, dereferencingResult.DereferencingMetadata.ResolutionError)
-			} else {
-				require.EqualValues(t, subtest.expectedError.Message, err.Message)
-				require.EqualValues(t, subtest.expectedError.Code, err.Code)
-			}
-		})
+	var expectedDIDProperties types.DidProperties
+	if testCase.expectedError == nil {
+		expectedDIDProperties = types.DidProperties{
+			DidString:        ValidDid,
+			MethodSpecificId: ValidIdentifier,
+			Method:           ValidMethod,
+		}
 	}
-}
-
-func TestDereferenceCollectionResources(t *testing.T) {
-	validResource := ValidResource()
-	validMetadata := ValidMetadata()
-	content := types.NewResolutionDidDocMetadata(ValidDid, &validMetadata, []*resourceTypes.Metadata{validResource.Metadata})
-	subtests := getSubtest(&content)
-
-	for _, subtest := range subtests {
-		t.Run(subtest.name, func(t *testing.T) {
-			if !utils.IsValidResourceId(subtest.resourceId) {
-				return
-			}
-			resourceService := services.NewResourceService(ValidMethod, subtest.ledgerService)
-			id := "did:" + subtest.method + ":" + subtest.namespace + ":" + subtest.identifier
-
-			var expectedDIDProperties types.DidProperties
-			if subtest.expectedError == nil {
-				expectedDIDProperties = types.DidProperties{
-					DidString:        ValidDid,
-					MethodSpecificId: ValidIdentifier,
-					Method:           ValidMethod,
-				}
-			}
-			expectedContentType := subtest.expectedContentType
-			if expectedContentType == "" {
-				expectedContentType = subtest.dereferencingType
-			}
-			dereferencingResult, err := resourceService.DereferenceCollectionResources(id, subtest.dereferencingType)
-
-			fmt.Println(subtest.name + ": dereferencingResult:")
-			fmt.Println(dereferencingResult)
-			if err == nil {
-				require.EqualValues(t, subtest.expectedContentStream, dereferencingResult.ContentStream)
-				require.EqualValues(t, subtest.expectedMetadata, dereferencingResult.Metadata)
-				require.EqualValues(t, expectedContentType, dereferencingResult.DereferencingMetadata.ContentType)
-				require.EqualValues(t, expectedDIDProperties, dereferencingResult.DereferencingMetadata.DidProperties)
-				require.Empty(t, dereferencingResult.DereferencingMetadata.ResolutionError)
-			} else {
-				require.EqualValues(t, subtest.expectedError.Message, err.Message)
-				require.EqualValues(t, subtest.expectedError.Code, err.Code)
-			}
-		})
+	expectedContentType := testCase.expectedContentType
+	if expectedContentType == "" {
+		expectedContentType = testCase.dereferencingType
 	}
-}
+	dereferencingResult, err := resourceService.DereferenceCollectionResources(id, testCase.dereferencingType)
 
-func TestDereferenceResourceData(t *testing.T) {
-	validResource := ValidResource()
-	validResourceData := types.DereferencedResourceData(validResource.Resource.Data)
-	subtests := getSubtest(&validResourceData)
-
-	for _, subtest := range subtests {
-		t.Run(subtest.name, func(t *testing.T) {
-			resourceService := services.NewResourceService(ValidMethod, subtest.ledgerService)
-			id := "did:" + subtest.method + ":" + subtest.namespace + ":" + subtest.identifier
-
-			var expectedDIDProperties types.DidProperties
-			if subtest.expectedError == nil {
-				expectedDIDProperties = types.DidProperties{
-					DidString:        ValidDid,
-					MethodSpecificId: ValidIdentifier,
-					Method:           ValidMethod,
-				}
-			}
-			expectedContentType := validResource.Metadata.MediaType
-			dereferencingResult, err := resourceService.DereferenceResourceData(id, subtest.resourceId, subtest.dereferencingType)
-
-			fmt.Println(subtest.name + ": dereferencingResult:")
-			fmt.Println(dereferencingResult)
-			if err == nil {
-				require.EqualValues(t, subtest.expectedContentStream, dereferencingResult.ContentStream)
-				require.EqualValues(t, subtest.expectedMetadata, dereferencingResult.Metadata)
-				require.EqualValues(t, expectedContentType, dereferencingResult.DereferencingMetadata.ContentType)
-				require.EqualValues(t, expectedDIDProperties, dereferencingResult.DereferencingMetadata.DidProperties)
-				require.Empty(t, dereferencingResult.DereferencingMetadata.ResolutionError)
-			} else {
-				require.EqualValues(t, subtest.expectedError.Message, err.Message)
-				require.EqualValues(t, subtest.expectedError.Code, err.Code)
-			}
-		})
+	if err == nil {
+		Expect(testCase.expectedContentStream, dereferencingResult.ContentStream)
+		Expect(testCase.expectedMetadata, dereferencingResult.Metadata)
+		Expect(expectedContentType, dereferencingResult.DereferencingMetadata.ContentType)
+		Expect(expectedDIDProperties, dereferencingResult.DereferencingMetadata.DidProperties)
+		Expect(dereferencingResult.DereferencingMetadata.ResolutionError).To(BeEmpty())
+	} else {
+		Expect(testCase.expectedError.Code).To(Equal(err.Code))
+		Expect(testCase.expectedError.Message).To(Equal(err.Message))
 	}
-}
+},
+
+	Entry(
+		"successful dereferencing for resource",
+		TestCase{
+			ledgerService:         NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
+			dereferencingType:     types.DIDJSON,
+			identifier:            ValidIdentifier,
+			method:                ValidMethod,
+			namespace:             ValidNamespace,
+			resourceId:            ValidResourceId,
+			expectedContentStream: &resolutionDIDDocMetadata,
+			expectedMetadata:      types.ResolutionResourceMetadata{},
+			expectedError:         nil,
+		},
+	),
+
+	Entry(
+		"successful dereferencing for resource (upper case UUID)",
+		TestCase{
+			ledgerService:         NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
+			dereferencingType:     types.DIDJSON,
+			identifier:            ValidIdentifier,
+			method:                ValidMethod,
+			namespace:             ValidNamespace,
+			resourceId:            strings.ToUpper(ValidResourceId),
+			expectedContentStream: &resolutionDIDDocMetadata,
+			expectedMetadata:      types.ResolutionResourceMetadata{},
+			expectedError:         nil,
+		},
+	),
+
+	Entry(
+		"resource not found",
+		TestCase{
+			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			dereferencingType: types.DIDJSONLD,
+			identifier:        ValidIdentifier,
+			method:            ValidMethod,
+			namespace:         ValidNamespace,
+			resourceId:        "a86f9cae-0902-4a7c-a144-96b60ced2fc9",
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+
+	Entry(
+		"invalid resource id",
+		TestCase{
+			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			dereferencingType: types.DIDJSONLD,
+			identifier:        ValidIdentifier,
+			method:            ValidMethod,
+			namespace:         ValidNamespace,
+			resourceId:        "invalid-resource-id",
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+
+	Entry(
+		"invalid resource id",
+		TestCase{
+			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			dereferencingType: types.DIDJSONLD,
+			identifier:        ValidIdentifier,
+			method:            ValidMethod,
+			namespace:         ValidNamespace,
+			resourceId:        "invalid-resource-id",
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+
+	Entry(
+		"invalid type",
+		TestCase{
+			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			dereferencingType: types.JSON,
+			identifier:        ValidIdentifier,
+			method:            ValidMethod,
+			namespace:         ValidNamespace,
+			resourceId:        ValidResourceId,
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+
+	Entry(
+		"invalid namespace",
+		TestCase{
+			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			dereferencingType: types.DIDJSONLD,
+			identifier:        ValidIdentifier,
+			method:            ValidMethod,
+			namespace:         "invalid-namespace",
+			resourceId:        ValidResourceId,
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+
+	Entry(
+		"invalid method",
+		TestCase{
+			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			dereferencingType: types.DIDJSONLD,
+			identifier:        ValidIdentifier,
+			method:            "invalid-method",
+			namespace:         ValidNamespace,
+			resourceId:        ValidResourceId,
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+
+	Entry(
+		"invalid identifier",
+		TestCase{
+			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			dereferencingType: types.DIDJSONLD,
+			identifier:        "invalid-identifier",
+			method:            ValidMethod,
+			namespace:         ValidNamespace,
+			resourceId:        ValidResourceId,
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+)
+
+var _ = DescribeTable("Test DereferenceResourceData method", func(testCase TestCase) {
+	resourceService := services.NewResourceService(ValidMethod, testCase.ledgerService)
+	id := "did:" + testCase.method + ":" + testCase.namespace + ":" + testCase.identifier
+
+	var expectedDIDProperties types.DidProperties
+	if testCase.expectedError == nil {
+		expectedDIDProperties = types.DidProperties{
+			DidString:        ValidDid,
+			MethodSpecificId: ValidIdentifier,
+			Method:           ValidMethod,
+		}
+	}
+
+	expectedContentType := validResource.Metadata.MediaType
+	dereferencingResult, err := resourceService.DereferenceResourceData(id, testCase.resourceId, testCase.dereferencingType)
+	if err == nil {
+		Expect(testCase.expectedContentStream, dereferencingResult.ContentStream)
+		Expect(testCase.expectedMetadata, dereferencingResult.Metadata)
+		Expect(expectedContentType, dereferencingResult.DereferencingMetadata.ContentType)
+		Expect(expectedDIDProperties, dereferencingResult.DereferencingMetadata.DidProperties)
+		Expect(dereferencingResult.DereferencingMetadata.ResolutionError).To(BeEmpty())
+	} else {
+		Expect(testCase.expectedError.Code).To(Equal(err.Code))
+		Expect(testCase.expectedError.Message).To(Equal(err.Message))
+	}
+},
+
+	Entry(
+		"successful dereferencing for resource",
+		TestCase{
+			ledgerService:         NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
+			dereferencingType:     types.DIDJSON,
+			identifier:            ValidIdentifier,
+			method:                ValidMethod,
+			namespace:             ValidNamespace,
+			resourceId:            ValidResourceId,
+			expectedContentStream: &resourceData,
+			expectedMetadata:      types.ResolutionResourceMetadata{},
+			expectedError:         nil,
+		},
+	),
+
+	Entry(
+		"successful dereferencing for resource (upper case UUID)",
+		TestCase{
+			ledgerService:         NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
+			dereferencingType:     types.DIDJSON,
+			identifier:            ValidIdentifier,
+			method:                ValidMethod,
+			namespace:             ValidNamespace,
+			resourceId:            strings.ToUpper(ValidResourceId),
+			expectedContentStream: &resourceData,
+			expectedMetadata:      types.ResolutionResourceMetadata{},
+			expectedError:         nil,
+		},
+	),
+
+	Entry(
+		"resource not found",
+		TestCase{
+			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			dereferencingType: types.DIDJSONLD,
+			identifier:        ValidIdentifier,
+			method:            ValidMethod,
+			namespace:         ValidNamespace,
+			resourceId:        "a86f9cae-0902-4a7c-a144-96b60ced2fc9",
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+
+	Entry(
+		"invalid resource id",
+		TestCase{
+			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			dereferencingType: types.DIDJSONLD,
+			identifier:        ValidIdentifier,
+			method:            ValidMethod,
+			namespace:         ValidNamespace,
+			resourceId:        "invalid-resource-id",
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+
+	Entry(
+		"invalid resource id",
+		TestCase{
+			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			dereferencingType: types.DIDJSONLD,
+			identifier:        ValidIdentifier,
+			method:            ValidMethod,
+			namespace:         ValidNamespace,
+			resourceId:        "invalid-resource-id",
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+
+	Entry(
+		"invalid type",
+		TestCase{
+			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			dereferencingType: types.JSON,
+			identifier:        ValidIdentifier,
+			method:            ValidMethod,
+			namespace:         ValidNamespace,
+			resourceId:        ValidResourceId,
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+
+	Entry(
+		"invalid namespace",
+		TestCase{
+			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			dereferencingType: types.DIDJSONLD,
+			identifier:        ValidIdentifier,
+			method:            ValidMethod,
+			namespace:         "invalid-namespace",
+			resourceId:        ValidResourceId,
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+
+	Entry(
+		"invalid method",
+		TestCase{
+			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			dereferencingType: types.DIDJSONLD,
+			identifier:        ValidIdentifier,
+			method:            "invalid-method",
+			namespace:         ValidNamespace,
+			resourceId:        ValidResourceId,
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+
+	Entry(
+		"invalid identifier",
+		TestCase{
+			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			dereferencingType: types.DIDJSONLD,
+			identifier:        "invalid-identifier",
+			method:            ValidMethod,
+			namespace:         ValidNamespace,
+			resourceId:        ValidResourceId,
+			expectedMetadata:  types.ResolutionResourceMetadata{},
+			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+)
