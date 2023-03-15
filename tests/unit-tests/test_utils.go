@@ -3,11 +3,14 @@ package tests
 import (
 	"crypto/sha256"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"net/url"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/types"
+	"github.com/labstack/echo/v4"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -137,6 +140,29 @@ func generateChecksum(data []byte) string {
 	h.Write(data)
 
 	return fmt.Sprintf("%x", h.Sum(nil))
+}
+
+func defineContentType(expectedContentType types.ContentType, resolutionType types.ContentType) types.ContentType {
+	if expectedContentType == "" {
+		return resolutionType
+	}
+
+	return expectedContentType
+}
+
+func setupContext(path string, paramsNames []string, paramsValues []string, resolutionType types.ContentType) (echo.Context, *httptest.ResponseRecorder) {
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+
+	context := e.NewContext(req, rec)
+	context.SetPath(path)
+	context.SetParamNames(paramsNames...)
+	context.SetParamValues(paramsValues...)
+
+	req.Header.Add("accept", string(resolutionType))
+
+	return context, rec
 }
 
 type MockLedgerService struct {
