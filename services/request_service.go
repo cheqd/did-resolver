@@ -37,41 +37,33 @@ func (rs RequestService) ResolveDIDDoc(c echo.Context) error {
 		return types.NewInvalidDIDUrlError(splitDID[0], requestedContentType, err, true)
 	}
 
+	didMethod, _, identifier, _ := types.TrySplitDID(did)
+	if didMethod != rs.didDocService.didMethod {
+		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
+	}
+
 	var fragmentId string
 	if len(splitDID) == 2 {
 		fragmentId = splitDID[1]
 	}
 
 	queryRaw, flag := prepareQueries(c)
-	queries, err := url.ParseQuery(queryRaw)
-	if err != nil {
-		return err
-	}
 
-	didMethod, _, identifier, _ := types.TrySplitDID(did)
-	if didMethod != rs.didDocService.didMethod {
-		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
-	}
-
-	//nolint: nestif
 	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
 		err := utils.ValidateDID(did, "", rs.didDocService.ledgerService.GetNamespaces())
 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
 			did = migrations.MigrateDID(did)
-			path := types.RESOLVER_PATH + did
-
-			if fragmentId != "" {
-				path += url.PathEscape(fmt.Sprintf("#%s", fragmentId))
-			}
-
-			if queryRaw != "" {
-				path += fmt.Sprintf("?%s", queryRaw)
-			}
+			path := types.RESOLVER_PATH + did + getQuery(queryRaw) + getFragment(fragmentId)
 
 			return c.Redirect(http.StatusMovedPermanently, path)
 		} else {
 			return types.NewInvalidDIDError(did, requestedContentType, nil, false)
 		}
+	}
+
+	queries, err := url.ParseQuery(queryRaw)
+	if err != nil {
+		return err
 	}
 
 	result, rErr := rs.didDocService.ProcessDIDRequest(did, fragmentId, queries, flag, requestedContentType)
@@ -92,11 +84,14 @@ func (rs RequestService) ResolveDIDDocVersion(c echo.Context) error {
 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
 	}
 
-	version := c.Param("version")
-
 	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != rs.didDocService.didMethod {
 		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
+	}
+
+	version := c.Param("version")
+	if !utils.IsValidUUID(version) {
+		return types.NewInvalidDIDUrlError(c.Param("version"), requestedContentType, err, true)
 	}
 
 	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
@@ -134,6 +129,7 @@ func (rs RequestService) ResolveDIDDocVersion(c echo.Context) error {
 //	@Failure		400			{object}	types.IdentityError
 //	@Failure		404			{object}	types.IdentityError
 //	@Failure		406			{object}	types.IdentityError
+//	@Failure		501			{object}	types.IdentityError
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did}/version/{versionId}/metadata [get]
 func (rs RequestService) ResolveDIDDocVersionMetadata(c echo.Context) error {
@@ -144,11 +140,14 @@ func (rs RequestService) ResolveDIDDocVersionMetadata(c echo.Context) error {
 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
 	}
 
-	version := c.Param("version")
-
 	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != rs.didDocService.didMethod {
 		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
+	}
+
+	version := c.Param("version")
+	if !utils.IsValidUUID(version) {
+		return types.NewInvalidDIDUrlError(c.Param("version"), requestedContentType, err, true)
 	}
 
 	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
@@ -186,6 +185,7 @@ func (rs RequestService) ResolveDIDDocVersionMetadata(c echo.Context) error {
 //	@Failure		400			{object}	types.IdentityError
 //	@Failure		404			{object}	types.IdentityError
 //	@Failure		406			{object}	types.IdentityError
+//	@Failure		501			{object}	types.IdentityError
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did}/version/{versionId} [get]
 func (rs RequestService) ResolveAllDidDocVersionsMetadata(c echo.Context) error {
@@ -235,6 +235,7 @@ func (rs RequestService) ResolveAllDidDocVersionsMetadata(c echo.Context) error 
 //	@Failure		400			{object}	types.IdentityError
 //	@Failure		404			{object}	types.IdentityError
 //	@Failure		406			{object}	types.IdentityError
+//	@Failure		501			{object}	types.IdentityError
 //	@Failure		500			{object}	types.IdentityError
 //	@Router			/{did}/resources/{resourceId}/metadata [get]
 func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
@@ -243,11 +244,15 @@ func (rs RequestService) DereferenceResourceMetadata(c echo.Context) error {
 	if err != nil {
 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
 	}
-	resourceId := c.Param("resource")
 
 	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != rs.didDocService.didMethod {
 		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
+	}
+
+	resourceId := c.Param("resource")
+	if !utils.IsValidUUID(resourceId) {
+		return types.NewInvalidDIDUrlError(c.Param("resource"), requestedContentType, err, true)
 	}
 
 	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
@@ -279,11 +284,15 @@ func (rs RequestService) DereferenceResourceData(c echo.Context) error {
 	if err != nil {
 		return types.NewInvalidDIDUrlError(c.Param("did"), requestedContentType, err, true)
 	}
-	resourceId := c.Param("resource")
 
 	didMethod, _, identifier, _ := types.TrySplitDID(did)
 	if didMethod != rs.didDocService.didMethod {
 		return types.NewMethodNotSupportedError(did, requestedContentType, nil, false)
+	}
+
+	resourceId := c.Param("resource")
+	if !utils.IsValidUUID(resourceId) {
+		return types.NewInvalidDIDUrlError(c.Param("resource"), requestedContentType, err, true)
 	}
 
 	if !utils.IsValidDID(did, "", rs.didDocService.ledgerService.GetNamespaces()) {
@@ -372,4 +381,20 @@ func prepareQueries(c echo.Context) (rawQuery string, flag *string) {
 
 func getDidParam(c echo.Context) (string, error) {
 	return url.QueryUnescape(c.Param("did"))
+}
+
+func getQuery(queryRaw string) (query string) {
+	if queryRaw != "" {
+		query += fmt.Sprintf("?%s", queryRaw)
+	}
+
+	return query
+}
+
+func getFragment(fragmentId string) (fragment string) {
+	if fragmentId != "" {
+		fragment += url.PathEscape(fmt.Sprintf("#%s", fragmentId))
+	}
+
+	return fragment
 }

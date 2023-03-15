@@ -207,7 +207,7 @@ def test_dereferencing_content_type_resource(accept, expected_header, expected_s
         (helpers.FAKE_TESTNET_FRAGMENT_1, 404),
         (helpers.FAKE_TESTNET_FRAGMENT_2, 404),
         (helpers.FAKE_TESTNET_RESOURCE, 404),
-        ("did:wrong_method:MTMxDQKMTMxDQKMT", 406),
+        ("did:wrong_method:MTMxDQKMTMxDQKMT", 501),
         (helpers.TESTNET_DID + "/", 400),
         (helpers.TESTNET_DID + "invalidDID", 400),
     ]

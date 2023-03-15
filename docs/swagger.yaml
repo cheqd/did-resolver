@@ -308,6 +308,10 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.IdentityError'
+        "501":
+          description: Not Implemented
+          schema:
+            $ref: '#/definitions/types.IdentityError'
       summary: Resolve DID Document on did:cheqd
       tags:
       - DID Resolution
@@ -354,6 +358,10 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.IdentityError'
+        "501":
+          description: Not Implemented
+          schema:
+            $ref: '#/definitions/types.IdentityError'
       summary: Fetch metadata for all Resources
       tags:
       - Resource Resolution
@@ -396,6 +404,10 @@ paths:
             $ref: '#/definitions/types.IdentityError'
         "500":
           description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "501":
+          description: Not Implemented
           schema:
             $ref: '#/definitions/types.IdentityError'
       summary: Fetch specific Resource
@@ -442,6 +454,10 @@ paths:
             $ref: '#/definitions/types.IdentityError'
         "500":
           description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "501":
+          description: Not Implemented
           schema:
             $ref: '#/definitions/types.IdentityError'
       summary: Fetch Resource-specific metadata
@@ -491,6 +507,10 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.IdentityError'
+        "501":
+          description: Not Implemented
+          schema:
+            $ref: '#/definitions/types.IdentityError'
       summary: Resolve DID Document Version on did:cheqd
       tags:
       - DID Resolution
@@ -538,6 +558,10 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/types.IdentityError'
+        "501":
+          description: Not Implemented
+          schema:
+            $ref: '#/definitions/types.IdentityError'
       summary: Resolve DID Document Version Metadata on did:cheqd
       tags:
       - DID Resolution
@@ -583,6 +607,10 @@ paths:
             $ref: '#/definitions/types.IdentityError'
         "500":
           description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.IdentityError'
+        "501":
+          description: Not Implemented
           schema:
             $ref: '#/definitions/types.IdentityError'
       summary: Resolve DID Document Versions on did:cheqd

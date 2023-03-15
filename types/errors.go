@@ -65,7 +65,7 @@ func NewRepresentationNotSupportedError(did string, contentType ContentType, err
 }
 
 func NewMethodNotSupportedError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
-	return NewIdentityError(406, "methodNotSupported", isDereferencing, did, contentType, err)
+	return NewIdentityError(501, "methodNotSupported", isDereferencing, did, contentType, err)
 }
 
 func NewInternalError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {

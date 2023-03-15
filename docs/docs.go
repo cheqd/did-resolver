@@ -96,6 +96,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/types.IdentityError"
                         }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
                     }
                 }
             }
@@ -168,6 +174,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/types.IdentityError"
                         }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
                     }
                 }
             }
@@ -231,6 +243,12 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
                         "schema": {
                             "$ref": "#/definitions/types.IdentityError"
                         }
@@ -301,6 +319,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/types.IdentityError"
                         }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
                     }
                 }
             }
@@ -368,6 +392,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/types.IdentityError"
                         }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
                     }
                 }
             }
@@ -432,6 +462,12 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
                         "schema": {
                             "$ref": "#/definitions/types.IdentityError"
                         }
@@ -504,6 +540,12 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
                         "schema": {
                             "$ref": "#/definitions/types.IdentityError"
                         }
