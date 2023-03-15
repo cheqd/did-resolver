@@ -23,6 +23,7 @@ const (
 		"\"kty\":\"OKP\"," +
 		"\"x\":\"VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ\"" +
 		"}"
+	ValidVersionId = "test_version_id"
 )
 
 var (

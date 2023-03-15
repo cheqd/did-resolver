@@ -12,7 +12,7 @@ import (
 var _ = Describe("Test NewResolutionDIDDocMetadata function", func() {
 	It("can resolution metadata with resource", func() {
 		metadata := &didTypes.Metadata{
-			VersionId:   "test_version_id",
+			VersionId:   ValidVersionId,
 			Deactivated: false,
 		}
 
@@ -24,7 +24,7 @@ var _ = Describe("Test NewResolutionDIDDocMetadata function", func() {
 			Created:     nil,
 			Updated:     nil,
 			Deactivated: false,
-			VersionId:   "test_version_id",
+			VersionId:   ValidVersionId,
 			Resources:   []types.DereferencedResource{ValidMetadataResource},
 		}
 
@@ -36,14 +36,14 @@ var _ = Describe("Test NewResolutionDIDDocMetadata function", func() {
 		metadata := &didTypes.Metadata{
 			Created:     NotEmptyTimestamp,
 			Updated:     NotEmptyTimestamp,
-			VersionId:   "test_version_id",
+			VersionId:   ValidVersionId,
 			Deactivated: false,
 		}
 
 		expectedResult := types.ResolutionDidDocMetadata{
 			Created:     &NotEmptyTime,
 			Updated:     &NotEmptyTime,
-			VersionId:   "test_version_id",
+			VersionId:   ValidVersionId,
 			Deactivated: false,
 		}
 
