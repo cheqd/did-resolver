@@ -9,11 +9,16 @@ import (
 )
 
 func GetContentType(accept string) types.ContentType {
+	// It returns suuported ContentType or "" otherwise
 	typeList := strings.Split(accept, ",")
 	for _, cType := range typeList {
 		result := types.ContentType(strings.Split(cType, ";")[0])
 		if result == "*/*" || result == types.JSONLD {
 			return types.DIDJSONLD
+		}
+		// Make this place more clearly
+		if result.IsSupported() {
+			return result
 		}
 	}
 

@@ -12,8 +12,9 @@ type DIDDocVersionRequestService struct {
 	services.BaseRequestService
 }
 
-func (dd DIDDocVersionRequestService) IsDereferencing() bool {
-	return true
+func (dd *DIDDocVersionRequestService) Setup(c services.ResolverContext) error {
+	dd.IsDereferencing = true
+	return nil
 }
 
 func (dd *DIDDocVersionRequestService) SpecificPrepare(c services.ResolverContext) error {
@@ -28,9 +29,5 @@ func (dd DIDDocVersionRequestService) Redirect(c services.ResolverContext) error
 }
 
 func (dd *DIDDocVersionRequestService) SpecificValidation(c services.ResolverContext) error {
-	return nil
-}
-
-func (dd *DIDDocVersionRequestService) MakeResponse(c services.ResolverContext) error {
 	return nil
 }

@@ -12,8 +12,9 @@ type DIDDocVersionMetadataRequestService struct {
 	services.BaseRequestService
 }
 
-func (dd DIDDocVersionMetadataRequestService) IsDereferencing() bool {
-	return true
+func (dd *DIDDocVersionMetadataRequestService) Setup(c services.ResolverContext) error {
+	dd.IsDereferencing = true
+	return nil
 }
 
 func (dd *DIDDocVersionMetadataRequestService) SpecificPrepare(c services.ResolverContext) error {
@@ -37,9 +38,5 @@ func (dd *DIDDocVersionMetadataRequestService) Query(c services.ResolverContext)
 		return err
 	}
 	dd.Result = result
-	return nil
-}
-
-func (dd *DIDDocVersionMetadataRequestService) MakeResponse(c services.ResolverContext) error {
 	return nil
 }

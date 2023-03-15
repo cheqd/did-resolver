@@ -14,8 +14,9 @@ type ResourceDataDereferencingService struct {
 	ResourceId string
 }
 
-func (dr *ResourceDataDereferencingService) IsDereferencing() bool {
-	return true
+func (dr *ResourceDataDereferencingService) Setup(c services.ResolverContext) error {
+	dr.IsDereferencing = true
+	return nil
 }
 
 func (dr *ResourceDataDereferencingService) SpecificPrepare(c services.ResolverContext) error {
@@ -37,7 +38,7 @@ func (dr *ResourceDataDereferencingService) SpecificValidation(c services.Resolv
 func (dr *ResourceDataDereferencingService) Query(c services.ResolverContext) error {
 	result, err := c.ResourceService.DereferenceResourceData(dr.Did, dr.ResourceId, dr.RequestedContentType)
 	if err != nil {
-		err.IsDereferencing = dr.IsDereferencing()
+		err.IsDereferencing = dr.IsDereferencing
 		return err
 	}
 	dr.Result = result
@@ -48,8 +49,4 @@ func (dr ResourceDataDereferencingService) Respond(c services.ResolverContext) e
 	c.Response().Header().Set(echo.HeaderContentType, dr.Result.GetContentType())
 
 	return c.Blob(http.StatusOK, dr.Result.GetContentType(), dr.Result.GetBytes())
-}
-
-func (dd *ResourceDataDereferencingService) MakeResponse(c services.ResolverContext) error {
-	return nil
 }

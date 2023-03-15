@@ -16,15 +16,12 @@ type (
 		Did                  string
 		Version              string
 		Fragment             string
+		IsDereferencing      bool
 		Queries              url.Values
 		Result               types.ResultI
 		RequestedContentType types.ContentType
 	}
 )
-
-func (dd BaseRequestService) IsDereferencing() bool {
-	return false
-}
 
 func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 	// Here we raise errors even they were caught while getting the data from context
@@ -32,21 +29,17 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 	// Get Accept header
 	dd.RequestedContentType = GetContentType(c.Request().Header.Get(echo.HeaderAccept))
 	if !dd.RequestedContentType.IsSupported() {
-		return types.NewRepresentationNotSupportedError(dd.Did, types.JSON, nil, dd.IsDereferencing())
+		return types.NewRepresentationNotSupportedError(dd.Did, types.JSON, nil, dd.IsDereferencing)
 	}
 
 	// Get DID from request
 	did, err := GetDidParam(c)
 	if err != nil {
-		return types.NewInvalidDIDUrlError(c.Param("did"), dd.RequestedContentType, err, dd.IsDereferencing())
+		return types.NewInvalidDIDUrlError(c.Param("did"), dd.RequestedContentType, err, dd.IsDereferencing)
 	}
 
 	// Get Did
 	did = strings.Split(did, "#")[0]
-	did, err = url.QueryUnescape(did)
-	if err != nil {
-		return types.NewInvalidDIDUrlError(did, dd.RequestedContentType, err, dd.IsDereferencing())
-	}
 	dd.Did = did
 
 	// Get Version
@@ -58,12 +51,12 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 func (dd BaseRequestService) BasicValidation(c ResolverContext) error {
 	didMethod, _, _, _ := types.TrySplitDID(dd.Did)
 	if didMethod != types.DID_METHOD {
-		return types.NewMethodNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing())
+		return types.NewMethodNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
 	err := utils.ValidateDID(dd.Did, "", c.LedgerService.GetNamespaces())
 	if err != nil {
-		return types.NewInvalidDIDError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing())
+		return types.NewInvalidDIDError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
 	return nil
@@ -98,7 +91,11 @@ func (dd *BaseRequestService) Query(c ResolverContext) error {
 	return nil
 }
 
-func (dd BaseRequestService) Respond(c ResolverContext) error {
+func (dd BaseRequestService) SetupResponse(c ResolverContext) error {
 	c.Response().Header().Set(echo.HeaderContentType, dd.Result.GetContentType())
+	return nil
+}
+
+func (dd BaseRequestService) Respond(c ResolverContext) error {
 	return c.JSONPretty(http.StatusOK, dd.Result, "  ")
 }

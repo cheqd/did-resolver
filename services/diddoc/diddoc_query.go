@@ -11,11 +11,16 @@ type QueryDIDDocRequestService struct {
 	services.BaseRequestService
 }
 
-func (dd QueryDIDDocRequestService) IsDereferencing() bool {
-	return true
+func (dd *QueryDIDDocRequestService) Setup(c services.ResolverContext) error {
+	dd.IsDereferencing = true
+	return nil
 }
 
 func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
+	_, err := url.QueryUnescape(dd.Did)
+	if err != nil {
+		return types.NewInvalidDIDUrlError(dd.Did, dd.RequestedContentType, err, dd.IsDereferencing)
+	}
 	return nil
 }
 
@@ -26,7 +31,7 @@ func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext)
 		return err
 	}
 	if flag != nil {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing())
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 	dd.Queries = queries
 
@@ -34,9 +39,5 @@ func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext)
 	if version != "" {
 		dd.Version = version
 	}
-	return nil
-}
-
-func (dd *QueryDIDDocRequestService) MakeResponse(c services.ResolverContext) error {
 	return nil
 }

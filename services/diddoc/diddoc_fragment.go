@@ -10,8 +10,9 @@ type FragmentDIDDocRequestService struct {
 	services.BaseRequestService
 }
 
-func (dd FragmentDIDDocRequestService) IsDereferencing() bool {
-	return true
+func (dd *FragmentDIDDocRequestService) Setup(c services.ResolverContext) error {
+	dd.IsDereferencing = true
+	return nil
 }
 
 func (dd *FragmentDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
@@ -34,9 +35,5 @@ func (dd *FragmentDIDDocRequestService) Query(c services.ResolverContext) error 
 		return err
 	}
 	dd.Result = result
-	return nil
-}
-
-func (dd *FragmentDIDDocRequestService) MakeResponse(c services.ResolverContext) error {
 	return nil
 }
