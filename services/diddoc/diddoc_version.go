@@ -6,6 +6,7 @@ import (
 	"github.com/cheqd/did-resolver/migrations"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
+	"github.com/cheqd/did-resolver/utils"
 )
 
 type DIDDocVersionRequestService struct {
@@ -18,6 +19,8 @@ func (dd *DIDDocVersionRequestService) Setup(c services.ResolverContext) error {
 }
 
 func (dd *DIDDocVersionRequestService) SpecificPrepare(c services.ResolverContext) error {
+	// Get Version
+	dd.Version = c.Param("version")
 	return nil
 }
 
@@ -29,5 +32,8 @@ func (dd DIDDocVersionRequestService) Redirect(c services.ResolverContext) error
 }
 
 func (dd *DIDDocVersionRequestService) SpecificValidation(c services.ResolverContext) error {
+	if !utils.IsValidUUID(dd.Version) {
+		return types.NewInvalidDIDUrlError(dd.Version, dd.RequestedContentType, nil, dd.IsDereferencing)
+	}
 	return nil
 }

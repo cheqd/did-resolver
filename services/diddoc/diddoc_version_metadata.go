@@ -6,6 +6,7 @@ import (
 	"github.com/cheqd/did-resolver/migrations"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
+	"github.com/cheqd/did-resolver/utils"
 )
 
 type DIDDocVersionMetadataRequestService struct {
@@ -18,6 +19,8 @@ func (dd *DIDDocVersionMetadataRequestService) Setup(c services.ResolverContext)
 }
 
 func (dd *DIDDocVersionMetadataRequestService) SpecificPrepare(c services.ResolverContext) error {
+	// Get Version
+	dd.Version = c.Param("version")
 	return nil
 }
 
@@ -29,6 +32,9 @@ func (dd DIDDocVersionMetadataRequestService) Redirect(c services.ResolverContex
 }
 
 func (dd *DIDDocVersionMetadataRequestService) SpecificValidation(c services.ResolverContext) error {
+	if !utils.IsValidUUID(dd.Version) {
+		return types.NewInvalidDIDUrlError(dd.Version, dd.RequestedContentType, nil, dd.IsDereferencing)
+	}
 	return nil
 }
 

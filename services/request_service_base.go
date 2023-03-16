@@ -42,9 +42,6 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 	did = strings.Split(did, "#")[0]
 	dd.Did = did
 
-	// Get Version
-	dd.Version = c.Param("version")
-
 	return nil
 }
 
@@ -52,10 +49,6 @@ func (dd BaseRequestService) BasicValidation(c ResolverContext) error {
 	didMethod, _, _, _ := types.TrySplitDID(dd.Did)
 	if didMethod != types.DID_METHOD {
 		return types.NewMethodNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
-	}
-
-	if !utils.IsValidUUID(dd.Version) {
-		return types.NewInvalidDIDUrlError(dd.Version, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
 	err := utils.ValidateDID(dd.Did, "", c.LedgerService.GetNamespaces())
