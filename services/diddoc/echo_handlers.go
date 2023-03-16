@@ -80,6 +80,7 @@ func DidDocVersionEchoHandler(c echo.Context) error {
 //	@Failure		404			{object}	types.IdentityError
 //	@Failure		406			{object}	types.IdentityError
 //	@Failure		500			{object}	types.IdentityError
+//	@Failure		501			{object}	types.IdentityError
 //	@Router			/{did}/version/{versionId}/metadata [get]
 func DidDocVersionMetadataEchoHandler(c echo.Context) error {
 	return services.EchoWrapHandler(&DIDDocVersionMetadataRequestService{})(c)
