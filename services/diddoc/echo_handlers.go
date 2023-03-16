@@ -1,9 +1,11 @@
 package diddoc
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/cheqd/did-resolver/services"
+	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
 )
 
@@ -22,7 +24,7 @@ func DidDocEchoHandler(c echo.Context) error {
 		return services.EchoWrapHandler(&QueryDIDDocRequestService{})(c)
 	default:
 		// ToDo: make it more clearly
-		return echo.NewHTTPError(500, "Unknown handler for processing request")
+		return types.NewInternalError(c.Param("did"), types.JSON, errors.New("Unkown internal error while getting the type of query"), true)
 	}
 }
 

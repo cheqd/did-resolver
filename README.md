@@ -16,7 +16,7 @@ The [Architecture Decision Record for the cheqd DID Resolver](https://docs.cheqd
 
 ## ✅ Quick Start
 
-If you do not want to install anything and just want to resolve a `did:cheqd` entry from the ledger, you can [load the REST API endpoint for resolver.cheqd.net in your browser](https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:zF7rhDBfUt9d1gJPjx7s1JXfUY7oVWkY).
+If you do not want to install anything and just want to resolve a `did:cheqd` entry from the ledger, you can [load the REST API endpoint for resolver.cheqd.net in your browser](https://resolver.cheqd.net/1.0/identifiers/did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN).
 
 Or, make a request from terminal to this hosted REST API:
 
