@@ -159,7 +159,6 @@ func (dds DIDDocService) GetAllDidDocVersionsMetadata(did string, contentType ty
 func (dds DIDDocService) DereferenceSecondary(did string, version string, fragmentId string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
 	didResolution, err := dds.Resolve(did, version, contentType)
 	if err != nil {
-		err.IsDereferencing = true
 		return nil, err
 	}
 
