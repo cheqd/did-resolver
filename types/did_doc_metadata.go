@@ -5,6 +5,7 @@ import (
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type ResolutionDidDocMetadata struct {
@@ -16,11 +17,12 @@ type ResolutionDidDocMetadata struct {
 }
 
 func NewResolutionDidDocMetadata(did string, metadata *didTypes.Metadata, resources []*resourceTypes.Metadata) ResolutionDidDocMetadata {
-	created := metadata.Created.AsTime()
-	updated := metadata.Updated.AsTime()
+	created := toTime(metadata.Created)
+	updated := toTime(metadata.Updated)
+
 	newMetadata := ResolutionDidDocMetadata{
-		Created:     &created,
-		Updated:     &updated,
+		Created:     created,
+		Updated:     updated,
 		Deactivated: metadata.Deactivated,
 		VersionId:   metadata.VersionId,
 	}
@@ -41,3 +43,14 @@ func TransformToFragmentMetadata(metadata ResolutionDidDocMetadata) ResolutionDi
 func (e *ResolutionDidDocMetadata) AddContext(newProtocol string) {}
 func (e *ResolutionDidDocMetadata) RemoveContext()                {}
 func (e *ResolutionDidDocMetadata) GetBytes() []byte              { return []byte{} }
+
+func toTime(value *timestamppb.Timestamp) (result *time.Time) {
+	if value.AsTime().IsZero() {
+		result = nil
+	} else {
+		value := value.AsTime()
+		result = &value
+	}
+
+	return result
+}

@@ -54,6 +54,10 @@ func (dd BaseRequestService) BasicValidation(c ResolverContext) error {
 		return types.NewMethodNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
+	if !utils.IsValidUUID(dd.Version) {
+		return types.NewInvalidDIDUrlError(dd.Version, dd.RequestedContentType, nil, dd.IsDereferencing)
+	}
+
 	err := utils.ValidateDID(dd.Did, "", c.LedgerService.GetNamespaces())
 	if err != nil {
 		return types.NewInvalidDIDError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)

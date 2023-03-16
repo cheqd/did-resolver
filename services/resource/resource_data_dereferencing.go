@@ -6,6 +6,7 @@ import (
 	"github.com/cheqd/did-resolver/migrations"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
+	"github.com/cheqd/did-resolver/utils"
 	"github.com/labstack/echo/v4"
 )
 
@@ -32,6 +33,9 @@ func (dr ResourceDataDereferencingService) Redirect(c services.ResolverContext) 
 }
 
 func (dr *ResourceDataDereferencingService) SpecificValidation(c services.ResolverContext) error {
+	if !utils.IsValidUUID(dr.ResourceId) {
+		return types.NewInvalidDIDUrlError(dr.ResourceId, dr.RequestedContentType, nil, dr.IsDereferencing)
+	}
 	return nil
 }
 

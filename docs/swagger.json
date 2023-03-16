@@ -94,6 +94,12 @@
                         "schema": {
                             "$ref": "#/definitions/types.IdentityError"
                         }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
                     }
                 }
             }
@@ -166,6 +172,12 @@
                         "schema": {
                             "$ref": "#/definitions/types.IdentityError"
                         }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
                     }
                 }
             }
@@ -229,6 +241,12 @@
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
                         "schema": {
                             "$ref": "#/definitions/types.IdentityError"
                         }
@@ -299,6 +317,12 @@
                         "schema": {
                             "$ref": "#/definitions/types.IdentityError"
                         }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
                     }
                 }
             }
@@ -366,6 +390,12 @@
                         "schema": {
                             "$ref": "#/definitions/types.IdentityError"
                         }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
                     }
                 }
             }
@@ -430,6 +460,12 @@
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
                         "schema": {
                             "$ref": "#/definitions/types.IdentityError"
                         }
@@ -502,6 +538,12 @@
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.IdentityError"
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
                         "schema": {
                             "$ref": "#/definitions/types.IdentityError"
                         }
