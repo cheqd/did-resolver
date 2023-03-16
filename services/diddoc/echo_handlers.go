@@ -24,7 +24,7 @@ func DidDocEchoHandler(c echo.Context) error {
 		return services.EchoWrapHandler(&QueryDIDDocRequestService{})(c)
 	default:
 		// ToDo: make it more clearly
-		return types.NewInternalError(c.Param("did"), types.JSON, errors.New("Unkown internal error while getting the type of query"), true)
+		return types.NewInternalError(c.Param("did"), types.JSON, errors.New("Unknown internal error while getting the type of query"), true)
 	}
 }
 
