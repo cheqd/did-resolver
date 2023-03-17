@@ -20,10 +20,10 @@ func (dd *FragmentDIDDocRequestService) SpecificValidation(c services.ResolverCo
 }
 
 func (dd *FragmentDIDDocRequestService) SpecificPrepare(c services.ResolverContext) error {
-	splitted := strings.Split(c.Param("did"), "#")
+	split := strings.Split(c.Param("did"), "#")
 
-	if len(splitted) == 2 {
-		dd.Fragment = splitted[1]
+	if len(split) == 2 {
+		dd.Fragment = split[1]
 	}
 	return nil
 }
@@ -31,7 +31,7 @@ func (dd *FragmentDIDDocRequestService) SpecificPrepare(c services.ResolverConte
 func (dd *FragmentDIDDocRequestService) Query(c services.ResolverContext) error {
 	result, err := c.DidDocService.DereferenceSecondary(dd.Did, dd.Version, dd.Fragment, dd.RequestedContentType)
 	if err != nil {
-		err.IsDereferencing = true
+		err.IsDereferencing = dd.IsDereferencing
 		return err
 	}
 	dd.Result = result

@@ -39,24 +39,6 @@ func NewLedgerService() LedgerService {
 	return ls
 }
 
-// QueryDIDDoc godoc
-//
-//	@Summary		Resolve DID Document on did:cheqd
-//	@Description	Fetch DID Document ("DIDDoc") from cheqd network
-//	@Tags			DID Resolution
-//	@Accept			application/did+ld+json,application/ld+json,application/did+json
-//	@Produce		application/did+ld+json,application/ld+json,application/did+json
-//	@Param			did			path		string	true	"Full DID with unique identifier"
-//	@Param			service		query		string	false	"Service Type"
-//	@Param			fragmentId	query		string	false	"#Fragment"
-//	@Param			versionId	query		string	false	"Version"
-//	@Success		200			{object}	types.DidResolution
-//	@Failure		400			{object}	types.IdentityError
-//	@Failure		404			{object}	types.IdentityError
-//	@Failure		406			{object}	types.IdentityError
-//	@Failure		501			{object}	types.IdentityError
-//	@Failure		500			{object}	types.IdentityError
-//	@Router			/{did} [get]
 func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
 	method, namespace, _, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
@@ -92,21 +74,6 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 	}
 }
 
-// QueryAllDidDocVersionsMetadata godoc
-//
-//	@Summary		Resolve DID Document Versions on did:cheqd
-//	@Description	Fetch specific all versions of a DID Document ("DIDDoc") for a given DID
-//	@Tags			DID Resolution
-//	@Accept			application/did+ld+json,application/ld+json,application/did+json
-//	@Produce		application/did+ld+json,application/ld+json,application/did+json
-//	@Param			did	path		string	true	"Full DID with unique identifier"
-//	@Success		200	{object}	types.ResourceDereferencing{contentStream=types.DereferencedDidVersionsList}
-//	@Failure		400	{object}	types.IdentityError
-//	@Failure		404	{object}	types.IdentityError
-//	@Failure		406	{object}	types.IdentityError
-//	@Failure		501	{object}	types.IdentityError
-//	@Failure		500	{object}	types.IdentityError
-//	@Router			/{did}/versions [get]
 func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError) {
 	method, namespace, _, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
@@ -132,22 +99,6 @@ func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.
 	return response.Versions, nil
 }
 
-// QueryResource godoc
-//
-//	@Summary		Fetch specific Resource
-//	@Description	Get specific Resource within a DID Resource Collection
-//	@Tags			Resource Resolution
-//	@Accept			*/*
-//	@Produce		*/*
-//	@Param			did			path		string	true	"Full DID with unique identifier"
-//	@Param			resourceId	path		string	true	"Resource-specific unique-identifier"
-//	@Success		200			{object}	[]byte
-//	@Failure		400			{object}	types.IdentityError
-//	@Failure		404			{object}	types.IdentityError
-//	@Failure		406			{object}	types.IdentityError
-//	@Failure		501			{object}	types.IdentityError
-//	@Failure		500			{object}	types.IdentityError
-//	@Router			/{did}/resources/{resourceId} [get]
 func (ls LedgerService) QueryResource(did string, resourceId string) (*resourceTypes.ResourceWithMetadata, *types.IdentityError) {
 	method, namespace, collectionId, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
@@ -175,21 +126,6 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resourceT
 	return resourceResponse.Resource, nil
 }
 
-// QueryCollectionResources godoc
-//
-//	@Summary		Fetch metadata for all Resources
-//	@Description	Get metadata for all Resources within a DID Resource Collection
-//	@Tags			Resource Resolution
-//	@Accept			application/did+ld+json,application/ld+json,application/did+json
-//	@Produce		application/did+ld+json,application/ld+json,application/did+json
-//	@Param			did	path		string	true	"Full DID with unique identifier"
-//	@Success		200	{object}	types.ResourceDereferencing{contentStream=types.ResolutionDidDocMetadata}
-//	@Failure		400	{object}	types.IdentityError
-//	@Failure		404	{object}	types.IdentityError
-//	@Failure		406	{object}	types.IdentityError
-//	@Failure		501	{object}	types.IdentityError
-//	@Failure		500	{object}	types.IdentityError
-//	@Router			/{did}/metadata [get]
 func (ls LedgerService) QueryCollectionResources(did string) ([]*resourceTypes.Metadata, *types.IdentityError) {
 	method, namespace, collectionId, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
