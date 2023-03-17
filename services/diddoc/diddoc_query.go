@@ -33,7 +33,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	if !utils.IsValidUUID(dd.Version) {
 		return types.NewInvalidDIDUrlError(dd.Version, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
-	
+
 	return nil
 }
 
