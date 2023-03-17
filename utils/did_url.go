@@ -3,6 +3,7 @@ package utils
 import (
 	"errors"
 	"fmt"
+	"net/url"
 
 	"github.com/cheqd/did-resolver/types"
 	"github.com/google/uuid"
@@ -112,4 +113,20 @@ func IsValidDIDUrl(didURL string, method string, allowedNamespaces []string) boo
 
 func IsMigrationNeeded(id string) bool {
 	return IsValidV1ID(id)
+}
+
+func GetQuery(queryRaw string) (query string) {
+	if queryRaw != "" {
+		query += fmt.Sprintf("?%s", queryRaw)
+	}
+
+	return query
+}
+
+func GetFragment(fragmentId string) (fragment string) {
+	if fragmentId != "" {
+		fragment += url.PathEscape(fmt.Sprintf("#%s", fragmentId))
+	}
+
+	return fragment
 }

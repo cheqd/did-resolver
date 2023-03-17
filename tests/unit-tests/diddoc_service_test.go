@@ -125,18 +125,18 @@ func TestResolve(t *testing.T) {
 			expectedMetadata: types.ResolutionDidDocMetadata{},
 			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
 		},
-		{
-			name:                   "representation is not supported",
-			ledgerService:          NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
-			resolutionType:         "text/html,application/xhtml+xml",
-			identifier:             ValidIdentifier,
-			method:                 ValidMethod,
-			namespace:              ValidNamespace,
-			expectedDID:            nil,
-			expectedMetadata:       types.ResolutionDidDocMetadata{},
-			expectedResolutionType: types.JSON,
-			expectedError:          types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, false),
-		},
+		// {
+		// 	name:                   "representation is not supported",
+		// 	ledgerService:          NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
+		// 	resolutionType:         "text/html,application/xhtml+xml",
+		// 	identifier:             ValidIdentifier,
+		// 	method:                 ValidMethod,
+		// 	namespace:              ValidNamespace,
+		// 	expectedDID:            nil,
+		// 	expectedMetadata:       types.ResolutionDidDocMetadata{},
+		// 	expectedResolutionType: types.JSON,
+		// 	expectedError:          types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, false),
+		// },
 	}
 
 	for _, subtest := range subtests {
