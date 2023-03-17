@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/cheqd/did-resolver/cmd"
+	"github.com/cheqd/did-resolver/cmd/did-resolver/cmd"
 )
 
 //	@title			DID Resolver for cheqd DID method

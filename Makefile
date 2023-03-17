@@ -4,6 +4,7 @@
 export GO111MODULE = on
 
 BUILD_DIR ?= $(CURDIR)/build
+DID_RESOLVER_DIR := $(CURDIR)/cmd/did-resolver
 
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 COMMIT := $(shell git log -1 --format='%H')
@@ -68,7 +69,7 @@ build: go.sum go-version
 	@echo "Building DID Resolver binary..."
 	@mkdir -p $(BUILD_DIR)
 	@echo $(BUILD_FLAGS)
-	@go build -mod=readonly $(BUILD_FLAGS) -o build/did-resolver main.go
+	@go build -mod=readonly $(BUILD_FLAGS) -o $(BUILD_DIR) $(DID_RESOLVER_DIR)
 .PHONY: build
 
 ###############################################################################
@@ -153,5 +154,5 @@ swagger:
 	@echo "Generating Swagger files..."
 	@go install github.com/swaggo/swag/cmd/swag@latest
 	@swag fmt
-	@swag init -g main.go
+	@swag init -g cmd/did-resolver/main.go
 .PHONY: swagger

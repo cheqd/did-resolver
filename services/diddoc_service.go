@@ -57,7 +57,7 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 
 	if fragmentId != "" {
 		log.Trace().Msgf("Dereferencing %s, %s, %s", did, fragmentId, queries)
-		result, err = dds.dereferenceSecondary(did, version, fragmentId, contentType)
+		result, err = dds.DereferenceSecondary(did, version, fragmentId, contentType)
 		isDereferencing = true
 	} else {
 		log.Trace().Msgf("Resolving %s", did)
@@ -74,9 +74,6 @@ func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, querie
 }
 
 func (dds DIDDocService) Resolve(did string, version string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {
-	if !contentType.IsSupported() {
-		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, false)
-	}
 	didResolutionMetadata := types.NewResolutionMetadata(did, contentType, "")
 
 	protoDidDocWithMetadata, err := dds.ledgerService.QueryDIDDoc(did, version)
@@ -113,10 +110,6 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 }
 
 func (dds DIDDocService) GetDIDDocVersionsMetadata(did string, version string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
-	if !contentType.IsSupported() {
-		return nil, types.NewRepresentationNotSupportedError(did, types.JSON, nil, false)
-	}
-
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 
 	protoDidDocWithMetadata, err := dds.ledgerService.QueryDIDDoc(did, version)
@@ -163,10 +156,9 @@ func (dds DIDDocService) GetAllDidDocVersionsMetadata(did string, contentType ty
 	return &types.DidDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
-func (dds DIDDocService) dereferenceSecondary(did string, version string, fragmentId string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
+func (dds DIDDocService) DereferenceSecondary(did string, version string, fragmentId string, contentType types.ContentType) (*types.DidDereferencing, *types.IdentityError) {
 	didResolution, err := dds.Resolve(did, version, contentType)
 	if err != nil {
-		err.IsDereferencing = true
 		return nil, err
 	}
 

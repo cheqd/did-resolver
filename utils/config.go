@@ -12,8 +12,8 @@ import (
 )
 
 func LoadConfig() (types.Config, error) {
-	if _, err := os.Stat("config.env"); err == nil {
-		viper.SetConfigFile("config.env")
+	if _, err := os.Stat("../../config.env"); err == nil {
+		viper.SetConfigFile("../../config.env")
 		err := viper.ReadInConfig()
 		if err != nil {
 			return types.Config{}, fmt.Errorf("error reading config.env: %v", err)

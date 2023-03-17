@@ -6,6 +6,11 @@ import (
 
 type DereferencingMetadata ResolutionMetadata
 
+type ResultI interface {
+	GetContentType() string
+	GetBytes() []byte
+}
+
 type DidDereferencing struct {
 	Context               string                   `json:"@context,omitempty" example:"https://w3id.org/did-resolution/v1"`
 	DereferencingMetadata DereferencingMetadata    `json:"dereferencingMetadata"`
