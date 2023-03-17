@@ -10,7 +10,7 @@ import (
 )
 
 var _ = Describe("Test NewResolutionDIDDocMetadata function", func() {
-	It("can resolution metadata with resource", func() {
+	It("can create the structure with resource", func() {
 		metadata := &didTypes.Metadata{
 			VersionId:   ValidVersionId,
 			Deactivated: false,
@@ -32,7 +32,7 @@ var _ = Describe("Test NewResolutionDIDDocMetadata function", func() {
 		Expect(result).To(Equal(expectedResult))
 	})
 
-	It("can resolution metadata without resource", func() {
+	It("can create the structure without resource", func() {
 		metadata := &didTypes.Metadata{
 			Created:     NotEmptyTimestamp,
 			Updated:     NotEmptyTimestamp,
