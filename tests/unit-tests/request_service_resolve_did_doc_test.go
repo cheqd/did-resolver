@@ -8,7 +8,7 @@ import (
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
-	"github.com/cheqd/did-resolver/services"
+	didDocServices "github.com/cheqd/did-resolver/services/diddoc"
 	"github.com/cheqd/did-resolver/types"
 )
 
@@ -25,17 +25,21 @@ type resolveDIDDocTestCase struct {
 var validDIDResolution = types.NewDidDoc(&validDIDDoc)
 
 var _ = DescribeTable("Test ResolveDIDDoc method", func(testCase resolveDIDDocTestCase) {
-	context, rec := setupContext("/1.0/identifiers/:did", []string{"did"}, []string{testCase.did}, testCase.resolutionType)
-	requestService := services.NewRequestService("cheqd", testCase.ledgerService)
+	context, rec := setupContext(
+		"/1.0/identifiers/:did",
+		[]string{"did"}, []string{testCase.did},
+		testCase.resolutionType,
+		testCase.ledgerService)
 
 	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
 		testCase.expectedDID.Context = []string{types.DIDSchemaJSONLD, types.JsonWebKey2020JSONLD}
 	} else if testCase.expectedDID != nil {
 		testCase.expectedDID.Context = nil
 	}
+
 	expectedContentType := defineContentType(testCase.expectedResolutionType, testCase.resolutionType)
 
-	err := requestService.ResolveDIDDoc(context)
+	err := didDocServices.DidDocEchoHandler(context)
 	if testCase.expectedError != nil {
 		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
 	} else {

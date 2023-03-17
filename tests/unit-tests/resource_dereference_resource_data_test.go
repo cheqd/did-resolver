@@ -112,20 +112,6 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase TestC
 	),
 
 	Entry(
-		"invalid type",
-		TestCase{
-			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
-			dereferencingType: types.JSON,
-			identifier:        ValidIdentifier,
-			method:            ValidMethod,
-			namespace:         ValidNamespace,
-			resourceId:        ValidResourceId,
-			expectedMetadata:  types.ResolutionResourceMetadata{},
-			expectedError:     types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
-		},
-	),
-
-	Entry(
 		"invalid namespace",
 		TestCase{
 			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),

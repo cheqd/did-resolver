@@ -9,6 +9,7 @@ import (
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -150,19 +151,26 @@ func defineContentType(expectedContentType types.ContentType, resolutionType typ
 	return expectedContentType
 }
 
-func setupContext(path string, paramsNames []string, paramsValues []string, resolutionType types.ContentType) (echo.Context, *httptest.ResponseRecorder) {
+func setupContext(path string, paramsNames []string, paramsValues []string, resolutionType types.ContentType, ledgerService services.LedgerServiceI) (echo.Context, *httptest.ResponseRecorder) {
 	e := echo.New()
+
+	didService := services.NewDIDDocService(types.DID_METHOD, ledgerService)
+	resourceService := services.NewResourceService(types.DID_METHOD, ledgerService)
+
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	rec := httptest.NewRecorder()
-
 	context := e.NewContext(req, rec)
-	context.SetPath(path)
-	context.SetParamNames(paramsNames...)
-	context.SetParamValues(paramsValues...)
-
+	rc := services.ResolverContext{
+		Context:         context,
+		LedgerService:   ledgerService,
+		DidDocService:   didService,
+		ResourceService: resourceService,
+	}
+	rc.SetPath(path)
+	rc.SetParamNames(paramsNames...)
+	rc.SetParamValues(paramsValues...)
 	req.Header.Add("accept", string(resolutionType))
-
-	return context, rec
+	return rc, rec
 }
 
 type MockLedgerService struct {

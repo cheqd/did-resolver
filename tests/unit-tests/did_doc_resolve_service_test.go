@@ -127,19 +127,4 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
 		},
 	),
-
-	Entry(
-		"representation is not supported",
-		resolveTestCase{
-			ledgerService:          NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
-			resolutionType:         "text/html,application/xhtml+xml",
-			identifier:             ValidIdentifier,
-			method:                 ValidMethod,
-			namespace:              ValidNamespace,
-			expectedDID:            nil,
-			expectedMetadata:       types.ResolutionDidDocMetadata{},
-			expectedResolutionType: types.JSON,
-			expectedError:          types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, false),
-		},
-	),
 )

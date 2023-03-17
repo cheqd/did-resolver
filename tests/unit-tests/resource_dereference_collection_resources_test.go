@@ -17,6 +17,7 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	if !utils.IsValidResourceId(testCase.resourceId) {
 		return
 	}
+
 	resourceService := services.NewResourceService(ValidMethod, testCase.ledgerService)
 	id := "did:" + testCase.method + ":" + testCase.namespace + ":" + testCase.identifier
 
@@ -115,20 +116,6 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 			resourceId:        "invalid-resource-id",
 			expectedMetadata:  types.ResolutionResourceMetadata{},
 			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
-		},
-	),
-
-	Entry(
-		"invalid type",
-		TestCase{
-			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
-			dereferencingType: types.JSON,
-			identifier:        ValidIdentifier,
-			method:            ValidMethod,
-			namespace:         ValidNamespace,
-			resourceId:        ValidResourceId,
-			expectedMetadata:  types.ResolutionResourceMetadata{},
-			expectedError:     types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 

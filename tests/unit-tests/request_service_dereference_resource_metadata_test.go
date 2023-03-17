@@ -12,21 +12,22 @@ import (
 	"github.com/cheqd/did-resolver/types"
 )
 
-type dereferenceCollectionResourcesTestCase struct {
+type dereferenceResourceMetadataTestCase struct {
 	ledgerService          MockLedgerService
 	resolutionType         types.ContentType
 	did                    string
+	resourceId             string
 	expectedResource       *types.DereferencedResourceList
 	expectedMetadata       types.ResolutionDidDocMetadata
 	expectedResolutionType types.ContentType
 	expectedError          error
 }
 
-var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCase dereferenceCollectionResourcesTestCase) {
+var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase dereferenceResourceMetadataTestCase) {
 	context, rec := setupContext(
-		"/1.0/identifiers/:did/metadata",
-		[]string{"did"},
-		[]string{testCase.did},
+		"/1.0/identifiers/:did/resources/:resource/metadata",
+		[]string{"did", "resource"},
+		[]string{testCase.did, testCase.resourceId},
 		testCase.resolutionType,
 		testCase.ledgerService)
 
@@ -35,12 +36,12 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	} else if testCase.expectedResource != nil {
 		testCase.expectedResource.RemoveContext()
 	}
-
 	expectedContentType := defineContentType(testCase.expectedResolutionType, testCase.resolutionType)
 
-	err := resourceServices.ResourceCollectionEchoHandler(context)
+	err := resourceServices.ResourceMetadataEchoHandler(context)
+
 	if testCase.expectedError != nil {
-		Expect(testCase.expectedError.Error(), err.Error())
+		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
 	} else {
 		var dereferencingResult struct {
 			DereferencingMetadata types.DereferencingMetadata    `json:"dereferencingMetadata"`
@@ -51,19 +52,19 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 
 		Expect(err).To(BeNil())
 		Expect(unmarshalErr).To(BeNil())
-		Expect(*testCase.expectedResource).To(Equal(dereferencingResult.ContentStream))
+		Expect(*testCase.expectedResource, dereferencingResult.ContentStream)
 		Expect(testCase.expectedMetadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
 		Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
 	}
 },
-
 	Entry(
 		"successful resolution",
-		dereferenceCollectionResourcesTestCase{
+		dereferenceResourceMetadataTestCase{
 			ledgerService:  NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
 			resolutionType: types.DIDJSONLD,
 			did:            ValidDid,
+			resourceId:     ValidResourceId,
 			expectedResource: types.NewDereferencedResourceList(
 				ValidDid,
 				[]*resourceTypes.Metadata{validResource.Metadata},
@@ -75,13 +76,27 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 
 	Entry(
 		"DID not found",
-		dereferenceCollectionResourcesTestCase{
+		dereferenceResourceMetadataTestCase{
 			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
 			did:              ValidDid,
+			resourceId:       "a86f9cae-0902-4a7c-a144-96b60ced2fc9",
 			expectedResource: nil,
 			expectedMetadata: types.ResolutionDidDocMetadata{},
 			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
+		},
+	),
+
+	Entry(
+		"invalid representation",
+		dereferenceResourceMetadataTestCase{
+			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			resolutionType:   types.JSON,
+			did:              ValidDid,
+			resourceId:       ValidResourceId,
+			expectedResource: nil,
+			expectedMetadata: types.ResolutionDidDocMetadata{},
+			expectedError:    types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 )

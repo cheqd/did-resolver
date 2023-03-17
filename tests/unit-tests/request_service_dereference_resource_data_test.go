@@ -6,7 +6,7 @@ import (
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
-	"github.com/cheqd/did-resolver/services"
+	resourceServices "github.com/cheqd/did-resolver/services/resource"
 	"github.com/cheqd/did-resolver/types"
 )
 
@@ -26,11 +26,13 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 	context, rec := setupContext(
 		"/1.0/identifiers/:did/resources/:resource",
 		[]string{"did", "resource"},
-		[]string{testCase.did, testCase.resourceId}, testCase.resolutionType)
-	requestService := services.NewRequestService("cheqd", testCase.ledgerService)
+		[]string{testCase.did, testCase.resourceId},
+		testCase.resolutionType,
+		testCase.ledgerService)
+
 	expectedContentType := types.ContentType(validResource.Metadata.MediaType)
 
-	err := requestService.DereferenceResourceData(context)
+	err := resourceServices.ResourceDataEchoHandler(context)
 	if testCase.expectedError != nil {
 		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
 	} else {
@@ -63,6 +65,18 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 			expectedResource: nil,
 			expectedMetadata: types.ResolutionDidDocMetadata{},
 			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
+		},
+	),
+
+	Entry(
+		"invalid representation",
+		dereferenceResourceDataTestCase{
+			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
+			resolutionType:   types.JSON,
+			did:              ValidDid,
+			expectedResource: nil,
+			expectedMetadata: types.ResolutionDidDocMetadata{},
+			expectedError:    types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 )
