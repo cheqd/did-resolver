@@ -15,10 +15,11 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+
 const (
-	ValidIdentifier = "fb53dd05-329b-4614-a3f2-c0a8c7554ee3"
 	ValidMethod     = "cheqd"
 	ValidNamespace  = "mainnet"
+	ValidIdentifier = "fb53dd05-329b-4614-a3f2-c0a8c7554ee3"
 	ValidDid        = "did:" + ValidMethod + ":" + ValidNamespace + ":" + ValidIdentifier
 	ValidResourceId = "a09abea0-22e0-4b35-8f70-9cc3a6d0b5fd"
 	ValidPubKeyJWK  = "{" +
@@ -29,6 +30,15 @@ const (
 		"}"
 	ValidVersionId = "test_version_id"
 )
+
+const (
+	InvalidMethod     = "invalid_method"
+	InvalidNamespace  = "invalid_namespace"
+	InvalidIdentifier = "invalid_identifier"
+	InvalidDid        = "did:" + InvalidMethod + ":" + InvalidNamespace + ":" + InvalidIdentifier
+)
+
+const NotExistIdentifier = "fb53dd05-329b-4614-a3f2-c0a8c7ffffff"
 
 var (
 	EmptyTimestamp = &timestamppb.Timestamp{
