@@ -1,6 +1,7 @@
 package cmd
 
 import (
+
 	"github.com/cheqd/did-resolver/services"
 	didDocServices "github.com/cheqd/did-resolver/services/diddoc"
 	resourceServices "github.com/cheqd/did-resolver/services/resource"
@@ -8,7 +9,6 @@ import (
 	"github.com/cheqd/did-resolver/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
@@ -29,30 +29,11 @@ func getServeCmd() *cobra.Command {
 	}
 }
 
-func setupLogger(config types.Config) {
-	log.Info().Msgf("Setting log level: %s", config.LogLevel)
-	level, err := zerolog.ParseLevel(config.LogLevel)
-	if err != nil {
-		panic(err)
-	}
-	zerolog.SetGlobalLevel(level)
-}
-
-func getConfig() types.Config {
-	log.Info().Msg("Loading configuration")
-	config, err := utils.LoadConfig()
-	if err != nil {
-		panic(err)
-	}
-	log.Info().Msgf("Configuration: %s", config.MustMarshalJson())
-	return config
-}
-
 func serve() {
 	// Get Config
-	config := getConfig()
+	config := utils.GetConfig()
 	// Setup logger
-	setupLogger(config)
+	utils.SetupLogger(config)
 	// Services
 	ledgerService := services.NewLedgerService()
 	didService := services.NewDIDDocService(types.DID_METHOD, ledgerService)
@@ -82,6 +63,17 @@ func serve() {
 			return next(cc)
 		}
 	})
+
+	// Client sends the Accept-Encoding header and 
+	// server should respond with the Content-Encoding header
+	// Decompress only if gzip in headers
+	e.Use(middleware.Decompress())
+
+	// Compress only if gzip in headers
+	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
+		// If gzip not in Accept-Encoding header, do not compress
+		Skipper: GzipSkipper,
+	  }))
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 

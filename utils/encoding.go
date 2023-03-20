@@ -2,7 +2,9 @@ package utils
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/labstack/echo/v4"
 	"github.com/multiformats/go-multibase"
 )
 
@@ -26,4 +28,10 @@ func ValidateBase58(data string) error {
 
 func IsValidBase58(data string) bool {
 	return ValidateBase58(data) == nil
+}
+
+// Headers Encoding
+func IsGzipAccepted(c echo.Context) bool {
+	acceptEncoding := c.Request().Header.Get(echo.HeaderAcceptEncoding)
+	return strings.Contains(acceptEncoding, "gzip")
 }
