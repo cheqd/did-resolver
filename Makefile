@@ -129,6 +129,9 @@ tidy:
 ###                           Tests & Simulation                            ###
 ###############################################################################
 
+unit-tests:
+	go test -v ./...
+
 lint:
 	golangci-lint run --out-format=tab
 
