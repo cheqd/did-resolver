@@ -20,14 +20,14 @@ var _ = Describe("Test QueryDIDDoc method", func() {
 
 	It("cannot get DIDDoc with a invalid DID", func() {
 		test := testCase{
-			did:                        "fake did",
+			did:                        InvalidDid,
 			expectedDidDocWithMetadata: nil,
 			expectedIsFound:            false,
-			expectedError:              types.NewInvalidDIDError("fake did", types.JSON, nil, false),
+			expectedError:              types.NewInvalidDIDError(InvalidDid, types.JSON, nil, false),
 		}
 
 		ledgerService := services.NewLedgerService()
-		didDocWithMetadata, err := ledgerService.QueryDIDDoc("fake did", "")
+		didDocWithMetadata, err := ledgerService.QueryDIDDoc(InvalidDid, "")
 		Expect(test.expectedDidDocWithMetadata).To(Equal(didDocWithMetadata))
 		Expect(test.expectedError.Error()).To(Equal(err.Error()))
 	})
@@ -43,10 +43,10 @@ var _ = Describe("Test QueryResource method", func() {
 
 	It("cannot get DIDDoc's resource with a invalid collectionId and resourceID", func() {
 		test := testCase{
-			collectionId:     "321",
-			resourceId:       "123",
+			collectionId:     InvalidDid,
+			resourceId:       InvalidResourceId,
 			expectedResource: nil,
-			expectedError:    types.NewInvalidDIDError("321", types.JSON, nil, true),
+			expectedError:    types.NewInvalidDIDError(InvalidDid, types.JSON, nil, true),
 		}
 
 		ledgerService := services.NewLedgerService()

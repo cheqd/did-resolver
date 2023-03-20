@@ -37,6 +37,7 @@ const (
 	InvalidNamespace  = "invalid_namespace"
 	InvalidIdentifier = "invalid_identifier"
 	InvalidDid        = "did:" + InvalidMethod + ":" + InvalidNamespace + ":" + InvalidIdentifier
+	InvalidResourceId = "invalid_resource_id"
 )
 
 const NotExistIdentifier = "fb53dd05-329b-4614-a3f2-c0a8c7ffffff"

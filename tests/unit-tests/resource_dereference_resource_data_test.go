@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"fmt"
 	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -72,7 +73,7 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase TestC
 			identifier:        ValidIdentifier,
 			method:            ValidMethod,
 			namespace:         ValidNamespace,
-			resourceId:        "a86f9cae-0902-4a7c-a144-96b60ced2fc9",
+			resourceId:        NotExistIdentifier,
 			expectedMetadata:  types.ResolutionResourceMetadata{},
 			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
 		},
@@ -85,20 +86,7 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase TestC
 			identifier:        ValidIdentifier,
 			method:            ValidMethod,
 			namespace:         ValidNamespace,
-			resourceId:        "invalid-resource-id",
-			expectedMetadata:  types.ResolutionResourceMetadata{},
-			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
-		},
-	),
-
-	Entry(
-		"invalid resource id",
-		TestCase{
-			dereferencingType: types.DIDJSONLD,
-			identifier:        ValidIdentifier,
-			method:            ValidMethod,
-			namespace:         ValidNamespace,
-			resourceId:        "invalid-resource-id",
+			resourceId:        InvalidResourceId,
 			expectedMetadata:  types.ResolutionResourceMetadata{},
 			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
 		},
@@ -113,7 +101,9 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase TestC
 			namespace:         ValidNamespace,
 			resourceId:        ValidResourceId,
 			expectedMetadata:  types.ResolutionResourceMetadata{},
-			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+			expectedError: types.NewNotFoundError(
+				fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, ValidIdentifier), types.DIDJSONLD, nil, true,
+			),
 		},
 	),
 
@@ -126,7 +116,9 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase TestC
 			namespace:         InvalidNamespace,
 			resourceId:        ValidResourceId,
 			expectedMetadata:  types.ResolutionResourceMetadata{},
-			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+			expectedError: types.NewNotFoundError(
+				fmt.Sprintf("did:%s:%s:%s", ValidMethod, InvalidNamespace, ValidIdentifier), types.DIDJSONLD, nil, true,
+			),
 		},
 	),
 
@@ -139,7 +131,9 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase TestC
 			namespace:         ValidNamespace,
 			resourceId:        ValidResourceId,
 			expectedMetadata:  types.ResolutionResourceMetadata{},
-			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+			expectedError: types.NewNotFoundError(
+				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, InvalidIdentifier), types.DIDJSONLD, nil, true,
+			),
 		},
 	),
 )
