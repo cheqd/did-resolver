@@ -15,6 +15,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+var mockLedgerService = NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource)
 
 const (
 	ValidMethod     = "cheqd"

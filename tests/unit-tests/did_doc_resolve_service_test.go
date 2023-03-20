@@ -6,125 +6,162 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 )
 
 type resolveTestCase struct {
-	ledgerService          MockLedgerService
-	resolutionType         types.ContentType
-	identifier             string
-	method                 string
-	namespace              string
-	expectedDID            *types.DidDoc
-	expectedMetadata       types.ResolutionDidDocMetadata
-	expectedResolutionType types.ContentType
-	expectedError          *types.IdentityError
+	resolutionType        types.ContentType
+	did                   string
+	expectedDIDResolution *types.DidResolution
+	expectedError         *types.IdentityError
 }
 
 var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
-	did := fmt.Sprintf("did:%s:%s:%s", testCase.method, testCase.namespace, testCase.identifier)
-
-	diddocService := services.NewDIDDocService("cheqd", testCase.ledgerService)
-	expectedDIDProperties := types.DidProperties{
-		DidString:        did,
-		MethodSpecificId: testCase.identifier,
-		Method:           testCase.method,
-	}
+	diddocService := services.NewDIDDocService("cheqd", mockLedgerService)
 
 	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
-		testCase.expectedDID.Context = []string{types.DIDSchemaJSONLD, types.JsonWebKey2020JSONLD}
-	} else if testCase.expectedDID != nil {
-		testCase.expectedDID.Context = nil
+		testCase.expectedDIDResolution.Did.Context = []string{types.DIDSchemaJSONLD, types.JsonWebKey2020JSONLD}
+	} else if testCase.expectedDIDResolution.Did != nil {
+		testCase.expectedDIDResolution.Did.Context = nil
 	}
 
-	expectedContentType := testCase.expectedResolutionType
+	expectedContentType := testCase.expectedDIDResolution.ResolutionMetadata.ContentType
 	if expectedContentType == "" {
 		expectedContentType = testCase.resolutionType
 	}
 
-	resolutionResult, err := diddocService.Resolve(did, "", testCase.resolutionType)
+	resolutionResult, err := diddocService.Resolve(testCase.did, "", testCase.resolutionType)
 	if testCase.expectedError != nil {
 		Expect(testCase.expectedError.Code).To(Equal(err.Code))
 		Expect(testCase.expectedError.Message).To(Equal(err.Message))
 	} else {
 		Expect(err).To(BeNil())
-		Expect(testCase.expectedDID).To(Equal(resolutionResult.Did))
-		Expect(testCase.expectedMetadata).To(Equal(resolutionResult.Metadata))
+		Expect(testCase.expectedDIDResolution.Did).To(Equal(resolutionResult.Did))
+		Expect(testCase.expectedDIDResolution.Metadata).To(Equal(resolutionResult.Metadata))
 		Expect(expectedContentType).To(Equal(resolutionResult.ResolutionMetadata.ContentType))
-		Expect(expectedDIDProperties).To(Equal(resolutionResult.ResolutionMetadata.DidProperties))
+		Expect(testCase.expectedDIDResolution.ResolutionMetadata.DidProperties).To(Equal(resolutionResult.ResolutionMetadata.DidProperties))
 	}
 },
 
 	Entry(
 		"Successful resolution",
 		resolveTestCase{
-			ledgerService:    NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
-			resolutionType:   types.DIDJSONLD,
-			identifier:       ValidIdentifier,
-			method:           ValidMethod,
-			namespace:        ValidNamespace,
-			expectedDID:      &validDIDDocResolution,
-			expectedMetadata: types.NewResolutionDidDocMetadata(ValidDid, &validMetadata, []*resourceTypes.Metadata{validResource.Metadata}),
-			expectedError:    nil,
+			resolutionType: types.DIDJSONLD,
+			did:            ValidDid,
+			expectedDIDResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				Did:      &validDIDDocResolution,
+				Metadata: types.NewResolutionDidDocMetadata(ValidDid, &validMetadata, []*resourceTypes.Metadata{validResource.Metadata}),
+			},
+			expectedError: nil,
 		},
 	),
 
 	Entry(
 		"DID not found",
 		resolveTestCase{
-			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
-			resolutionType:   types.DIDJSONLD,
-			identifier:       ValidIdentifier,
-			method:           ValidMethod,
-			namespace:        ValidNamespace,
-			expectedDID:      nil,
-			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
+			resolutionType: types.DIDJSONLD,
+			did:            fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, NotExistIdentifier),
+			expectedDIDResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, NotExistIdentifier),
+						MethodSpecificId: NotExistIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewNotFoundError(fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, NotExistIdentifier), types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
 		"invalid DID",
 		resolveTestCase{
-			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
-			resolutionType:   types.DIDJSONLD,
-			identifier:       "oooooo0000OOOO_invalid_did",
-			method:           ValidMethod,
-			namespace:        ValidNamespace,
-			expectedDID:      nil,
-			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
+			resolutionType: types.DIDJSONLD,
+			did:            InvalidDid,
+			expectedDIDResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        InvalidDid,
+						MethodSpecificId: InvalidIdentifier,
+						Method:           InvalidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewNotFoundError(InvalidDid, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
 		"invalid method",
 		resolveTestCase{
-			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
-			resolutionType:   types.DIDJSONLD,
-			identifier:       ValidIdentifier,
-			method:           "not_supported_method",
-			namespace:        ValidNamespace,
-			expectedDID:      nil,
-			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
+			resolutionType: types.DIDJSONLD,
+			did:            "did:" + InvalidMethod + ":" + ValidNamespace + ":" + ValidIdentifier,
+			expectedDIDResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        "did:" + InvalidMethod + ":" + ValidNamespace + ":" + ValidIdentifier,
+						MethodSpecificId: ValidIdentifier,
+						Method:           InvalidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewNotFoundError(fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, ValidIdentifier), types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
 		"invalid namespace",
 		resolveTestCase{
-			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
-			resolutionType:   types.DIDJSONLD,
-			identifier:       ValidIdentifier,
-			method:           ValidMethod,
-			namespace:        "invalid_namespace",
-			expectedDID:      nil,
-			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
+			resolutionType: types.DIDJSONLD,
+			did:            "did:" + ValidMethod + ":" + InvalidNamespace + ":" + ValidIdentifier,
+			expectedDIDResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        "did:" + ValidMethod + ":" + InvalidNamespace + ":" + ValidIdentifier,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewNotFoundError(fmt.Sprintf("did:%s:%s:%s", ValidMethod, InvalidNamespace, ValidIdentifier), types.DIDJSONLD, nil, false),
+		},
+	),
+
+	Entry(
+		"invalid identifier",
+		resolveTestCase{
+			resolutionType: types.DIDJSONLD,
+			did:            "did:" + ValidMethod + ":" + ValidNamespace + ":" + InvalidIdentifier,
+			expectedDIDResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        "did:" + ValidMethod + ":" + ValidNamespace + ":" + InvalidIdentifier,
+						MethodSpecificId: InvalidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewNotFoundError(fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, InvalidIdentifier), types.DIDJSONLD, nil, false),
 		},
 	),
 )
