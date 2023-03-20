@@ -1,7 +1,6 @@
 package cmd
 
 import (
-
 	"github.com/cheqd/did-resolver/services"
 	didDocServices "github.com/cheqd/did-resolver/services/diddoc"
 	resourceServices "github.com/cheqd/did-resolver/services/resource"
@@ -64,7 +63,7 @@ func serve() {
 		}
 	})
 
-	// Client sends the Accept-Encoding header and 
+	// Client sends the Accept-Encoding header and
 	// server should respond with the Content-Encoding header
 	// Decompress only if gzip in headers
 	e.Use(middleware.Decompress())
@@ -73,7 +72,7 @@ func serve() {
 	e.Use(middleware.GzipWithConfig(middleware.GzipConfig{
 		// If gzip not in Accept-Encoding header, do not compress
 		Skipper: GzipSkipper,
-	  }))
+	}))
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 

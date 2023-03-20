@@ -92,7 +92,7 @@ func (dd BaseRequestService) SetupResponse(c ResolverContext) error {
 	c.Response().Header().Set(echo.HeaderContentType, dd.Result.GetContentType())
 	if utils.IsGzipAccepted(c) {
 		c.Response().Header().Set(echo.HeaderContentEncoding, "gzip")
-	} 
+	}
 	return nil
 }
 

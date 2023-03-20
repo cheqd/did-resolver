@@ -1,8 +1,9 @@
 package utils
+
 import (
+	"github.com/cheqd/did-resolver/types"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/cheqd/did-resolver/types"
 )
 
 func SetupLogger(config types.Config) {

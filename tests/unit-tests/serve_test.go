@@ -40,7 +40,6 @@ var _ = Describe("Content/Accept encoding checks", func() {
 	})
 	Context("Gzip not in Accept-Encoding", func() {
 		It("should not return gzip in Content-Encoding", func() {
-
 			err := diddocServices.DidDocEchoHandler(context)
 			Expect(err).To(BeNil())
 
