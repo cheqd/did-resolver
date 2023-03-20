@@ -2,18 +2,17 @@ package tests
 
 import (
 	"encoding/json"
+	"fmt"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	didDocServices "github.com/cheqd/did-resolver/services/diddoc"
 	"github.com/cheqd/did-resolver/types"
 )
 
 type resolveDIDDocTestCase struct {
-	ledgerService          MockLedgerService
 	resolutionType         types.ContentType
 	did                    string
 	expectedDID            *types.DidDoc
@@ -29,7 +28,7 @@ var _ = DescribeTable("Test ResolveDIDDoc method", func(testCase resolveDIDDocTe
 		"/1.0/identifiers/:did",
 		[]string{"did"}, []string{testCase.did},
 		testCase.resolutionType,
-		testCase.ledgerService)
+		mockLedgerService)
 
 	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
 		testCase.expectedDID.Context = []string{types.DIDSchemaJSONLD, types.JsonWebKey2020JSONLD}
@@ -56,7 +55,6 @@ var _ = DescribeTable("Test ResolveDIDDoc method", func(testCase resolveDIDDocTe
 	Entry(
 		"successful resolution",
 		resolveDIDDocTestCase{
-			ledgerService:    NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
 			resolutionType:   types.DIDJSONLD,
 			did:              ValidDid,
 			expectedDID:      &validDIDResolution,
@@ -68,12 +66,13 @@ var _ = DescribeTable("Test ResolveDIDDoc method", func(testCase resolveDIDDocTe
 	Entry(
 		"DID not found",
 		resolveDIDDocTestCase{
-			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
-			did:              ValidDid,
+			did:              fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier),
 			expectedDID:      nil,
 			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
+			expectedError: types.NewNotFoundError(
+				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier), types.DIDJSONLD, nil, false,
+			),
 		},
 	),
 )

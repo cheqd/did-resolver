@@ -2,18 +2,17 @@ package tests
 
 import (
 	"encoding/json"
+	"fmt"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	resourceServices "github.com/cheqd/did-resolver/services/resource"
 	"github.com/cheqd/did-resolver/types"
 )
 
 type dereferenceCollectionResourcesTestCase struct {
-	ledgerService          MockLedgerService
 	resolutionType         types.ContentType
 	did                    string
 	expectedResource       *types.DereferencedResourceList
@@ -28,7 +27,7 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 		[]string{"did"},
 		[]string{testCase.did},
 		testCase.resolutionType,
-		testCase.ledgerService)
+		mockLedgerService)
 
 	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
 		testCase.expectedResource.AddContext(types.DIDSchemaJSONLD)
@@ -61,7 +60,6 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	Entry(
 		"successful resolution",
 		dereferenceCollectionResourcesTestCase{
-			ledgerService:  NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
 			resolutionType: types.DIDJSONLD,
 			did:            ValidDid,
 			expectedResource: types.NewDereferencedResourceList(
@@ -76,12 +74,13 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	Entry(
 		"DID not found",
 		dereferenceCollectionResourcesTestCase{
-			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
-			did:              ValidDid,
+			did:              fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier),
 			expectedResource: nil,
 			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
+			expectedError: types.NewNotFoundError(
+				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier), types.DIDJSONLD, nil, false,
+			),
 		},
 	),
 )

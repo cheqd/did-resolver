@@ -6,14 +6,11 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
-	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 )
 
 type dereferencingTestCase struct {
-	ledgerService         MockLedgerService
 	dereferencingType     types.ContentType
 	did                   string
 	fragmentId            string
@@ -25,7 +22,7 @@ type dereferencingTestCase struct {
 }
 
 var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTestCase) {
-	diddocService := services.NewDIDDocService("cheqd", testCase.ledgerService)
+	diddocService := services.NewDIDDocService("cheqd", mockLedgerService)
 	var expectedDIDProperties types.DidProperties
 	if testCase.expectedError == nil {
 		expectedDIDProperties = types.DidProperties{
@@ -51,7 +48,6 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 		Expect(testCase.expectedContentStream).To(Equal(dereferencingResult.ContentStream))
 		Expect(testCase.expectedMetadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
-
 		Expect(dereferencingResult.DereferencingMetadata.ResolutionError).To(BeEmpty())
 		Expect(expectedDIDProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
 	}
@@ -60,7 +56,6 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 	Entry(
 		"successful Secondary dereferencing (key)",
 		dereferencingTestCase{
-			ledgerService:         NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
 			dereferencingType:     types.DIDJSON,
 			did:                   ValidDid,
 			fragmentId:            validVerificationMethod.Id,
@@ -73,7 +68,6 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 	Entry(
 		"successful Secondary dereferencing (service)",
 		dereferencingTestCase{
-			ledgerService:         NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
 			dereferencingType:     types.DIDJSON,
 			did:                   ValidDid,
 			fragmentId:            validService.Id,
@@ -86,7 +80,6 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 	Entry(
 		"not supported query",
 		dereferencingTestCase{
-			ledgerService:         NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType:     types.DIDJSONLD,
 			did:                   ValidDid,
 			queries:               validQuery,
@@ -99,7 +92,6 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 	Entry(
 		"key not found",
 		dereferencingTestCase{
-			ledgerService:         NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType:     types.DIDJSONLD,
 			did:                   ValidDid,
 			fragmentId:            "notFoundKey",

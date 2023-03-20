@@ -1,17 +1,17 @@
 package tests
 
 import (
+	"fmt"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	resourceServices "github.com/cheqd/did-resolver/services/resource"
 	"github.com/cheqd/did-resolver/types"
 )
 
 type dereferenceResourceDataTestCase struct {
-	ledgerService    MockLedgerService
 	resolutionType   types.ContentType
 	did              string
 	resourceId       string
@@ -28,7 +28,7 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 		[]string{"did", "resource"},
 		[]string{testCase.did, testCase.resourceId},
 		testCase.resolutionType,
-		testCase.ledgerService)
+		mockLedgerService)
 
 	expectedContentType := types.ContentType(validResource.Metadata.MediaType)
 
@@ -45,7 +45,6 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 	Entry(
 		"successful resolution",
 		dereferenceResourceDataTestCase{
-			ledgerService:    NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
 			resolutionType:   types.DIDJSONLD,
 			did:              ValidDid,
 			resourceId:       ValidResourceId,
@@ -58,20 +57,20 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 	Entry(
 		"DID not found",
 		dereferenceResourceDataTestCase{
-			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			resolutionType:   types.DIDJSONLD,
-			did:              ValidDid,
+			did:              fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier),
 			resourceId:       "a86f9cae-0902-4a7c-a144-96b60ced2fc9",
 			expectedResource: nil,
 			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
+			expectedError: types.NewNotFoundError(
+				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier), types.DIDJSONLD, nil, false,
+			),
 		},
 	),
 
 	Entry(
 		"invalid representation",
 		dereferenceResourceDataTestCase{
-			ledgerService:    NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			resolutionType:   types.JSON,
 			did:              ValidDid,
 			expectedResource: nil,

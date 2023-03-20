@@ -6,8 +6,6 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
-	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
@@ -18,7 +16,7 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 		return
 	}
 
-	resourceService := services.NewResourceService(ValidMethod, testCase.ledgerService)
+	resourceService := services.NewResourceService(ValidMethod, mockLedgerService)
 	id := "did:" + testCase.method + ":" + testCase.namespace + ":" + testCase.identifier
 
 	var expectedDIDProperties types.DidProperties
@@ -50,7 +48,6 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	Entry(
 		"successful dereferencing for resource",
 		TestCase{
-			ledgerService:         NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
 			dereferencingType:     types.DIDJSON,
 			identifier:            ValidIdentifier,
 			method:                ValidMethod,
@@ -65,7 +62,6 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	Entry(
 		"successful dereferencing for resource (upper case UUID)",
 		TestCase{
-			ledgerService:         NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource),
 			dereferencingType:     types.DIDJSON,
 			identifier:            ValidIdentifier,
 			method:                ValidMethod,
@@ -80,7 +76,6 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	Entry(
 		"resource not found",
 		TestCase{
-			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
 			identifier:        ValidIdentifier,
 			method:            ValidMethod,
@@ -94,7 +89,6 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	Entry(
 		"invalid resource id",
 		TestCase{
-			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
 			identifier:        ValidIdentifier,
 			method:            ValidMethod,
@@ -108,7 +102,6 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	Entry(
 		"invalid resource id",
 		TestCase{
-			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
 			identifier:        ValidIdentifier,
 			method:            ValidMethod,
@@ -120,13 +113,12 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	),
 
 	Entry(
-		"invalid namespace",
+		"invalid method",
 		TestCase{
-			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
 			identifier:        ValidIdentifier,
-			method:            ValidMethod,
-			namespace:         "invalid-namespace",
+			method:            InvalidMethod,
+			namespace:         ValidNamespace,
 			resourceId:        ValidResourceId,
 			expectedMetadata:  types.ResolutionResourceMetadata{},
 			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
@@ -134,13 +126,12 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	),
 
 	Entry(
-		"invalid method",
+		"invalid namespace",
 		TestCase{
-			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
 			identifier:        ValidIdentifier,
-			method:            "invalid-method",
-			namespace:         ValidNamespace,
+			method:            ValidMethod,
+			namespace:         InvalidNamespace,
 			resourceId:        ValidResourceId,
 			expectedMetadata:  types.ResolutionResourceMetadata{},
 			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
@@ -150,9 +141,8 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	Entry(
 		"invalid identifier",
 		TestCase{
-			ledgerService:     NewMockLedgerService(&didTypes.DidDoc{}, &didTypes.Metadata{}, &resourceTypes.ResourceWithMetadata{}),
 			dereferencingType: types.DIDJSONLD,
-			identifier:        "invalid-identifier",
+			identifier:        InvalidIdentifier,
 			method:            ValidMethod,
 			namespace:         ValidNamespace,
 			resourceId:        ValidResourceId,

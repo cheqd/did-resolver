@@ -58,8 +58,11 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 						Method:           ValidMethod,
 					},
 				},
-				Did:      &validDIDDocResolution,
-				Metadata: types.NewResolutionDidDocMetadata(ValidDid, &validMetadata, []*resourceTypes.Metadata{validResource.Metadata}),
+				Did: &validDIDDocResolution,
+				Metadata: types.NewResolutionDidDocMetadata(
+					ValidDid, &validMetadata,
+					[]*resourceTypes.Metadata{validResource.Metadata},
+				),
 			},
 			expectedError: nil,
 		},
@@ -69,7 +72,7 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 		"DID not found",
 		resolveTestCase{
 			resolutionType: types.DIDJSONLD,
-			did:            fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, NotExistIdentifier),
+			did:            fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier),
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
@@ -81,7 +84,9 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewNotFoundError(fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, NotExistIdentifier), types.DIDJSONLD, nil, false),
+			expectedError: types.NewNotFoundError(
+				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier), types.DIDJSONLD, nil, false,
+			),
 		},
 	),
 
@@ -121,7 +126,9 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewNotFoundError(fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, ValidIdentifier), types.DIDJSONLD, nil, false),
+			expectedError: types.NewNotFoundError(
+				fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, ValidIdentifier), types.DIDJSONLD, nil, false,
+			),
 		},
 	),
 
@@ -141,7 +148,9 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewNotFoundError(fmt.Sprintf("did:%s:%s:%s", ValidMethod, InvalidNamespace, ValidIdentifier), types.DIDJSONLD, nil, false),
+			expectedError: types.NewNotFoundError(
+				fmt.Sprintf("did:%s:%s:%s", ValidMethod, InvalidNamespace, ValidIdentifier), types.DIDJSONLD, nil, false,
+			),
 		},
 	),
 
@@ -161,7 +170,9 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewNotFoundError(fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, InvalidIdentifier), types.DIDJSONLD, nil, false),
+			expectedError: types.NewNotFoundError(
+				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, InvalidIdentifier), types.DIDJSONLD, nil, false,
+			),
 		},
 	),
 )

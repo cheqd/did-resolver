@@ -199,7 +199,7 @@ func NewMockLedgerService(did *didTypes.DidDoc, metadata *didTypes.Metadata, res
 }
 
 func (ls MockLedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
-	if did == ls.Did.Id {
+	if ls.Did.Id == did {
 		println("query !!!" + ls.Did.Id)
 		return &didTypes.DidDocWithMetadata{DidDoc: ls.Did, Metadata: ls.Metadata}, nil
 	}
@@ -207,7 +207,7 @@ func (ls MockLedgerService) QueryDIDDoc(did string, version string) (*didTypes.D
 }
 
 func (ls MockLedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError) {
-	if did == ls.Did.Id {
+	if ls.Did.Id == did {
 		return []*didTypes.Metadata{ls.Metadata}, nil
 	}
 
@@ -215,14 +215,14 @@ func (ls MockLedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTy
 }
 
 func (ls MockLedgerService) QueryResource(did string, resourceId string) (*resourceTypes.ResourceWithMetadata, *types.IdentityError) {
-	if ls.Resource.Metadata == nil || ls.Resource.Metadata.Id != resourceId {
+	if ls.Did.Id != did || ls.Resource.Metadata == nil || ls.Resource.Metadata.Id != resourceId {
 		return nil, types.NewNotFoundError(did, types.JSON, nil, true)
 	}
 	return ls.Resource, nil
 }
 
 func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resourceTypes.Metadata, *types.IdentityError) {
-	if ls.Resource.Metadata == nil {
+	if ls.Did.Id != did || ls.Resource.Metadata == nil {
 		return []*resourceTypes.Metadata{}, types.NewNotFoundError(did, types.JSON, nil, true)
 	}
 	return []*resourceTypes.Metadata{ls.Resource.Metadata}, nil
