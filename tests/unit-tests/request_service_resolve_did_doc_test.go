@@ -13,30 +13,28 @@ import (
 )
 
 type resolveDIDDocTestCase struct {
-	resolutionType         types.ContentType
-	did                    string
-	expectedDID            *types.DidDoc
-	expectedMetadata       types.ResolutionDidDocMetadata
-	expectedResolutionType types.ContentType
-	expectedError          error
+	didURL                string
+	resolutionType        types.ContentType
+	expectedDIDResolution *types.DidResolution
+	expectedError         *types.IdentityError
 }
 
-var validDIDResolution = types.NewDidDoc(&validDIDDoc)
-
-var _ = DescribeTable("Test ResolveDIDDoc method", func(testCase resolveDIDDocTestCase) {
+var _ = DescribeTable("Test DIDDocEchoHandler method", func(testCase resolveDIDDocTestCase) {
 	context, rec := setupContext(
-		"/1.0/identifiers/:did",
-		[]string{"did"}, []string{testCase.did},
+		testCase.didURL,
+		[]string{"did"},
+		[]string{getDID(testCase.didURL)},
 		testCase.resolutionType,
-		mockLedgerService)
+		mockLedgerService,
+	)
 
 	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
-		testCase.expectedDID.Context = []string{types.DIDSchemaJSONLD, types.JsonWebKey2020JSONLD}
-	} else if testCase.expectedDID != nil {
-		testCase.expectedDID.Context = nil
+		testCase.expectedDIDResolution.Did.Context = []string{types.DIDSchemaJSONLD, types.JsonWebKey2020JSONLD}
+	} else if testCase.expectedDIDResolution.Did != nil {
+		testCase.expectedDIDResolution.Did.Context = nil
 	}
 
-	expectedContentType := defineContentType(testCase.expectedResolutionType, testCase.resolutionType)
+	expectedContentType := defineContentType(testCase.expectedDIDResolution.ResolutionMetadata.ContentType, testCase.resolutionType)
 
 	err := didDocServices.DidDocEchoHandler(context)
 	if testCase.expectedError != nil {
@@ -46,33 +44,53 @@ var _ = DescribeTable("Test ResolveDIDDoc method", func(testCase resolveDIDDocTe
 		unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &resolutionResult)
 		Expect(unmarshalErr).To(BeNil())
 		Expect(err).To(BeNil())
-		Expect(testCase.expectedDID).To(Equal(resolutionResult.Did))
-		Expect(testCase.expectedMetadata).To(Equal(resolutionResult.Metadata))
+		Expect(testCase.expectedDIDResolution.Did).To(Equal(resolutionResult.Did))
+		Expect(testCase.expectedDIDResolution.Metadata).To(Equal(resolutionResult.Metadata))
 		Expect(expectedContentType).To(Equal(resolutionResult.ResolutionMetadata.ContentType))
 		Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
 	}
 },
+
 	Entry(
 		"successful resolution",
 		resolveDIDDocTestCase{
-			resolutionType:   types.DIDJSONLD,
-			did:              ValidDid,
-			expectedDID:      &validDIDResolution,
-			expectedMetadata: types.NewResolutionDidDocMetadata(ValidDid, &validMetadata, []*resourceTypes.Metadata{validResource.Metadata}),
-			expectedError:    nil,
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s", ValidDid),
+			resolutionType: types.DIDJSONLD,
+			expectedDIDResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				Did: &validDIDDocResolution,
+				Metadata: types.NewResolutionDidDocMetadata(
+					ValidDid, &validMetadata,
+					[]*resourceTypes.Metadata{validResource.Metadata},
+				),
+			},
+			expectedError: nil,
 		},
 	),
 
 	Entry(
 		"DID not found",
 		resolveDIDDocTestCase{
-			resolutionType:   types.DIDJSONLD,
-			did:              fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier),
-			expectedDID:      nil,
-			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier), types.DIDJSONLD, nil, false,
-			),
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s", NotExistDID),
+			resolutionType: types.DIDJSONLD,
+			expectedDIDResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        NotExistDID,
+						MethodSpecificId: NotExistIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewNotFoundError(NotExistDID, types.DIDJSONLD, nil, false),
 		},
 	),
 )

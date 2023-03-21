@@ -12,47 +12,46 @@ import (
 	"github.com/cheqd/did-resolver/types"
 )
 
+type DereferencingResult struct {
+	DereferencingMetadata *types.DereferencingMetadata    `json:"dereferencingMetadata"`
+	ContentStream         *types.DereferencedResourceList `json:"contentStream"`
+	Metadata              *types.ResolutionDidDocMetadata `json:"contentMetadata"`
+}
+
 type dereferenceResourceMetadataTestCase struct {
-	resolutionType         types.ContentType
-	did                    string
-	resourceId             string
-	expectedResource       *types.DereferencedResourceList
-	expectedMetadata       types.ResolutionDidDocMetadata
-	expectedResolutionType types.ContentType
-	expectedError          error
+	didURL                      string
+	resolutionType              types.ContentType
+	expectedDereferencingResult *DereferencingResult
+	expectedError               error
 }
 
 var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase dereferenceResourceMetadataTestCase) {
 	context, rec := setupContext(
-		"/1.0/identifiers/:did/resources/:resource/metadata",
+		testCase.didURL,
 		[]string{"did", "resource"},
-		[]string{testCase.did, testCase.resourceId},
+		[]string{getDID(testCase.didURL), getResourceId(testCase.didURL)},
 		testCase.resolutionType,
 		mockLedgerService)
 
 	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
-		testCase.expectedResource.AddContext(types.DIDSchemaJSONLD)
-	} else if testCase.expectedResource != nil {
-		testCase.expectedResource.RemoveContext()
+		testCase.expectedDereferencingResult.ContentStream.AddContext(types.DIDSchemaJSONLD)
+	} else if testCase.expectedDereferencingResult.ContentStream != nil {
+		testCase.expectedDereferencingResult.ContentStream.RemoveContext()
 	}
-	expectedContentType := defineContentType(testCase.expectedResolutionType, testCase.resolutionType)
+	expectedContentType := defineContentType(testCase.expectedDereferencingResult.DereferencingMetadata.ContentType, testCase.resolutionType)
 
 	err := resourceServices.ResourceMetadataEchoHandler(context)
 
 	if testCase.expectedError != nil {
 		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
 	} else {
-		var dereferencingResult struct {
-			DereferencingMetadata types.DereferencingMetadata    `json:"dereferencingMetadata"`
-			ContentStream         types.DereferencedResourceList `json:"contentStream"`
-			Metadata              types.ResolutionDidDocMetadata `json:"contentMetadata"`
-		}
+		var dereferencingResult DereferencingResult
 		unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &dereferencingResult)
 
 		Expect(err).To(BeNil())
 		Expect(unmarshalErr).To(BeNil())
-		Expect(*testCase.expectedResource, dereferencingResult.ContentStream)
-		Expect(testCase.expectedMetadata).To(Equal(dereferencingResult.Metadata))
+		Expect(testCase.expectedDereferencingResult.ContentStream, dereferencingResult.ContentStream)
+		Expect(testCase.expectedDereferencingResult.Metadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
 		Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
 	}
@@ -60,41 +59,63 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 	Entry(
 		"successful resolution",
 		dereferenceResourceMetadataTestCase{
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s/resources/%s/metadata", ValidDid, ValidResourceId),
 			resolutionType: types.DIDJSONLD,
-			did:            ValidDid,
-			resourceId:     ValidResourceId,
-			expectedResource: types.NewDereferencedResourceList(
-				ValidDid,
-				[]*resourceTypes.Metadata{validResource.Metadata},
-			),
-			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    nil,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				ContentStream: types.NewDereferencedResourceList(
+					ValidDid,
+					[]*resourceTypes.Metadata{validResource.Metadata},
+				),
+				Metadata: &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: nil,
 		},
 	),
 
 	Entry(
 		"DID not found",
 		dereferenceResourceMetadataTestCase{
-			resolutionType:   types.DIDJSONLD,
-			did:              fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier),
-			resourceId:       "a86f9cae-0902-4a7c-a144-96b60ced2fc9",
-			expectedResource: nil,
-			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier), types.DIDJSONLD, nil, false,
-			),
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s/resources/%s/metadata", NotExistDID, ValidResourceId),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        NotExistDID,
+						MethodSpecificId: NotExistIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewNotFoundError(NotExistDID, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
 		"invalid representation",
 		dereferenceResourceMetadataTestCase{
-			resolutionType:   types.JSON,
-			did:              ValidDid,
-			resourceId:       ValidResourceId,
-			expectedResource: nil,
-			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s/resources/%s/metadata", ValidDid, ValidResourceId),
+			resolutionType: types.JSON,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 )

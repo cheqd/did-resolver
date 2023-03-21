@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
@@ -40,7 +41,10 @@ const (
 	InvalidResourceId = "invalid_resource_id"
 )
 
-const NotExistIdentifier = "fb53dd05-329b-4614-a3f2-c0a8c7ffffff"
+const (
+	NotExistIdentifier = "fb53dd05-329b-4614-a3f2-c0a8c7ffffff"
+	NotExistDID        = "did:" + ValidMethod + ":" + ValidNamespace + ":" + NotExistIdentifier
+)
 
 var (
 	EmptyTimestamp = &timestamppb.Timestamp{
@@ -161,6 +165,14 @@ func defineContentType(expectedContentType types.ContentType, resolutionType typ
 	}
 
 	return expectedContentType
+}
+
+func getDID(didURL string) string {
+	return strings.Split(didURL, "/")[3]
+}
+
+func getResourceId(didURL string) string {
+	return strings.Split(didURL, "/")[5]
 }
 
 func setupContext(path string, paramsNames []string, paramsValues []string, resolutionType types.ContentType, ledgerService services.LedgerServiceI) (echo.Context, *httptest.ResponseRecorder) {

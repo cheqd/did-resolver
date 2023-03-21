@@ -6,17 +6,14 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	resourceServices "github.com/cheqd/did-resolver/services/resource"
 	"github.com/cheqd/did-resolver/types"
 )
 
 type dereferenceResourceDataTestCase struct {
+	didURL           string
 	resolutionType   types.ContentType
-	did              string
-	resourceId       string
 	expectedResource types.ContentStreamI
-	expectedMetadata types.ResolutionDidDocMetadata
 	expectedError    error
 }
 
@@ -24,9 +21,9 @@ var validResourceDereferencing = types.DereferencedResourceData(validResource.Re
 
 var _ = DescribeTable("Test DereferenceResourceData method", func(testCase dereferenceResourceDataTestCase) {
 	context, rec := setupContext(
-		"/1.0/identifiers/:did/resources/:resource",
+		testCase.didURL,
 		[]string{"did", "resource"},
-		[]string{testCase.did, testCase.resourceId},
+		[]string{getDID(testCase.didURL), getResourceId(testCase.didURL)},
 		testCase.resolutionType,
 		mockLedgerService)
 
@@ -45,11 +42,9 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 	Entry(
 		"successful resolution",
 		dereferenceResourceDataTestCase{
+			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", ValidDid, ValidResourceId),
 			resolutionType:   types.DIDJSONLD,
-			did:              ValidDid,
-			resourceId:       ValidResourceId,
 			expectedResource: &validResourceDereferencing,
-			expectedMetadata: types.NewResolutionDidDocMetadata(ValidDid, &validMetadata, []*resourceTypes.Metadata{validResource.Metadata}),
 			expectedError:    nil,
 		},
 	),
@@ -57,24 +52,19 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 	Entry(
 		"DID not found",
 		dereferenceResourceDataTestCase{
+			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", NotExistDID, ValidResourceId),
 			resolutionType:   types.DIDJSONLD,
-			did:              fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier),
-			resourceId:       "a86f9cae-0902-4a7c-a144-96b60ced2fc9",
 			expectedResource: nil,
-			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier), types.DIDJSONLD, nil, false,
-			),
+			expectedError:    types.NewNotFoundError(NotExistDID, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
 		"invalid representation",
 		dereferenceResourceDataTestCase{
+			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", ValidDid, ValidResourceId),
 			resolutionType:   types.JSON,
-			did:              ValidDid,
 			expectedResource: nil,
-			expectedMetadata: types.ResolutionDidDocMetadata{},
 			expectedError:    types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),

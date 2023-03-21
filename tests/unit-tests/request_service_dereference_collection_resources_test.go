@@ -13,45 +13,39 @@ import (
 )
 
 type dereferenceCollectionResourcesTestCase struct {
-	resolutionType         types.ContentType
-	did                    string
-	expectedResource       *types.DereferencedResourceList
-	expectedMetadata       types.ResolutionDidDocMetadata
-	expectedResolutionType types.ContentType
-	expectedError          error
+	didURL                      string
+	resolutionType              types.ContentType
+	expectedDereferencingResult *DereferencingResult
+	expectedError               error
 }
 
 var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCase dereferenceCollectionResourcesTestCase) {
 	context, rec := setupContext(
-		"/1.0/identifiers/:did/metadata",
+		testCase.didURL,
 		[]string{"did"},
-		[]string{testCase.did},
+		[]string{getDID(testCase.didURL)},
 		testCase.resolutionType,
 		mockLedgerService)
 
 	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
-		testCase.expectedResource.AddContext(types.DIDSchemaJSONLD)
-	} else if testCase.expectedResource != nil {
-		testCase.expectedResource.RemoveContext()
+		testCase.expectedDereferencingResult.ContentStream.AddContext(types.DIDSchemaJSONLD)
+	} else if testCase.expectedDereferencingResult.ContentStream != nil {
+		testCase.expectedDereferencingResult.ContentStream.RemoveContext()
 	}
 
-	expectedContentType := defineContentType(testCase.expectedResolutionType, testCase.resolutionType)
+	expectedContentType := defineContentType(testCase.expectedDereferencingResult.DereferencingMetadata.ContentType, testCase.resolutionType)
 
 	err := resourceServices.ResourceCollectionEchoHandler(context)
 	if testCase.expectedError != nil {
 		Expect(testCase.expectedError.Error(), err.Error())
 	} else {
-		var dereferencingResult struct {
-			DereferencingMetadata types.DereferencingMetadata    `json:"dereferencingMetadata"`
-			ContentStream         types.DereferencedResourceList `json:"contentStream"`
-			Metadata              types.ResolutionDidDocMetadata `json:"contentMetadata"`
-		}
+		var dereferencingResult DereferencingResult
 		unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &dereferencingResult)
 
 		Expect(err).To(BeNil())
 		Expect(unmarshalErr).To(BeNil())
-		Expect(*testCase.expectedResource).To(Equal(dereferencingResult.ContentStream))
-		Expect(testCase.expectedMetadata).To(Equal(dereferencingResult.Metadata))
+		Expect(testCase.expectedDereferencingResult.ContentStream).To(Equal(dereferencingResult.ContentStream))
+		Expect(testCase.expectedDereferencingResult.Metadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
 		Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
 	}
@@ -60,27 +54,43 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	Entry(
 		"successful resolution",
 		dereferenceCollectionResourcesTestCase{
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", ValidDid),
 			resolutionType: types.DIDJSONLD,
-			did:            ValidDid,
-			expectedResource: types.NewDereferencedResourceList(
-				ValidDid,
-				[]*resourceTypes.Metadata{validResource.Metadata},
-			),
-			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError:    nil,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				ContentStream: types.NewDereferencedResourceList(
+					ValidDid,
+					[]*resourceTypes.Metadata{validResource.Metadata},
+				),
+				Metadata: &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: nil,
 		},
 	),
 
 	Entry(
 		"DID not found",
 		dereferenceCollectionResourcesTestCase{
-			resolutionType:   types.DIDJSONLD,
-			did:              fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier),
-			expectedResource: nil,
-			expectedMetadata: types.ResolutionDidDocMetadata{},
-			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier), types.DIDJSONLD, nil, false,
-			),
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", NotExistDID),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        NotExistDID,
+						MethodSpecificId: NotExistIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewNotFoundError(NotExistDID, types.DIDJSONLD, nil, false),
 		},
 	),
 )
