@@ -39,7 +39,7 @@ func (dr *ResourceMetadataDereferencingService) SpecificValidation(c services.Re
 }
 
 func (dr *ResourceMetadataDereferencingService) Query(c services.ResolverContext) error {
-	result, err := c.ResourceService.DereferenceResourceMetadata(dr.ResourceId, dr.Did, dr.RequestedContentType)
+	result, err := c.ResourceService.DereferenceResourceMetadata(dr.Did, dr.ResourceId, dr.RequestedContentType)
 	if err != nil {
 		err.IsDereferencing = dr.IsDereferencing
 		return err

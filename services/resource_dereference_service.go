@@ -22,7 +22,7 @@ func NewResourceService(didMethod string, ledgerService LedgerServiceI) Resource
 	}
 }
 
-func (rds ResourceService) DereferenceResourceMetadata(resourceId string, did string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
+func (rds ResourceService) DereferenceResourceMetadata(did string, resourceId string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 
 	resource, err := rds.ledgerService.QueryResource(did, strings.ToLower(resourceId))
