@@ -48,6 +48,20 @@ func getConfig() types.Config {
 	return config
 }
 
+func SetRoutes(e *echo.Echo) {
+	// Routes
+	// Did docs
+	e.GET(types.SWAGGER_PATH, echoSwagger.WrapHandler)
+	e.GET(types.RESOLVER_PATH+":did", didDocServices.DidDocEchoHandler)
+	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSION_PATH+":version", didDocServices.DidDocVersionEchoHandler)
+	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSION_PATH+":version/metadata", didDocServices.DidDocVersionMetadataEchoHandler)
+	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSIONS_PATH, didDocServices.DidDocAllVersionMetadataEchoHandler)
+	// Resources
+	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource", resourceServices.ResourceDataEchoHandler)
+	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource/metadata", resourceServices.ResourceMetadataEchoHandler)
+	e.GET(types.RESOLVER_PATH+":did"+types.DID_METADATA, resourceServices.ResourceCollectionEchoHandler)
+}
+
 func serve() {
 	// Get Config
 	config := getConfig()
@@ -85,17 +99,7 @@ func serve() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	// Routes
-	// Did docs
-	e.GET(types.SWAGGER_PATH, echoSwagger.WrapHandler)
-	e.GET(types.RESOLVER_PATH+":did", didDocServices.DidDocEchoHandler)
-	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSION_PATH+":version", didDocServices.DidDocVersionEchoHandler)
-	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSION_PATH+":version/metadata", didDocServices.DidDocVersionMetadataEchoHandler)
-	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSIONS_PATH, didDocServices.DidDocAllVersionMetadataEchoHandler)
-	// Resources
-	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource", resourceServices.ResourceDataEchoHandler)
-	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource/metadata", resourceServices.ResourceMetadataEchoHandler)
-	e.GET(types.RESOLVER_PATH+":did"+types.DID_METADATA, resourceServices.ResourceCollectionEchoHandler)
+	SetRoutes(e)
 
 	e.Debug = true
 	log.Info().Msg("Starting listener")
