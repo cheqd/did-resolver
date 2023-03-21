@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"strings"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	"github.com/cheqd/did-resolver/cmd/did-resolver/cmd"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
@@ -44,6 +44,7 @@ const (
 const (
 	NotExistIdentifier = "fb53dd05-329b-4614-a3f2-c0a8c7ffffff"
 	NotExistDID        = "did:" + ValidMethod + ":" + ValidNamespace + ":" + NotExistIdentifier
+	NotExistFragmentId = "not_found_fragment_id"
 )
 
 var (
@@ -167,33 +168,24 @@ func defineContentType(expectedContentType types.ContentType, resolutionType typ
 	return expectedContentType
 }
 
-func getDID(didURL string) string {
-	return strings.Split(didURL, "/")[3]
-}
-
-func getResourceId(didURL string) string {
-	return strings.Split(didURL, "/")[5]
-}
-
-func setupContext(path string, paramsNames []string, paramsValues []string, resolutionType types.ContentType, ledgerService services.LedgerServiceI) (echo.Context, *httptest.ResponseRecorder) {
+func setupEmptyContext(request *http.Request, resolutionType types.ContentType, ledgerService services.LedgerServiceI) (echo.Context, *httptest.ResponseRecorder) {
 	e := echo.New()
+	cmd.SetRoutes(e)
 
 	didService := services.NewDIDDocService(types.DID_METHOD, ledgerService)
 	resourceService := services.NewResourceService(types.DID_METHOD, ledgerService)
 
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	rec := httptest.NewRecorder()
-	context := e.NewContext(req, rec)
+	context := e.NewContext(request, rec)
+	e.Router().Find("GET", request.RequestURI, context)
 	rc := services.ResolverContext{
 		Context:         context,
 		LedgerService:   ledgerService,
 		DidDocService:   didService,
 		ResourceService: resourceService,
 	}
-	rc.SetPath(path)
-	rc.SetParamNames(paramsNames...)
-	rc.SetParamValues(paramsValues...)
-	req.Header.Add("accept", string(resolutionType))
+
+	request.Header.Add("accept", string(resolutionType))
 	return rc, rec
 }
 

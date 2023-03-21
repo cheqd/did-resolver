@@ -11,14 +11,12 @@ import (
 )
 
 type dereferencingTestCase struct {
-	dereferencingType     types.ContentType
-	did                   string
-	fragmentId            string
-	queries               url.Values
-	expectedContentStream types.ContentStreamI
-	expectedMetadata      types.ResolutionDidDocMetadata
-	expectedContentType   types.ContentType
-	expectedError         *types.IdentityError
+	did                      string
+	fragmentId               string
+	queries                  url.Values
+	dereferencingType        types.ContentType
+	expectedDidDereferencing *types.DidDereferencing
+	expectedError            *types.IdentityError
 }
 
 var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTestCase) {
@@ -32,10 +30,9 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 		}
 	}
 
-	expectedContentType := testCase.expectedContentType
-	if expectedContentType == "" {
-		expectedContentType = testCase.dereferencingType
-	}
+	expectedContentType := defineContentType(
+		testCase.expectedDidDereferencing.DereferencingMetadata.ContentType, testCase.dereferencingType,
+	)
 
 	result, err := diddocService.ProcessDIDRequest(testCase.did, testCase.fragmentId, testCase.queries, nil, testCase.dereferencingType)
 	dereferencingResult, _ := result.(*types.DidDereferencing)
@@ -45,8 +42,8 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 		Expect(testCase.expectedError.Message).To(Equal(err.Message))
 	} else {
 		Expect(err).To(BeNil())
-		Expect(testCase.expectedContentStream).To(Equal(dereferencingResult.ContentStream))
-		Expect(testCase.expectedMetadata).To(Equal(dereferencingResult.Metadata))
+		Expect(testCase.expectedDidDereferencing.ContentStream).To(Equal(dereferencingResult.ContentStream))
+		Expect(testCase.expectedDidDereferencing.Metadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
 		Expect(dereferencingResult.DereferencingMetadata.ResolutionError).To(BeEmpty())
 		Expect(expectedDIDProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
@@ -56,48 +53,84 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 	Entry(
 		"successful Secondary dereferencing (key)",
 		dereferencingTestCase{
-			dereferencingType:     types.DIDJSON,
-			did:                   ValidDid,
-			fragmentId:            validVerificationMethod.Id,
-			expectedContentStream: types.NewVerificationMethod(&validVerificationMethod),
-			expectedMetadata:      validFragmentMetadata,
-			expectedError:         nil,
+			did:               ValidDid,
+			fragmentId:        validVerificationMethod.Id,
+			dereferencingType: types.DIDJSON,
+			expectedDidDereferencing: &types.DidDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				ContentStream: types.NewVerificationMethod(&validVerificationMethod),
+				Metadata:      validFragmentMetadata,
+			},
+			expectedError: nil,
 		},
 	),
 
 	Entry(
 		"successful Secondary dereferencing (service)",
 		dereferencingTestCase{
-			dereferencingType:     types.DIDJSON,
-			did:                   ValidDid,
-			fragmentId:            validService.Id,
-			expectedContentStream: types.NewService(&validService),
-			expectedMetadata:      validFragmentMetadata,
-			expectedError:         nil,
+			did:               ValidDid,
+			fragmentId:        validService.Id,
+			dereferencingType: types.DIDJSON,
+			expectedDidDereferencing: &types.DidDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				ContentStream: types.NewService(&validService),
+				Metadata:      validFragmentMetadata,
+			},
+			expectedError: nil,
 		},
 	),
 
 	Entry(
 		"not supported query",
 		dereferencingTestCase{
-			dereferencingType:     types.DIDJSONLD,
-			did:                   ValidDid,
-			queries:               validQuery,
-			expectedContentStream: nil,
-			expectedMetadata:      types.ResolutionDidDocMetadata{},
-			expectedError:         types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, false),
+			did:               ValidDid,
+			queries:           validQuery,
+			dereferencingType: types.DIDJSONLD,
+			expectedDidDereferencing: &types.DidDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
 		"key not found",
 		dereferencingTestCase{
-			dereferencingType:     types.DIDJSONLD,
-			did:                   ValidDid,
-			fragmentId:            "notFoundKey",
-			expectedContentStream: nil,
-			expectedMetadata:      types.ResolutionDidDocMetadata{},
-			expectedError:         types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
+			did:               ValidDid,
+			fragmentId:        NotExistFragmentId,
+			dereferencingType: types.DIDJSONLD,
+			expectedDidDereferencing: &types.DidDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
 		},
 	),
 )

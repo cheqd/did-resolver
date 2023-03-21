@@ -12,8 +12,8 @@ import (
 )
 
 type resolveTestCase struct {
-	resolutionType        types.ContentType
 	did                   string
+	resolutionType        types.ContentType
 	expectedDIDResolution *types.DidResolution
 	expectedError         *types.IdentityError
 }
@@ -27,10 +27,9 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 		testCase.expectedDIDResolution.Did.Context = nil
 	}
 
-	expectedContentType := testCase.expectedDIDResolution.ResolutionMetadata.ContentType
-	if expectedContentType == "" {
-		expectedContentType = testCase.resolutionType
-	}
+	expectedContentType := defineContentType(
+		testCase.expectedDIDResolution.ResolutionMetadata.ContentType, testCase.resolutionType,
+	)
 
 	resolutionResult, err := diddocService.Resolve(testCase.did, "", testCase.resolutionType)
 	if testCase.expectedError != nil {
@@ -48,8 +47,8 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 	Entry(
 		"Successful resolution",
 		resolveTestCase{
-			resolutionType: types.DIDJSONLD,
 			did:            ValidDid,
+			resolutionType: types.DIDJSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
@@ -71,12 +70,12 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 	Entry(
 		"DID not found",
 		resolveTestCase{
+			did:            NotExistDID,
 			resolutionType: types.DIDJSONLD,
-			did:            fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier),
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, NotExistIdentifier),
+						DidString:        NotExistDID,
 						MethodSpecificId: NotExistIdentifier,
 						Method:           ValidMethod,
 					},
@@ -84,17 +83,15 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, NotExistIdentifier), types.DIDJSONLD, nil, false,
-			),
+			expectedError: types.NewNotFoundError(NotExistDID, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
 		"invalid DID",
 		resolveTestCase{
-			resolutionType: types.DIDJSONLD,
 			did:            InvalidDid,
+			resolutionType: types.DIDJSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
@@ -113,8 +110,8 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 	Entry(
 		"invalid method",
 		resolveTestCase{
-			resolutionType: types.DIDJSONLD,
 			did:            "did:" + InvalidMethod + ":" + ValidNamespace + ":" + ValidIdentifier,
+			resolutionType: types.DIDJSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
@@ -135,8 +132,8 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 	Entry(
 		"invalid namespace",
 		resolveTestCase{
-			resolutionType: types.DIDJSONLD,
 			did:            "did:" + ValidMethod + ":" + InvalidNamespace + ":" + ValidIdentifier,
+			resolutionType: types.DIDJSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
@@ -157,8 +154,8 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 	Entry(
 		"invalid identifier",
 		resolveTestCase{
-			resolutionType: types.DIDJSONLD,
 			did:            "did:" + ValidMethod + ":" + ValidNamespace + ":" + InvalidIdentifier,
+			resolutionType: types.DIDJSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{

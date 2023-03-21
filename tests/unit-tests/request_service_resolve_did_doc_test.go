@@ -3,6 +3,8 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -20,13 +22,8 @@ type resolveDIDDocTestCase struct {
 }
 
 var _ = DescribeTable("Test DIDDocEchoHandler method", func(testCase resolveDIDDocTestCase) {
-	context, rec := setupContext(
-		testCase.didURL,
-		[]string{"did"},
-		[]string{getDID(testCase.didURL)},
-		testCase.resolutionType,
-		mockLedgerService,
-	)
+	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
+	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
 
 	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
 		testCase.expectedDIDResolution.Did.Context = []string{types.DIDSchemaJSONLD, types.JsonWebKey2020JSONLD}
@@ -39,6 +36,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler method", func(testCase resolveDIDD
 	err := didDocServices.DidDocEchoHandler(context)
 	if testCase.expectedError != nil {
 		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
+		// Expect(testCase.expectedError.Message).To(Equal(err.Error())) message
 	} else {
 		var resolutionResult types.DidResolution
 		unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &resolutionResult)

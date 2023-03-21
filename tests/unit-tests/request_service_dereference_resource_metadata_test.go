@@ -3,6 +3,8 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -26,12 +28,8 @@ type dereferenceResourceMetadataTestCase struct {
 }
 
 var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase dereferenceResourceMetadataTestCase) {
-	context, rec := setupContext(
-		testCase.didURL,
-		[]string{"did", "resource"},
-		[]string{getDID(testCase.didURL), getResourceId(testCase.didURL)},
-		testCase.resolutionType,
-		mockLedgerService)
+	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
+	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
 
 	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
 		testCase.expectedDereferencingResult.ContentStream.AddContext(types.DIDSchemaJSONLD)

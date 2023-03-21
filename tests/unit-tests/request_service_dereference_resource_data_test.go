@@ -2,6 +2,8 @@ package tests
 
 import (
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -20,12 +22,8 @@ type dereferenceResourceDataTestCase struct {
 var validResourceDereferencing = types.DereferencedResourceData(validResource.Resource.Data)
 
 var _ = DescribeTable("Test DereferenceResourceData method", func(testCase dereferenceResourceDataTestCase) {
-	context, rec := setupContext(
-		testCase.didURL,
-		[]string{"did", "resource"},
-		[]string{getDID(testCase.didURL), getResourceId(testCase.didURL)},
-		testCase.resolutionType,
-		mockLedgerService)
+	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
+	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
 
 	expectedContentType := types.ContentType(validResource.Metadata.MediaType)
 

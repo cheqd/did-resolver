@@ -41,7 +41,7 @@ var _ = Describe("Test QueryResource method", func() {
 		expectedError    error
 	}
 
-	It("cannot get DIDDoc's resource with a invalid collectionId and resourceID", func() {
+	It("cannot get DIDDoc's resource with a invalid collectionId and resourceId", func() {
 		test := testCase{
 			collectionId:     InvalidDid,
 			resourceId:       InvalidResourceId,

@@ -32,11 +32,9 @@ var _ = Describe("Test GetDIDFragment method", func() {
 	})
 
 	It("cannot find a not-existent fragment", func() {
-		fragmentId := "fake_id"
-
 		didDocService := services.DIDDocService{}
 
-		fragment := didDocService.GetDIDFragment(fragmentId, DIDDoc)
+		fragment := didDocService.GetDIDFragment(NotExistFragmentId, DIDDoc)
 		Expect(fragment).To(BeNil())
 	})
 })
