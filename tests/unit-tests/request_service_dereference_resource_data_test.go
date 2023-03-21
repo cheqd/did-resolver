@@ -12,7 +12,7 @@ import (
 	"github.com/cheqd/did-resolver/types"
 )
 
-type dereferenceResourceDataTestCase struct {
+type resourceDataTestCase struct {
 	didURL           string
 	resolutionType   types.ContentType
 	expectedResource types.ContentStreamI
@@ -21,7 +21,7 @@ type dereferenceResourceDataTestCase struct {
 
 var validResourceDereferencing = types.DereferencedResourceData(validResource.Resource.Data)
 
-var _ = DescribeTable("Test DereferenceResourceData method", func(testCase dereferenceResourceDataTestCase) {
+var _ = DescribeTable("Test DereferenceResourceData method", func(testCase resourceDataTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
 
@@ -39,7 +39,7 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 
 	Entry(
 		"successful resolution",
-		dereferenceResourceDataTestCase{
+		resourceDataTestCase{
 			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", ValidDid, ValidResourceId),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: &validResourceDereferencing,
@@ -49,7 +49,7 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 
 	Entry(
 		"DID not found",
-		dereferenceResourceDataTestCase{
+		resourceDataTestCase{
 			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", NotExistDID, ValidResourceId),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
@@ -59,7 +59,7 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 
 	Entry(
 		"invalid representation",
-		dereferenceResourceDataTestCase{
+		resourceDataTestCase{
 			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", ValidDid, ValidResourceId),
 			resolutionType:   types.JSON,
 			expectedResource: nil,

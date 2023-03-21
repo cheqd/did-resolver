@@ -11,144 +11,182 @@ import (
 	"github.com/cheqd/did-resolver/types"
 )
 
-type TestCase struct {
-	dereferencingType     types.ContentType
-	identifier            string
-	method                string
-	namespace             string
-	resourceId            string
-	expectedContentStream types.ContentStreamI
-	expectedContentType   types.ContentType
-	expectedMetadata      types.ResolutionResourceMetadata
-	expectedError         *types.IdentityError
+type dereferenceResourceMetadataTestCase struct {
+	did                           string
+	resourceId                    string
+	dereferencingType             types.ContentType
+	expectedResourceDereferencing *types.ResourceDereferencing
+	expectedError                 *types.IdentityError
 }
 
-var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase TestCase) {
+var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase dereferenceResourceMetadataTestCase) {
 	resourceService := services.NewResourceService(ValidMethod, mockLedgerService)
-	id := "did:" + testCase.method + ":" + testCase.namespace + ":" + testCase.identifier
 
-	var expectedDIDProperties types.DidProperties
-	if testCase.expectedError == nil {
-		expectedDIDProperties = types.DidProperties{
-			DidString:        ValidDid,
-			MethodSpecificId: ValidIdentifier,
-			Method:           ValidMethod,
-		}
-	}
+	expectedContentType := defineContentType(
+		testCase.expectedResourceDereferencing.DereferencingMetadata.ContentType,
+		testCase.dereferencingType,
+	)
 
-	expectedContentType := testCase.expectedContentType
-	if expectedContentType == "" {
-		expectedContentType = testCase.dereferencingType
-	}
-
-	dereferencingResult, err := resourceService.DereferenceResourceMetadata(testCase.resourceId, id, testCase.dereferencingType)
-	if err == nil {
-		Expect(testCase.expectedContentStream).To(Equal(dereferencingResult.ContentStream))
-		Expect(testCase.expectedMetadata).To(Equal(dereferencingResult.Metadata))
-		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
-		Expect(expectedDIDProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
-		Expect(dereferencingResult.DereferencingMetadata.ResolutionError).To(BeEmpty())
-	} else {
+	dereferencingResult, err := resourceService.DereferenceResourceMetadata(testCase.did, testCase.resourceId, testCase.dereferencingType)
+	if err != nil {
 		Expect(testCase.expectedError.Code).To(Equal(err.Code))
 		Expect(testCase.expectedError.Message).To(Equal(err.Message))
+	} else {
+		Expect(testCase.expectedResourceDereferencing.ContentStream).To(Equal(dereferencingResult.ContentStream))
+		Expect(testCase.expectedResourceDereferencing.Metadata).To(Equal(dereferencingResult.Metadata))
+		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
+		Expect(testCase.expectedResourceDereferencing.DereferencingMetadata.DidProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
+		Expect(dereferencingResult.DereferencingMetadata.ResolutionError).To(BeEmpty())
 	}
 },
 
 	Entry(
 		"successful dereferencing for resource",
-		TestCase{
-			dereferencingType:     types.DIDJSON,
-			identifier:            ValidIdentifier,
-			method:                ValidMethod,
-			namespace:             ValidNamespace,
-			resourceId:            ValidResourceId,
-			expectedContentStream: dereferencedResourceList,
-			expectedMetadata:      types.ResolutionResourceMetadata{},
-			expectedError:         nil,
+		dereferenceResourceMetadataTestCase{
+			did:               ValidDid,
+			resourceId:        ValidResourceId,
+			dereferencingType: types.DIDJSON,
+			expectedResourceDereferencing: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				ContentStream: dereferencedResourceList,
+				Metadata:      types.ResolutionResourceMetadata{},
+			},
+			expectedError: nil,
 		},
 	),
 
 	Entry(
 		"successful dereferencing for resource (upper case UUID)",
-		TestCase{
-			dereferencingType:     types.DIDJSON,
-			identifier:            ValidIdentifier,
-			method:                ValidMethod,
-			namespace:             ValidNamespace,
-			resourceId:            strings.ToUpper(ValidResourceId),
-			expectedContentStream: dereferencedResourceList,
-			expectedMetadata:      types.ResolutionResourceMetadata{},
-			expectedError:         nil,
+		dereferenceResourceMetadataTestCase{
+			did:               ValidDid,
+			resourceId:        strings.ToUpper(ValidResourceId),
+			dereferencingType: types.DIDJSON,
+			expectedResourceDereferencing: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				ContentStream: dereferencedResourceList,
+				Metadata:      types.ResolutionResourceMetadata{},
+			},
+			expectedError: nil,
 		},
 	),
 
 	Entry(
 		"resource not found",
-		TestCase{
-			dereferencingType: types.DIDJSONLD,
-			identifier:        ValidIdentifier,
-			method:            ValidMethod,
-			namespace:         ValidNamespace,
+		dereferenceResourceMetadataTestCase{
+			did:               ValidDid,
 			resourceId:        NotExistIdentifier,
-			expectedMetadata:  types.ResolutionResourceMetadata{},
-			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+			dereferencingType: types.DIDJSON,
+			expectedResourceDereferencing: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				Metadata: types.ResolutionResourceMetadata{},
+			},
+			expectedError: types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 
 	Entry(
 		"invalid resource id",
-		TestCase{
-			dereferencingType: types.DIDJSONLD,
-			identifier:        ValidIdentifier,
-			method:            ValidMethod,
-			namespace:         ValidNamespace,
+		dereferenceResourceMetadataTestCase{
+			did:               ValidDid,
 			resourceId:        InvalidResourceId,
-			expectedMetadata:  types.ResolutionResourceMetadata{},
-			expectedError:     types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+			dereferencingType: types.DIDJSON,
+			expectedResourceDereferencing: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				Metadata: types.ResolutionResourceMetadata{},
+			},
+			expectedError: types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 
 	Entry(
 		"invalid method",
-		TestCase{
-			dereferencingType: types.DIDJSONLD,
-			identifier:        ValidIdentifier,
-			method:            InvalidMethod,
-			namespace:         ValidNamespace,
-			resourceId:        ValidResourceId,
-			expectedMetadata:  types.ResolutionResourceMetadata{},
+		dereferenceResourceMetadataTestCase{
+			did:               fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, ValidIdentifier),
+			resourceId:        InvalidResourceId,
+			dereferencingType: types.DIDJSON,
+			expectedResourceDereferencing: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           InvalidMethod,
+					},
+				},
+				Metadata: types.ResolutionResourceMetadata{},
+			},
 			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, ValidIdentifier), types.DIDJSONLD, nil, true,
+				fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, ValidIdentifier),
+				types.DIDJSONLD, nil, true,
 			),
 		},
 	),
 
 	Entry(
 		"invalid namespace",
-		TestCase{
-			dereferencingType: types.DIDJSONLD,
-			identifier:        ValidIdentifier,
-			method:            ValidMethod,
-			namespace:         InvalidNamespace,
-			resourceId:        ValidResourceId,
-			expectedMetadata:  types.ResolutionResourceMetadata{},
+		dereferenceResourceMetadataTestCase{
+			did:               fmt.Sprintf("did:%s:%s:%s", ValidMethod, InvalidNamespace, ValidIdentifier),
+			resourceId:        InvalidResourceId,
+			dereferencingType: types.DIDJSON,
+			expectedResourceDereferencing: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				Metadata: types.ResolutionResourceMetadata{},
+			},
 			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", ValidMethod, InvalidNamespace, ValidIdentifier), types.DIDJSONLD, nil, true,
+				fmt.Sprintf("did:%s:%s:%s", ValidMethod, InvalidNamespace, ValidIdentifier),
+				types.DIDJSONLD, nil, true,
 			),
 		},
 	),
 
 	Entry(
 		"invalid identifier",
-		TestCase{
-			dereferencingType: types.DIDJSONLD,
-			identifier:        InvalidIdentifier,
-			method:            ValidMethod,
-			namespace:         ValidNamespace,
-			resourceId:        ValidResourceId,
-			expectedMetadata:  types.ResolutionResourceMetadata{},
+		dereferenceResourceMetadataTestCase{
+			did:               fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, InvalidIdentifier),
+			resourceId:        InvalidResourceId,
+			dereferencingType: types.DIDJSON,
+			expectedResourceDereferencing: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        InvalidDid,
+						MethodSpecificId: InvalidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				Metadata: types.ResolutionResourceMetadata{},
+			},
 			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, InvalidIdentifier), types.DIDJSONLD, nil, true,
+				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, InvalidIdentifier),
+				types.DIDJSONLD, nil, true,
 			),
 		},
 	),

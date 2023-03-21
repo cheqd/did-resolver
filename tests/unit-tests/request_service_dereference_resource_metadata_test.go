@@ -20,14 +20,14 @@ type DereferencingResult struct {
 	Metadata              *types.ResolutionDidDocMetadata `json:"contentMetadata"`
 }
 
-type dereferenceResourceMetadataTestCase struct {
+type resourceMetadataTestCase struct {
 	didURL                      string
 	resolutionType              types.ContentType
 	expectedDereferencingResult *DereferencingResult
 	expectedError               error
 }
 
-var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase dereferenceResourceMetadataTestCase) {
+var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase resourceMetadataTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
 
@@ -56,7 +56,7 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 },
 	Entry(
 		"successful resolution",
-		dereferenceResourceMetadataTestCase{
+		resourceMetadataTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s/resources/%s/metadata", ValidDid, ValidResourceId),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
@@ -79,7 +79,7 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 
 	Entry(
 		"DID not found",
-		dereferenceResourceMetadataTestCase{
+		resourceMetadataTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s/resources/%s/metadata", NotExistDID, ValidResourceId),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
@@ -99,7 +99,7 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 
 	Entry(
 		"invalid representation",
-		dereferenceResourceMetadataTestCase{
+		resourceMetadataTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s/resources/%s/metadata", ValidDid, ValidResourceId),
 			resolutionType: types.JSON,
 			expectedDereferencingResult: &DereferencingResult{

@@ -14,14 +14,14 @@ import (
 	"github.com/cheqd/did-resolver/types"
 )
 
-type dereferenceCollectionResourcesTestCase struct {
+type resourceCollectionTestCase struct {
 	didURL                      string
 	resolutionType              types.ContentType
 	expectedDereferencingResult *DereferencingResult
 	expectedError               error
 }
 
-var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCase dereferenceCollectionResourcesTestCase) {
+var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCase resourceCollectionTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
 
@@ -51,7 +51,7 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 
 	Entry(
 		"successful resolution",
-		dereferenceCollectionResourcesTestCase{
+		resourceCollectionTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", ValidDid),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
@@ -74,7 +74,7 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 
 	Entry(
 		"DID not found",
-		dereferenceCollectionResourcesTestCase{
+		resourceCollectionTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", NotExistDID),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
