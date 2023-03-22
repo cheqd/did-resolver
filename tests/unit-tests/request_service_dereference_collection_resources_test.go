@@ -21,7 +21,7 @@ type resourceCollectionTestCase struct {
 	expectedError               error
 }
 
-var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCase resourceCollectionTestCase) {
+var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCase resourceCollectionTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
 
@@ -45,6 +45,7 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 		Expect(testCase.expectedDereferencingResult.ContentStream).To(Equal(dereferencingResult.ContentStream))
 		Expect(testCase.expectedDereferencingResult.Metadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
+		Expect(testCase.expectedDereferencingResult.DereferencingMetadata.DidProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
 		Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
 	}
 },
@@ -91,4 +92,6 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 			expectedError: types.NewNotFoundError(NotExistDID, types.DIDJSONLD, nil, false),
 		},
 	),
+
+	// TODO: add unit tests for invalid DID case.
 )

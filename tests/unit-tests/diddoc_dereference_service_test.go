@@ -21,14 +21,6 @@ type dereferencingTestCase struct {
 
 var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTestCase) {
 	diddocService := services.NewDIDDocService("cheqd", mockLedgerService)
-	var expectedDIDProperties types.DidProperties
-	if testCase.expectedError == nil {
-		expectedDIDProperties = types.DidProperties{
-			DidString:        ValidDid,
-			MethodSpecificId: ValidIdentifier,
-			Method:           ValidMethod,
-		}
-	}
 
 	expectedContentType := defineContentType(
 		testCase.expectedDidDereferencing.DereferencingMetadata.ContentType, testCase.dereferencingType,
@@ -46,7 +38,7 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 		Expect(testCase.expectedDidDereferencing.Metadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
 		Expect(dereferencingResult.DereferencingMetadata.ResolutionError).To(BeEmpty())
-		Expect(expectedDIDProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
+		Expect(testCase.expectedDidDereferencing.DereferencingMetadata.DidProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
 	}
 },
 

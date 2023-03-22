@@ -124,4 +124,23 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 			),
 		},
 	),
+
+	Entry(
+		"invalid did",
+		dereferenceCollectionResourcesTestCase{
+			did:               InvalidDid,
+			dereferencingType: types.DIDJSON,
+			expectedResourceDereferencing: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        InvalidDid,
+						MethodSpecificId: InvalidIdentifier,
+						Method:           InvalidMethod,
+					},
+				},
+				Metadata: types.ResolutionResourceMetadata{},
+			},
+			expectedError: types.NewNotFoundError(InvalidDid, types.DIDJSONLD, nil, true),
+		},
+	),
 )

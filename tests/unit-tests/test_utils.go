@@ -99,8 +99,6 @@ var (
 
 var (
 	dereferencedResourceList = types.NewDereferencedResourceList(ValidDid, []*resourceTypes.Metadata{validResource.Metadata})
-	resolutionDIDDocMetadata = types.NewResolutionDidDocMetadata(ValidDid, &validMetadata, []*resourceTypes.Metadata{validResource.Metadata})
-	resourceData             = types.DereferencedResourceData(validResource.Resource.Data)
 )
 
 func ValidVerificationMethod() didTypes.VerificationMethod {
@@ -203,14 +201,16 @@ func NewMockLedgerService(did *didTypes.DidDoc, metadata *didTypes.Metadata, res
 	}
 }
 
+// TODO: add more unit tests for testing QueryDIDDoc method.
 func (ls MockLedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
 	if ls.Did.Id == did {
-		println("query !!!" + ls.Did.Id)
 		return &didTypes.DidDocWithMetadata{DidDoc: ls.Did, Metadata: ls.Metadata}, nil
 	}
+
 	return nil, types.NewNotFoundError(did, types.JSON, nil, true)
 }
 
+// TODO: add unit tests for testing QueryAllDidDocVersionsMetadata method.
 func (ls MockLedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError) {
 	if ls.Did.Id == did {
 		return []*didTypes.Metadata{ls.Metadata}, nil
@@ -223,13 +223,16 @@ func (ls MockLedgerService) QueryResource(did string, resourceId string) (*resou
 	if ls.Did.Id != did || ls.Resource.Metadata == nil || ls.Resource.Metadata.Id != resourceId {
 		return nil, types.NewNotFoundError(did, types.JSON, nil, true)
 	}
+
 	return ls.Resource, nil
 }
 
+// TODO: add unit tests for testing QueryCollectionResources method.
 func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resourceTypes.Metadata, *types.IdentityError) {
 	if ls.Did.Id != did || ls.Resource.Metadata == nil {
 		return []*resourceTypes.Metadata{}, types.NewNotFoundError(did, types.JSON, nil, true)
 	}
+
 	return []*resourceTypes.Metadata{ls.Resource.Metadata}, nil
 }
 

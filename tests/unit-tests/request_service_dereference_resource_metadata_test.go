@@ -27,7 +27,7 @@ type resourceMetadataTestCase struct {
 	expectedError               error
 }
 
-var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase resourceMetadataTestCase) {
+var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase resourceMetadataTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
 
@@ -51,6 +51,7 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase r
 		Expect(testCase.expectedDereferencingResult.ContentStream, dereferencingResult.ContentStream)
 		Expect(testCase.expectedDereferencingResult.Metadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
+		Expect(testCase.expectedDereferencingResult.DereferencingMetadata.DidProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
 		Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
 	}
 },
@@ -116,4 +117,6 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase r
 			expectedError: types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
+
+	// TODO: add unit tests for invalid DID case.
 )

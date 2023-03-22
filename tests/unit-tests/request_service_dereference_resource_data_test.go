@@ -21,7 +21,7 @@ type resourceDataTestCase struct {
 
 var validResourceDereferencing = types.DereferencedResourceData(validResource.Resource.Data)
 
-var _ = DescribeTable("Test DereferenceResourceData method", func(testCase resourceDataTestCase) {
+var _ = DescribeTable("Test ResourceDataEchoHandler function", func(testCase resourceDataTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
 
@@ -66,4 +66,6 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase resou
 			expectedError:    types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
+
+	// TODO: add more unit tests.
 )

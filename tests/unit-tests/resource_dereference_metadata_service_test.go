@@ -123,10 +123,10 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 	),
 
 	Entry(
-		"invalid method",
+		"invalid did method",
 		dereferenceResourceMetadataTestCase{
 			did:               fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, ValidIdentifier),
-			resourceId:        InvalidResourceId,
+			resourceId:        ValidResourceId,
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
@@ -146,10 +146,10 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 	),
 
 	Entry(
-		"invalid namespace",
+		"invalid did namespace",
 		dereferenceResourceMetadataTestCase{
 			did:               fmt.Sprintf("did:%s:%s:%s", ValidMethod, InvalidNamespace, ValidIdentifier),
-			resourceId:        InvalidResourceId,
+			resourceId:        ValidResourceId,
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
@@ -169,10 +169,10 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 	),
 
 	Entry(
-		"invalid identifier",
+		"invalid did identifier",
 		dereferenceResourceMetadataTestCase{
 			did:               fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, InvalidIdentifier),
-			resourceId:        InvalidResourceId,
+			resourceId:        ValidResourceId,
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
@@ -190,4 +190,9 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 			),
 		},
 	),
+
+	// TODO: add unit tests for:
+	// - invalid DID and invalid resourceId
+	// - not existent DID and existent resourceId
+	// - not existent DID and not existent resourceId.
 )

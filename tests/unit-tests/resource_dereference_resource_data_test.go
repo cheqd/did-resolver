@@ -186,4 +186,9 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 			),
 		},
 	),
+
+	// TODO: add unit tests for:
+	// - invalid DID and invalid resourceId
+	// - not existent DID and existent resourceId
+	// - not existent DID and not existent resourceId.
 )

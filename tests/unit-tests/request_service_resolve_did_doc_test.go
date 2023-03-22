@@ -18,10 +18,10 @@ type resolveDIDDocTestCase struct {
 	didURL                string
 	resolutionType        types.ContentType
 	expectedDIDResolution *types.DidResolution
-	expectedError         *types.IdentityError
+	expectedError         error
 }
 
-var _ = DescribeTable("Test DIDDocEchoHandler method", func(testCase resolveDIDDocTestCase) {
+var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDIDDocTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
 
@@ -36,7 +36,6 @@ var _ = DescribeTable("Test DIDDocEchoHandler method", func(testCase resolveDIDD
 	err := didDocServices.DidDocEchoHandler(context)
 	if testCase.expectedError != nil {
 		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
-		// Expect(testCase.expectedError.Message).To(Equal(err.Error())) message
 	} else {
 		var resolutionResult types.DidResolution
 		unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &resolutionResult)
@@ -45,6 +44,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler method", func(testCase resolveDIDD
 		Expect(testCase.expectedDIDResolution.Did).To(Equal(resolutionResult.Did))
 		Expect(testCase.expectedDIDResolution.Metadata).To(Equal(resolutionResult.Metadata))
 		Expect(expectedContentType).To(Equal(resolutionResult.ResolutionMetadata.ContentType))
+		Expect(testCase.expectedDIDResolution.ResolutionMetadata.DidProperties).To(Equal(resolutionResult.ResolutionMetadata.DidProperties))
 		Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
 	}
 },
@@ -91,4 +91,6 @@ var _ = DescribeTable("Test DIDDocEchoHandler method", func(testCase resolveDIDD
 			expectedError: types.NewNotFoundError(NotExistDID, types.DIDJSONLD, nil, false),
 		},
 	),
+
+	// TODO: add unit tests for invalid DID case.
 )
