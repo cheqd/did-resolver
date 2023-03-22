@@ -39,7 +39,7 @@ func EchoWrapHandler(controller RequestServiceI) echo.HandlerFunc {
 		if err := controller.Setup(rc); err != nil {
 			return err
 		}
-		// Preaprations, like get parameters from context and others
+		// Preparations, like get parameters from context and others
 		if err := controller.BasicPrepare(rc); err != nil {
 			return err
 		}
