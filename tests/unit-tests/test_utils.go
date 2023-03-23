@@ -97,9 +97,7 @@ var (
 	validQuery, _           = url.ParseQuery("attr=value")
 )
 
-var (
-	dereferencedResourceList = types.NewDereferencedResourceList(ValidDid, []*resourceTypes.Metadata{validResource.Metadata})
-)
+var dereferencedResourceList = types.NewDereferencedResourceList(ValidDid, []*resourceTypes.Metadata{validResource.Metadata})
 
 func ValidVerificationMethod() didTypes.VerificationMethod {
 	return didTypes.VerificationMethod{
