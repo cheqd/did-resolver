@@ -17,7 +17,7 @@ import (
 type getDidDocNegativeTestCase struct {
 	didURL                string
 	resolutionType        string
-	expectedDIDResolution *types.DidResolution
+	expectedDidResolution *types.DidResolution
 	expectedStatusCode    int
 }
 
@@ -33,10 +33,10 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase getDidDocNegativeTes
 	Expect(json.Unmarshal(resp.Body(), &receivedDIDResolution)).To(BeNil())
 
 	Expect(testCase.expectedStatusCode).To(Equal(resp.StatusCode()))
-	Expect(testCase.expectedDIDResolution.Context).To(Equal(receivedDIDResolution.Context))
-	Expect(testCase.expectedDIDResolution.ResolutionMetadata.ContentType).To(Equal(receivedDIDResolution.ResolutionMetadata.ContentType))
-	Expect(testCase.expectedDIDResolution.ResolutionMetadata.ResolutionError).To(Equal(receivedDIDResolution.ResolutionMetadata.ResolutionError))
-	Expect(testCase.expectedDIDResolution.ResolutionMetadata.DidProperties).To(Equal(receivedDIDResolution.ResolutionMetadata.DidProperties))
+	Expect(testCase.expectedDidResolution.Context).To(Equal(receivedDIDResolution.Context))
+	Expect(testCase.expectedDidResolution.ResolutionMetadata.ContentType).To(Equal(receivedDIDResolution.ResolutionMetadata.ContentType))
+	Expect(testCase.expectedDidResolution.ResolutionMetadata.ResolutionError).To(Equal(receivedDIDResolution.ResolutionMetadata.ResolutionError))
+	Expect(testCase.expectedDidResolution.ResolutionMetadata.DidProperties).To(Equal(receivedDIDResolution.ResolutionMetadata.DidProperties))
 	Expect(receivedDIDResolution.Did).To(BeZero())
 	Expect(receivedDIDResolution.Metadata).To(BeZero())
 },
@@ -46,7 +46,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase getDidDocNegativeTes
 		getDidDocNegativeTestCase{
 			didURL:         fmt.Sprintf("http://localhost:8080/1.0/identifiers/%s", testconstants.NotExistentMainnetDid),
 			resolutionType: testconstants.DefaultResolutionType,
-			expectedDIDResolution: &types.DidResolution{
+			expectedDidResolution: &types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -69,7 +69,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase getDidDocNegativeTes
 		getDidDocNegativeTestCase{
 			didURL:         fmt.Sprintf("http://localhost:8080/1.0/identifiers/%s", testconstants.NotExistentTestnetDid),
 			resolutionType: testconstants.DefaultResolutionType,
-			expectedDIDResolution: &types.DidResolution{
+			expectedDidResolution: &types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -92,7 +92,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase getDidDocNegativeTes
 		getDidDocNegativeTestCase{
 			didURL:         fmt.Sprintf("http://localhost:8080/1.0/identifiers/%s", testconstants.MainnetDIDWithInvalidMethod),
 			resolutionType: testconstants.DefaultResolutionType,
-			expectedDIDResolution: &types.DidResolution{
+			expectedDidResolution: &types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -115,7 +115,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase getDidDocNegativeTes
 		getDidDocNegativeTestCase{
 			didURL:         fmt.Sprintf("http://localhost:8080/1.0/identifiers/%s", testconstants.TestnetDIDWithInvalidMethod),
 			resolutionType: testconstants.DefaultResolutionType,
-			expectedDIDResolution: &types.DidResolution{
+			expectedDidResolution: &types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -138,7 +138,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase getDidDocNegativeTes
 		getDidDocNegativeTestCase{
 			didURL:         fmt.Sprintf("http://localhost:8080/1.0/identifiers/%s", testconstants.DIDWithInvalidNamespace),
 			resolutionType: testconstants.DefaultResolutionType,
-			expectedDIDResolution: &types.DidResolution{
+			expectedDidResolution: &types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -161,7 +161,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase getDidDocNegativeTes
 		getDidDocNegativeTestCase{
 			didURL:         fmt.Sprintf("http://localhost:8080/1.0/identifiers/%s", testconstants.InvalidDID),
 			resolutionType: testconstants.DefaultResolutionType,
-			expectedDIDResolution: &types.DidResolution{
+			expectedDidResolution: &types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,

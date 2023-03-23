@@ -28,19 +28,19 @@ var _ = DescribeTable("Get DIDDoc with existent DID", func(testCase getDidDocPos
 		Get(testCase.didURL)
 	Expect(err).To(BeNil())
 
-	var receivedDIDResolution types.DidResolution
-	Expect(json.Unmarshal(resp.Body(), &receivedDIDResolution)).To(BeNil())
+	var receivedDidResolution types.DidResolution
+	Expect(json.Unmarshal(resp.Body(), &receivedDidResolution)).To(BeNil())
 	Expect(testCase.expectedStatusCode).To(Equal(resp.StatusCode()))
 
-	var expectedDIDResolution types.DidResolution
-	Expect(convertJsonFileToType(testCase.expectedJSONPath, &expectedDIDResolution)).To(BeNil())
+	var expectedDidResolution types.DidResolution
+	Expect(convertJsonFileToType(testCase.expectedJSONPath, &expectedDidResolution)).To(BeNil())
 
-	Expect(expectedDIDResolution.Context).To(Equal(receivedDIDResolution.Context))
-	Expect(expectedDIDResolution.ResolutionMetadata.ContentType).To(Equal(receivedDIDResolution.ResolutionMetadata.ContentType))
-	Expect(expectedDIDResolution.ResolutionMetadata.ResolutionError).To(Equal(receivedDIDResolution.ResolutionMetadata.ResolutionError))
-	Expect(expectedDIDResolution.ResolutionMetadata.DidProperties).To(Equal(receivedDIDResolution.ResolutionMetadata.DidProperties))
-	Expect(expectedDIDResolution.Did).To(Equal(receivedDIDResolution.Did))
-	Expect(expectedDIDResolution.Metadata).To(Equal(receivedDIDResolution.Metadata))
+	Expect(expectedDidResolution.Context).To(Equal(receivedDidResolution.Context))
+	Expect(expectedDidResolution.ResolutionMetadata.ContentType).To(Equal(receivedDidResolution.ResolutionMetadata.ContentType))
+	Expect(expectedDidResolution.ResolutionMetadata.ResolutionError).To(Equal(receivedDidResolution.ResolutionMetadata.ResolutionError))
+	Expect(expectedDidResolution.ResolutionMetadata.DidProperties).To(Equal(receivedDidResolution.ResolutionMetadata.DidProperties))
+	Expect(expectedDidResolution.Did).To(Equal(receivedDidResolution.Did))
+	Expect(expectedDidResolution.Metadata).To(Equal(receivedDidResolution.Metadata))
 
 },
 
@@ -49,7 +49,7 @@ var _ = DescribeTable("Get DIDDoc with existent DID", func(testCase getDidDocPos
 		getDidDocPositiveTestCase{
 			didURL:             fmt.Sprintf("http://localhost:8080/1.0/identifiers/%s", testconstants.IndyStyleMainnetDid),
 			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/diddoc_indy_mainnet_did.json",
+			expectedJSONPath:   "testdata/diddoc/diddoc_indy_mainnet_did.json",
 			expectedStatusCode: http.StatusOK,
 		},
 	),
@@ -59,7 +59,7 @@ var _ = DescribeTable("Get DIDDoc with existent DID", func(testCase getDidDocPos
 		getDidDocPositiveTestCase{
 			didURL:             fmt.Sprintf("http://localhost:8080/1.0/identifiers/%s", testconstants.IndyStyleTestnetDid),
 			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/diddoc_indy_testnet_did.json",
+			expectedJSONPath:   "testdata/diddoc/diddoc_indy_testnet_did.json",
 			expectedStatusCode: http.StatusOK,
 		},
 	),
@@ -69,7 +69,7 @@ var _ = DescribeTable("Get DIDDoc with existent DID", func(testCase getDidDocPos
 		getDidDocPositiveTestCase{
 			didURL:             fmt.Sprintf("http://localhost:8080/1.0/identifiers/%s", testconstants.UUIDStyleMainnetDid),
 			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/diddoc_uuid_mainnet_did.json",
+			expectedJSONPath:   "testdata/diddoc/diddoc_uuid_mainnet_did.json",
 			expectedStatusCode: http.StatusOK,
 		},
 	),
@@ -79,7 +79,7 @@ var _ = DescribeTable("Get DIDDoc with existent DID", func(testCase getDidDocPos
 		getDidDocPositiveTestCase{
 			didURL:             fmt.Sprintf("http://localhost:8080/1.0/identifiers/%s", testconstants.UUIDStyleTestnetDid),
 			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/diddoc_uuid_testnet_did.json",
+			expectedJSONPath:   "testdata/diddoc/diddoc_uuid_testnet_did.json",
 			expectedStatusCode: http.StatusOK,
 		},
 	),
