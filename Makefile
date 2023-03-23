@@ -133,10 +133,10 @@ unit-tests:
 	go test -v ./...
 
 lint:
-	golangci-lint run --out-format=tab
+	golangci-lint run  --config .github/linters/.golangci.yaml
 
 lint-fix:
-	golangci-lint run --fix --out-format=tab --issues-exit-code=0
+	golangci-lint run  --config .github/linters/.golangci.yaml --fix
 .PHONY: lint lint-fix
 
 format:
