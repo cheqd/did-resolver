@@ -9,7 +9,7 @@ import (
 )
 
 func GetContentType(accept string) types.ContentType {
-	// It returns suuported ContentType or "" otherwise
+	// It returns supported ContentType or "" otherwise
 	typeList := strings.Split(accept, ",")
 	for _, cType := range typeList {
 		result := types.ContentType(strings.Split(cType, ";")[0])
