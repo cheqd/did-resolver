@@ -1,0 +1,25 @@
+{
+    "@context": "https://w3id.org/did-resolution/v1",
+    "dereferencingMetadata": {
+        "contentType": "application/did+ld+json",
+        "retrieved": "2023-03-23T15:28:25Z",
+        "did": {
+            "didString": "did:cheqd:mainnet:c82f2b02-bdab-4dd7-b833-3e143745d612",
+            "methodSpecificId": "c82f2b02-bdab-4dd7-b833-3e143745d612",
+            "method": "cheqd"
+        }
+    },
+    "contentStream": {
+        "@context": [
+            "https://www.w3.org/ns/did/v1"
+        ],
+        "id": "did:cheqd:mainnet:c82f2b02-bdab-4dd7-b833-3e143745d612#key-1",
+        "type": "Ed25519VerificationKey2020",
+        "controller": "did:cheqd:mainnet:c82f2b02-bdab-4dd7-b833-3e143745d612",
+        "publicKeyMultibase": "z6MkuGoZyDyji4sApi9L79CG484hoQPmtuqJSTbUpdrVQAqB"
+    },
+    "contentMetadata": {
+        "created": "2022-11-17T10:29:53Z",
+        "versionId": "76e546ee-78cd-5372-b34e-8b47461626e1"
+    }
+}
