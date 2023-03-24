@@ -32,7 +32,10 @@ var (
 	ValidIdentifier       = "fb53dd05-329b-4614-a3f2-c0a8c7554ee3"
 )
 
-var NotExistentIdentifier = "ffffffff-329b-4614-a3f2-ffffffffffff"
+var (
+	NotExistentIdentifier = "ffffffff-329b-4614-a3f2-ffffffffffff"
+	NotExistentFragment   = "invalid_fragment"
+)
 
 var (
 	InvalidMethod     = "invalid_method"
@@ -41,3 +44,5 @@ var (
 )
 
 var DIDStructure = "did:%s:%s:%s"
+
+var HashTag = "\u0023"

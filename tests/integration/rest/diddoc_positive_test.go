@@ -20,7 +20,7 @@ type getDidDocPositiveTestCase struct {
 	expectedStatusCode int
 }
 
-var _ = DescribeTable("Get DIDDoc with existent DID", func(testCase getDidDocPositiveTestCase) {
+var _ = DescribeTable("Positive: Get DIDDoc", func(testCase getDidDocPositiveTestCase) {
 	client := resty.New()
 
 	resp, err := client.R().
