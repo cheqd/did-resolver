@@ -41,7 +41,6 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase getDidDocPositiveTes
 	Expect(expectedDidResolution.ResolutionMetadata.DidProperties).To(Equal(receivedDidResolution.ResolutionMetadata.DidProperties))
 	Expect(expectedDidResolution.Did).To(Equal(receivedDidResolution.Did))
 	Expect(expectedDidResolution.Metadata).To(Equal(receivedDidResolution.Metadata))
-
 },
 
 	Entry(

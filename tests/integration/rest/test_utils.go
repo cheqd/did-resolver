@@ -2,7 +2,6 @@ package rest
 
 import (
 	"encoding/json"
-	"log"
 	"os"
 
 	"github.com/cheqd/did-resolver/types"
@@ -24,7 +23,7 @@ func convertJsonFileToType(path string, v any) error {
 
 	decoder := json.NewDecoder(file)
 	if err := decoder.Decode(&v); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	return nil
