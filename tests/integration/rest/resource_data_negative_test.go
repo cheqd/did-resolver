@@ -14,14 +14,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-type getResourceDataNegativeTestCase struct {
-	didURL                      string
-	resolutionType              string
-	expectedDereferencingResult DereferencingResult
-	expectedStatusCode          int
-}
-
-var _ = DescribeTable("Negative: Get resource data", func(testCase getResourceDataNegativeTestCase) {
+var _ = DescribeTable("Negative: Get resource data", func(testCase negativeTestCase) {
 	client := resty.New()
 
 	resp, err := client.R().
@@ -29,28 +22,24 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase getResourceDa
 		Get(testCase.didURL)
 	Expect(err).To(BeNil())
 
-	var receivedDidDereferencing DereferencingResult
+	var receivedDidDereferencing dereferencingResult
 	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
-
 	Expect(testCase.expectedStatusCode).To(Equal(resp.StatusCode()))
-	Expect(testCase.expectedDereferencingResult.Context).To(Equal(receivedDidDereferencing.Context))
-	Expect(testCase.expectedDereferencingResult.DereferencingMetadata.ContentType).To(Equal(receivedDidDereferencing.DereferencingMetadata.ContentType))
-	Expect(testCase.expectedDereferencingResult.DereferencingMetadata.ResolutionError).To(Equal(receivedDidDereferencing.DereferencingMetadata.ResolutionError))
-	Expect(testCase.expectedDereferencingResult.DereferencingMetadata.DidProperties).To(Equal(receivedDidDereferencing.DereferencingMetadata.DidProperties))
-	Expect(testCase.expectedDereferencingResult.ContentStream).To(Equal(receivedDidDereferencing.ContentStream))
-	Expect(testCase.expectedDereferencingResult.Metadata).To(Equal(receivedDidDereferencing.Metadata))
+
+	expectedDidDereferencing := testCase.expectedResult.(dereferencingResult)
+	assertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
 },
 
 	Entry(
-		"cannot get resource data with not existent DID and a valid resouceId",
-		getResourceDataNegativeTestCase{
+		"cannot get resource data with not existent DID and a valid resourceId",
+		negativeTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
 			resolutionType: testconstants.DefaultResolutionType,
-			expectedDereferencingResult: DereferencingResult{
+			expectedResult: dereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -70,14 +59,14 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase getResourceDa
 
 	Entry(
 		"cannot get resource data with existent DID and not existent resourceId",
-		getResourceDataNegativeTestCase{
+		negativeTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
 			resolutionType: testconstants.DefaultResolutionType,
-			expectedDereferencingResult: DereferencingResult{
+			expectedResult: dereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -97,14 +86,14 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase getResourceDa
 
 	Entry(
 		"cannot get resource data with not existent DID and resourceId",
-		getResourceDataNegativeTestCase{
+		negativeTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
 				testconstants.NotExistentTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
 			resolutionType: testconstants.DefaultResolutionType,
-			expectedDereferencingResult: DereferencingResult{
+			expectedResult: dereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -124,14 +113,14 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase getResourceDa
 
 	Entry(
 		"cannot get resource data with an invalid DID and a valid resourceId",
-		getResourceDataNegativeTestCase{
+		negativeTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
 				testconstants.InvalidDID,
 				testconstants.ValidIdentifier,
 			),
 			resolutionType: testconstants.DefaultResolutionType,
-			expectedDereferencingResult: DereferencingResult{
+			expectedResult: dereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -151,14 +140,14 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase getResourceDa
 
 	Entry(
 		"cannot get resource data with an existent DID and an invalid resourceId",
-		getResourceDataNegativeTestCase{
+		negativeTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
 				testconstants.IndyStyleMainnetDid,
 				testconstants.InvalidIdentifier,
 			),
 			resolutionType: testconstants.DefaultResolutionType,
-			expectedDereferencingResult: DereferencingResult{
+			expectedResult: dereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -174,14 +163,14 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase getResourceDa
 
 	Entry(
 		"cannot get resource data with an invalid DID and resourceId",
-		getResourceDataNegativeTestCase{
+		negativeTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
 				testconstants.InvalidDID,
 				testconstants.InvalidIdentifier,
 			),
 			resolutionType: testconstants.DefaultResolutionType,
-			expectedDereferencingResult: DereferencingResult{
+			expectedResult: dereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,

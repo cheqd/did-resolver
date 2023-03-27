@@ -13,14 +13,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-type resourceMetadataPositiveTestCase struct {
-	didURL             string
-	resolutionType     string
-	expectedJSONPath   string
-	expectedStatusCode int
-}
-
-var _ = DescribeTable("", func(testCase resourceMetadataPositiveTestCase) {
+var _ = DescribeTable("Positive: get resource metadata", func(testCase positiveTestCase) {
 	client := resty.New()
 
 	resp, err := client.R().
@@ -28,25 +21,19 @@ var _ = DescribeTable("", func(testCase resourceMetadataPositiveTestCase) {
 		Get(testCase.didURL)
 	Expect(err).To(BeNil())
 
-	var receivedDidDereferencing DereferencingResult
+	var receivedDidDereferencing dereferencingResult
 	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
 	Expect(testCase.expectedStatusCode).To(Equal(resp.StatusCode()))
 
-	var expectedDidDereferencing DereferencingResult
+	var expectedDidDereferencing dereferencingResult
 	Expect(convertJsonFileToType(testCase.expectedJSONPath, &expectedDidDereferencing)).To(BeNil())
 
-	Expect(expectedDidDereferencing.Context).To(Equal(receivedDidDereferencing.Context))
-	Expect(expectedDidDereferencing.DereferencingMetadata.ContentType).To(Equal(receivedDidDereferencing.DereferencingMetadata.ContentType))
-	Expect(expectedDidDereferencing.DereferencingMetadata.ResolutionError).To(Equal(receivedDidDereferencing.DereferencingMetadata.ResolutionError))
-	Expect(expectedDidDereferencing.DereferencingMetadata.DidProperties).To(Equal(receivedDidDereferencing.DereferencingMetadata.DidProperties))
-	Expect(expectedDidDereferencing.ContentStream).To(Equal(receivedDidDereferencing.ContentStream))
-	Expect(expectedDidDereferencing.Metadata).To(Equal(receivedDidDereferencing.Metadata))
+	assertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
 },
 
 	Entry(
-
 		"can get resource metadata with existent DID and resourceId",
-		resourceMetadataPositiveTestCase{
+		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
 				testconstants.UUIDStyleTestnetDid,

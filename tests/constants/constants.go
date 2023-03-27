@@ -34,7 +34,7 @@ var (
 
 var (
 	NotExistentIdentifier = "ffffffff-329b-4614-a3f2-ffffffffffff"
-	NotExistentFragment   = "invalid_fragment"
+	NotExistentFragment   = "not_existent_fragment"
 )
 
 var (

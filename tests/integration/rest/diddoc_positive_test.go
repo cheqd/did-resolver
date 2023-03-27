@@ -15,14 +15,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-type getDidDocPositiveTestCase struct {
-	didURL             string
-	resolutionType     string
-	expectedJSONPath   string
-	expectedStatusCode int
-}
-
-var _ = DescribeTable("Positive: Get DIDDoc", func(testCase getDidDocPositiveTestCase) {
+var _ = DescribeTable("Positive: Get DIDDoc", func(testCase positiveTestCase) {
 	client := resty.New()
 
 	resp, err := client.R().
@@ -37,18 +30,16 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase getDidDocPositiveTes
 	var expectedDidResolution types.DidResolution
 	Expect(convertJsonFileToType(testCase.expectedJSONPath, &expectedDidResolution)).To(BeNil())
 
-	Expect(expectedDidResolution.Context).To(Equal(receivedDidResolution.Context))
-	Expect(expectedDidResolution.ResolutionMetadata.ContentType).To(Equal(receivedDidResolution.ResolutionMetadata.ContentType))
-	Expect(expectedDidResolution.ResolutionMetadata.ResolutionError).To(Equal(receivedDidResolution.ResolutionMetadata.ResolutionError))
-	Expect(expectedDidResolution.ResolutionMetadata.DidProperties).To(Equal(receivedDidResolution.ResolutionMetadata.DidProperties))
-	Expect(expectedDidResolution.Did).To(Equal(receivedDidResolution.Did))
-	Expect(expectedDidResolution.Metadata).To(Equal(receivedDidResolution.Metadata))
+	assertDidResolution(expectedDidResolution, receivedDidResolution)
 },
 
 	Entry(
 		"can get DIDDoc with an existent 22 bytes INDY style mainnet DID",
-		getDidDocPositiveTestCase{
-			didURL:             fmt.Sprintf("http://localhost:8080/1.0/identifiers/%s", testconstants.IndyStyleMainnetDid),
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s",
+				testconstants.IndyStyleMainnetDid,
+			),
 			resolutionType:     testconstants.DefaultResolutionType,
 			expectedJSONPath:   "testdata/diddoc/diddoc_indy_mainnet_did.json",
 			expectedStatusCode: http.StatusOK,
@@ -57,8 +48,11 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase getDidDocPositiveTes
 
 	Entry(
 		"can get DIDDoc with an existent 22 bytes INDY style testnet DID",
-		getDidDocPositiveTestCase{
-			didURL:             fmt.Sprintf("http://localhost:8080/1.0/identifiers/%s", testconstants.IndyStyleTestnetDid),
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s",
+				testconstants.IndyStyleTestnetDid,
+			),
 			resolutionType:     testconstants.DefaultResolutionType,
 			expectedJSONPath:   "testdata/diddoc/diddoc_indy_testnet_did.json",
 			expectedStatusCode: http.StatusOK,
@@ -67,8 +61,11 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase getDidDocPositiveTes
 
 	Entry(
 		"can get DIDDoc with an existent UUID style mainnet DID",
-		getDidDocPositiveTestCase{
-			didURL:             fmt.Sprintf("http://localhost:8080/1.0/identifiers/%s", testconstants.UUIDStyleMainnetDid),
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s",
+				testconstants.UUIDStyleMainnetDid,
+			),
 			resolutionType:     testconstants.DefaultResolutionType,
 			expectedJSONPath:   "testdata/diddoc/diddoc_uuid_mainnet_did.json",
 			expectedStatusCode: http.StatusOK,
@@ -77,8 +74,11 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase getDidDocPositiveTes
 
 	Entry(
 		"can get DIDDoc with an existent UUID style testnet DID",
-		getDidDocPositiveTestCase{
-			didURL:             fmt.Sprintf("http://localhost:8080/1.0/identifiers/%s", testconstants.UUIDStyleTestnetDid),
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s",
+				testconstants.UUIDStyleTestnetDid,
+			),
 			resolutionType:     testconstants.DefaultResolutionType,
 			expectedJSONPath:   "testdata/diddoc/diddoc_uuid_testnet_did.json",
 			expectedStatusCode: http.StatusOK,

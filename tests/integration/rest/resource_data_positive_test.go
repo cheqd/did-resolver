@@ -13,14 +13,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-type getResourceDataPositiveTestCase struct {
-	didURL             string
-	resolutionType     string
-	expectedJSONPath   string
-	expectedStatusCode int
-}
-
-var _ = DescribeTable("Positive: Get resource data", func(testCase getResourceDataPositiveTestCase) {
+var _ = DescribeTable("Positive: Get resource data", func(testCase positiveTestCase) {
 	client := resty.New()
 
 	resp, err := client.R().
@@ -39,7 +32,7 @@ var _ = DescribeTable("Positive: Get resource data", func(testCase getResourceDa
 
 	Entry(
 		"can get resource data with an existent mainnet DID and existent resourceId",
-		getResourceDataPositiveTestCase{
+		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
 				testconstants.UUIDStyleTestnetDid,
