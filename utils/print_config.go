@@ -1,6 +1,6 @@
 package utils
 
-func printConfig() error {
+func PrintConfig() error {
 	config := MustLoadConfig()
 	configJson := config.MustMarshalJson()
 

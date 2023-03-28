@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"net/http"
 	"net/http/httptest"
 
 	diddocServices "github.com/cheqd/did-resolver/services/diddoc"
@@ -15,16 +16,9 @@ var _ = Describe("Content/Accept encoding checks", func() {
 	var rec *httptest.ResponseRecorder
 
 	BeforeEach(func() {
-		validDIDDoc := ValidDIDDoc()
-		validMetadata := ValidMetadata()
-		validResource := ValidResource()
-		ledgerService := NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource)
-		context, rec = setupContext(
-			"/1.0/identifiers/:did",
-			[]string{"did"},
-			[]string{ValidDid},
-			types.DIDJSON,
-			ledgerService)
+
+		request := httptest.NewRequest(http.MethodGet, "/1.0/identifiers/" + ValidDid, nil)
+		context, rec = setupEmptyContext(request, types.DIDJSON, mockLedgerService)
 	})
 	Context("Gzip in Accept-Encoding", func() {
 		It("should return gzip in Content-Encoding", func() {
