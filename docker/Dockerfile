@@ -51,4 +51,3 @@ USER $USER
 EXPOSE 8080
 
 ENTRYPOINT ["did-resolver"]
-CMD ["serve"]
