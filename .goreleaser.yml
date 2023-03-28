@@ -15,7 +15,7 @@ builds:
   - 
     env:
       - CGO_ENABLED=0
-    main: ./cmd/did-resolver
+    main: ./
     binary: did-resolver
     goos:
       - linux
@@ -28,8 +28,8 @@ builds:
       - -trimpath
     ldflags:
       - -s -w
-      - -X github.com/cheqd/did-resolver/cmd/did-resolver.version={{ .Version }}
-      - -X github.com/cheqd/did-resolver/cmd/did-resolver.Commit={{ .Commit }}
+      - -X github.com/cheqd/did-resolver.version={{ .Version }}
+      - -X github.com/cheqd/did-resolver.Commit={{ .Commit }}
 
 archives:
   - id: release-archives
