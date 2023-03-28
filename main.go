@@ -17,6 +17,39 @@ import (
 	_ "github.com/cheqd/did-resolver/docs"
 )
 
+func setupLogger(config types.Config) {
+	log.Info().Msgf("Setting log level: %s", config.LogLevel)
+	level, err := zerolog.ParseLevel(config.LogLevel)
+	if err != nil {
+		panic(err)
+	}
+	zerolog.SetGlobalLevel(level)
+}
+
+func getConfig() types.Config {
+	log.Info().Msg("Loading configuration")
+	config, err := utils.LoadConfig()
+	if err != nil {
+		panic(err)
+	}
+	log.Info().Msgf("Configuration: %s", config.MustMarshalJson())
+	return config
+}
+
+func SetRoutes(e *echo.Echo) {
+	// Routes
+	// Did docs
+	e.GET(types.SWAGGER_PATH, echoSwagger.WrapHandler)
+	e.GET(types.RESOLVER_PATH+":did", didDocServices.DidDocEchoHandler)
+	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSION_PATH+":version", didDocServices.DidDocVersionEchoHandler)
+	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSION_PATH+":version/metadata", didDocServices.DidDocVersionMetadataEchoHandler)
+	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSIONS_PATH, didDocServices.DidDocAllVersionMetadataEchoHandler)
+	// Resources
+	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource", resourceServices.ResourceDataEchoHandler)
+	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource/metadata", resourceServices.ResourceMetadataEchoHandler)
+	e.GET(types.RESOLVER_PATH+":did"+types.DID_METADATA, resourceServices.ResourceCollectionEchoHandler)
+}
+
 func serve() {
 	// Get Config
 	config := utils.GetConfig()
@@ -65,17 +98,7 @@ func serve() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	// Routes
-	// Did docs
-	e.GET(types.SWAGGER_PATH, echoSwagger.WrapHandler)
-	e.GET(types.RESOLVER_PATH+":did", didDocServices.DidDocEchoHandler)
-	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSION_PATH+":version", didDocServices.DidDocVersionEchoHandler)
-	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSION_PATH+":version/metadata", didDocServices.DidDocVersionMetadataEchoHandler)
-	e.GET(types.RESOLVER_PATH+":did"+types.DID_VERSIONS_PATH, didDocServices.DidDocAllVersionMetadataEchoHandler)
-	// Resources
-	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource", resourceServices.ResourceDataEchoHandler)
-	e.GET(types.RESOLVER_PATH+":did"+types.RESOURCE_PATH+":resource/metadata", resourceServices.ResourceMetadataEchoHandler)
-	e.GET(types.RESOLVER_PATH+":did"+types.DID_METADATA, resourceServices.ResourceCollectionEchoHandler)
+	SetRoutes(e)
 
 	e.Debug = true
 	log.Info().Msg("Starting listener")

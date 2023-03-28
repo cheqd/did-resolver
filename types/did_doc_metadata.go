@@ -45,7 +45,7 @@ func (e *ResolutionDidDocMetadata) RemoveContext()                {}
 func (e *ResolutionDidDocMetadata) GetBytes() []byte              { return []byte{} }
 
 func toTime(value *timestamppb.Timestamp) (result *time.Time) {
-	if value.AsTime().IsZero() {
+	if value == nil || value.AsTime().IsZero() {
 		result = nil
 	} else {
 		value := value.AsTime()

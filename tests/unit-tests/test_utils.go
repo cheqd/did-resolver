@@ -3,17 +3,25 @@ package tests
 import (
 	"crypto/sha256"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	"github.com/cheqd/did-resolver/cmd/did-resolver/cmd"
+	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
+	"github.com/labstack/echo/v4"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+var mockLedgerService = NewMockLedgerService(&validDIDDoc, &validMetadata, &validResource)
+
 const (
-	ValidIdentifier = "fb53dd05-329b-4614-a3f2-c0a8c7554ee3"
 	ValidMethod     = "cheqd"
 	ValidNamespace  = "mainnet"
+	ValidIdentifier = "fb53dd05-329b-4614-a3f2-c0a8c7554ee3"
 	ValidDid        = "did:" + ValidMethod + ":" + ValidNamespace + ":" + ValidIdentifier
 	ValidResourceId = "a09abea0-22e0-4b35-8f70-9cc3a6d0b5fd"
 	ValidPubKeyJWK  = "{" +
@@ -22,6 +30,21 @@ const (
 		"\"kty\":\"OKP\"," +
 		"\"x\":\"VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ\"" +
 		"}"
+	ValidVersionId = "test_version_id"
+)
+
+const (
+	InvalidMethod     = "invalid_method"
+	InvalidNamespace  = "invalid_namespace"
+	InvalidIdentifier = "invalid_identifier"
+	InvalidDid        = "did:" + InvalidMethod + ":" + InvalidNamespace + ":" + InvalidIdentifier
+	InvalidResourceId = "invalid_resource_id"
+)
+
+const (
+	NotExistIdentifier = "fb53dd05-329b-4614-a3f2-c0a8c7ffffff"
+	NotExistDID        = "did:" + ValidMethod + ":" + ValidNamespace + ":" + NotExistIdentifier
+	NotExistFragmentId = "not_found_fragment_id"
 )
 
 var (
@@ -30,7 +53,51 @@ var (
 		Nanos:   0,
 	}
 	EmptyTime = EmptyTimestamp.AsTime()
+
+	NotEmptyTimestamp = &timestamppb.Timestamp{
+		Seconds: 123456789,
+		Nanos:   0,
+	}
+	NotEmptyTime = NotEmptyTimestamp.AsTime()
 )
+
+var (
+	ResourceData     = []byte("test_checksum")
+	ResourceMetadata = resourceTypes.Metadata{
+		CollectionId: ValidIdentifier,
+		Id:           ValidResourceId,
+		Name:         "Existing Resource Name",
+		ResourceType: "CL-Schema",
+		MediaType:    "application/json",
+		Checksum:     generateChecksum(ResourceData),
+	}
+
+	ValidMetadataResource = types.DereferencedResource{
+		ResourceURI:       ValidDid + types.RESOURCE_PATH + ResourceMetadata.Id,
+		CollectionId:      ResourceMetadata.CollectionId,
+		ResourceId:        ResourceMetadata.Id,
+		Name:              ResourceMetadata.Name,
+		ResourceType:      ResourceMetadata.ResourceType,
+		MediaType:         ResourceMetadata.MediaType,
+		Created:           &EmptyTime,
+		Checksum:          ResourceMetadata.Checksum,
+		PreviousVersionId: nil,
+		NextVersionId:     nil,
+	}
+)
+
+var (
+	validDIDDoc             = ValidDIDDoc()
+	validVerificationMethod = ValidVerificationMethod()
+	validDIDDocResolution   = types.NewDidDoc(&validDIDDoc)
+	validMetadata           = ValidMetadata()
+	validService            = ValidService()
+	validResource           = ValidResource()
+	validFragmentMetadata   = types.NewResolutionDidDocMetadata(ValidDid, &validMetadata, []*resourceTypes.Metadata{})
+	validQuery, _           = url.ParseQuery("attr=value")
+)
+
+var dereferencedResourceList = types.NewDereferencedResourceList(ValidDid, []*resourceTypes.Metadata{validResource.Metadata})
 
 func ValidVerificationMethod() didTypes.VerificationMethod {
 	return didTypes.VerificationMethod{
@@ -82,6 +149,42 @@ func ValidMetadata() didTypes.Metadata {
 	return didTypes.Metadata{VersionId: "test_version_id", Deactivated: false}
 }
 
+func generateChecksum(data []byte) string {
+	h := sha256.New()
+	h.Write(data)
+
+	return fmt.Sprintf("%x", h.Sum(nil))
+}
+
+func defineContentType(expectedContentType types.ContentType, resolutionType types.ContentType) types.ContentType {
+	if expectedContentType == "" {
+		return resolutionType
+	}
+
+	return expectedContentType
+}
+
+func setupEmptyContext(request *http.Request, resolutionType types.ContentType, ledgerService services.LedgerServiceI) (echo.Context, *httptest.ResponseRecorder) {
+	e := echo.New()
+	cmd.SetRoutes(e)
+
+	didService := services.NewDIDDocService(types.DID_METHOD, ledgerService)
+	resourceService := services.NewResourceService(types.DID_METHOD, ledgerService)
+
+	rec := httptest.NewRecorder()
+	context := e.NewContext(request, rec)
+	e.Router().Find("GET", request.RequestURI, context)
+	rc := services.ResolverContext{
+		Context:         context,
+		LedgerService:   ledgerService,
+		DidDocService:   didService,
+		ResourceService: resourceService,
+	}
+
+	request.Header.Add("accept", string(resolutionType))
+	return rc, rec
+}
+
 type MockLedgerService struct {
 	Did      *didTypes.DidDoc
 	Metadata *didTypes.Metadata
@@ -96,16 +199,18 @@ func NewMockLedgerService(did *didTypes.DidDoc, metadata *didTypes.Metadata, res
 	}
 }
 
+// TODO: add more unit tests for testing QueryDIDDoc method.
 func (ls MockLedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
-	if did == ls.Did.Id {
-		println("query !!!" + ls.Did.Id)
+	if ls.Did.Id == did {
 		return &didTypes.DidDocWithMetadata{DidDoc: ls.Did, Metadata: ls.Metadata}, nil
 	}
+
 	return nil, types.NewNotFoundError(did, types.JSON, nil, true)
 }
 
+// TODO: add unit tests for testing QueryAllDidDocVersionsMetadata method.
 func (ls MockLedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError) {
-	if did == ls.Did.Id {
+	if ls.Did.Id == did {
 		return []*didTypes.Metadata{ls.Metadata}, nil
 	}
 
@@ -113,16 +218,19 @@ func (ls MockLedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTy
 }
 
 func (ls MockLedgerService) QueryResource(did string, resourceId string) (*resourceTypes.ResourceWithMetadata, *types.IdentityError) {
-	if ls.Resource.Metadata == nil || ls.Resource.Metadata.Id != resourceId {
+	if ls.Did.Id != did || ls.Resource.Metadata == nil || ls.Resource.Metadata.Id != resourceId {
 		return nil, types.NewNotFoundError(did, types.JSON, nil, true)
 	}
+
 	return ls.Resource, nil
 }
 
+// TODO: add unit tests for testing QueryCollectionResources method.
 func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resourceTypes.Metadata, *types.IdentityError) {
-	if ls.Resource.Metadata == nil {
+	if ls.Did.Id != did || ls.Resource.Metadata == nil {
 		return []*resourceTypes.Metadata{}, types.NewNotFoundError(did, types.JSON, nil, true)
 	}
+
 	return []*resourceTypes.Metadata{ls.Resource.Metadata}, nil
 }
 
