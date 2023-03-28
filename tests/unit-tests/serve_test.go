@@ -16,8 +16,7 @@ var _ = Describe("Content/Accept encoding checks", func() {
 	var rec *httptest.ResponseRecorder
 
 	BeforeEach(func() {
-
-		request := httptest.NewRequest(http.MethodGet, "/1.0/identifiers/" + ValidDid, nil)
+		request := httptest.NewRequest(http.MethodGet, "/1.0/identifiers/"+ValidDid, nil)
 		context, rec = setupEmptyContext(request, types.DIDJSON, mockLedgerService)
 	})
 	Context("Gzip in Accept-Encoding", func() {
