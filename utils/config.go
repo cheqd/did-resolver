@@ -8,8 +8,43 @@ import (
 	"time"
 
 	"github.com/cheqd/did-resolver/types"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
+
+func SetupLogger(config types.Config) {
+	log.Info().Msgf("Setting log level: %s", config.LogLevel)
+	level, err := zerolog.ParseLevel(config.LogLevel)
+	if err != nil {
+		panic(err)
+	}
+	zerolog.SetGlobalLevel(level)
+}
+
+func ParseGRPCEndpoint(configEndpoint string, networkName string) (*types.Network, error) {
+	config := strings.Split(configEndpoint, ",")
+	if len(config) != 3 {
+		return nil, fmt.Errorf(fmt.Sprintf("Endpoint config for %s is invalid: %s", networkName, configEndpoint))
+	}
+	useTls, err := strconv.ParseBool(config[1])
+	if err != nil {
+		return nil, fmt.Errorf(fmt.Sprintf("useTls value %s for %s endpoint is invalid", configEndpoint, networkName))
+	}
+	timeout, err := time.ParseDuration(config[2])
+	if err != nil {
+		return nil, fmt.Errorf(fmt.Sprintf("Timeout value %s for %s endpoint is invalid", configEndpoint, networkName))
+	}
+
+	return &types.Network{
+		Namespace: networkName,
+		Endpoint:  config[0],
+		UseTls:    useTls,
+		Timeout:   timeout,
+	}, nil
+}
+
+// Config functions
 
 func LoadConfig() (types.Config, error) {
 	if _, err := os.Stat("config.env"); err == nil {
@@ -46,28 +81,6 @@ func MustLoadConfig() types.Config {
 	return config
 }
 
-func ParseGRPCEndpoint(configEndpoint string, networkName string) (*types.Network, error) {
-	config := strings.Split(configEndpoint, ",")
-	if len(config) != 3 {
-		return nil, fmt.Errorf(fmt.Sprintf("Endpoint config for %s is invalid: %s", networkName, configEndpoint))
-	}
-	useTls, err := strconv.ParseBool(config[1])
-	if err != nil {
-		return nil, fmt.Errorf(fmt.Sprintf("useTls value %s for %s endpoint is invalid", configEndpoint, networkName))
-	}
-	timeout, err := time.ParseDuration(config[2])
-	if err != nil {
-		return nil, fmt.Errorf(fmt.Sprintf("Timeout value %s for %s endpoint is invalid", configEndpoint, networkName))
-	}
-
-	return &types.Network{
-		Namespace: networkName,
-		Endpoint:  config[0],
-		UseTls:    useTls,
-		Timeout:   timeout,
-	}, nil
-}
-
 func NewConfig(rawConfig types.RawConfig) (types.Config, error) {
 	mainnetEndpoint, err := ParseGRPCEndpoint(rawConfig.MainnetEndpoint, "mainnet")
 	if err != nil {
@@ -83,3 +96,23 @@ func NewConfig(rawConfig types.RawConfig) (types.Config, error) {
 		LogLevel:         rawConfig.LogLevel,
 	}, nil
 }
+
+func PrintConfig() error {
+	config := MustLoadConfig()
+	configJson := config.MustMarshalJson()
+
+	println(configJson)
+
+	return nil
+}
+
+func GetConfig() types.Config {
+	log.Info().Msg("Loading configuration")
+	config, err := LoadConfig()
+	if err != nil {
+		panic(err)
+	}
+	log.Info().Msgf("Configuration: %s", config.MustMarshalJson())
+	return config
+}
+

@@ -86,5 +86,6 @@ func serve() {
 //	@schemes		https http
 
 func main() {
+	utils.PrintConfig()
 	serve()
 }
