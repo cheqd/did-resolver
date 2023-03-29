@@ -115,4 +115,3 @@ func GetConfig() types.Config {
 	log.Info().Msgf("Configuration: %s", config.MustMarshalJson())
 	return config
 }
-
