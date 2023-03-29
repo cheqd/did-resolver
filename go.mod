@@ -7,7 +7,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.10.2
 	github.com/mr-tron/base58 v1.2.0
-	github.com/multiformats/go-multibase v0.1.1
+	github.com/multiformats/go-multibase v0.2.0
 	github.com/rs/zerolog v1.29.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.15.0
