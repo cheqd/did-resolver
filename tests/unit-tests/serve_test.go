@@ -52,4 +52,16 @@ var _ = Describe("Content/Accept encoding checks", func() {
 			Expect(rec.Header().Get("Content-Encoding")).To(BeEmpty())
 		})
 	})
+	Context("* in Accept-Encoding", func() {
+		It("should return gzip in Content-Encoding", func() {
+			// Setup Accept header to all possible variants
+			context.Request().Header.Set("Accept-Encoding", "*")
+
+			err := diddocServices.DidDocEchoHandler(context)
+			Expect(err).To(BeNil())
+
+			// Check if Content-Encoding is Empty
+			Expect(rec.Header().Get("Content-Encoding")).To(Equal("gzip"))
+		})
+	})
 })

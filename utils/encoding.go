@@ -33,5 +33,5 @@ func IsValidBase58(data string) bool {
 // Headers Encoding
 func IsGzipAccepted(c echo.Context) bool {
 	acceptEncoding := c.Request().Header.Get(echo.HeaderAcceptEncoding)
-	return strings.Contains(acceptEncoding, "gzip")
+	return strings.Contains(acceptEncoding, "gzip") || strings.Contains(acceptEncoding, "*")
 }
