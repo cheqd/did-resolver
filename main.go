@@ -86,6 +86,9 @@ func serve() {
 //	@schemes		https http
 
 func main() {
-	utils.PrintConfig()
+	err := utils.PrintConfig()
+	if err != nil {
+		panic(err)
+	}
 	serve()
 }
