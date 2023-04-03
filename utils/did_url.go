@@ -4,9 +4,28 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"regexp"
 
-	"github.com/cheqd/did-resolver/types"
 	"github.com/google/uuid"
+)
+
+
+// SplitDIDURLRegexp ...
+// That for groups:
+// Example: did:cheqd:testnet:fafdsffq11213343/path-to-s/ome-external-resource?query#key1???
+// 1 - [^/?#]* - all the symbols except / and ? and # . This is the DID part                      (did:cheqd:testnet:fafdsffq11213343)
+// 2 - [^?#]*  - all the symbols except ? and #. it means te section started from /, path-abempty (/path-to-s/ome-external-resource)
+// 3 - \?([^#]*) - group for `query` part but with ? symbol 									  (?query)
+// 4 - [^#]*     - group inside query string, match only exact query                              (query)
+// 5 - #([^#]+[\$]?) - group for fragment, starts with #, includes #                              (#key1???)
+// 6 - [^#]+[\$]?    - fragment only															  (key1???)
+// Number of queries is not limited.
+var SplitDIDURLRegexp = regexp.MustCompile(`([^/?#]*)?([^?#]*)(\?([^#]*))?(#([^#]+$))?$`)
+
+var (
+	DIDPathAbemptyRegexp = regexp.MustCompile(`^([/a-zA-Z0-9\-\.\_\~\!\$\&\'\(\)\*\+\,\;\=\:\@]*|(%[0-9A-Fa-f]{2})*)*$`)
+	DIDQueryRegexp       = regexp.MustCompile(`^([/a-zA-Z0-9\-\.\_\~\!\$\&\'\(\)\*\+\,\;\=\:\@\/\?]*|(%[0-9A-Fa-f]{2})*)*$`)
+	DIDFragmentRegexp    = regexp.MustCompile(`^([/a-zA-Z0-9\-\.\_\~\!\$\&\'\(\)\*\+\,\;\=\:\@\/\?]*|(%[0-9A-Fa-f]{2})*)*$`)
 )
 
 func IsValidResourceId(u string) bool {
@@ -32,7 +51,7 @@ func IsValidV1ID(id string) bool {
 }
 
 func MustSplitDIDUrl(didURL string) (did string, path string, query string, fragment string) {
-	did, path, query, fragment, err := types.TrySplitDIDUrl(didURL)
+	did, path, query, fragment, err := TrySplitDIDUrl(didURL)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -55,7 +74,7 @@ func JoinDIDUrl(did string, path string, query string, fragment string) string {
 
 // ValidateDIDUrl checks method and allowed namespaces only when the corresponding parameters are specified.
 func ValidateDIDUrl(didURL string, method string, allowedNamespaces []string) error {
-	did, path, query, fragment, err := types.TrySplitDIDUrl(didURL)
+	did, path, query, fragment, err := TrySplitDIDUrl(didURL)
 	if err != nil {
 		return err
 	}
@@ -85,22 +104,22 @@ func ValidateDIDUrl(didURL string, method string, allowedNamespaces []string) er
 }
 
 func ValidateFragment(fragment string) error {
-	if !types.DIDFragmentRegexp.MatchString(fragment) {
-		return fmt.Errorf("did url fragment must match the following regexp: %s", types.DIDFragmentRegexp)
+	if !DIDFragmentRegexp.MatchString(fragment) {
+		return fmt.Errorf("did url fragment must match the following regexp: %s", DIDFragmentRegexp)
 	}
 	return nil
 }
 
 func ValidateQuery(query string) error {
-	if !types.DIDQueryRegexp.MatchString(query) {
-		return fmt.Errorf("did url query must match the following regexp: %s", types.DIDQueryRegexp)
+	if !DIDQueryRegexp.MatchString(query) {
+		return fmt.Errorf("did url query must match the following regexp: %s", DIDQueryRegexp)
 	}
 	return nil
 }
 
 func ValidatePath(path string) error {
-	if !types.DIDPathAbemptyRegexp.MatchString(path) {
-		return fmt.Errorf("did url path abempty must match the following regexp: %s", types.DIDPathAbemptyRegexp)
+	if !DIDPathAbemptyRegexp.MatchString(path) {
+		return fmt.Errorf("did url path abempty must match the following regexp: %s", DIDPathAbemptyRegexp)
 	}
 	return nil
 }
@@ -129,4 +148,41 @@ func GetFragment(fragmentId string) (fragment string) {
 	}
 
 	return fragment
+}
+
+// TrySplitDIDUrl Validates generic format of DIDUrl. It doesn't validate path, query and fragment content.
+// Call ValidateDIDUrl for further validation.
+func TrySplitDIDUrl(didURL string) (did string, path string, query string, fragment string, err error) {
+	matches := SplitDIDURLRegexp.FindAllStringSubmatch(didURL, -1)
+
+	if len(matches) != 1 {
+		return "", "", "", "", errors.New("unable to split did url into did, path, query and fragment")
+	}
+
+	match := matches[0]
+
+	return match[1], match[2], match[4], match[6], nil
+}
+
+var (
+	SplitDIDRegexp     = regexp.MustCompile(`^did:([^:]+?)(:([^:]+?))?:([^:]+)$`)
+	DidNamespaceRegexp = regexp.MustCompile(`^[a-zA-Z0-9]*$`)
+)
+
+// TrySplitDID Validates generic format of DID. It doesn't validate method, name and id content.
+// Call ValidateDID for further validation.
+func TrySplitDID(did string) (method string, namespace string, id string, err error) {
+	// Example: did:cheqd:testnet:base58str1ng1111
+	// match [0] - the whole string
+	// match [1] - cheqd                - method
+	// match [2] - :testnet
+	// match [3] - testnet              - namespace
+	// match [4] - base58str1ng1111     - id
+	matches := SplitDIDRegexp.FindAllStringSubmatch(did, -1)
+	if len(matches) != 1 {
+		return "", "", "", errors.New("unable to split did into method, namespace and id")
+	}
+
+	match := matches[0]
+	return match[1], match[3], match[4], nil
 }

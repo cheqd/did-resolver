@@ -44,6 +44,6 @@ func (dr *ResourceMetadataDereferencingService) Query(c services.ResolverContext
 		err.IsDereferencing = dr.IsDereferencing
 		return err
 	}
-	dr.Result = result
+	dr.SetResponse(result)
 	return nil
 }

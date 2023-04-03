@@ -18,11 +18,29 @@ type (
 		Fragment             string
 		IsDereferencing      bool
 		Queries              url.Values
-		Result               types.ResultI
+		Result               types.ResolutionResultI
 		RequestedContentType types.ContentType
 	}
 )
 
+// Getters
+func (dd BaseRequestService) GetDid() string {
+	return dd.Did
+}
+
+func (dd BaseRequestService) GetContentType() types.ContentType {
+	return dd.RequestedContentType
+}
+
+func (dd BaseRequestService) GetQueryParam(name string) string {
+	return dd.Queries.Get(name)
+}
+
+func (dd BaseRequestService) GetDereferencing() bool {
+	return dd.IsDereferencing
+}
+
+// Basic implementation
 func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 	// Here we raise errors even they were caught while getting the data from context
 
@@ -46,7 +64,7 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 }
 
 func (dd BaseRequestService) BasicValidation(c ResolverContext) error {
-	didMethod, _, _, _ := types.TrySplitDID(dd.Did)
+	didMethod, _, _, _ := utils.TrySplitDID(dd.Did)
 	if didMethod != types.DID_METHOD {
 		return types.NewMethodNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
@@ -62,7 +80,7 @@ func (dd BaseRequestService) BasicValidation(c ResolverContext) error {
 func (dd *BaseRequestService) IsRedirectNeeded(c ResolverContext) bool {
 	if !utils.IsValidDID(dd.Did, "", c.LedgerService.GetNamespaces()) {
 		err := utils.ValidateDID(dd.Did, "", c.LedgerService.GetNamespaces())
-		_, _, identifier, _ := types.TrySplitDID(dd.Did)
+		_, _, identifier, _ := utils.TrySplitDID(dd.Did)
 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
 			return true
 		}
@@ -84,7 +102,7 @@ func (dd *BaseRequestService) Query(c ResolverContext) error {
 		err.IsDereferencing = false
 		return err
 	}
-	dd.Result = result
+	dd.SetResponse(result)
 	return nil
 }
 
@@ -98,4 +116,11 @@ func (dd BaseRequestService) SetupResponse(c ResolverContext) error {
 
 func (dd BaseRequestService) Respond(c ResolverContext) error {
 	return c.JSONPretty(http.StatusOK, dd.Result, "  ")
+}
+
+// Setters
+
+func (dd *BaseRequestService) SetResponse(response types.ResolutionResultI) error {
+	dd.Result = response
+	return nil
 }

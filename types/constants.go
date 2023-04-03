@@ -35,3 +35,10 @@ const (
 	RESOURCE_PATH     = "/resources/"
 	SWAGGER_PATH      = "/swagger/*"
 )
+
+const (
+	VersionId   string = "versionId"
+	VersionTime string = "versionTime"
+	ServiceQ    string = "service"
+	RelativeRef string = "relativeRef"
+)

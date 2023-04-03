@@ -11,6 +11,7 @@ import (
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/types"
+	"github.com/cheqd/did-resolver/utils"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -40,7 +41,7 @@ func NewLedgerService() LedgerService {
 }
 
 func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
-	method, namespace, _, _ := types.TrySplitDID(did)
+	method, namespace, _, _ := utils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
@@ -75,7 +76,7 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 }
 
 func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError) {
-	method, namespace, _, _ := types.TrySplitDID(did)
+	method, namespace, _, _ := utils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
@@ -100,7 +101,7 @@ func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.
 }
 
 func (ls LedgerService) QueryResource(did string, resourceId string) (*resourceTypes.ResourceWithMetadata, *types.IdentityError) {
-	method, namespace, collectionId, _ := types.TrySplitDID(did)
+	method, namespace, collectionId, _ := utils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDIDError(did, types.JSON, nil, true)
@@ -127,7 +128,7 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resourceT
 }
 
 func (ls LedgerService) QueryCollectionResources(did string) ([]*resourceTypes.Metadata, *types.IdentityError) {
-	method, namespace, collectionId, _ := types.TrySplitDID(did)
+	method, namespace, collectionId, _ := utils.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)

@@ -18,9 +18,9 @@ import (
 
 func serve() {
 	// Get Config
-	config := utils.GetConfig()
+	config := types.GetConfig()
 	// Setup logger
-	utils.SetupLogger(config)
+	types.SetupLogger(config)
 	// Services
 	ledgerService := services.NewLedgerService()
 	didService := services.NewDIDDocService(types.DID_METHOD, ledgerService)
@@ -36,7 +36,7 @@ func serve() {
 
 	// Echo instance
 	e := echo.New()
-	e.HTTPErrorHandler = utils.CustomHTTPErrorHandler
+	e.HTTPErrorHandler = services.CustomHTTPErrorHandler
 
 	// Middleware
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -86,7 +86,7 @@ func serve() {
 //	@schemes		https http
 
 func main() {
-	err := utils.PrintConfig()
+	err := types.PrintConfig()
 	if err != nil {
 		panic(err)
 	}

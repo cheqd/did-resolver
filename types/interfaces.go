@@ -9,4 +9,5 @@ type ContentStreamI interface {
 type ResolutionResultI interface {
 	GetContentType() string
 	GetBytes() []byte
+	IsRedirect() bool
 }

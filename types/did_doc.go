@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"net/url"
 
 	did "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 )
@@ -110,3 +111,17 @@ func (e *VerificationMethod) AddContext(newProtocol string) {
 }
 func (e *VerificationMethod) RemoveContext()   { e.Context = nil }
 func (e *VerificationMethod) GetBytes() []byte { return []byte{} }
+
+
+func (d DidDoc) GetServiceByName(serviceId string) (string, error) {
+	for _, s := range d.Service {
+		_url, err := url.Parse(s.Id)
+		if err != nil {
+			return "", err
+		}
+		if _url.Fragment == serviceId {
+			return s.ServiceEndpoint[0], nil
+		}
+	}
+	return "", nil
+}

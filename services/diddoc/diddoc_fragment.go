@@ -34,6 +34,6 @@ func (dd *FragmentDIDDocRequestService) Query(c services.ResolverContext) error 
 		err.IsDereferencing = dd.IsDereferencing
 		return err
 	}
-	dd.Result = result
+	dd.SetResponse(result)
 	return nil
 }

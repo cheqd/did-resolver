@@ -1,20 +1,31 @@
 package diddoc
 
 import (
+	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/cheqd/did-resolver/services"
+	"github.com/cheqd/did-resolver/services/queries"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
+	// "github.com/cheqd/did-resolver/utils"
+)
+
+const (
+	supportedQueries = "versionId,versionTime,service,relativeRef"
 )
 
 type QueryDIDDocRequestService struct {
 	services.BaseRequestService
+	FirstHandler queries.BaseQueryHandlerI
 }
 
 func (dd *QueryDIDDocRequestService) Setup(c services.ResolverContext) error {
 	dd.IsDereferencing = true
-	return nil
+
+	// Register query handlers
+	return dd.RegisterQueryHandlers(c)
 }
 
 func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
@@ -23,14 +34,35 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 		return types.NewInvalidDIDUrlError(dd.Did, dd.RequestedContentType, err, dd.IsDereferencing)
 	}
 
-	// ToDo make list of supported queries
-	// For now we support only versionId
-	if dd.Version == "" {
+	diff := types.DidSupportedQueries.DiffWithUrlValues(dd.Queries)
+	if len(diff) > 0 {
+		return types.NewRepresentationNotSupportedError("Queries from list: " + strings.Join(diff, ","), dd.RequestedContentType, nil, dd.IsDereferencing)
+	}
+
+	versionId := dd.GetQueryParam(types.VersionId)
+	versionTime := dd.GetQueryParam(types.VersionTime)
+	service := dd.GetQueryParam(types.ServiceQ)
+	relativeRef := dd.GetQueryParam(types.RelativeRef)
+
+	// Validation of query parameters
+	if versionId != "" && versionTime != "" {
 		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
+	// relativeRef should be only with service parameter also
+	if relativeRef != "" && service == "" {
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
+	}
+
+	if versionTime != "" {
+		_, err := utils.ParseFromStringTimeToGoTime(versionTime)
+		if err != nil {
+			return types.NewRepresentationNotSupportedError(versionTime, dd.RequestedContentType, err, dd.IsDereferencing)
+		}
+	}
+	
 	// Validate that versionId is UUID
-	if !utils.IsValidUUID(dd.Version) {
+	if versionId != "" && !utils.IsValidUUID(dd.Version) {
 		return types.NewInvalidDIDUrlError(dd.Version, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
@@ -47,10 +79,53 @@ func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext)
 		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 	dd.Queries = queries
-
-	version := queries.Get("versionId")
-	if version != "" {
-		dd.Version = version
-	}
 	return nil
+}
+
+func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverContext) error {
+	// ToDo register query handlers
+	relativeRefHandler := queries.RelativeRefHandler{}
+	serviceHandler := queries.ServiceHandler{}
+	versionIdHandler := queries.VersionIdHandler{}
+	versionTimeHandler := queries.VersionTimeHandler{}
+	didQueryHandler := queries.DidQueryHandler{}
+
+	stopHandler := queries.StopHandler{}
+
+	// Create Chain of responsibility
+	// First we need to just ask for Did:
+	// - didQueryHandler
+	// or
+	// - versionIdHandler
+	// After that we can find for service field if it's set.
+	// didQueryHandler -> versionIdHandler -> versionTimeHandler -> serviceHandler
+
+	didQueryHandler.SetNext(c, &versionIdHandler)
+	versionIdHandler.SetNext(c, &versionTimeHandler)
+	versionTimeHandler.SetNext(c, &serviceHandler)
+	serviceHandler.SetNext(c, &relativeRefHandler)
+	relativeRefHandler.SetNext(c, &stopHandler)
+
+	dd.FirstHandler = &didQueryHandler
+
+	return nil
+}
+
+func (dd *QueryDIDDocRequestService) Query(c services.ResolverContext) error {
+	result, err := dd.FirstHandler.Handle(c, dd, nil)
+	if err != nil {
+		return err
+	}
+	if result == nil {
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
+	}
+	dd.SetResponse(result)
+	return nil
+}
+
+func (dd QueryDIDDocRequestService) Respond(c services.ResolverContext) error {
+	if dd.Result.IsRedirect() {
+		return c.Redirect(http.StatusSeeOther, string(dd.Result.GetBytes()))
+	}
+	return c.JSONPretty(http.StatusOK, dd.Result, "  ")
 }

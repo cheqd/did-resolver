@@ -45,7 +45,7 @@ func (dr *ResourceDataDereferencingService) Query(c services.ResolverContext) er
 		err.IsDereferencing = dr.IsDereferencing
 		return err
 	}
-	dr.Result = result
+	dr.SetResponse(result)
 	return nil
 }
 
