@@ -9,8 +9,9 @@ import (
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
-	"github.com/cheqd/did-resolver/cmd/did-resolver/cmd"
 	"github.com/cheqd/did-resolver/services"
+	didDocServices "github.com/cheqd/did-resolver/services/diddoc"
+	resourceServices "github.com/cheqd/did-resolver/services/resource"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -166,7 +167,8 @@ func defineContentType(expectedContentType types.ContentType, resolutionType typ
 
 func setupEmptyContext(request *http.Request, resolutionType types.ContentType, ledgerService services.LedgerServiceI) (echo.Context, *httptest.ResponseRecorder) {
 	e := echo.New()
-	cmd.SetRoutes(e)
+	didDocServices.SetRoutes(e)
+	resourceServices.SetRoutes(e)
 
 	didService := services.NewDIDDocService(types.DID_METHOD, ledgerService)
 	resourceService := services.NewResourceService(types.DID_METHOD, ledgerService)

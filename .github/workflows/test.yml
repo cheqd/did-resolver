@@ -14,13 +14,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: ./go.mod
           cache: true
+
+      - name: Install ginkgo
+        run: |
+          go install github.com/onsi/ginkgo/v2/ginkgo@latest
       
       - name: Run Golang unit tests
-        run: go test -v ./...
+        run: ginkgo -r --race --randomize-all --randomize-suites --keep-going --trace
 
   integration-tests:
     name: "Integration Tests"
