@@ -44,4 +44,18 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase positiveT
 			expectedStatusCode: http.StatusOK,
 		},
 	),
+
+	Entry(
+		"can get resource metadata with existent old 32 characters Indy style DID and resourceId",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.OldIndy32CharStyleTestnetDid,
+				"214b8b61-a861-416b-a7e4-45533af40ada",
+			),
+			resolutionType:     testconstants.DefaultResolutionType,
+			expectedJSONPath:   "testdata/resource_metadata/metadata_32_indy_did.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
 )

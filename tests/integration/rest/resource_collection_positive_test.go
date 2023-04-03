@@ -43,4 +43,17 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase pos
 			expectedStatusCode: http.StatusOK,
 		},
 	),
+
+	Entry(
+		"can get collection of resources with existent old 32 characters Indy style DID",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/metadata",
+				testconstants.OldIndy32CharStyleTestnetDid,
+			),
+			resolutionType:     testconstants.DefaultResolutionType,
+			expectedJSONPath:   "testdata/collection_of_resources/metadata_32_indy_did.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
 )

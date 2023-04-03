@@ -47,6 +47,32 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase positiveTestCa
 	),
 
 	Entry(
+		"can get verificationMethod section with an existent old 16 characters Indy style DID#fragment",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%skey-1",
+				testconstants.OldIndy16CharStyleTestnetDid+url.PathEscape(testconstants.HashTag),
+			),
+			resolutionType:     testconstants.DefaultResolutionType,
+			expectedJSONPath:   "testdata/diddoc_fragment/verification_method_old_16_did_fragment.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get verificationMethod section with an existent old 32 characters Indy style DID#fragment",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%skey-1",
+				testconstants.OldIndy32CharStyleTestnetDid+url.PathEscape(testconstants.HashTag),
+			),
+			resolutionType:     testconstants.DefaultResolutionType,
+			expectedJSONPath:   "testdata/diddoc_fragment/verification_method_old_32_did_fragment.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
 		"can get serviceEndpoint section with an existent DID#fragment",
 		positiveTestCase{
 			didURL: fmt.Sprintf(

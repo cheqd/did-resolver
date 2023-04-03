@@ -31,7 +31,7 @@ var _ = DescribeTable("Positive: Get resource data", func(testCase positiveTestC
 },
 
 	Entry(
-		"can get resource data with an existent mainnet DID and existent resourceId",
+		"can get resource data with an existent DID and existent resourceId",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
@@ -40,6 +40,20 @@ var _ = DescribeTable("Positive: Get resource data", func(testCase positiveTestC
 			),
 			resolutionType:     testconstants.DefaultResolutionType,
 			expectedJSONPath:   "testdata/resource_data/resource.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get resource data with an existent old 32 characters Indy style DID and existent resourceId",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
+				testconstants.OldIndy32CharStyleTestnetDid,
+				"214b8b61-a861-416b-a7e4-45533af40ada",
+			),
+			resolutionType:     testconstants.DefaultResolutionType,
+			expectedJSONPath:   "testdata/resource_data/resource_32_indy_did.json",
 			expectedStatusCode: http.StatusOK,
 		},
 	),

@@ -10,6 +10,9 @@ var (
 
 	UUIDStyleMainnetDid = "did:cheqd:mainnet:c82f2b02-bdab-4dd7-b833-3e143745d612"
 	UUIDStyleTestnetDid = "did:cheqd:testnet:c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0"
+
+	OldIndy16CharStyleTestnetDid = "did:cheqd:testnet:zHqbcXb3irKRCMst"
+	OldIndy32CharStyleTestnetDid = "did:cheqd:testnet:zEv9FXHwp8eFeHbeTXamwda8YoPfgU12"
 )
 
 var (

@@ -84,4 +84,30 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase positiveTestCase) {
 			expectedStatusCode: http.StatusOK,
 		},
 	),
+
+	Entry(
+		"can get DIDDoc with an existent old 16 characters INDY style testnet DID",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s",
+				testconstants.OldIndy16CharStyleTestnetDid,
+			),
+			resolutionType:     testconstants.DefaultResolutionType,
+			expectedJSONPath:   "testdata/diddoc/diddoc_old_16_indy_testnet_did.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with an existent old 32 characters INDY style testnet DID",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s",
+				testconstants.OldIndy32CharStyleTestnetDid,
+			),
+			resolutionType:     testconstants.DefaultResolutionType,
+			expectedJSONPath:   "testdata/diddoc/diddoc_old_32_indy_testnet_did.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
 )
