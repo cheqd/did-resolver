@@ -84,7 +84,33 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase negativeTestCase) {
 	),
 
 	Entry(
-		"cannot get DIDDoc with DID that contains an invalid method",
+		"cannot get DIDDoc with mainnet DID that contains an invalid method",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s",
+				testconstants.MainnetDIDWithInvalidMethod,
+			),
+			resolutionType: testconstants.DefaultResolutionType,
+			expectedResult: types.DidResolution{
+				Context: "",
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "methodNotSupported",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.MainnetDIDWithInvalidMethod,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.InvalidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotImplemented,
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc with testnet DID that contains an invalid method",
 		negativeTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s",

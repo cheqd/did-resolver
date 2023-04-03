@@ -31,7 +31,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase negativeT
 },
 
 	Entry(
-		"cannot get resource metadata with not existent DID and a valid resourceId",
+		"cannot get resource metadata with not existent DID",
 		negativeTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
@@ -54,6 +54,33 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase negativeT
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
 			expectedStatusCode: http.StatusNotFound,
+		},
+	),
+
+	Entry(
+		"cannot get resource metadata with an invalid DID",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.InvalidDID,
+				testconstants.ValidIdentifier,
+			),
+			resolutionType: testconstants.DefaultResolutionType,
+			expectedResult: dereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "methodNotSupported",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.InvalidDID,
+						MethodSpecificId: testconstants.InvalidIdentifier,
+						Method:           testconstants.InvalidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotImplemented,
 		},
 	),
 
@@ -85,11 +112,11 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase negativeT
 	),
 
 	Entry(
-		"cannot get resource metadata with not existent DID and resourceId",
+		"cannot get resource metadata with an existent old 16 characters Indy style DID and not existent resourceId",
 		negativeTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.NotExistentTestnetDid,
+				testconstants.OldIndy16CharStyleTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
 			resolutionType: testconstants.DefaultResolutionType,
@@ -99,8 +126,8 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase negativeT
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.NotExistentTestnetDid,
-						MethodSpecificId: testconstants.NotExistentIdentifier,
+						DidString:        testconstants.OldIndy16CharStyleTestnetDid,
+						MethodSpecificId: "CpeMubv5yw63jXyrgRRsxR",
 						Method:           testconstants.ValidMethod,
 					},
 				},
@@ -112,29 +139,29 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase negativeT
 	),
 
 	Entry(
-		"cannot get resource metadata with an invalid DID and a valid resourceId",
+		"cannot get resource metadata with an existent old 32 characters Indy style DID and not existent resourceId",
 		negativeTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.InvalidDID,
-				testconstants.ValidIdentifier,
+				testconstants.OldIndy32CharStyleTestnetDid,
+				testconstants.NotExistentIdentifier,
 			),
 			resolutionType: testconstants.DefaultResolutionType,
 			expectedResult: dereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "methodNotSupported",
+					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.InvalidDID,
-						MethodSpecificId: testconstants.InvalidIdentifier,
-						Method:           testconstants.InvalidMethod,
+						DidString:        testconstants.OldIndy32CharStyleTestnetDid,
+						MethodSpecificId: "3KpiDD6Hxs4i2G7FtpiGhu",
+						Method:           testconstants.ValidMethod,
 					},
 				},
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotImplemented,
+			expectedStatusCode: http.StatusNotFound,
 		},
 	),
 
@@ -158,33 +185,6 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase negativeT
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
 			expectedStatusCode: http.StatusBadRequest,
-		},
-	),
-
-	Entry(
-		"cannot get resource metadata with an invalid DID and resourceId",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.InvalidDID,
-				testconstants.InvalidIdentifier,
-			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
-				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
-					ResolutionError: "methodNotSupported",
-					DidProperties: types.DidProperties{
-						DidString:        testconstants.InvalidDID,
-						MethodSpecificId: testconstants.InvalidIdentifier,
-						Method:           testconstants.InvalidMethod,
-					},
-				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
-			},
-			expectedStatusCode: http.StatusNotImplemented,
 		},
 	),
 )

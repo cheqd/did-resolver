@@ -44,6 +44,8 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase pos
 		},
 	),
 
+	// TODO: Add test case for getting collection of resources with existent old 16 characters Indy style DID.
+
 	Entry(
 		"can get collection of resources with existent old 32 characters Indy style DID",
 		positiveTestCase{

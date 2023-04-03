@@ -12,7 +12,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = DescribeTable("Test status of redirect DID", func(testCase positiveTestCase) {
+var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase positiveTestCase) {
 	client := resty.New()
 	client.SetRedirectPolicy(resty.NoRedirectPolicy())
 

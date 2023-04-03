@@ -45,8 +45,11 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase positiveT
 		},
 	),
 
+	// TODO: add test for getting resource metadata with existent old 16 characters Indy style DID
+	// and an existent resourceId.
+
 	Entry(
-		"can get resource metadata with existent old 32 characters Indy style DID and resourceId",
+		"can get resource metadata with existent old 32 characters Indy style DID and an existent resourceId",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",

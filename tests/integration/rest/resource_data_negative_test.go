@@ -58,29 +58,29 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase negativeTestC
 	),
 
 	Entry(
-		"cannot get resource data with existent DID and not existent resourceId",
+		"cannot get resource data with an invalid DID and not existent resourceId",
 		negativeTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
-				testconstants.UUIDStyleTestnetDid,
-				testconstants.NotExistentIdentifier,
+				testconstants.InvalidDID,
+				testconstants.ValidIdentifier,
 			),
 			resolutionType: testconstants.DefaultResolutionType,
 			expectedResult: dereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "notFound",
+					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.UUIDStyleTestnetDid,
-						MethodSpecificId: "c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0",
-						Method:           testconstants.ValidMethod,
+						DidString:        testconstants.InvalidDID,
+						MethodSpecificId: testconstants.InvalidIdentifier,
+						Method:           testconstants.InvalidMethod,
 					},
 				},
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotFound,
+			expectedStatusCode: http.StatusNotImplemented,
 		},
 	),
 
@@ -112,33 +112,6 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase negativeTestC
 	),
 
 	Entry(
-		"cannot get resource data with an invalid DID and a valid resourceId",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
-				testconstants.InvalidDID,
-				testconstants.ValidIdentifier,
-			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
-				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
-					ResolutionError: "methodNotSupported",
-					DidProperties: types.DidProperties{
-						DidString:        testconstants.InvalidDID,
-						MethodSpecificId: testconstants.InvalidIdentifier,
-						Method:           testconstants.InvalidMethod,
-					},
-				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
-			},
-			expectedStatusCode: http.StatusNotImplemented,
-		},
-	),
-
-	Entry(
 		"cannot get resource data with an existent DID and an invalid resourceId",
 		negativeTestCase{
 			didURL: fmt.Sprintf(
@@ -162,11 +135,11 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase negativeTestC
 	),
 
 	Entry(
-		"cannot get resource data with an invalid DID and resourceId",
+		"cannot get resource data with an existent old 16 characters Indy style DID and an invalid resourceId",
 		negativeTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
-				testconstants.InvalidDID,
+				testconstants.OldIndy16CharStyleTestnetDid,
 				testconstants.InvalidIdentifier,
 			),
 			resolutionType: testconstants.DefaultResolutionType,
@@ -174,17 +147,36 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase negativeTestC
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "methodNotSupported",
-					DidProperties: types.DidProperties{
-						DidString:        testconstants.InvalidDID,
-						MethodSpecificId: testconstants.InvalidIdentifier,
-						Method:           testconstants.InvalidMethod,
-					},
+					ResolutionError: "invalidDidUrl",
+					DidProperties:   types.DidProperties{},
 				},
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotImplemented,
+			expectedStatusCode: http.StatusBadRequest,
+		},
+	),
+
+	Entry(
+		"cannot get resource data with an existent old 32 characters Indy style DID and an invalid resourceId",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
+				testconstants.OldIndy32CharStyleTestnetDid,
+				testconstants.InvalidIdentifier,
+			),
+			resolutionType: testconstants.DefaultResolutionType,
+			expectedResult: dereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "invalidDidUrl",
+					DidProperties:   types.DidProperties{},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusBadRequest,
 		},
 	),
 )

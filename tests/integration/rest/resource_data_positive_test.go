@@ -44,6 +44,9 @@ var _ = DescribeTable("Positive: Get resource data", func(testCase positiveTestC
 		},
 	),
 
+	// TODO: Add test for getting resource data with an existent old 16 characters Indy style DID
+	// and existent resourceId.
+
 	Entry(
 		"can get resource data with an existent old 32 characters Indy style DID and existent resourceId",
 		positiveTestCase{

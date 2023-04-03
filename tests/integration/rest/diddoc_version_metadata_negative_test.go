@@ -14,7 +14,7 @@ package rest
 // 	. "github.com/onsi/gomega"
 // )
 
-// var _ = DescribeTable("Negative: Get DIDDoc metadata for a specific version of DIDDoc", func(testCase negativeTestCase) {
+// var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase negativeTestCase) {
 // 	client := resty.New()
 
 // 	resp, err := client.R().

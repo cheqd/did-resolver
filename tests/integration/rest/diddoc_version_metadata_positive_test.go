@@ -13,7 +13,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = DescribeTable("Positive: Get DIDDoc metadata for a specific version of DIDDoc", func(testCase positiveTestCase) {
+var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase positiveTestCase) {
 	client := resty.New()
 
 	resp, err := client.R().

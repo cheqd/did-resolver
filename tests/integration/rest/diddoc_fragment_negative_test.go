@@ -32,7 +32,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase negativeTestCa
 },
 
 	Entry(
-		"cannot get DIDDoc fragment fragment section with not existent DID",
+		"cannot get DIDDoc fragment with not existent DID",
 		negativeTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%skey1",
@@ -58,6 +58,32 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase negativeTestCa
 	),
 
 	Entry(
+		"cannot get DIDDoc fragment with an invalid DID",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%skey1",
+				testconstants.InvalidDID+url.PathEscape(testconstants.HashTag),
+			),
+			resolutionType: testconstants.DefaultResolutionType,
+			expectedResult: dereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "methodNotSupported",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.InvalidDID,
+						MethodSpecificId: testconstants.InvalidIdentifier,
+						Method:           testconstants.InvalidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotImplemented,
+		},
+	),
+
+	Entry(
 		"cannot get DIDDoc fragment with existent DID, but not existent #fragment",
 		negativeTestCase{
 			didURL: fmt.Sprintf(
@@ -74,6 +100,60 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase negativeTestCa
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.IndyStyleTestnetDid,
 						MethodSpecificId: "73wnEyHhkhXiH1Nq7w5Kgq",
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotFound,
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc fragment with existent old 16 characters Indy style DID, but not existent #fragment",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s%s",
+				testconstants.OldIndy16CharStyleTestnetDid+url.PathEscape(testconstants.HashTag),
+				testconstants.NotExistentFragment,
+			),
+			resolutionType: testconstants.DefaultResolutionType,
+			expectedResult: dereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "notFound",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.OldIndy16CharStyleTestnetDid,
+						MethodSpecificId: "CpeMubv5yw63jXyrgRRsxR",
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotFound,
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc fragment with existent old 32 characters Indy style DID, but not existent #fragment",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s%s",
+				testconstants.OldIndy32CharStyleTestnetDid+url.PathEscape(testconstants.HashTag),
+				testconstants.NotExistentFragment,
+			),
+			resolutionType: testconstants.DefaultResolutionType,
+			expectedResult: dereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "notFound",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.OldIndy32CharStyleTestnetDid,
+						MethodSpecificId: "3KpiDD6Hxs4i2G7FtpiGhu",
 						Method:           testconstants.ValidMethod,
 					},
 				},
