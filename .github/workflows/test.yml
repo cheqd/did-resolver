@@ -69,4 +69,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: report-integration.xml
-          path: report-integration.xml
+          path: tests/integration/rest/report-integration.xml
