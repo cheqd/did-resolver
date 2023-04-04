@@ -9,7 +9,6 @@ import (
 	"github.com/google/uuid"
 )
 
-
 // SplitDIDURLRegexp ...
 // That for groups:
 // Example: did:cheqd:testnet:fafdsffq11213343/path-to-s/ome-external-resource?query#key1???

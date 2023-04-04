@@ -5,15 +5,15 @@ import (
 	"github.com/cheqd/did-resolver/utils"
 )
 
-type DereferencingMetadata ResolutionMetadata
-
-
-type DidDereferencing struct {
-	Context               string                   `json:"@context,omitempty" example:"https://w3id.org/did-resolution/v1"`
-	DereferencingMetadata DereferencingMetadata    `json:"dereferencingMetadata"`
-	ContentStream         ContentStreamI           `json:"contentStream"`
-	Metadata              ResolutionDidDocMetadata `json:"contentMetadata"`
-}
+type (
+	DereferencingMetadata ResolutionMetadata
+	DidDereferencing      struct {
+		Context               string                   `json:"@context,omitempty" example:"https://w3id.org/did-resolution/v1"`
+		DereferencingMetadata DereferencingMetadata    `json:"dereferencingMetadata"`
+		ContentStream         ContentStreamI           `json:"contentStream"`
+		Metadata              ResolutionDidDocMetadata `json:"contentMetadata"`
+	}
+)
 
 func NewDereferencingMetadata(did string, contentType ContentType, resolutionError string) DereferencingMetadata {
 	return DereferencingMetadata(NewResolutionMetadata(did, contentType, resolutionError))
@@ -35,6 +35,7 @@ func (d DidDereferencing) GetBytes() []byte {
 func (r DidDereferencing) IsRedirect() bool {
 	return false
 }
+
 // end of Interface implementation
 
 type ResourceDereferencing struct {
@@ -60,8 +61,6 @@ func (d ResourceDereferencing) GetBytes() []byte {
 func (r ResourceDereferencing) IsRedirect() bool {
 	return false
 }
-// end of Interface implementation
-
 
 type DereferencedDidVersionsList struct {
 	Versions []ResolutionDidDocMetadata `json:"versions,omitempty"`
@@ -84,7 +83,7 @@ func (e *DereferencedDidVersionsList) GetBytes() []byte              { return []
 
 // Returns VersionId if there is a version before the given time
 // Otherwise NotFound error
-func (e DereferencedDidVersionsList) FindBeforeTime(before string) (string, error) { 
+func (e DereferencedDidVersionsList) FindBeforeTime(before string) (string, error) {
 	time_before, err := utils.ParseFromStringTimeToGoTime(before)
 	if err != nil {
 		return "", err

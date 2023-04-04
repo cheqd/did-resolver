@@ -21,6 +21,7 @@ func (s ServiceResult) GetServiceEndpoint() string {
 func (r ServiceResult) IsRedirect() bool {
 	return true
 }
+
 // end of Interface implementation
 
 func NewServiceResult(endpoint string) *ServiceResult {

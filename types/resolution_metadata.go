@@ -64,4 +64,3 @@ func NewResolutionMetadata(didUrl string, contentType ContentType, resolutionErr
 		DidProperties:   didProperties,
 	}
 }
-

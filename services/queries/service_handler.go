@@ -28,7 +28,7 @@ func (s *ServiceHandler) Handle(c services.ResolverContext, service services.Req
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Call the next handler
 	return s.Continue(c, service, types.NewServiceResult(result))
 }

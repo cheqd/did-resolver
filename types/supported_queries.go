@@ -11,7 +11,7 @@ type SupportedQueriesT []string
 // DiffWithUrlValues returns values which are in url.Values but not in SupportedQueriesT
 func (s *SupportedQueriesT) DiffWithUrlValues(values url.Values) []string {
 	var result []string
-	for k, _ := range values {
+	for k := range values {
 		if !utils.Contains(*s, k) {
 			result = append(result, k)
 		}
@@ -19,11 +19,9 @@ func (s *SupportedQueriesT) DiffWithUrlValues(values url.Values) []string {
 	return result
 }
 
-var (
-	DidSupportedQueries = SupportedQueriesT{
-		VersionId,
-		VersionTime,
-		ServiceQ,
-		RelativeRef,
-	}
-)
+var DidSupportedQueries = SupportedQueriesT{
+	VersionId,
+	VersionTime,
+	ServiceQ,
+	RelativeRef,
+}

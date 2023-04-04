@@ -102,8 +102,7 @@ func (dd *BaseRequestService) Query(c ResolverContext) error {
 		err.IsDereferencing = false
 		return err
 	}
-	dd.SetResponse(result)
-	return nil
+	return dd.SetResponse(result)
 }
 
 func (dd BaseRequestService) SetupResponse(c ResolverContext) error {

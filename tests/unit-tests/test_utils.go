@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
+	"time"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
@@ -31,7 +33,8 @@ const (
 		"\"kty\":\"OKP\"," +
 		"\"x\":\"VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ\"" +
 		"}"
-	ValidVersionId = "test_version_id"
+	ValidVersionId = "32e0613e-bee4-4ea4-952c-bba3e857fa2a"
+	ValidServiceId = "service-1"
 )
 
 const (
@@ -60,6 +63,10 @@ var (
 		Nanos:   0,
 	}
 	NotEmptyTime = NotEmptyTimestamp.AsTime()
+
+	ValidCreated, _  = time.Parse(time.RFC3339, "2021-08-23T09:00:00Z")
+	CreatedAfter, _  = time.Parse(time.RFC3339, "2021-08-23T09:00:01Z")
+	CreatedBefore, _ = time.Parse(time.RFC3339, "2021-08-23T08:59:59Z")
 )
 
 var (
@@ -111,7 +118,7 @@ func ValidVerificationMethod() didTypes.VerificationMethod {
 
 func ValidService() didTypes.Service {
 	return didTypes.Service{
-		Id:              ValidDid + "#service-1",
+		Id:              ValidDid + "#" + ValidServiceId,
 		ServiceType:     "DIDCommMessaging",
 		ServiceEndpoint: []string{"http://example.com"},
 	}
@@ -147,7 +154,11 @@ func ValidResource() resourceTypes.ResourceWithMetadata {
 }
 
 func ValidMetadata() didTypes.Metadata {
-	return didTypes.Metadata{VersionId: "test_version_id", Deactivated: false}
+	return didTypes.Metadata{
+		VersionId:   ValidVersionId,
+		Deactivated: false,
+		Created:     timestamppb.New(ValidCreated),
+	}
 }
 
 func generateChecksum(data []byte) string {
@@ -175,7 +186,7 @@ func setupEmptyContext(request *http.Request, resolutionType types.ContentType, 
 
 	rec := httptest.NewRecorder()
 	context := e.NewContext(request, rec)
-	e.Router().Find("GET", request.RequestURI, context)
+	e.Router().Find("GET", strings.Split(request.RequestURI, "?")[0], context)
 	rc := services.ResolverContext{
 		Context:         context,
 		LedgerService:   ledgerService,

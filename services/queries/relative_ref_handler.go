@@ -25,5 +25,5 @@ func (r *RelativeRefHandler) Handle(c services.ResolverContext, service services
 	}
 
 	// Call the next handler
-	return r.Continue(c, service, types.NewServiceResult(serviceResult.GetServiceEndpoint() + relativeRef))
+	return r.Continue(c, service, types.NewServiceResult(serviceResult.GetServiceEndpoint()+relativeRef))
 }

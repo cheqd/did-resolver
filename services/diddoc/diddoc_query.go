@@ -9,11 +9,6 @@ import (
 	"github.com/cheqd/did-resolver/services/queries"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
-	// "github.com/cheqd/did-resolver/utils"
-)
-
-const (
-	supportedQueries = "versionId,versionTime,service,relativeRef"
 )
 
 type QueryDIDDocRequestService struct {
@@ -36,7 +31,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 
 	diff := types.DidSupportedQueries.DiffWithUrlValues(dd.Queries)
 	if len(diff) > 0 {
-		return types.NewRepresentationNotSupportedError("Queries from list: " + strings.Join(diff, ","), dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewRepresentationNotSupportedError("Queries from list: "+strings.Join(diff, ","), dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
 	versionId := dd.GetQueryParam(types.VersionId)
@@ -60,9 +55,9 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 			return types.NewRepresentationNotSupportedError(versionTime, dd.RequestedContentType, err, dd.IsDereferencing)
 		}
 	}
-	
+
 	// Validate that versionId is UUID
-	if versionId != "" && !utils.IsValidUUID(dd.Version) {
+	if versionId != "" && !utils.IsValidUUID(versionId) {
 		return types.NewInvalidDIDUrlError(dd.Version, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
@@ -100,11 +95,30 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 	// After that we can find for service field if it's set.
 	// didQueryHandler -> versionIdHandler -> versionTimeHandler -> serviceHandler
 
-	didQueryHandler.SetNext(c, &versionIdHandler)
-	versionIdHandler.SetNext(c, &versionTimeHandler)
-	versionTimeHandler.SetNext(c, &serviceHandler)
-	serviceHandler.SetNext(c, &relativeRefHandler)
-	relativeRefHandler.SetNext(c, &stopHandler)
+	err := didQueryHandler.SetNext(c, &versionIdHandler)
+	if err != nil {
+		return err
+	}
+
+	err = versionIdHandler.SetNext(c, &versionTimeHandler)
+	if err != nil {
+		return err
+	}
+
+	err = versionTimeHandler.SetNext(c, &serviceHandler)
+	if err != nil {
+		return err
+	}
+
+	err = serviceHandler.SetNext(c, &relativeRefHandler)
+	if err != nil {
+		return err
+	}
+
+	err = relativeRefHandler.SetNext(c, &stopHandler)
+	if err != nil {
+		return err
+	}
 
 	dd.FirstHandler = &didQueryHandler
 
@@ -119,8 +133,7 @@ func (dd *QueryDIDDocRequestService) Query(c services.ResolverContext) error {
 	if result == nil {
 		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
-	dd.SetResponse(result)
-	return nil
+	return dd.SetResponse(result)
 }
 
 func (dd QueryDIDDocRequestService) Respond(c services.ResolverContext) error {

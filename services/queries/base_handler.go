@@ -14,7 +14,7 @@ type BaseQueryHandlerI interface {
 
 type BaseQueryHandler struct {
 	IsDereferencing bool
-	next                 BaseQueryHandlerI
+	next            BaseQueryHandlerI
 }
 
 func (b *BaseQueryHandler) SetNext(c services.ResolverContext, next BaseQueryHandlerI) error {

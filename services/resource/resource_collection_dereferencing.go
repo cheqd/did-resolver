@@ -39,6 +39,5 @@ func (dr *ResourceCollectionDereferencingService) Query(c services.ResolverConte
 		err.IsDereferencing = dr.IsDereferencing
 		return err
 	}
-	dr.SetResponse(result)
-	return nil
+	return dr.SetResponse(result)
 }

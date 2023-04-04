@@ -34,6 +34,5 @@ func (dd *DIDDocAllVersionMetadataRequestService) Query(c services.ResolverConte
 	if err != nil {
 		return err
 	}
-	dd.SetResponse(result)
-	return nil
+	return dd.SetResponse(result)
 }
