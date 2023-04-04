@@ -126,7 +126,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase negativeT
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.OldIndy16CharStyleTestnetDid,
+						DidString:        testconstants.MigratedIndy16CharStyleTestnetDid,
 						MethodSpecificId: "CpeMubv5yw63jXyrgRRsxR",
 						Method:           testconstants.ValidMethod,
 					},
@@ -153,7 +153,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase negativeT
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.OldIndy32CharStyleTestnetDid,
+						DidString:        testconstants.MigratedIndy32CharStyleTestnetDid,
 						MethodSpecificId: "3KpiDD6Hxs4i2G7FtpiGhu",
 						Method:           testconstants.ValidMethod,
 					},

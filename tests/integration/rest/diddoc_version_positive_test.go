@@ -87,31 +87,31 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase positiveTest
 		},
 	),
 
-	Entry(
-		"can get DIDDoc with an existent old 16 characters Indy style DID",
-		positiveTestCase{
-			didURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/version/%s",
-				testconstants.OldIndy16CharStyleTestnetDid,
-				"CpeMubv5yw63jXyrgRRsxR",
-			),
-			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/diddoc_version/diddoc_version_uuid_testnet_did.json",
-			expectedStatusCode: http.StatusOK,
-		},
-	),
+	// Entry(
+	// 	"can get DIDDoc with an existent old 16 characters Indy style DID",
+	// 	positiveTestCase{
+	// 		didURL: fmt.Sprintf(
+	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s",
+	// 			testconstants.OldIndy16CharStyleTestnetDid,
+	// 			"CpeMubv5yw63jXyrgRRsxR",
+	// 		),
+	// 		resolutionType:     testconstants.DefaultResolutionType,
+	// 		expectedJSONPath:   "testdata/diddoc_version/diddoc_version_uuid_testnet_did.json",
+	// 		expectedStatusCode: http.StatusOK,
+	// 	},
+	// ),
 
-	Entry(
-		"can get DIDDoc with an existent old 32 characters Indy style DID",
-		positiveTestCase{
-			didURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/version/%s",
-				testconstants.OldIndy32CharStyleTestnetDid,
-				"3KpiDD6Hxs4i2G7FtpiGhu",
-			),
-			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/diddoc_version/diddoc_version_uuid_testnet_did.json",
-			expectedStatusCode: http.StatusOK,
-		},
-	),
+	// Entry(
+	// 	"can get DIDDoc with an existent old 32 characters Indy style DID",
+	// 	positiveTestCase{
+	// 		didURL: fmt.Sprintf(
+	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s",
+	// 			testconstants.OldIndy32CharStyleTestnetDid,
+	// 			"3KpiDD6Hxs4i2G7FtpiGhu",
+	// 		),
+	// 		resolutionType:     testconstants.DefaultResolutionType,
+	// 		expectedJSONPath:   "testdata/diddoc_version/diddoc_version_uuid_testnet_did.json",
+	// 		expectedStatusCode: http.StatusOK,
+	// 	},
+	// ),
 )

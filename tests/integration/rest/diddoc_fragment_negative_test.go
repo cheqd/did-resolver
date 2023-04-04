@@ -125,7 +125,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase negativeTestCa
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.OldIndy16CharStyleTestnetDid,
+						DidString:        testconstants.MigratedIndy16CharStyleTestnetDid,
 						MethodSpecificId: "CpeMubv5yw63jXyrgRRsxR",
 						Method:           testconstants.ValidMethod,
 					},
@@ -152,7 +152,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase negativeTestCa
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.OldIndy32CharStyleTestnetDid,
+						DidString:        testconstants.MigratedIndy32CharStyleTestnetDid,
 						MethodSpecificId: "3KpiDD6Hxs4i2G7FtpiGhu",
 						Method:           testconstants.ValidMethod,
 					},
