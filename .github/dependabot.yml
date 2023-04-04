@@ -43,3 +43,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+
+  # Maintain dependencies for Kotlin
+  - package-ecosystem: "gradle"
+    target-branch: "develop"
+    directory: "/"
+    schedule:
+      interval: "weekly"
