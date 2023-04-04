@@ -41,6 +41,7 @@ func (dd *DIDDocVersionMetadataRequestService) SpecificValidation(c services.Res
 func (dd *DIDDocVersionMetadataRequestService) Query(c services.ResolverContext) error {
 	result, err := c.DidDocService.GetDIDDocVersionsMetadata(dd.Did, dd.Version, dd.RequestedContentType)
 	if err != nil {
+		err.IsDereferencing = dd.IsDereferencing
 		return err
 	}
 	dd.Result = result
