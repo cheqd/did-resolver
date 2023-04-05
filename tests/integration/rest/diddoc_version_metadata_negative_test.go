@@ -31,6 +31,52 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase neg
 },
 
 	Entry(
+		"cannot get DIDDoc version metadata with an existent DID and versionId, but not supported resolutionType",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
+				testconstants.UUIDStyleMainnetDid,
+				testconstants.ValidIdentifier,
+			),
+			resolutionType: string(types.JSON),
+			expectedResult: dereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.JSON,
+					ResolutionError: "representationNotSupported",
+					DidProperties:   types.DidProperties{},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotAcceptable,
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc version metadata with not existent DID and not supported resolutionType",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
+				testconstants.NotExistentMainnetDid,
+				testconstants.ValidIdentifier,
+			),
+			resolutionType: string(types.JSON),
+			expectedResult: dereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.JSON,
+					ResolutionError: "representationNotSupported",
+					DidProperties:   types.DidProperties{},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotAcceptable,
+		},
+	),
+
+	Entry(
 		"cannot get DIDDoc version metadata with not existent DID",
 		negativeTestCase{
 			didURL: fmt.Sprintf(

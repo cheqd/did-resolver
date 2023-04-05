@@ -31,6 +31,52 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase negativeT
 },
 
 	Entry(
+		"cannot get resource metadata with an existent DID, but not supported resolutionType",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.UUIDStyleMainnetDid,
+				testconstants.ValidIdentifier,
+			),
+			resolutionType: string(types.JSON),
+			expectedResult: dereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.JSON,
+					ResolutionError: "representationNotSupported",
+					DidProperties:   types.DidProperties{},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotAcceptable,
+		},
+	),
+
+	Entry(
+		"cannot get resource metadata with not existent DID and not supported resolutionType",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.NotExistentMainnetDid,
+				testconstants.ValidIdentifier,
+			),
+			resolutionType: string(types.JSON),
+			expectedResult: dereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.JSON,
+					ResolutionError: "representationNotSupported",
+					DidProperties:   types.DidProperties{},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotAcceptable,
+		},
+	),
+
+	Entry(
 		"cannot get resource metadata with not existent DID",
 		negativeTestCase{
 			didURL: fmt.Sprintf(

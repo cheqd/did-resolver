@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
+	"github.com/cheqd/did-resolver/types"
 	"github.com/go-resty/resty/v2"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -57,6 +58,48 @@ var _ = DescribeTable("Positive: Get resource data", func(testCase positiveTestC
 			),
 			resolutionType:     testconstants.DefaultResolutionType,
 			expectedJSONPath:   "testdata/resource_data/resource_32_indy_did.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get resource data with an existent DID, and supported DIDJSON resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
+				testconstants.UUIDStyleTestnetDid,
+				"9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
+			),
+			resolutionType:     string(types.DIDJSON),
+			expectedJSONPath:   "testdata/resource_data/resource.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get resource data with an existent DID, and supported DIDJSONLD resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
+				testconstants.UUIDStyleTestnetDid,
+				"9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
+			),
+			resolutionType:     string(types.DIDJSONLD),
+			expectedJSONPath:   "testdata/resource_data/resource.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get resource data with an existent DID, and supported JSONLD resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
+				testconstants.UUIDStyleTestnetDid,
+				"9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
+			),
+			resolutionType:     string(types.JSONLD),
+			expectedJSONPath:   "testdata/resource_data/resource.json",
 			expectedStatusCode: http.StatusOK,
 		},
 	),

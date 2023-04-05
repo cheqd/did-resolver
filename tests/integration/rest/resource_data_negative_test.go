@@ -31,6 +31,52 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase negativeTestC
 },
 
 	Entry(
+		"cannot get resource data with an existent DID, but not supported resolutionType",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
+				testconstants.UUIDStyleMainnetDid,
+				testconstants.ValidIdentifier,
+			),
+			resolutionType: string(types.JSON),
+			expectedResult: dereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.JSON,
+					ResolutionError: "representationNotSupported",
+					DidProperties:   types.DidProperties{},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotAcceptable,
+		},
+	),
+
+	Entry(
+		"cannot get resource data with not existent DID and not supported resolutionType",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
+				testconstants.NotExistentMainnetDid,
+				testconstants.ValidIdentifier,
+			),
+			resolutionType: string(types.JSON),
+			expectedResult: dereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.JSON,
+					ResolutionError: "representationNotSupported",
+					DidProperties:   types.DidProperties{},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotAcceptable,
+		},
+	),
+
+	Entry(
 		"cannot get resource data with not existent DID and a valid resourceId",
 		negativeTestCase{
 			didURL: fmt.Sprintf(

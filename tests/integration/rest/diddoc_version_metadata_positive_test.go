@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
+	"github.com/cheqd/did-resolver/types"
 	"github.com/go-resty/resty/v2"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -111,6 +112,48 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 			),
 			resolutionType:     testconstants.DefaultResolutionType,
 			expectedJSONPath:   "testdata/diddoc_version_metadata/diddoc_old_32_indy_testnet_did.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc metadata with an existent DID and versionId, and supported DIDJSON resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
+				testconstants.UUIDStyleTestnetDid,
+				"e5615fc2-6f13-42b1-989c-49576a574cef",
+			),
+			resolutionType:     string(types.DIDJSON),
+			expectedJSONPath:   "testdata/diddoc_version_metadata/diddoc_did_json.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc metadata with an existent DID and versionId, and supported DIDJSONLD resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
+				testconstants.UUIDStyleTestnetDid,
+				"e5615fc2-6f13-42b1-989c-49576a574cef",
+			),
+			resolutionType:     string(types.DIDJSONLD),
+			expectedJSONPath:   "testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc metadata with an existent DID and versionId, and supported JSONLD resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
+				testconstants.UUIDStyleTestnetDid,
+				"e5615fc2-6f13-42b1-989c-49576a574cef",
+			),
+			resolutionType:     string(types.JSONLD),
+			expectedJSONPath:   "testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",
 			expectedStatusCode: http.StatusOK,
 		},
 	),

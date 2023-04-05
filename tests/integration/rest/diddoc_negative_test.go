@@ -32,6 +32,50 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase negativeTestCase) {
 },
 
 	Entry(
+		"cannot get DIDDoc with an existent DID, but not supported resolutionType",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s",
+				testconstants.UUIDStyleMainnetDid,
+			),
+			resolutionType: string(types.JSON),
+			expectedResult: types.DidResolution{
+				Context: "",
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.JSON,
+					ResolutionError: "representationNotSupported",
+					DidProperties:   types.DidProperties{},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotAcceptable,
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc with not existent DID and not supported resolutionType",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s",
+				testconstants.NotExistentMainnetDid,
+			),
+			resolutionType: string(types.JSON),
+			expectedResult: types.DidResolution{
+				Context: "",
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.JSON,
+					ResolutionError: "representationNotSupported",
+					DidProperties:   types.DidProperties{},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotAcceptable,
+		},
+	),
+
+	Entry(
 		"cannot get DIDDoc with not existent mainnet DID",
 		negativeTestCase{
 			didURL: fmt.Sprintf(

@@ -31,6 +31,52 @@ var _ = DescribeTable("Negative: Get DIDDoc version", func(testCase negativeTest
 },
 
 	Entry(
+		"cannot get DIDDoc version with an existent DID and versionId, but not supported resolutionType",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				testconstants.UUIDStyleMainnetDid,
+				testconstants.ValidIdentifier,
+			),
+			resolutionType: string(types.JSON),
+			expectedResult: types.DidResolution{
+				Context: "",
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.JSON,
+					ResolutionError: "representationNotSupported",
+					DidProperties:   types.DidProperties{},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotAcceptable,
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc version with not existent DID and not supported resolutionType",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				testconstants.NotExistentMainnetDid,
+				testconstants.ValidIdentifier,
+			),
+			resolutionType: string(types.JSON),
+			expectedResult: types.DidResolution{
+				Context: "",
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.JSON,
+					ResolutionError: "representationNotSupported",
+					DidProperties:   types.DidProperties{},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotAcceptable,
+		},
+	),
+
+	Entry(
 		"cannot get DIDDoc version with not existent DID",
 		negativeTestCase{
 			didURL: fmt.Sprintf(

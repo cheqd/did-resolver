@@ -110,4 +110,43 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase positiveTestCase) {
 			expectedStatusCode: http.StatusOK,
 		},
 	),
+
+	Entry(
+		"can get DIDDoc with an existent DID and supported DIDJSON resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s",
+				testconstants.IndyStyleMainnetDid,
+			),
+			resolutionType:     string(types.DIDJSON),
+			expectedJSONPath:   "testdata/diddoc/diddoc_did_json.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with an existent DID and supported DIDJSONLD resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s",
+				testconstants.IndyStyleMainnetDid,
+			),
+			resolutionType:     string(types.DIDJSONLD),
+			expectedJSONPath:   "testdata/diddoc/diddoc_indy_mainnet_did.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with an existent DID and supported JSONLD resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s",
+				testconstants.IndyStyleMainnetDid,
+			),
+			resolutionType:     string(types.JSONLD),
+			expectedJSONPath:   "testdata/diddoc/diddoc_json_ld.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
 )

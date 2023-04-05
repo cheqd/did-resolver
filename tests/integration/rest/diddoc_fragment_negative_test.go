@@ -32,6 +32,50 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase negativeTestCa
 },
 
 	Entry(
+		"cannot get DIDDoc fragment with an existent DID, but not supported resolutionType",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%skey-1",
+				testconstants.UUIDStyleMainnetDid+url.PathEscape(testconstants.HashTag),
+			),
+			resolutionType: string(types.JSON),
+			expectedResult: dereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.JSON,
+					ResolutionError: "representationNotSupported",
+					DidProperties:   types.DidProperties{},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotAcceptable,
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc fragment with not existent DID and not supported resolutionType",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%skey-1",
+				testconstants.NotExistentMainnetDid+url.PathEscape(testconstants.HashTag),
+			),
+			resolutionType: string(types.JSON),
+			expectedResult: dereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.JSON,
+					ResolutionError: "representationNotSupported",
+					DidProperties:   types.DidProperties{},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotAcceptable,
+		},
+	),
+
+	Entry(
 		"cannot get DIDDoc fragment with not existent DID",
 		negativeTestCase{
 			didURL: fmt.Sprintf(

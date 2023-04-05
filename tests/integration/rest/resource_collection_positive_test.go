@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
+	"github.com/cheqd/did-resolver/types"
 	"github.com/go-resty/resty/v2"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -55,6 +56,45 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase pos
 			),
 			resolutionType:     testconstants.DefaultResolutionType,
 			expectedJSONPath:   "testdata/collection_of_resources/metadata_32_indy_did.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get collection of resources with an existent DID, and supported DIDJSON resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/metadata",
+				testconstants.UUIDStyleTestnetDid,
+			),
+			resolutionType:     string(types.DIDJSON),
+			expectedJSONPath:   "testdata/collection_of_resources/metadata_did_json.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get collection of resources with an existent DID, and supported DIDJSONLD resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/metadata",
+				testconstants.UUIDStyleTestnetDid,
+			),
+			resolutionType:     string(types.DIDJSONLD),
+			expectedJSONPath:   "testdata/collection_of_resources/metadata.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc version with an existent DID, and supported JSONLD resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/metadata",
+				testconstants.UUIDStyleTestnetDid,
+			),
+			resolutionType:     string(types.JSONLD),
+			expectedJSONPath:   "testdata/collection_of_resources/metadata.json",
 			expectedStatusCode: http.StatusOK,
 		},
 	),
