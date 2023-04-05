@@ -44,29 +44,29 @@ var _ = DescribeTable("Positive: Get DIDDoc versions", func(testCase positiveTes
 		},
 	),
 
-	// Entry(
-	// 	"can get DIDDoc versions with an existent old 16 characters Indy style DID",
-	// 	positiveTestCase{
-	// 		didURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/versions",
-	// 			testconstants.OldIndy16CharStyleTestnetDid,
-	// 		),
-	// 		resolutionType:     testconstants.DefaultResolutionType,
-	// 		expectedJSONPath:   "testdata/diddoc_versions/diddoc_versions_old_16_indy_did.json",
-	// 		expectedStatusCode: http.StatusOK,
-	// 	},
-	// ),
+	Entry(
+		"can get DIDDoc versions with an existent old 16 characters Indy style DID",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/versions",
+				testconstants.OldIndy16CharStyleTestnetDid,
+			),
+			resolutionType:     testconstants.DefaultResolutionType,
+			expectedJSONPath:   "testdata/diddoc_versions/diddoc_versions_old_16_indy_did.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
 
-	// Entry(
-	// 	"can get DIDDoc versions with an existent old 32 characters Indy style DID",
-	// 	positiveTestCase{
-	// 		didURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/versions",
-	// 			testconstants.OldIndy32CharStyleTestnetDid,
-	// 		),
-	// 		resolutionType:     testconstants.DefaultResolutionType,
-	// 		expectedJSONPath:   "testdata/diddoc_versions/diddoc_versions_old_32_indy_did.json",
-	// 		expectedStatusCode: http.StatusOK,
-	// 	},
-	// ),
+	Entry(
+		"can get DIDDoc versions with an existent old 32 characters Indy style DID",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/versions",
+				testconstants.OldIndy32CharStyleTestnetDid,
+			),
+			resolutionType:     testconstants.DefaultResolutionType,
+			expectedJSONPath:   "testdata/diddoc_versions/diddoc_versions_old_32_indy_did.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
 )

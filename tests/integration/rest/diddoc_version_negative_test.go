@@ -22,40 +22,40 @@ var _ = DescribeTable("Negative: Get DIDDoc version", func(testCase negativeTest
 		Get(testCase.didURL)
 	Expect(err).To(BeNil())
 
-	var receivedDidDereferencing dereferencingResult
+	var receivedDidDereferencing types.DidResolution
 	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
 	Expect(testCase.expectedStatusCode).To(Equal(resp.StatusCode()))
 
-	expectedDidDereferencing := testCase.expectedResult.(dereferencingResult)
-	assertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
+	expectedDidDereferencing := testCase.expectedResult.(types.DidResolution)
+	assertDidResolution(expectedDidDereferencing, receivedDidDereferencing)
 },
 
-	// Entry(
-	// 	"cannot get DIDDoc version with not existent DID",
-	// 	negativeTestCase{
-	// 		didURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s",
-	// 			testconstants.NotExistentMainnetDid,
-	// 			testconstants.ValidIdentifier,
-	// 		),
-	// 		resolutionType: testconstants.DefaultResolutionType,
-	// 		expectedResult: dereferencingResult{
-	// 			Context: "",
-	// 			DereferencingMetadata: types.DereferencingMetadata{
-	// 				ContentType:     types.DIDJSONLD,
-	// 				ResolutionError: "notFound",
-	// 				DidProperties: types.DidProperties{
-	// 					DidString:        testconstants.NotExistentMainnetDid,
-	// 					MethodSpecificId: testconstants.NotExistentIdentifier,
-	// 					Method:           testconstants.ValidMethod,
-	// 				},
-	// 			},
-	// 			ContentStream: nil,
-	// 			Metadata:      types.ResolutionDidDocMetadata{},
-	// 		},
-	// 		expectedStatusCode: http.StatusNotFound,
-	// 	},
-	// ),
+	Entry(
+		"cannot get DIDDoc version with not existent DID",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				testconstants.NotExistentMainnetDid,
+				testconstants.ValidIdentifier,
+			),
+			resolutionType: testconstants.DefaultResolutionType,
+			expectedResult: types.DidResolution{
+				Context: "",
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "notFound",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.NotExistentMainnetDid,
+						MethodSpecificId: testconstants.NotExistentIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotFound,
+		},
+	),
 
 	Entry(
 		"cannot get DIDDoc version with invalid DID",
@@ -66,9 +66,9 @@ var _ = DescribeTable("Negative: Get DIDDoc version", func(testCase negativeTest
 				testconstants.ValidIdentifier,
 			),
 			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
+			expectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
+				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
@@ -77,118 +77,114 @@ var _ = DescribeTable("Negative: Get DIDDoc version", func(testCase negativeTest
 						Method:           testconstants.InvalidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			expectedStatusCode: http.StatusNotImplemented,
 		},
 	),
 
-	// Entry(
-	// 	"cannot get DIDDoc with an existent DID, but not existent versionId",
-	// 	negativeTestCase{
-	// 		didURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s",
-	// 			testconstants.IndyStyleMainnetDid,
-	// 			testconstants.NotExistentIdentifier,
-	// 		),
-	// 		resolutionType: testconstants.DefaultResolutionType,
-	// 		expectedResult: dereferencingResult{
-	// 			Context: "",
-	// 			DereferencingMetadata: types.DereferencingMetadata{
-	// 				ContentType:     types.DIDJSONLD,
-	// 				ResolutionError: "notFound",
-	// 				DidProperties: types.DidProperties{
-	// 					DidString:        testconstants.IndyStyleMainnetDid,
-	// 					MethodSpecificId: "Ps1ysXP2Ae6GBfxNhNQNKN",
-	// 					Method:           testconstants.ValidMethod,
-	// 				},
-	// 			},
-	// 			ContentStream: nil,
-	// 			Metadata:      types.ResolutionDidDocMetadata{},
-	// 		},
-	// 		expectedStatusCode: http.StatusNotFound,
-	// 	},
-	// ),
+	Entry(
+		"cannot get DIDDoc with an existent DID, but not existent versionId",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				testconstants.IndyStyleMainnetDid,
+				testconstants.NotExistentIdentifier,
+			),
+			resolutionType: testconstants.DefaultResolutionType,
+			expectedResult: types.DidResolution{
+				Context: "",
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "notFound",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.IndyStyleMainnetDid,
+						MethodSpecificId: "Ps1ysXP2Ae6GBfxNhNQNKN",
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotFound,
+		},
+	),
 
-	// Entry(
-	// 	"cannot get DIDDoc with an existent old 16 characters Indy style DID, but not existent versionId",
-	// 	negativeTestCase{
-	// 		didURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s",
-	// 			testconstants.OldIndy16CharStyleTestnetDid,
-	// 			testconstants.NotExistentIdentifier,
-	// 		),
-	// 		resolutionType: testconstants.DefaultResolutionType,
-	// 		expectedResult: dereferencingResult{
-	// 			Context: "",
-	// 			DereferencingMetadata: types.DereferencingMetadata{
-	// 				ContentType:     types.DIDJSONLD,
-	// 				ResolutionError: "notFound",
-	// 				DidProperties: types.DidProperties{
-	// 					DidString:        testconstants.OldIndy16CharStyleTestnetDid,
-	// 					MethodSpecificId: "CpeMubv5yw63jXyrgRRsxR",
-	// 					Method:           testconstants.ValidMethod,
-	// 				},
-	// 			},
-	// 			ContentStream: nil,
-	// 			Metadata:      types.ResolutionDidDocMetadata{},
-	// 		},
-	// 		expectedStatusCode: http.StatusNotFound,
-	// 	},
-	// ),
+	Entry(
+		"cannot get DIDDoc with an existent old 16 characters Indy style DID, but not existent versionId",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				testconstants.OldIndy16CharStyleTestnetDid,
+				testconstants.NotExistentIdentifier,
+			),
+			resolutionType: testconstants.DefaultResolutionType,
+			expectedResult: types.DidResolution{
+				Context: "",
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "notFound",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.MigratedIndy16CharStyleTestnetDid,
+						MethodSpecificId: "CpeMubv5yw63jXyrgRRsxR",
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotFound,
+		},
+	),
 
-	// Entry(
-	// 	"cannot get DIDDoc with an existent old 32 characters Indy style DID, but not existent versionId",
-	// 	negativeTestCase{
-	// 		didURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s",
-	// 			testconstants.OldIndy32CharStyleTestnetDid,
-	// 			testconstants.NotExistentIdentifier,
-	// 		),
-	// 		resolutionType: testconstants.DefaultResolutionType,
-	// 		expectedResult: dereferencingResult{
-	// 			Context: "",
-	// 			DereferencingMetadata: types.DereferencingMetadata{
-	// 				ContentType:     types.DIDJSONLD,
-	// 				ResolutionError: "notFound",
-	// 				DidProperties: types.DidProperties{
-	// 					DidString:        testconstants.OldIndy32CharStyleTestnetDid,
-	// 					MethodSpecificId: "3KpiDD6Hxs4i2G7FtpiGhu",
-	// 					Method:           testconstants.ValidMethod,
-	// 				},
-	// 			},
-	// 			ContentStream: nil,
-	// 			Metadata:      types.ResolutionDidDocMetadata{},
-	// 		},
-	// 		expectedStatusCode: http.StatusNotFound,
-	// 	},
-	// ),
+	Entry(
+		"cannot get DIDDoc with an existent old 32 characters Indy style DID, but not existent versionId",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				testconstants.OldIndy32CharStyleTestnetDid,
+				testconstants.NotExistentIdentifier,
+			),
+			resolutionType: testconstants.DefaultResolutionType,
+			expectedResult: types.DidResolution{
+				Context: "",
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "notFound",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.MigratedIndy32CharStyleTestnetDid,
+						MethodSpecificId: "3KpiDD6Hxs4i2G7FtpiGhu",
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusNotFound,
+		},
+	),
 
-	// Entry(
-	// 	"cannot get DIDDoc with an existent DID, but an invalid versionId",
-	// 	negativeTestCase{
-	// 		didURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s",
-	// 			testconstants.UUIDStyleMainnetDid,
-	// 			testconstants.InvalidIdentifier,
-	// 		),
-	// 		resolutionType: testconstants.DefaultResolutionType,
-	// 		expectedResult: dereferencingResult{
-	// 			Context: "",
-	// 			DereferencingMetadata: types.DereferencingMetadata{
-	// 				ContentType:     types.DIDJSONLD,
-	// 				ResolutionError: "notFound",
-	// 				DidProperties: types.DidProperties{
-	// 					DidString:        testconstants.UUIDStyleMainnetDid,
-	// 					MethodSpecificId: "c82f2b02-bdab-4dd7-b833-3e143745d612",
-	// 					Method:           testconstants.ValidMethod,
-	// 				},
-	// 			},
-	// 			ContentStream: nil,
-	// 			Metadata:      types.ResolutionDidDocMetadata{},
-	// 		},
-	// 		expectedStatusCode: http.StatusNotFound,
-	// 	},
-	// ),
+	Entry(
+		"cannot get DIDDoc with an existent DID, but an invalid versionId",
+		negativeTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				testconstants.UUIDStyleMainnetDid,
+				testconstants.InvalidIdentifier,
+			),
+			resolutionType: testconstants.DefaultResolutionType,
+			expectedResult: types.DidResolution{
+				Context: "",
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "invalidDidUrl",
+					DidProperties:   types.DidProperties{},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedStatusCode: http.StatusBadRequest,
+		},
+	),
 )
