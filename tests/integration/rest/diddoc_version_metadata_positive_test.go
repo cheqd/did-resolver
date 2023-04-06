@@ -33,7 +33,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 },
 
 	Entry(
-		"can get DIDDoc metadata with an existent 22 bytes INDY style mainnet DID and versionId",
+		"can get DIDDoc version metadata with an existent 22 bytes INDY style mainnet DID and versionId",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
@@ -47,7 +47,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 	),
 
 	Entry(
-		"can get DIDDoc metadata with an existent 22 bytes INDY style testnet DID and versionId",
+		"can get DIDDoc version metadata with an existent 22 bytes INDY style testnet DID and versionId",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
@@ -61,7 +61,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 	),
 
 	Entry(
-		"can get DIDDoc metadata with an existent UUID style mainnet DID and versionId",
+		"can get DIDDoc version metadata with an existent UUID style mainnet DID and versionId",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
@@ -75,7 +75,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 	),
 
 	Entry(
-		"can get DIDDoc metadata with an existent UUID style testnet DID and versionId",
+		"can get DIDDoc version metadata with an existent UUID style testnet DID and versionId",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
@@ -89,7 +89,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 	),
 
 	Entry(
-		"can get DIDDoc metadata with an existent old 16 characters Indy style testnet DID and versionId",
+		"can get DIDDoc version metadata with an existent old 16 characters Indy style testnet DID and versionId",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
@@ -103,7 +103,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 	),
 
 	Entry(
-		"can get DIDDoc metadata with an existent old 32 characters Indy style testnet DID and versionId",
+		"can get DIDDoc version metadata with an existent old 32 characters Indy style testnet DID and versionId",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
@@ -117,7 +117,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 	),
 
 	Entry(
-		"can get DIDDoc metadata with an existent DID and versionId, and supported DIDJSON resolution type",
+		"can get DIDDoc version metadata with an existent DID and versionId, and supported DIDJSON resolution type",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
@@ -131,7 +131,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 	),
 
 	Entry(
-		"can get DIDDoc metadata with an existent DID and versionId, and supported DIDJSONLD resolution type",
+		"can get DIDDoc version metadata with an existent DID and versionId, and supported DIDJSONLD resolution type",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
@@ -145,7 +145,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 	),
 
 	Entry(
-		"can get DIDDoc metadata with an existent DID and versionId, and supported JSONLD resolution type",
+		"can get DIDDoc version metadata with an existent DID and versionId, and supported JSONLD resolution type",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",

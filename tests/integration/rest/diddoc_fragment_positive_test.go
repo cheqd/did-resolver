@@ -124,4 +124,43 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase positiveTestCa
 			expectedStatusCode: http.StatusOK,
 		},
 	),
+
+	Entry(
+		"can get serviceEndpoint section with an existent DID#fragment and supported DIDJSON resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%swebsite",
+				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
+			),
+			resolutionType:     string(types.DIDJSON),
+			expectedJSONPath:   "testdata/diddoc_fragment/service_endpoint_did_fragment_did_json.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get verificationMethod section with an existent DID#fragment and supported DIDJSONLD resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%swebsite",
+				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
+			),
+			resolutionType:     string(types.DIDJSONLD),
+			expectedJSONPath:   "testdata/diddoc_fragment/service_endpoint_did_fragment.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get verificationMethod section with an existent DID#fragment and supported JSONLD resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%swebsite",
+				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
+			),
+			resolutionType:     string(types.JSONLD),
+			expectedJSONPath:   "testdata/diddoc_fragment/service_endpoint_did_fragment.json",
+			expectedStatusCode: http.StatusOK,
+		},
+	),
 )

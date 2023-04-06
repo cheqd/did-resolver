@@ -145,7 +145,7 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase positiveTestCase) {
 				testconstants.IndyStyleMainnetDid,
 			),
 			resolutionType:     string(types.JSONLD),
-			expectedJSONPath:   "testdata/diddoc/diddoc_json_ld.json",
+			expectedJSONPath:   "testdata/diddoc/diddoc_indy_mainnet_did.json",
 			expectedStatusCode: http.StatusOK,
 		},
 	),

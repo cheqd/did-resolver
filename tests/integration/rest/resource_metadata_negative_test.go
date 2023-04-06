@@ -31,7 +31,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase negativeT
 },
 
 	Entry(
-		"cannot get resource metadata with an existent DID, but not supported resolutionType",
+		"cannot get resource metadata with an existent DID and resourceId, but not supported resolutionType",
 		negativeTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",

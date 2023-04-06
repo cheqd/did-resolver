@@ -87,7 +87,7 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase pos
 	),
 
 	Entry(
-		"can get DIDDoc version with an existent DID, and supported JSONLD resolution type",
+		"can get collection of resources with an existent DID, and supported JSONLD resolution type",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/metadata",

@@ -33,7 +33,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase positiveTest
 },
 
 	Entry(
-		"can get DIDDoc with an existent 22 bytes INDY style mainnet DID and versionId",
+		"can get DIDDoc version with an existent 22 bytes INDY style mainnet DID and versionId",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s",
@@ -47,7 +47,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase positiveTest
 	),
 
 	Entry(
-		"can get DIDDoc with an existent 22 bytes INDY style testnet DID and versionId",
+		"can get DIDDoc version with an existent 22 bytes INDY style testnet DID and versionId",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s",
@@ -61,7 +61,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase positiveTest
 	),
 
 	Entry(
-		"can get DIDDoc with an existent UUID style mainnet DID and versionId",
+		"can get DIDDoc version with an existent UUID style mainnet DID and versionId",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s",
@@ -75,7 +75,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase positiveTest
 	),
 
 	Entry(
-		"can get DIDDoc with an existent UUID style testnet DID and versionId",
+		"can get DIDDoc version with an existent UUID style testnet DID and versionId",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s",
@@ -89,7 +89,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase positiveTest
 	),
 
 	Entry(
-		"can get DIDDoc with an existent old 16 characters Indy style DID",
+		"can get DIDDoc version with an existent old 16 characters Indy style DID",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s",
@@ -103,7 +103,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase positiveTest
 	),
 
 	Entry(
-		"can get DIDDoc with an existent old 32 characters Indy style DID",
+		"can get DIDDoc version with an existent old 32 characters Indy style DID",
 		positiveTestCase{
 			didURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s",

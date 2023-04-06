@@ -14,7 +14,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = DescribeTable("Positive: Get collection of resources", func(testCase negativeTestCase) {
+var _ = DescribeTable("Negative: Get collection of resources", func(testCase negativeTestCase) {
 	client := resty.New()
 
 	resp, err := client.R().
