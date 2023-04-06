@@ -36,6 +36,10 @@ func (v *VersionTimeHandler) Handle(c services.ResolverContext, service services
 		return nil, types.NewInternalError("error while finding version before time", contentType, _err, v.IsDereferencing)
 	}
 
+	if versionId == "" {
+		return nil, types.NewNotFoundError("No versions found", contentType, nil, v.IsDereferencing)
+	}
+
 	result, err := c.DidDocService.Resolve(did, versionId, contentType)
 	if err != nil {
 		err.IsDereferencing = v.IsDereferencing

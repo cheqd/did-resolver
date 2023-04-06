@@ -29,6 +29,10 @@ func (s *ServiceHandler) Handle(c services.ResolverContext, service services.Req
 		return nil, err
 	}
 
+	if result == "" {
+		return nil, types.NewNotFoundError("Service not found", types.DIDJSONLD, nil, s.IsDereferencing)
+	}
+
 	// Call the next handler
 	return s.Continue(c, service, types.NewServiceResult(result))
 }

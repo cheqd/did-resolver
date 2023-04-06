@@ -43,6 +43,8 @@ const (
 	InvalidIdentifier = "invalid_identifier"
 	InvalidDid        = "did:" + InvalidMethod + ":" + InvalidNamespace + ":" + InvalidIdentifier
 	InvalidResourceId = "invalid_resource_id"
+	InvalidVersionId  = "invalid_uuid_identifier"
+	InvalidServiceId = "not_found_service_id"
 )
 
 const (
@@ -66,7 +68,10 @@ var (
 
 	ValidCreated, _  = time.Parse(time.RFC3339, "2021-08-23T09:00:00Z")
 	CreatedAfter, _  = time.Parse(time.RFC3339, "2021-08-23T09:00:01Z")
-	CreatedBefore, _ = time.Parse(time.RFC3339, "2021-08-23T08:59:59Z")
+	CreatedBefore, _ = time.Parse(time.RFC3339, "2021-08-23T08:00:00Z")
+	ValidUpdated, _  = time.Parse(time.RFC3339, "2021-08-23T09:30:00Z")
+	UpdatedAfter, _  = time.Parse(time.RFC3339, "2021-08-23T09:30:01Z")
+	UpdatedBefore, _ = time.Parse(time.RFC3339, "2021-08-23T09:20:00Z")
 )
 
 var (
@@ -249,4 +254,13 @@ func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resourceTyp
 
 func (ls MockLedgerService) GetNamespaces() []string {
 	return []string{"testnet", "mainnet"}
+}
+
+func MustParseDate(sdate string) time.Time {
+	date, err := time.Parse(time.RFC3339, sdate)
+	if err != nil {
+		panic(err)
+	}
+
+	return date
 }

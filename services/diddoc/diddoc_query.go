@@ -58,7 +58,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 
 	// Validate that versionId is UUID
 	if versionId != "" && !utils.IsValidUUID(versionId) {
-		return types.NewInvalidDIDUrlError(dd.Version, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewInvalidDIDUrlError(versionId, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
 	return nil
@@ -93,7 +93,7 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 	// or
 	// - versionIdHandler
 	// After that we can find for service field if it's set.
-	// didQueryHandler -> versionIdHandler -> versionTimeHandler -> serviceHandler
+	// didQueryHandler -> versionIdHandler -> versionTimeHandler -> serviceHandler -> stopHandler
 
 	err := didQueryHandler.SetNext(c, &versionIdHandler)
 	if err != nil {

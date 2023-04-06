@@ -1,6 +1,7 @@
 package types
 
 import (
+	"sort"
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	"github.com/cheqd/did-resolver/utils"
 )
@@ -62,12 +63,33 @@ func (r ResourceDereferencing) IsRedirect() bool {
 	return false
 }
 
+type DidDocMetadataList []ResolutionDidDocMetadata
+
+func (dd DidDocMetadataList) Len() int {
+    return len(dd)
+}
+
+// Sort in reverse order
+func (dd DidDocMetadataList) Less(i, j int) bool {
+	if dd[i].Updated == nil {
+		return false
+	}
+	if dd[j].Updated == nil {
+		return true
+	}
+    return dd[i].Updated.After(*dd[j].Updated)
+}
+
+func (dd DidDocMetadataList) Swap(i, j int) {
+    dd[i], dd[j] = dd[j], dd[i]
+}
+
 type DereferencedDidVersionsList struct {
-	Versions []ResolutionDidDocMetadata `json:"versions,omitempty"`
+	Versions DidDocMetadataList `json:"versions,omitempty"`
 }
 
 func NewDereferencedDidVersionsList(versions []*didTypes.Metadata) *DereferencedDidVersionsList {
-	didVersionList := []ResolutionDidDocMetadata{}
+	didVersionList := DidDocMetadataList{}
 	for _, version := range versions {
 		didVersionList = append(didVersionList, NewResolutionDidDocMetadata("", version, nil))
 	}
@@ -83,13 +105,19 @@ func (e *DereferencedDidVersionsList) GetBytes() []byte              { return []
 
 // Returns VersionId if there is a version before the given time
 // Otherwise NotFound error
-func (e DereferencedDidVersionsList) FindBeforeTime(before string) (string, error) {
-	time_before, err := utils.ParseFromStringTimeToGoTime(before)
+func (e DereferencedDidVersionsList) FindBeforeTime(stime string) (string, error) {
+	search_time, err := utils.ParseFromStringTimeToGoTime(stime)
 	if err != nil {
 		return "", err
 	}
-	for _, version := range e.Versions {
-		if version.Created.Before(time_before) {
+	// Firstly - sort versions by Updated time
+	versions := e.Versions
+	sort.Sort(DidDocMetadataList(versions))
+	for _, version := range versions {
+		if version.Updated != nil && version.Updated.Before(search_time) {
+			return version.VersionId, nil
+		}  
+		if version.Updated == nil && version.Created.Before(search_time) {
 			return version.VersionId, nil
 		}
 	}
