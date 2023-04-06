@@ -2,7 +2,11 @@ package testconstants
 
 import "fmt"
 
-var DefaultResolutionType = "*/*"
+var (
+	DefaultResolutionType    = "*/*"
+	DefaultEncodingType      = "gzip, deflate, br"
+	NotSupportedEncodingType = "deflate, br"
+)
 
 var (
 	IndyStyleMainnetDid = "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN"

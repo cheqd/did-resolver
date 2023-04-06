@@ -19,6 +19,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase positiveT
 
 	resp, err := client.R().
 		SetHeader("Accept", testCase.resolutionType).
+		SetHeader("Accept-Encoding", testCase.encodingType).
 		Get(testCase.didURL)
 	Expect(err).To(BeNil())
 
@@ -29,6 +30,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase positiveT
 	var expectedDidDereferencing dereferencingResult
 	Expect(convertJsonFileToType(testCase.expectedJSONPath, &expectedDidDereferencing)).To(BeNil())
 
+	Expect(testCase.expectedEncodingType).To(Equal(resp.Header().Get("Content-Encoding")))
 	assertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
 },
 
@@ -40,9 +42,11 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase positiveT
 				testconstants.UUIDStyleTestnetDid,
 				"9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
 			),
-			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/resource_metadata/metadata.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       testconstants.DefaultResolutionType,
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/resource_metadata/metadata.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -57,9 +61,11 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase positiveT
 				testconstants.OldIndy32CharStyleTestnetDid,
 				"214b8b61-a861-416b-a7e4-45533af40ada",
 			),
-			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/resource_metadata/metadata_32_indy_did.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       testconstants.DefaultResolutionType,
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/resource_metadata/metadata_32_indy_did.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -71,9 +77,11 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase positiveT
 				testconstants.UUIDStyleTestnetDid,
 				"9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
 			),
-			resolutionType:     string(types.DIDJSON),
-			expectedJSONPath:   "testdata/resource_metadata/metadata_did_json.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       string(types.DIDJSON),
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/resource_metadata/metadata_did_json.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -85,9 +93,11 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase positiveT
 				testconstants.UUIDStyleTestnetDid,
 				"9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
 			),
-			resolutionType:     string(types.DIDJSONLD),
-			expectedJSONPath:   "testdata/resource_metadata/metadata.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       string(types.DIDJSONLD),
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/resource_metadata/metadata.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -99,7 +109,40 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase positiveT
 				testconstants.UUIDStyleTestnetDid,
 				"9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
 			),
-			resolutionType:     string(types.JSONLD),
+			resolutionType:       string(types.JSONLD),
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/resource_metadata/metadata.json",
+			expectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc version with an existent DID, and supported gzip encoding type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.UUIDStyleTestnetDid,
+				"9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
+			),
+			resolutionType:       testconstants.DefaultResolutionType,
+			encodingType:         "gzip",
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/resource_metadata/metadata.json",
+			expectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc version with an existent DID, and supported gzip encoding type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.UUIDStyleTestnetDid,
+				"9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
+			),
+			resolutionType:     testconstants.DefaultResolutionType,
+			encodingType:       testconstants.NotSupportedEncodingType,
 			expectedJSONPath:   "testdata/resource_metadata/metadata.json",
 			expectedStatusCode: http.StatusOK,
 		},

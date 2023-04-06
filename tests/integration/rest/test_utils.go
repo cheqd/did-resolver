@@ -11,10 +11,12 @@ import (
 )
 
 type positiveTestCase struct {
-	didURL             string
-	resolutionType     string
-	expectedJSONPath   string
-	expectedStatusCode int
+	didURL               string
+	resolutionType       string
+	encodingType         string
+	expectedEncodingType string
+	expectedJSONPath     string
+	expectedStatusCode   int
 }
 
 type negativeTestCase struct {

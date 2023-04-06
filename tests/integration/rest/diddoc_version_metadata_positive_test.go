@@ -19,6 +19,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 
 	resp, err := client.R().
 		SetHeader("Accept", testCase.resolutionType).
+		SetHeader("Accept-Encoding", testCase.encodingType).
 		Get(testCase.didURL)
 	Expect(err).To(BeNil())
 
@@ -29,6 +30,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 	var expectedDidDereferencing dereferencingResult
 	Expect(convertJsonFileToType(testCase.expectedJSONPath, &expectedDidDereferencing)).To(BeNil())
 
+	Expect(testCase.expectedEncodingType).To(Equal(resp.Header().Get("Content-Encoding")))
 	assertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
 },
 
@@ -40,9 +42,11 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 				testconstants.IndyStyleMainnetDid,
 				"4fa8e367-c70e-533e-babf-3732d9761061",
 			),
-			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/diddoc_version_metadata/diddoc_indy_mainnet_did.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       testconstants.DefaultResolutionType,
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/diddoc_version_metadata/diddoc_indy_mainnet_did.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -54,9 +58,11 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 				testconstants.IndyStyleTestnetDid,
 				"60bb3b62-e0f0-545b-a552-63aab5cd1aef",
 			),
-			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/diddoc_version_metadata/diddoc_indy_testnet_did.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       testconstants.DefaultResolutionType,
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/diddoc_version_metadata/diddoc_indy_testnet_did.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -68,9 +74,11 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 				testconstants.UUIDStyleMainnetDid,
 				"76e546ee-78cd-5372-b34e-8b47461626e1",
 			),
-			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/diddoc_version_metadata/diddoc_uuid_mainnet_did.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       testconstants.DefaultResolutionType,
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/diddoc_version_metadata/diddoc_uuid_mainnet_did.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -82,9 +90,11 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 				testconstants.UUIDStyleTestnetDid,
 				"e5615fc2-6f13-42b1-989c-49576a574cef",
 			),
-			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       testconstants.DefaultResolutionType,
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -96,9 +106,11 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 				testconstants.OldIndy16CharStyleTestnetDid,
 				"674e6cb5-8d7c-5c50-b0ff-d91bcbcbd5d6",
 			),
-			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/diddoc_version_metadata/diddoc_old_16_indy_testnet_did.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       testconstants.DefaultResolutionType,
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/diddoc_version_metadata/diddoc_old_16_indy_testnet_did.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -110,9 +122,11 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 				testconstants.OldIndy32CharStyleTestnetDid,
 				"1dc202d4-26ee-54a9-b091-8d2e1f609722",
 			),
-			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/diddoc_version_metadata/diddoc_old_32_indy_testnet_did.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       testconstants.DefaultResolutionType,
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/diddoc_version_metadata/diddoc_old_32_indy_testnet_did.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -124,9 +138,11 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 				testconstants.UUIDStyleTestnetDid,
 				"e5615fc2-6f13-42b1-989c-49576a574cef",
 			),
-			resolutionType:     string(types.DIDJSON),
-			expectedJSONPath:   "testdata/diddoc_version_metadata/diddoc_did_json.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       string(types.DIDJSON),
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/diddoc_version_metadata/diddoc_did_json.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -138,9 +154,11 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 				testconstants.UUIDStyleTestnetDid,
 				"e5615fc2-6f13-42b1-989c-49576a574cef",
 			),
-			resolutionType:     string(types.DIDJSONLD),
-			expectedJSONPath:   "testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       string(types.DIDJSONLD),
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -152,7 +170,40 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase pos
 				testconstants.UUIDStyleTestnetDid,
 				"e5615fc2-6f13-42b1-989c-49576a574cef",
 			),
-			resolutionType:     string(types.JSONLD),
+			resolutionType:       string(types.JSONLD),
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",
+			expectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc version metadata with an existent DID and versionId, and supported gzip encoding type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
+				testconstants.UUIDStyleTestnetDid,
+				"e5615fc2-6f13-42b1-989c-49576a574cef",
+			),
+			resolutionType:       testconstants.DefaultResolutionType,
+			encodingType:         "gzip",
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",
+			expectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc version metadata with an existent DID and versionId, and not supported encoding type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
+				testconstants.UUIDStyleTestnetDid,
+				"e5615fc2-6f13-42b1-989c-49576a574cef",
+			),
+			resolutionType:     testconstants.DefaultResolutionType,
+			encodingType:       testconstants.NotSupportedEncodingType,
 			expectedJSONPath:   "testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",
 			expectedStatusCode: http.StatusOK,
 		},

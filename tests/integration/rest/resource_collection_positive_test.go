@@ -19,6 +19,7 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase pos
 
 	resp, err := client.R().
 		SetHeader("Accept", testCase.resolutionType).
+		SetHeader("Accept-Encoding", testCase.encodingType).
 		Get(testCase.didURL)
 	Expect(err).To(BeNil())
 
@@ -29,6 +30,7 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase pos
 	var expectedDidDereferencing dereferencingResult
 	Expect(convertJsonFileToType(testCase.expectedJSONPath, &expectedDidDereferencing)).To(BeNil())
 
+	Expect(testCase.expectedEncodingType).To(Equal(resp.Header().Get("Content-Encoding")))
 	assertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
 },
 
@@ -39,9 +41,11 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase pos
 				"http://localhost:8080/1.0/identifiers/%s/metadata",
 				testconstants.UUIDStyleTestnetDid,
 			),
-			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/collection_of_resources/metadata.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       testconstants.DefaultResolutionType,
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/collection_of_resources/metadata.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -54,9 +58,11 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase pos
 				"http://localhost:8080/1.0/identifiers/%s/metadata",
 				testconstants.OldIndy32CharStyleTestnetDid,
 			),
-			resolutionType:     testconstants.DefaultResolutionType,
-			expectedJSONPath:   "testdata/collection_of_resources/metadata_32_indy_did.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       testconstants.DefaultResolutionType,
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/collection_of_resources/metadata_32_indy_did.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -67,9 +73,11 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase pos
 				"http://localhost:8080/1.0/identifiers/%s/metadata",
 				testconstants.UUIDStyleTestnetDid,
 			),
-			resolutionType:     string(types.DIDJSON),
-			expectedJSONPath:   "testdata/collection_of_resources/metadata_did_json.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       string(types.DIDJSON),
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/collection_of_resources/metadata_did_json.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -80,9 +88,11 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase pos
 				"http://localhost:8080/1.0/identifiers/%s/metadata",
 				testconstants.UUIDStyleTestnetDid,
 			),
-			resolutionType:     string(types.DIDJSONLD),
-			expectedJSONPath:   "testdata/collection_of_resources/metadata.json",
-			expectedStatusCode: http.StatusOK,
+			resolutionType:       string(types.DIDJSONLD),
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/collection_of_resources/metadata.json",
+			expectedStatusCode:   http.StatusOK,
 		},
 	),
 
@@ -93,7 +103,38 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase pos
 				"http://localhost:8080/1.0/identifiers/%s/metadata",
 				testconstants.UUIDStyleTestnetDid,
 			),
-			resolutionType:     string(types.JSONLD),
+			resolutionType:       string(types.JSONLD),
+			encodingType:         testconstants.DefaultEncodingType,
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/collection_of_resources/metadata.json",
+			expectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get collection of resources with an existent DID, and supported gzip resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/metadata",
+				testconstants.UUIDStyleTestnetDid,
+			),
+			resolutionType:       testconstants.DefaultResolutionType,
+			encodingType:         "gzip",
+			expectedEncodingType: "gzip",
+			expectedJSONPath:     "testdata/collection_of_resources/metadata.json",
+			expectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get collection of resources with an existent DID, and not supported resolution type",
+		positiveTestCase{
+			didURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/metadata",
+				testconstants.UUIDStyleTestnetDid,
+			),
+			resolutionType:     testconstants.DefaultResolutionType,
+			encodingType:       testconstants.NotSupportedEncodingType,
 			expectedJSONPath:   "testdata/collection_of_resources/metadata.json",
 			expectedStatusCode: http.StatusOK,
 		},
