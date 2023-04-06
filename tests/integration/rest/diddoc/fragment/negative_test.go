@@ -1,6 +1,6 @@
 //go:build integration
 
-package rest
+package fragment
 
 import (
 	"encoding/json"
@@ -9,37 +9,38 @@ import (
 	"net/url"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
+	utils "github.com/cheqd/did-resolver/tests/integration/rest"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/go-resty/resty/v2"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-var _ = DescribeTable("Negative: Get DID#fragment", func(testCase negativeTestCase) {
+var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.NegativeTestCase) {
 	client := resty.New()
 
 	resp, err := client.R().
-		SetHeader("Accept", testCase.resolutionType).
-		Get(testCase.didURL)
+		SetHeader("Accept", testCase.ResolutionType).
+		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
 
-	var receivedDidDereferencing dereferencingResult
+	var receivedDidDereferencing utils.DereferencingResult
 	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
-	Expect(testCase.expectedStatusCode).To(Equal(resp.StatusCode()))
+	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	expectedDidDereferencing := testCase.expectedResult.(dereferencingResult)
-	assertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
+	expectedDidDereferencing := testCase.ExpectedResult.(utils.DereferencingResult)
+	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
 },
 
 	Entry(
-		"cannot get DIDDoc fragment with an existent DID, but not supported resolutionType",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		"cannot get DIDDoc fragment with an existent DID, but not supported ResolutionType",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%skey-1",
 				testconstants.UUIDStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
-			resolutionType: string(types.JSON),
-			expectedResult: dereferencingResult{
+			ResolutionType: string(types.JSON),
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.JSON,
@@ -49,19 +50,19 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase negativeTestCa
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotAcceptable,
+			ExpectedStatusCode: http.StatusNotAcceptable,
 		},
 	),
 
 	Entry(
-		"cannot get DIDDoc fragment with not existent DID and not supported resolutionType",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		"cannot get DIDDoc fragment with not existent DID and not supported ResolutionType",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%skey-1",
 				testconstants.NotExistentMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
-			resolutionType: string(types.JSON),
-			expectedResult: dereferencingResult{
+			ResolutionType: string(types.JSON),
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.JSON,
@@ -71,19 +72,19 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase negativeTestCa
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotAcceptable,
+			ExpectedStatusCode: http.StatusNotAcceptable,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc fragment with not existent DID",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%skey1",
 				testconstants.NotExistentTestnetDid+url.PathEscape(testconstants.HashTag),
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -97,19 +98,19 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase negativeTestCa
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotFound,
+			ExpectedStatusCode: http.StatusNotFound,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc fragment with an invalid DID",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%skey1",
 				testconstants.InvalidDID+url.PathEscape(testconstants.HashTag),
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -123,20 +124,20 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase negativeTestCa
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotImplemented,
+			ExpectedStatusCode: http.StatusNotImplemented,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc fragment with existent DID, but not existent #fragment",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s%s",
 				testconstants.IndyStyleTestnetDid+url.PathEscape(testconstants.HashTag),
 				testconstants.NotExistentFragment,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -150,20 +151,20 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase negativeTestCa
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotFound,
+			ExpectedStatusCode: http.StatusNotFound,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc fragment with existent old 16 characters Indy style DID, but not existent #fragment",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s%s",
 				testconstants.OldIndy16CharStyleTestnetDid+url.PathEscape(testconstants.HashTag),
 				testconstants.NotExistentFragment,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -177,20 +178,20 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase negativeTestCa
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotFound,
+			ExpectedStatusCode: http.StatusNotFound,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc fragment with existent old 32 characters Indy style DID, but not existent #fragment",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s%s",
 				testconstants.OldIndy32CharStyleTestnetDid+url.PathEscape(testconstants.HashTag),
 				testconstants.NotExistentFragment,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -204,7 +205,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase negativeTestCa
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotFound,
+			ExpectedStatusCode: http.StatusNotFound,
 		},
 	),
 )

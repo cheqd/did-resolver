@@ -1,6 +1,6 @@
 //go:build integration
 
-package rest
+package versions
 
 import (
 	"encoding/json"
@@ -8,37 +8,38 @@ import (
 	"net/http"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
+	utils "github.com/cheqd/did-resolver/tests/integration/rest"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/go-resty/resty/v2"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-var _ = DescribeTable("Negative: Get collection of resources", func(testCase negativeTestCase) {
+var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.NegativeTestCase) {
 	client := resty.New()
 
 	resp, err := client.R().
-		SetHeader("Accept", testCase.resolutionType).
-		Get(testCase.didURL)
+		SetHeader("Accept", testCase.ResolutionType).
+		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
 
-	var receivedDidDereferencing dereferencingResult
+	var receivedDidDereferencing utils.DereferencingResult
 	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
-	Expect(testCase.expectedStatusCode).To(Equal(resp.StatusCode()))
+	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	expectedDidDereferencing := testCase.expectedResult.(dereferencingResult)
-	assertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
+	expectedDidDereferencing := testCase.ExpectedResult.(utils.DereferencingResult)
+	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
 },
 
 	Entry(
-		"cannot get collection of resources with an existent DID, but not supported resolutionType",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/metadata",
+		"cannot get DIDDoc versions with an existent DID, but not supported ResolutionType",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/versions",
 				testconstants.UUIDStyleMainnetDid,
 			),
-			resolutionType: string(types.JSON),
-			expectedResult: dereferencingResult{
+			ResolutionType: string(types.JSON),
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.JSON,
@@ -48,19 +49,19 @@ var _ = DescribeTable("Negative: Get collection of resources", func(testCase neg
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotAcceptable,
+			ExpectedStatusCode: http.StatusNotAcceptable,
 		},
 	),
 
 	Entry(
-		"cannot get collection of resources with not existent DID and not supported resolutionType",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/metadata",
+		"cannot get DIDDoc versions with not existent DID and not supported ResolutionType",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/versions",
 				testconstants.NotExistentMainnetDid,
 			),
-			resolutionType: string(types.JSON),
-			expectedResult: dereferencingResult{
+			ResolutionType: string(types.JSON),
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.JSON,
@@ -70,25 +71,25 @@ var _ = DescribeTable("Negative: Get collection of resources", func(testCase neg
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotAcceptable,
+			ExpectedStatusCode: http.StatusNotAcceptable,
 		},
 	),
 
 	Entry(
-		"cannot get collection of resources with not existent DID",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/metadata",
-				testconstants.NotExistentMainnetDid,
+		"cannot get DIDDoc versions with not existent DID",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/versions",
+				testconstants.NotExistentTestnetDid,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.JSON,
+					ContentType:     types.DIDJSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.NotExistentMainnetDid,
+						DidString:        testconstants.NotExistentTestnetDid,
 						MethodSpecificId: testconstants.NotExistentIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
@@ -96,19 +97,19 @@ var _ = DescribeTable("Negative: Get collection of resources", func(testCase neg
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotFound,
+			ExpectedStatusCode: http.StatusNotFound,
 		},
 	),
 
 	Entry(
-		"cannot get collection of resources with invalid DID",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/metadata",
+		"cannot get DIDDoc versions with invalid DID",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s/versions",
 				testconstants.InvalidDID,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -122,7 +123,7 @@ var _ = DescribeTable("Negative: Get collection of resources", func(testCase neg
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotImplemented,
+			ExpectedStatusCode: http.StatusNotImplemented,
 		},
 	),
 )

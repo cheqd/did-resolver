@@ -10,30 +10,30 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-type positiveTestCase struct {
-	didURL               string
-	resolutionType       string
-	encodingType         string
-	expectedEncodingType string
-	expectedJSONPath     string
-	expectedStatusCode   int
+type PositiveTestCase struct {
+	DidURL               string
+	ResolutionType       string
+	EncodingType         string
+	ExpectedEncodingType string
+	ExpectedJSONPath     string
+	ExpectedStatusCode   int
 }
 
-type negativeTestCase struct {
-	didURL             string
-	resolutionType     string
-	expectedResult     any
-	expectedStatusCode int
+type NegativeTestCase struct {
+	DidURL             string
+	ResolutionType     string
+	ExpectedResult     any
+	ExpectedStatusCode int
 }
 
-type dereferencingResult struct {
+type DereferencingResult struct {
 	Context               string                         `json:"@context,omitempty"`
 	DereferencingMetadata types.DereferencingMetadata    `json:"dereferencingMetadata"`
 	ContentStream         *any                           `json:"contentStream"`
 	Metadata              types.ResolutionDidDocMetadata `json:"contentMetadata"`
 }
 
-func assertDidDereferencing(expected dereferencingResult, received dereferencingResult) {
+func AssertDidDereferencing(expected DereferencingResult, received DereferencingResult) {
 	Expect(expected.Context).To(Equal(received.Context))
 	Expect(expected.DereferencingMetadata.ContentType).To(Equal(received.DereferencingMetadata.ContentType))
 	Expect(expected.DereferencingMetadata.ResolutionError).To(Equal(received.DereferencingMetadata.ResolutionError))
@@ -42,7 +42,7 @@ func assertDidDereferencing(expected dereferencingResult, received dereferencing
 	Expect(expected.Metadata).To(Equal(received.Metadata))
 }
 
-func assertDidResolution(expected types.DidResolution, received types.DidResolution) {
+func AssertDidResolution(expected types.DidResolution, received types.DidResolution) {
 	Expect(expected.Context).To(Equal(received.Context))
 	Expect(expected.ResolutionMetadata.ContentType).To(Equal(received.ResolutionMetadata.ContentType))
 	Expect(expected.ResolutionMetadata.ResolutionError).To(Equal(received.ResolutionMetadata.ResolutionError))
@@ -51,7 +51,7 @@ func assertDidResolution(expected types.DidResolution, received types.DidResolut
 	Expect(expected.Metadata).To(Equal(received.Metadata))
 }
 
-func convertJsonFileToType(path string, v any) error {
+func ConvertJsonFileToType(path string, v any) error {
 	file, err := os.Open(path)
 	if err != nil {
 		return err

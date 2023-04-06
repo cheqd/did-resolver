@@ -1,6 +1,6 @@
 //go:build integration
 
-package rest
+package diddoc
 
 import (
 	"encoding/json"
@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
+	utils "github.com/cheqd/did-resolver/tests/integration/rest"
 
 	"github.com/cheqd/did-resolver/types"
 	"github.com/go-resty/resty/v2"
@@ -16,30 +17,31 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = DescribeTable("Negative: Get DIDDoc", func(testCase negativeTestCase) {
+var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCase) {
 	client := resty.New()
 
 	resp, err := client.R().
-		SetHeader("Accept", testCase.resolutionType).
-		Get(testCase.didURL)
+		SetHeader("Accept", testCase.ResolutionType).
+		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
+	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
 	var receivedDidResolution types.DidResolution
 	Expect(json.Unmarshal(resp.Body(), &receivedDidResolution)).To(BeNil())
 
-	expectedDidResolution := testCase.expectedResult.(types.DidResolution)
-	assertDidResolution(expectedDidResolution, receivedDidResolution)
+	expectedDidResolution := testCase.ExpectedResult.(types.DidResolution)
+	utils.AssertDidResolution(expectedDidResolution, receivedDidResolution)
 },
 
 	Entry(
-		"cannot get DIDDoc with an existent DID, but not supported resolutionType",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		"cannot get DIDDoc with an existent DID, but not supported ResolutionType",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s",
 				testconstants.UUIDStyleMainnetDid,
 			),
-			resolutionType: string(types.JSON),
-			expectedResult: types.DidResolution{
+			ResolutionType: string(types.JSON),
+			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.JSON,
@@ -49,19 +51,19 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase negativeTestCase) {
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotAcceptable,
+			ExpectedStatusCode: http.StatusNotAcceptable,
 		},
 	),
 
 	Entry(
-		"cannot get DIDDoc with not existent DID and not supported resolutionType",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		"cannot get DIDDoc with not existent DID and not supported ResolutionType",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s",
 				testconstants.NotExistentMainnetDid,
 			),
-			resolutionType: string(types.JSON),
-			expectedResult: types.DidResolution{
+			ResolutionType: string(types.JSON),
+			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.JSON,
@@ -71,19 +73,19 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase negativeTestCase) {
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotAcceptable,
+			ExpectedStatusCode: http.StatusNotAcceptable,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc with not existent mainnet DID",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s",
 				testconstants.NotExistentMainnetDid,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: types.DidResolution{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -97,19 +99,19 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase negativeTestCase) {
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotFound,
+			ExpectedStatusCode: http.StatusNotFound,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc with not existent testnet DID",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s",
 				testconstants.NotExistentTestnetDid,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: types.DidResolution{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -123,19 +125,19 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase negativeTestCase) {
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotFound,
+			ExpectedStatusCode: http.StatusNotFound,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc with mainnet DID that contains an invalid method",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s",
 				testconstants.MainnetDIDWithInvalidMethod,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: types.DidResolution{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -149,19 +151,19 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase negativeTestCase) {
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotImplemented,
+			ExpectedStatusCode: http.StatusNotImplemented,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc with testnet DID that contains an invalid method",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s",
 				testconstants.TestnetDIDWithInvalidMethod,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: types.DidResolution{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -175,19 +177,19 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase negativeTestCase) {
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotImplemented,
+			ExpectedStatusCode: http.StatusNotImplemented,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc with DID that contains an invalid namespace",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s",
 				testconstants.DIDWithInvalidNamespace,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: types.DidResolution{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -201,19 +203,19 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase negativeTestCase) {
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusBadRequest,
+			ExpectedStatusCode: http.StatusBadRequest,
 		},
 	),
 
 	Entry(
 		"It cannot get DIDDoc with an invalid DID",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s",
 				testconstants.InvalidDID,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: types.DidResolution{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -227,7 +229,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase negativeTestCase) {
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotImplemented,
+			ExpectedStatusCode: http.StatusNotImplemented,
 		},
 	),
 )

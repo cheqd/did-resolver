@@ -1,6 +1,6 @@
 //go:build integration
 
-package rest
+package metadata
 
 import (
 	"encoding/json"
@@ -8,38 +8,39 @@ import (
 	"net/http"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
+	utils "github.com/cheqd/did-resolver/tests/integration/rest"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/go-resty/resty/v2"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase negativeTestCase) {
+var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase utils.NegativeTestCase) {
 	client := resty.New()
 
 	resp, err := client.R().
-		SetHeader("Accept", testCase.resolutionType).
-		Get(testCase.didURL)
+		SetHeader("Accept", testCase.ResolutionType).
+		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
 
-	var receivedDidDereferencing dereferencingResult
+	var receivedDidDereferencing utils.DereferencingResult
 	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
-	Expect(testCase.expectedStatusCode).To(Equal(resp.StatusCode()))
+	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	expectedDidDereferencing := testCase.expectedResult.(dereferencingResult)
-	assertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
+	expectedDidDereferencing := testCase.ExpectedResult.(utils.DereferencingResult)
+	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
 },
 
 	Entry(
-		"cannot get DIDDoc version metadata with an existent DID and versionId, but not supported resolutionType",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		"cannot get DIDDoc version metadata with an existent DID and versionId, but not supported ResolutionType",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
 				testconstants.UUIDStyleMainnetDid,
 				testconstants.ValidIdentifier,
 			),
-			resolutionType: string(types.JSON),
-			expectedResult: dereferencingResult{
+			ResolutionType: string(types.JSON),
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.JSON,
@@ -49,20 +50,20 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase neg
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotAcceptable,
+			ExpectedStatusCode: http.StatusNotAcceptable,
 		},
 	),
 
 	Entry(
-		"cannot get DIDDoc version metadata with not existent DID and not supported resolutionType",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		"cannot get DIDDoc version metadata with not existent DID and not supported ResolutionType",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
-			resolutionType: string(types.JSON),
-			expectedResult: dereferencingResult{
+			ResolutionType: string(types.JSON),
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.JSON,
@@ -72,20 +73,20 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase neg
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotAcceptable,
+			ExpectedStatusCode: http.StatusNotAcceptable,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc version metadata with not existent DID",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -99,20 +100,20 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase neg
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotFound,
+			ExpectedStatusCode: http.StatusNotFound,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc version metadata with an invalid DID",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
 				testconstants.InvalidDID,
 				testconstants.ValidIdentifier,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -126,20 +127,20 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase neg
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotImplemented,
+			ExpectedStatusCode: http.StatusNotImplemented,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc version metadata with an existent DID, but not existent versionId",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
 				testconstants.IndyStyleMainnetDid,
 				testconstants.NotExistentIdentifier,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -153,20 +154,20 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase neg
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotFound,
+			ExpectedStatusCode: http.StatusNotFound,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc version metadata with an existent old 16 characters Indy style DID, but not existent versionId",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
 				testconstants.OldIndy16CharStyleTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -180,20 +181,20 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase neg
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotFound,
+			ExpectedStatusCode: http.StatusNotFound,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc version metadata with an existent old 32 characters Indy style DID, but not existent versionId",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
 				testconstants.OldIndy32CharStyleTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -207,20 +208,20 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase neg
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusNotFound,
+			ExpectedStatusCode: http.StatusNotFound,
 		},
 	),
 
 	Entry(
 		"cannot get DIDDoc version metadata with an existent DID, but an invalid versionId",
-		negativeTestCase{
-			didURL: fmt.Sprintf(
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
 				testconstants.UUIDStyleMainnetDid,
 				testconstants.InvalidIdentifier,
 			),
-			resolutionType: testconstants.DefaultResolutionType,
-			expectedResult: dereferencingResult{
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -230,7 +231,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase neg
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedStatusCode: http.StatusBadRequest,
+			ExpectedStatusCode: http.StatusBadRequest,
 		},
 	),
 )
