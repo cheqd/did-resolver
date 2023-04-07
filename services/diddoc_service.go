@@ -1,13 +1,11 @@
 package services
 
 import (
-	"net/url"
 	"strings"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 
 	"github.com/cheqd/did-resolver/types"
-	"github.com/rs/zerolog/log"
 )
 
 type DIDDocService struct {
@@ -35,42 +33,6 @@ func (DIDDocService) GetDIDFragment(fragmentId string, didDoc types.DidDoc) type
 	}
 
 	return nil
-}
-
-func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, queries url.Values, flag *string, contentType types.ContentType) (types.ResolutionResultI, *types.IdentityError) {
-	log.Trace().Msgf("ProcessDIDRequest %s, %s, %s", did, fragmentId, queries)
-	var result types.ResolutionResultI
-	var err *types.IdentityError
-	var isDereferencing bool
-
-	version := ""
-	if len(queries) > 0 {
-		version = queries.Get("versionId")
-		if version == "" {
-			return nil, types.NewRepresentationNotSupportedError(did, contentType, nil, true)
-		}
-	}
-
-	if flag != nil {
-		return nil, types.NewRepresentationNotSupportedError(did, contentType, nil, true)
-	}
-
-	if fragmentId != "" {
-		log.Trace().Msgf("Dereferencing %s, %s, %s", did, fragmentId, queries)
-		result, err = dds.DereferenceSecondary(did, version, fragmentId, contentType)
-		isDereferencing = true
-	} else {
-		log.Trace().Msgf("Resolving %s", did)
-		result, err = dds.Resolve(did, version, contentType)
-		isDereferencing = false
-	}
-
-	if err != nil {
-		err.IsDereferencing = isDereferencing
-		return nil, err
-	}
-
-	return result, nil
 }
 
 func (dds DIDDocService) Resolve(did string, version string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {
