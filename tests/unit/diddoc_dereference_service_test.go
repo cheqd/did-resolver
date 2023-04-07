@@ -1,8 +1,6 @@
 package tests
 
 import (
-	"net/url"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -13,7 +11,6 @@ import (
 type dereferencingTestCase struct {
 	did                      string
 	fragmentId               string
-	queries                  url.Values
 	dereferencingType        types.ContentType
 	expectedDidDereferencing *types.DidDereferencing
 	expectedError            *types.IdentityError
@@ -26,9 +23,7 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 		testCase.expectedDidDereferencing.DereferencingMetadata.ContentType, testCase.dereferencingType,
 	)
 
-	result, err := diddocService.ProcessDIDRequest(testCase.did, testCase.fragmentId, testCase.queries, nil, testCase.dereferencingType)
-	dereferencingResult, _ := result.(*types.DidDereferencing)
-
+	dereferencingResult, err := diddocService.DereferenceSecondary(testCase.did, "", testCase.fragmentId, testCase.dereferencingType)
 	if testCase.expectedError != nil {
 		Expect(testCase.expectedError.Code).To(Equal(err.Code))
 		Expect(testCase.expectedError.Message).To(Equal(err.Message))
@@ -43,7 +38,7 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 },
 
 	Entry(
-		"successful Secondary dereferencing (key)",
+		"successful Secondary dereferencing (verification method)",
 		dereferencingTestCase{
 			did:               ValidDid,
 			fragmentId:        validVerificationMethod.Id,
@@ -81,27 +76,6 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 				Metadata:      validFragmentMetadata,
 			},
 			expectedError: nil,
-		},
-	),
-
-	Entry(
-		"not supported query",
-		dereferencingTestCase{
-			did:               ValidDid,
-			queries:           validQuery,
-			dereferencingType: types.DIDJSONLD,
-			expectedDidDereferencing: &types.DidDereferencing{
-				DereferencingMetadata: types.DereferencingMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        ValidDid,
-						MethodSpecificId: ValidIdentifier,
-						Method:           ValidMethod,
-					},
-				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
-			},
-			expectedError: types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, false),
 		},
 	),
 

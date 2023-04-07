@@ -14,7 +14,7 @@ type queryResourceTestCase struct {
 	expectedError    *types.IdentityError
 }
 
-var _ = DescribeTable("Test QueryDIDDoc method", func(testCase queryResourceTestCase) {
+var _ = DescribeTable("Test QueryResource method", func(testCase queryResourceTestCase) {
 	resource, err := mockLedgerService.QueryResource(testCase.collectionId, testCase.resourceId)
 	if err != nil {
 		Expect(testCase.expectedError.Code).To(Equal(err.Code))
@@ -46,32 +46,12 @@ var _ = DescribeTable("Test QueryDIDDoc method", func(testCase queryResourceTest
 	),
 
 	Entry(
-		"existent collectionId, but an invalid resourceId",
-		queryResourceTestCase{
-			collectionId:     ValidDid,
-			resourceId:       InvalidIdentifier,
-			expectedResource: nil,
-			expectedError:    types.NewNotFoundError(ValidDid, types.JSON, nil, true),
-		},
-	),
-
-	Entry(
 		"not existent collectionId, but existent resourceId",
 		queryResourceTestCase{
 			collectionId:     NotExistDID,
 			resourceId:       ValidResourceId,
 			expectedResource: nil,
 			expectedError:    types.NewNotFoundError(NotExistDID, types.JSON, nil, true),
-		},
-	),
-
-	Entry(
-		"an invalid collectionId, but existent resourceId",
-		queryResourceTestCase{
-			collectionId:     InvalidDid,
-			resourceId:       ValidResourceId,
-			expectedResource: nil,
-			expectedError:    types.NewNotFoundError(InvalidDid, types.JSON, nil, true),
 		},
 	),
 

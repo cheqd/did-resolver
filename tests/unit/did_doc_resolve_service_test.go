@@ -1,8 +1,6 @@
 package tests
 
 import (
-	"fmt"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -84,92 +82,6 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			expectedError: types.NewNotFoundError(NotExistDID, types.DIDJSONLD, nil, false),
-		},
-	),
-
-	Entry(
-		"invalid DID",
-		resolveTestCase{
-			did:            InvalidDid,
-			resolutionType: types.DIDJSONLD,
-			expectedDIDResolution: &types.DidResolution{
-				ResolutionMetadata: types.ResolutionMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        InvalidDid,
-						MethodSpecificId: InvalidIdentifier,
-						Method:           InvalidMethod,
-					},
-				},
-				Did:      nil,
-				Metadata: types.ResolutionDidDocMetadata{},
-			},
-			expectedError: types.NewNotFoundError(InvalidDid, types.DIDJSONLD, nil, false),
-		},
-	),
-
-	Entry(
-		"invalid method",
-		resolveTestCase{
-			did:            "did:" + InvalidMethod + ":" + ValidNamespace + ":" + ValidIdentifier,
-			resolutionType: types.DIDJSONLD,
-			expectedDIDResolution: &types.DidResolution{
-				ResolutionMetadata: types.ResolutionMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        "did:" + InvalidMethod + ":" + ValidNamespace + ":" + ValidIdentifier,
-						MethodSpecificId: ValidIdentifier,
-						Method:           InvalidMethod,
-					},
-				},
-				Did:      nil,
-				Metadata: types.ResolutionDidDocMetadata{},
-			},
-			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, ValidIdentifier), types.DIDJSONLD, nil, false,
-			),
-		},
-	),
-
-	Entry(
-		"invalid namespace",
-		resolveTestCase{
-			did:            "did:" + ValidMethod + ":" + InvalidNamespace + ":" + ValidIdentifier,
-			resolutionType: types.DIDJSONLD,
-			expectedDIDResolution: &types.DidResolution{
-				ResolutionMetadata: types.ResolutionMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        "did:" + ValidMethod + ":" + InvalidNamespace + ":" + ValidIdentifier,
-						MethodSpecificId: ValidIdentifier,
-						Method:           ValidMethod,
-					},
-				},
-				Did:      nil,
-				Metadata: types.ResolutionDidDocMetadata{},
-			},
-			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", ValidMethod, InvalidNamespace, ValidIdentifier), types.DIDJSONLD, nil, false,
-			),
-		},
-	),
-
-	Entry(
-		"invalid identifier",
-		resolveTestCase{
-			did:            "did:" + ValidMethod + ":" + ValidNamespace + ":" + InvalidIdentifier,
-			resolutionType: types.DIDJSONLD,
-			expectedDIDResolution: &types.DidResolution{
-				ResolutionMetadata: types.ResolutionMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        "did:" + ValidMethod + ":" + ValidNamespace + ":" + InvalidIdentifier,
-						MethodSpecificId: InvalidIdentifier,
-						Method:           ValidMethod,
-					},
-				},
-				Did:      nil,
-				Metadata: types.ResolutionDidDocMetadata{},
-			},
-			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, InvalidIdentifier), types.DIDJSONLD, nil, false,
-			),
 		},
 	),
 )

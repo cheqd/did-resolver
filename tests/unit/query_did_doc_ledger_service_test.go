@@ -5,8 +5,6 @@ import (
 	. "github.com/onsi/gomega"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
-	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
-	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 )
 
@@ -47,36 +45,8 @@ var _ = DescribeTable("Test QueryDIDDoc method", func(testCase queryDIDDocTestCa
 			expectedError:              types.NewNotFoundError(NotExistDID, types.JSON, nil, true),
 		},
 	),
-
-	Entry(
-		"invalid DID",
-		queryDIDDocTestCase{
-			did:                        InvalidDid,
-			expectedDidDocWithMetadata: nil,
-			expectedError:              types.NewNotFoundError(InvalidDid, types.JSON, nil, true),
-		},
-	),
 )
 
-var _ = Describe("Test QueryResource method", func() {
-	type testCase struct {
-		collectionId     string
-		resourceId       string
-		expectedResource *resourceTypes.ResourceWithMetadata
-		expectedError    error
-	}
-
-	It("cannot get DIDDoc's resource with a invalid collectionId and resourceId", func() {
-		test := testCase{
-			collectionId:     InvalidDid,
-			resourceId:       InvalidResourceId,
-			expectedResource: nil,
-			expectedError:    types.NewInvalidDIDError(InvalidDid, types.JSON, nil, true),
-		}
-
-		ledgerService := services.NewLedgerService()
-		resource, err := ledgerService.QueryResource(test.collectionId, test.resourceId)
-		Expect(test.expectedResource).To(Equal(resource))
-		Expect(test.expectedError.Error()).To(Equal(err.Error()))
-	})
-})
+// TODO: add unit tests for testing other Ledger services:
+// - QueryAllDidDocVersionsMetadata
+// - QueryCollectionResources

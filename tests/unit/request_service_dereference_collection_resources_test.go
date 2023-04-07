@@ -38,10 +38,9 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 		Expect(testCase.expectedError.Error(), err.Error())
 	} else {
 		var dereferencingResult DereferencingResult
-		unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &dereferencingResult)
 
 		Expect(err).To(BeNil())
-		Expect(unmarshalErr).To(BeNil())
+		Expect(json.Unmarshal(rec.Body.Bytes(), &dereferencingResult)).To(BeNil())
 		Expect(testCase.expectedDereferencingResult.ContentStream).To(Equal(dereferencingResult.ContentStream))
 		Expect(testCase.expectedDereferencingResult.Metadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
@@ -93,5 +92,46 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 		},
 	),
 
-	// TODO: add unit tests for invalid DID case.
+	Entry(
+		"invalid DID",
+		resourceCollectionTestCase{
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", InvalidDid),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        InvalidDid,
+						MethodSpecificId: InvalidIdentifier,
+						Method:           InvalidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewMethodNotSupportedError(InvalidDid, types.DIDJSONLD, nil, false),
+		},
+	),
+
+	Entry(
+		"invalid representation",
+		resourceCollectionTestCase{
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", ValidDid),
+			resolutionType: types.JSON,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewRepresentationNotSupportedError(ValidDid, types.JSON, nil, false),
+		},
+	),
+
+	// TODO: add unit tests for
+	// - redirect integration tests.
 )

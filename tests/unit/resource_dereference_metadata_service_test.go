@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"fmt"
 	"strings"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -83,7 +82,27 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 	),
 
 	Entry(
-		"resource not found",
+		"not existent DID",
+		dereferenceResourceMetadataTestCase{
+			did:               NotExistDID,
+			resourceId:        NotExistIdentifier,
+			dereferencingType: types.DIDJSON,
+			expectedResourceDereferencing: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        NotExistDID,
+						MethodSpecificId: NotExistIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				Metadata: types.ResolutionResourceMetadata{},
+			},
+			expectedError: types.NewNotFoundError(NotExistDID, types.DIDJSONLD, nil, true),
+		},
+	),
+
+	Entry(
+		"an existent DID, but not existent resourceId",
 		dereferenceResourceMetadataTestCase{
 			did:               ValidDid,
 			resourceId:        NotExistIdentifier,
@@ -103,10 +122,10 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 	),
 
 	Entry(
-		"invalid resource id",
+		"not existent DID and resourceId",
 		dereferenceResourceMetadataTestCase{
 			did:               ValidDid,
-			resourceId:        InvalidResourceId,
+			resourceId:        NotExistIdentifier,
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
@@ -121,78 +140,4 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 			expectedError: types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
-
-	Entry(
-		"invalid did method",
-		dereferenceResourceMetadataTestCase{
-			did:               fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, ValidIdentifier),
-			resourceId:        ValidResourceId,
-			dereferencingType: types.DIDJSON,
-			expectedResourceDereferencing: &types.ResourceDereferencing{
-				DereferencingMetadata: types.DereferencingMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        ValidDid,
-						MethodSpecificId: ValidIdentifier,
-						Method:           InvalidMethod,
-					},
-				},
-				Metadata: types.ResolutionResourceMetadata{},
-			},
-			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, ValidIdentifier),
-				types.DIDJSONLD, nil, true,
-			),
-		},
-	),
-
-	Entry(
-		"invalid did namespace",
-		dereferenceResourceMetadataTestCase{
-			did:               fmt.Sprintf("did:%s:%s:%s", ValidMethod, InvalidNamespace, ValidIdentifier),
-			resourceId:        ValidResourceId,
-			dereferencingType: types.DIDJSON,
-			expectedResourceDereferencing: &types.ResourceDereferencing{
-				DereferencingMetadata: types.DereferencingMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        ValidDid,
-						MethodSpecificId: ValidIdentifier,
-						Method:           ValidMethod,
-					},
-				},
-				Metadata: types.ResolutionResourceMetadata{},
-			},
-			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", ValidMethod, InvalidNamespace, ValidIdentifier),
-				types.DIDJSONLD, nil, true,
-			),
-		},
-	),
-
-	Entry(
-		"invalid did identifier",
-		dereferenceResourceMetadataTestCase{
-			did:               fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, InvalidIdentifier),
-			resourceId:        ValidResourceId,
-			dereferencingType: types.DIDJSON,
-			expectedResourceDereferencing: &types.ResourceDereferencing{
-				DereferencingMetadata: types.DereferencingMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        InvalidDid,
-						MethodSpecificId: InvalidIdentifier,
-						Method:           ValidMethod,
-					},
-				},
-				Metadata: types.ResolutionResourceMetadata{},
-			},
-			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, InvalidIdentifier),
-				types.DIDJSONLD, nil, true,
-			),
-		},
-	),
-
-	// TODO: add unit tests for:
-	// - invalid DID and invalid resourceId
-	// - not existent DID and existent resourceId
-	// - not existent DID and not existent resourceId.
 )

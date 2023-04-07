@@ -58,14 +58,45 @@ var _ = DescribeTable("Test ResourceDataEchoHandler function", func(testCase res
 	),
 
 	Entry(
+		"invalid DID",
+		resourceDataTestCase{
+			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", InvalidDid, ValidResourceId),
+			resolutionType:   types.DIDJSONLD,
+			expectedResource: nil,
+			expectedError:    types.NewMethodNotSupportedError(InvalidDid, types.DIDJSONLD, nil, false),
+		},
+	),
+
+	Entry(
+		"a valid DID, but not existent resourceId",
+		resourceDataTestCase{
+			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", ValidDid, NotExistIdentifier),
+			resolutionType:   types.DIDJSONLD,
+			expectedResource: nil,
+			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
+		},
+	),
+
+	Entry(
+		"a valid DID, but an invalid resourceId",
+		resourceDataTestCase{
+			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", ValidDid, InvalidIdentifier),
+			resolutionType:   types.DIDJSONLD,
+			expectedResource: nil,
+			expectedError:    types.NewInvalidDIDUrlError(ValidDid, types.DIDJSONLD, nil, false),
+		},
+	),
+
+	Entry(
 		"invalid representation",
 		resourceDataTestCase{
 			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", ValidDid, ValidResourceId),
 			resolutionType:   types.JSON,
 			expectedResource: nil,
-			expectedError:    types.NewRepresentationNotSupportedError(ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewRepresentationNotSupportedError(ValidDid, types.JSON, nil, true),
 		},
 	),
 
-	// TODO: add more unit tests.
+	// TODO: add more unit tests for:
+	// - redirect integration tests.
 )

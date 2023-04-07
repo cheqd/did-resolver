@@ -1,8 +1,6 @@
 package tests
 
 import (
-	"fmt"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -60,82 +58,16 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	),
 
 	Entry(
-		"invalid method",
+		"not found DID",
 		dereferenceCollectionResourcesTestCase{
-			did:               fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, ValidIdentifier),
+			did:               NotExistDID,
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        ValidDid,
-						MethodSpecificId: ValidIdentifier,
-						Method:           InvalidMethod,
-					},
-				},
-				Metadata: types.ResolutionResourceMetadata{},
-			},
-			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", InvalidMethod, ValidNamespace, ValidIdentifier),
-				types.DIDJSONLD, nil, true,
-			),
-		},
-	),
-
-	Entry(
-		"invalid namespace",
-		dereferenceCollectionResourcesTestCase{
-			did:               fmt.Sprintf("did:%s:%s:%s", ValidMethod, InvalidNamespace, ValidIdentifier),
-			dereferencingType: types.DIDJSON,
-			expectedResourceDereferencing: &types.ResourceDereferencing{
-				DereferencingMetadata: types.DereferencingMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        ValidDid,
-						MethodSpecificId: ValidIdentifier,
+						DidString:        NotExistDID,
+						MethodSpecificId: NotExistIdentifier,
 						Method:           ValidMethod,
-					},
-				},
-				Metadata: types.ResolutionResourceMetadata{},
-			},
-			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", ValidMethod, InvalidNamespace, ValidIdentifier),
-				types.DIDJSONLD, nil, true,
-			),
-		},
-	),
-
-	Entry(
-		"invalid identifier",
-		dereferenceCollectionResourcesTestCase{
-			did:               fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, InvalidIdentifier),
-			dereferencingType: types.DIDJSON,
-			expectedResourceDereferencing: &types.ResourceDereferencing{
-				DereferencingMetadata: types.DereferencingMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        InvalidDid,
-						MethodSpecificId: InvalidIdentifier,
-						Method:           ValidMethod,
-					},
-				},
-				Metadata: types.ResolutionResourceMetadata{},
-			},
-			expectedError: types.NewNotFoundError(
-				fmt.Sprintf("did:%s:%s:%s", ValidMethod, ValidNamespace, InvalidIdentifier),
-				types.DIDJSONLD, nil, true,
-			),
-		},
-	),
-
-	Entry(
-		"invalid did",
-		dereferenceCollectionResourcesTestCase{
-			did:               InvalidDid,
-			dereferencingType: types.DIDJSON,
-			expectedResourceDereferencing: &types.ResourceDereferencing{
-				DereferencingMetadata: types.DereferencingMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        InvalidDid,
-						MethodSpecificId: InvalidIdentifier,
-						Method:           InvalidMethod,
 					},
 				},
 				Metadata: types.ResolutionResourceMetadata{},

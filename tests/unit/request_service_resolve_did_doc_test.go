@@ -11,6 +11,7 @@ import (
 
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	didDocServices "github.com/cheqd/did-resolver/services/diddoc"
+	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	"github.com/cheqd/did-resolver/types"
 )
 
@@ -38,9 +39,9 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
 	} else {
 		var resolutionResult types.DidResolution
-		unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &resolutionResult)
-		Expect(unmarshalErr).To(BeNil())
+
 		Expect(err).To(BeNil())
+		Expect(json.Unmarshal(rec.Body.Bytes(), &resolutionResult)).To(BeNil())
 		Expect(testCase.expectedDIDResolution.Did).To(Equal(resolutionResult.Did))
 		Expect(testCase.expectedDIDResolution.Metadata).To(Equal(resolutionResult.Metadata))
 		Expect(expectedContentType).To(Equal(resolutionResult.ResolutionMetadata.ContentType))
@@ -92,5 +93,120 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 		},
 	),
 
-	// TODO: add unit tests for invalid DID case.
+	Entry(
+		"invalid DID method",
+		resolveDIDDocTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s",
+				fmt.Sprintf(testconstants.DIDStructure, InvalidMethod, ValidNamespace, ValidIdentifier),
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDIDResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        fmt.Sprintf(testconstants.DIDStructure, InvalidMethod, ValidNamespace, ValidIdentifier),
+						MethodSpecificId: ValidIdentifier,
+						Method:           InvalidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewMethodNotSupportedError(
+				fmt.Sprintf(testconstants.DIDStructure, InvalidMethod, ValidNamespace, ValidIdentifier), types.DIDJSONLD, nil, false,
+			),
+		},
+	),
+
+	Entry(
+		"invalid DID namespace",
+		resolveDIDDocTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s",
+				fmt.Sprintf(testconstants.DIDStructure, ValidMethod, InvalidNamespace, ValidIdentifier),
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDIDResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        fmt.Sprintf(testconstants.DIDStructure, ValidMethod, InvalidNamespace, ValidIdentifier),
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewInvalidDIDError(
+				fmt.Sprintf(testconstants.DIDStructure, ValidMethod, InvalidNamespace, ValidIdentifier), types.DIDJSONLD, nil, false,
+			),
+		},
+	),
+
+	Entry(
+		"invalid DID identifier",
+		resolveDIDDocTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s",
+				fmt.Sprintf(testconstants.DIDStructure, ValidMethod, ValidNamespace, InvalidIdentifier),
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDIDResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        fmt.Sprintf(testconstants.DIDStructure, ValidMethod, ValidNamespace, InvalidIdentifier),
+						MethodSpecificId: InvalidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewInvalidDIDError(
+				fmt.Sprintf(testconstants.DIDStructure, ValidMethod, ValidNamespace, InvalidIdentifier), types.DIDJSONLD, nil, false,
+			),
+		},
+	),
+
+	Entry(
+		"invalid DID",
+		resolveDIDDocTestCase{
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s", InvalidDid),
+			resolutionType: types.DIDJSONLD,
+			expectedDIDResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        InvalidDid,
+						MethodSpecificId: InvalidIdentifier,
+						Method:           InvalidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewMethodNotSupportedError(InvalidDid, types.DIDJSONLD, nil, false),
+		},
+	),
+
+	Entry(
+		"invalid representation",
+		resolveDIDDocTestCase{
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s", ValidDid),
+			resolutionType: types.JSON,
+			expectedDIDResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        ValidDid,
+						MethodSpecificId: ValidIdentifier,
+						Method:           ValidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewRepresentationNotSupportedError(ValidDid, types.JSON, nil, false),
+		},
+	),
+	// TODO: add more unit tests for:
+	// - redirect integration tests.
 )
