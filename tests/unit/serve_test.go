@@ -22,13 +22,13 @@ var _ = Describe("Content/Accept encoding checks", func() {
 	Context("Gzip in Accept-Encoding", func() {
 		It("should return gzip in Content-Encoding", func() {
 			// Setup Accept header to gzip
-			context.Request().Header.Set("Accept-Encoding", "gzip")
+			context.Request().Header.Set(echo.HeaderAcceptEncoding, "gzip") // change echo.HeaderAcceptEncoding to echo constant.
 
 			err := diddocServices.DidDocEchoHandler(context)
 			Expect(err).To(BeNil())
 
 			// Check if Content-Encoding is gzip
-			Expect(rec.Header().Get("Content-Encoding")).To(Equal("gzip"))
+			Expect(rec.Header().Get(echo.HeaderContentEncoding)).To(Equal("gzip"))
 		})
 	})
 	Context("Gzip not in Accept-Encoding", func() {
@@ -37,31 +37,31 @@ var _ = Describe("Content/Accept encoding checks", func() {
 			Expect(err).To(BeNil())
 
 			// Check if Content-Encoding is Empty
-			Expect(rec.Header().Get("Content-Encoding")).To(BeEmpty())
+			Expect(rec.Header().Get(echo.HeaderContentEncoding)).To(BeEmpty()) // change echo.HeaderContentEncoding to echo constant.
 		})
 	})
 	Context("Not supported compressing", func() {
 		It("should not return gzip in Content-Encoding", func() {
 			// Setup Accept header to gzip
-			context.Request().Header.Set("Accept-Encoding", "br")
+			context.Request().Header.Set(echo.HeaderAcceptEncoding, "br")
 
 			err := diddocServices.DidDocEchoHandler(context)
 			Expect(err).To(BeNil())
 
 			// Check if Content-Encoding is empty
-			Expect(rec.Header().Get("Content-Encoding")).To(BeEmpty())
+			Expect(rec.Header().Get(echo.HeaderContentEncoding)).To(BeEmpty())
 		})
 	})
 	Context("* in Accept-Encoding", func() {
 		It("should return gzip in Content-Encoding", func() {
 			// Setup Accept header to all possible variants
-			context.Request().Header.Set("Accept-Encoding", "*")
+			context.Request().Header.Set(echo.HeaderAcceptEncoding, "*")
 
 			err := diddocServices.DidDocEchoHandler(context)
 			Expect(err).To(BeNil())
 
 			// Check if Content-Encoding is Empty
-			Expect(rec.Header().Get("Content-Encoding")).To(Equal("gzip"))
+			Expect(rec.Header().Get(echo.HeaderContentEncoding)).To(Equal("gzip"))
 		})
 	})
 })
