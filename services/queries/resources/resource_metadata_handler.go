@@ -1,10 +1,9 @@
 package resources
 
 import (
-
 	"github.com/cheqd/did-resolver/services"
-	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/services/queries"
+	"github.com/cheqd/did-resolver/types"
 )
 
 type ResourceMetadataHandler struct {
@@ -33,7 +32,7 @@ func (d *ResourceMetadataHandler) Handle(c services.ResolverContext, service ser
 	// if resourceMetadata != "true" {
 	// 	dereferencingResult, err := c.ResourceService.DereferenceResourceMetadata(service.GetDid(), .ResourceId, dr.RequestedContentType)
 	// }
-	
+
 	// Call the next handler
 	return d.Continue(c, service, response)
 }

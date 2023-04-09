@@ -129,7 +129,7 @@ func (e DereferencedResourceList) FindBeforeTime(stime string) (string, error) {
 	}
 	// Firstly - sort versions by Updated time
 	versions := e
-	sort.Sort(DereferencedResourceList(versions))
+	sort.Sort(versions)
 	if len(versions) == 0 {
 		return "", nil
 	}

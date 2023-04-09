@@ -29,14 +29,10 @@ func (s *SupportedQueriesT) IntersectWithUrlValues(values url.Values) []string {
 	return result
 }
 
-func (s *SupportedQueriesT) Plus (s2 SupportedQueriesT) SupportedQueriesT {
+func (s *SupportedQueriesT) Plus(s2 SupportedQueriesT) SupportedQueriesT {
 	var result SupportedQueriesT
-	for _, v := range *s {
-		result = append(result, v)
-	}
-	for _, v := range s2 {
-		result = append(result, v)
-	}
+	result = append(result, *s...)
+	result = append(result, s2...)
 	return result
 }
 

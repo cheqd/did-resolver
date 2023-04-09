@@ -80,12 +80,75 @@ func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext)
 }
 
 func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverContext) error {
-	// ToDo register query handlers
+
+	stopHandler := queries.StopHandler{}
+
+	// Create Chain of responsibility
+	// First we need to just ask for Did:
+
+	// DidDoc handlers
+	startHandler := diddocQueries.DidQueryHandler{}
+	lastHandler, err := dd.RegisterDidDocQueryHanlders(&startHandler, c)
+	if err != nil {
+		return err
+	}
+
+	if len(types.ResourceSupportedQueries.IntersectWithUrlValues(dd.Queries)) > 0 {
+		lastHandler, err := dd.RegisterResourceQueryHandlers(lastHandler, c)
+		if err != nil {
+			return err
+		}
+		err = lastHandler.SetNext(c, &stopHandler)
+		if err != nil {
+			return err
+		}
+	} else {
+		err = lastHandler.SetNext(c, &stopHandler)
+		if err != nil {
+			return err
+		}
+	}
+
+	dd.FirstHandler = &startHandler
+
+	return nil
+}
+
+func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHanlders(startHandler queries.BaseQueryHandlerI, c services.ResolverContext) (queries.BaseQueryHandlerI, error) {
+	// - didQueryHandler
+	// or
+	// - versionIdHandler
+	// After that we can find for service field if it's set.
+	// didQueryHandler -> versionIdHandler -> versionTimeHandler -> serviceHandler -> stopHandler
 	relativeRefHandler := diddocQueries.RelativeRefHandler{}
 	serviceHandler := diddocQueries.ServiceHandler{}
 	versionIdHandler := diddocQueries.VersionIdHandler{}
 	versionTimeHandler := diddocQueries.VersionTimeHandler{}
-	didQueryHandler := diddocQueries.DidQueryHandler{}
+
+	err := startHandler.SetNext(c, &versionIdHandler)
+	if err != nil {
+		return nil, err
+	}
+
+	err = versionIdHandler.SetNext(c, &versionTimeHandler)
+	if err != nil {
+		return nil, err
+	}
+
+	err = versionTimeHandler.SetNext(c, &serviceHandler)
+	if err != nil {
+		return nil, err
+	}
+
+	err = serviceHandler.SetNext(c, &relativeRefHandler)
+	if err != nil {
+		return nil, err
+	}
+	return &relativeRefHandler, nil
+
+}
+
+func (dd *QueryDIDDocRequestService) RegisterResourceQueryHandlers(startHandler queries.BaseQueryHandlerI, c services.ResolverContext) (queries.BaseQueryHandlerI, error) {
 
 	// Resource handlers
 	resourceQueryHandler := resourceQueries.ResourceQueryHandler{}
@@ -98,106 +161,59 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 	resourceVersionTimeHandler := resourceQueries.ResourceVersionTimeHandler{}
 	resourceValidationHandler := resourceQueries.ResourceValidationHandler{}
 
-
-	stopHandler := queries.StopHandler{}
-
-	// Create Chain of responsibility
-	// First we need to just ask for Did:
-	// - didQueryHandler
-	// or
-	// - versionIdHandler
-	// After that we can find for service field if it's set.
-	// didQueryHandler -> versionIdHandler -> versionTimeHandler -> serviceHandler -> stopHandler
-
-	// DidDoc handlers
-
-	err := didQueryHandler.SetNext(c, &versionIdHandler)
+	err := startHandler.SetNext(c, &resourceQueryHandler)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = versionIdHandler.SetNext(c, &versionTimeHandler)
+	// It's a resource query to fetch the collection of resources
+	err = resourceQueryHandler.SetNext(c, &resourceIdHandler)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = versionTimeHandler.SetNext(c, &serviceHandler)
+	// Resource handlers
+	// Chain would be:
+	// resourceIdHandler -> resourceVersionTimeHandler -> resourceCollectionIdHandler ->
+	// -> resourceNameHandler -> resourceTypeHandler -> resourceVersionHandler ->
+	// -> resourceValidationHandler -> resourceMetadataHandler -> stopHandler
+	err = resourceIdHandler.SetNext(c, &resourceVersionTimeHandler)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = serviceHandler.SetNext(c, &relativeRefHandler)
+	err = resourceVersionTimeHandler.SetNext(c, &resourceCollectionIdHandler)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if len(types.ResourceSupportedQueries.IntersectWithUrlValues(dd.Queries)) > 0 {
-		err = relativeRefHandler.SetNext(c, &resourceQueryHandler)
-		if err != nil {
-			return err
-		}
-
-		// It's a resource query to fetch the collection of resources
-		resourceQueryHandler.SetNext(c, &resourceIdHandler)
-		if err != nil {
-			return err
-		}
-
-		// Resource handlers
-		// Chain would be:
-		// resourceIdHandler -> resourceVersionTimeHandler -> resourceCollectionIdHandler -> 
-		// -> resourceNameHandler -> resourceTypeHandler -> resourceVersionHandler -> 
-		// -> resourceValidationHandler -> resourceMetadataHandler -> stopHandler
-		err = resourceIdHandler.SetNext(c, &resourceVersionTimeHandler)
-		if err != nil {
-			return err
-		}
-
-		err = resourceVersionTimeHandler.SetNext(c, &resourceCollectionIdHandler)
-		if err != nil {
-			return err
-		}
-
-		err = resourceCollectionIdHandler.SetNext(c, &resourceNameHandler)
-		if err != nil {
-			return err
-		}
-
-		err = resourceNameHandler.SetNext(c, &resourceTypeHandler)
-		if err != nil {
-			return err
-		}
-		
-		err = resourceTypeHandler.SetNext(c, &resourceVersionHandler)
-		if err != nil {
-			return err
-		}
-
-		err = resourceVersionHandler.SetNext(c, &resourceValidationHandler)
-		if err != nil {
-			return err
-		}
-
-		err = resourceValidationHandler.SetNext(c, &resourceMetadataHandler)
-		if err != nil {
-			return err
-		}
-
-		err = resourceMetadataHandler.SetNext(c, &stopHandler)
-		if err != nil {
-			return err
-		}
-
-	} else {
-		err = relativeRefHandler.SetNext(c, &stopHandler)
-		if err != nil {
-			return err
-		}
+	err = resourceCollectionIdHandler.SetNext(c, &resourceNameHandler)
+	if err != nil {
+		return nil, err
 	}
 
-	dd.FirstHandler = &didQueryHandler
+	err = resourceNameHandler.SetNext(c, &resourceTypeHandler)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil
+	err = resourceTypeHandler.SetNext(c, &resourceVersionHandler)
+	if err != nil {
+		return nil, err
+	}
+
+	err = resourceVersionHandler.SetNext(c, &resourceValidationHandler)
+	if err != nil {
+		return nil, err
+	}
+
+	err = resourceValidationHandler.SetNext(c, &resourceMetadataHandler)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resourceMetadataHandler, nil
+
 }
 
 func (dd *QueryDIDDocRequestService) Query(c services.ResolverContext) error {

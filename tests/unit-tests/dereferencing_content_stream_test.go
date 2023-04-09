@@ -17,15 +17,15 @@ var _ = Describe("DereferencingContentStream Find before time", func() {
 		_t2 := MustParseDate("2021-08-23T09:40:00Z")
 		versionList = types.DereferencedResourceList{
 			{
-				Created: &_tcreated,
+				Created:    &_tcreated,
 				ResourceId: "1",
 			},
 			{
-				Created: &_t1,
+				Created:    &_t1,
 				ResourceId: "2",
 			},
 			{
-				Created: &_t2,
+				Created:    &_t2,
 				ResourceId: "3",
 			},
 		}
@@ -48,6 +48,5 @@ var _ = Describe("DereferencingContentStream Find before time", func() {
 		It("should return empty string if no metadata found", func() {
 			Expect(versionList.FindBeforeTime(MustParseDate("2021-08-23T08:59:59Z").Format(time.RFC3339))).To(Equal(""))
 		})
-
 	})
 })

@@ -2,6 +2,7 @@ package types
 
 import (
 	"sort"
+
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	"github.com/cheqd/did-resolver/utils"
 )
@@ -66,7 +67,7 @@ func (r ResourceDereferencing) IsRedirect() bool {
 type DidDocMetadataList []ResolutionDidDocMetadata
 
 func (dd DidDocMetadataList) Len() int {
-    return len(dd)
+	return len(dd)
 }
 
 // Sort in reverse order
@@ -77,11 +78,11 @@ func (dd DidDocMetadataList) Less(i, j int) bool {
 	if dd[j].Updated == nil {
 		return true
 	}
-    return dd[i].Updated.After(*dd[j].Updated)
+	return dd[i].Updated.After(*dd[j].Updated)
 }
 
 func (dd DidDocMetadataList) Swap(i, j int) {
-    dd[i], dd[j] = dd[j], dd[i]
+	dd[i], dd[j] = dd[j], dd[i]
 }
 
 type DereferencedDidVersionsList struct {
@@ -112,11 +113,11 @@ func (e DereferencedDidVersionsList) FindBeforeTime(stime string) (string, error
 	}
 	// Firstly - sort versions by Updated time
 	versions := e.Versions
-	sort.Sort(DidDocMetadataList(versions))
+	sort.Sort(versions)
 	for _, version := range versions {
 		if version.Updated != nil && version.Updated.Before(search_time) {
 			return version.VersionId, nil
-		}  
+		}
 		if version.Updated == nil && version.Created.Before(search_time) {
 			return version.VersionId, nil
 		}

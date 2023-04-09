@@ -2,8 +2,8 @@ package resources
 
 import (
 	"github.com/cheqd/did-resolver/services"
-	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/services/queries"
+	"github.com/cheqd/did-resolver/types"
 )
 
 type ResourceTypeHandler struct {
@@ -26,7 +26,7 @@ func (d *ResourceTypeHandler) Handle(c services.ResolverContext, service service
 	if len(resourceCollectionFiltered) == 0 {
 		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 	}
-	
+
 	// Call the next handler
 	return d.Continue(c, service, d.CastToResult(resourceCollectionFiltered))
 }

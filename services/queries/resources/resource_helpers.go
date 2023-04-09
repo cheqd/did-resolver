@@ -15,7 +15,7 @@ package resources
 // 	if len(resourceCollectionFiltered) == 0 {
 // 		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 // 	}
-	
+
 // 	resDeref.ContentStream = &types.DereferencedResourceListStruct{
 // 		Resources: resourceCollectionFiltered,
 // 	}

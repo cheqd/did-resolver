@@ -2,8 +2,8 @@ package diddoc
 
 import (
 	"github.com/cheqd/did-resolver/services"
-	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/services/queries"
+	"github.com/cheqd/did-resolver/types"
 )
 
 type ServiceHandler struct {

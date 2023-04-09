@@ -171,7 +171,7 @@ var _ = DescribeTable("Test Query handlers with service and relativeRef params",
 		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
 	} else {
 		Expect(rec.Code).To(Equal(http.StatusSeeOther))
-		Expect(string(testCase.expectedResolution.GetBytes())).To(Equal(rec.HeaderMap.Get("Location")))
+		Expect(string(testCase.expectedResolution.GetBytes())).To(Equal(context.Response().Header().Get("Location")))
 		Expect(err).To(BeNil())
 	}
 },

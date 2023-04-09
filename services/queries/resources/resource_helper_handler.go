@@ -1,7 +1,6 @@
 package resources
 
 import (
-
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 )
@@ -29,11 +28,11 @@ func (d *ResourceHelperHandler) CastToContent(service services.RequestServiceI, 
 
 func (d *ResourceHelperHandler) CastToResult(resourceCollectionFiltered types.DereferencedResourceList) *types.ResourceDereferencing {
 	d.rd.ContentStream = &types.ResolutionDidDocMetadata{
-		Created:  d.rc.Created,
-		Updated:  d.rc.Updated,
+		Created:     d.rc.Created,
+		Updated:     d.rc.Updated,
 		Deactivated: d.rc.Deactivated,
-		VersionId: d.rc.VersionId,
-		Resources: resourceCollectionFiltered,
+		VersionId:   d.rc.VersionId,
+		Resources:   resourceCollectionFiltered,
 	}
 	return d.rd
 }

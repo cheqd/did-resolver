@@ -48,7 +48,7 @@ var _ = Describe("DereferencingMetadata", func() {
 		It("should return versionId of metadata with the first updated", func() {
 			Expect(versionList.FindBeforeTime(MustParseDate("2021-08-23T09:30:01Z").Format(time.RFC3339))).To(Equal("2"))
 		})
-		//Time after the latest update
+
 		It("should return versionId of metadata with the latest updated", func() {
 			Expect(versionList.FindBeforeTime(MustParseDate("2021-08-23T09:40:01Z").Format(time.RFC3339))).To(Equal("3"))
 		})
@@ -56,6 +56,5 @@ var _ = Describe("DereferencingMetadata", func() {
 		It("should return empty string if no metadata found", func() {
 			Expect(versionList.FindBeforeTime(MustParseDate("2021-08-23T08:59:59Z").Format(time.RFC3339))).To(Equal(""))
 		})
-
 	})
 })
