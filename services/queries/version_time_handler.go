@@ -28,16 +28,16 @@ func (v *VersionTimeHandler) Handle(c services.ResolverContext, service services
 
 	allVersions := allMetadatas.ContentStream.(*types.DereferencedDidVersionsList)
 	if len(allVersions.Versions) == 0 {
-		return nil, types.NewNotFoundError("No versions found", contentType, nil, v.IsDereferencing)
+		return nil, types.NewNotFoundError(did, contentType, nil, v.IsDereferencing)
 	}
 
 	versionId, _err := allVersions.FindBeforeTime(versionTime)
 	if _err != nil {
-		return nil, types.NewInternalError("error while finding version before time", contentType, _err, v.IsDereferencing)
+		return nil, types.NewInternalError(did, contentType, _err, v.IsDereferencing)
 	}
 
 	if versionId == "" {
-		return nil, types.NewNotFoundError("No versions found", contentType, nil, v.IsDereferencing)
+		return nil, types.NewNotFoundError(did, contentType, nil, v.IsDereferencing)
 	}
 
 	result, err := c.DidDocService.Resolve(did, versionId, contentType)

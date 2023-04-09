@@ -19,9 +19,42 @@ func (s *SupportedQueriesT) DiffWithUrlValues(values url.Values) []string {
 	return result
 }
 
+func (s *SupportedQueriesT) IntersectWithUrlValues(values url.Values) []string {
+	var result []string
+	for k := range values {
+		if utils.Contains(*s, k) {
+			result = append(result, k)
+		}
+	}
+	return result
+}
+
+func (s *SupportedQueriesT) Plus (s2 SupportedQueriesT) SupportedQueriesT {
+	var result SupportedQueriesT
+	for _, v := range *s {
+		result = append(result, v)
+	}
+	for _, v := range s2 {
+		result = append(result, v)
+	}
+	return result
+}
+
 var DidSupportedQueries = SupportedQueriesT{
 	VersionId,
 	VersionTime,
 	ServiceQ,
 	RelativeRef,
 }
+
+var ResourceSupportedQueries = SupportedQueriesT{
+	ResourceId,
+	ResourceCollectionId,
+	ResourceName,
+	ResourceMetadata,
+	ResourceType,
+	ResourceVersion,
+	ResourceVersionTime,
+}
+
+var AllSupportedQueries = DidSupportedQueries.Plus(ResourceSupportedQueries)

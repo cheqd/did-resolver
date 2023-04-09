@@ -42,24 +42,72 @@ func NewDereferencedResource(did string, resource *resourceTypes.Metadata) *Dere
 	}
 }
 
-type DereferencedResourceList struct {
-	Resources []DereferencedResource `json:"linkedResourceMetadata,omitempty"`
+type DereferencedResourceListStruct struct {
+	Resources DereferencedResourceList `json:"linkedResourceMetadata,omitempty"`
 }
 
-func NewDereferencedResourceList(did string, protoResources []*resourceTypes.Metadata) *DereferencedResourceList {
+func NewDereferencedResourceListStruct(did string, protoResources []*resourceTypes.Metadata) *DereferencedResourceListStruct {
 	resourceList := []DereferencedResource{}
 	for _, r := range protoResources {
 		resourceList = append(resourceList, *NewDereferencedResource(did, r))
 	}
 
-	return &DereferencedResourceList{
+	return &DereferencedResourceListStruct{
 		Resources: resourceList,
 	}
 }
 
+func (e *DereferencedResourceListStruct) AddContext(newProtocol string) {}
+func (e *DereferencedResourceListStruct) RemoveContext()                {}
+func (e *DereferencedResourceListStruct) GetBytes() []byte              { return []byte{} }
+
+// DereferencedResourceList
+
+type DereferencedResourceList []DereferencedResource
 func (e *DereferencedResourceList) AddContext(newProtocol string) {}
 func (e *DereferencedResourceList) RemoveContext()                {}
 func (e *DereferencedResourceList) GetBytes() []byte              { return []byte{} }
+
+func (e DereferencedResourceList) GetByResourceId(resourceId string) DereferencedResourceList {
+	for _, r := range e {
+		if r.ResourceId == resourceId {
+			return DereferencedResourceList{r}
+		}
+	}
+	return DereferencedResourceList{}
+}
+
+func (e DereferencedResourceList) FilterByCollectionId(collectionId string) DereferencedResourceList {
+	filteredResources := DereferencedResourceList{}
+	for _, r := range e {
+		if r.CollectionId == collectionId {
+			filteredResources = append(filteredResources, r)
+		}
+	}
+	return filteredResources
+}
+
+func (e DereferencedResourceList) FilterByResourceType(resourceType string) DereferencedResourceList {
+	filteredResources := DereferencedResourceList{}
+	for _, r := range e {
+		if r.ResourceType == resourceType {
+			filteredResources = append(filteredResources, r)
+		}
+	}
+	return filteredResources
+}
+
+func (e DereferencedResourceList) FilterByResourceName(resourceName string) DereferencedResourceList {
+	filteredResources := DereferencedResourceList{}
+	for _, r := range e {
+		if r.Name == resourceName {
+			filteredResources = append(filteredResources, r)
+		}
+	}
+	return filteredResources
+}
+
+// DereferencedResourceData
 
 type DereferencedResourceData []byte
 

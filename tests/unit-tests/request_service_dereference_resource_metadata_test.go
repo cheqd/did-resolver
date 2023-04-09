@@ -15,9 +15,9 @@ import (
 )
 
 type DereferencingResult struct {
-	DereferencingMetadata *types.DereferencingMetadata    `json:"dereferencingMetadata"`
-	ContentStream         *types.DereferencedResourceList `json:"contentStream"`
-	Metadata              *types.ResolutionDidDocMetadata `json:"contentMetadata"`
+	DereferencingMetadata *types.DereferencingMetadata          `json:"dereferencingMetadata"`
+	ContentStream         *types.DereferencedResourceListStruct `json:"contentStream"`
+	Metadata              *types.ResolutionDidDocMetadata       `json:"contentMetadata"`
 }
 
 type resourceMetadataTestCase struct {
@@ -68,7 +68,7 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 						Method:           ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceList(
+				ContentStream: types.NewDereferencedResourceListStruct(
 					ValidDid,
 					[]*resourceTypes.Metadata{validResource.Metadata},
 				),

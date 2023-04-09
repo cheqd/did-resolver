@@ -18,9 +18,7 @@ type QueryDIDDocRequestService struct {
 
 func (dd *QueryDIDDocRequestService) Setup(c services.ResolverContext) error {
 	dd.IsDereferencing = true
-
-	// Register query handlers
-	return dd.RegisterQueryHandlers(c)
+	return nil
 }
 
 func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
@@ -29,7 +27,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 		return types.NewInvalidDIDUrlError(dd.Did, dd.RequestedContentType, err, dd.IsDereferencing)
 	}
 
-	diff := types.DidSupportedQueries.DiffWithUrlValues(dd.Queries)
+	diff := types.AllSupportedQueries.DiffWithUrlValues(dd.Queries)
 	if len(diff) > 0 {
 		return types.NewRepresentationNotSupportedError("Queries from list: "+strings.Join(diff, ","), dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
@@ -74,7 +72,9 @@ func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext)
 		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 	dd.Queries = queries
-	return nil
+
+	// Register query handlers
+	return dd.RegisterQueryHandlers(c)
 }
 
 func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverContext) error {
@@ -85,6 +85,17 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 	versionTimeHandler := queries.VersionTimeHandler{}
 	didQueryHandler := queries.DidQueryHandler{}
 
+	// Resource handlers
+	resourceQueryHandler := queries.ResourceQueryHandler{}
+	resourceIdHandler := queries.ResourceIdHandler{}
+	resourceMetadataHandler := queries.ResourceMetadataHandler{}
+	resourceCollectionIdHandler := queries.ResourceCollectionIdHandler{}
+	resourceNameHandler := queries.ResourceNameHandler{}
+	resourceTypeHandler := queries.ResourceTypeHandler{}
+	resourceVersionHandler := queries.ResourceVersionHandler{}
+	resourceVersionTimeHandler := queries.ResourceVersionTimeHandler{}
+
+
 	stopHandler := queries.StopHandler{}
 
 	// Create Chain of responsibility
@@ -94,6 +105,8 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 	// - versionIdHandler
 	// After that we can find for service field if it's set.
 	// didQueryHandler -> versionIdHandler -> versionTimeHandler -> serviceHandler -> stopHandler
+
+	// DidDoc handlers
 
 	err := didQueryHandler.SetNext(c, &versionIdHandler)
 	if err != nil {
@@ -115,9 +128,60 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 		return err
 	}
 
-	err = relativeRefHandler.SetNext(c, &stopHandler)
-	if err != nil {
-		return err
+	if len(types.ResourceSupportedQueries.IntersectWithUrlValues(dd.Queries)) > 0 {
+		err = relativeRefHandler.SetNext(c, &resourceQueryHandler)
+		if err != nil {
+			return err
+		}
+
+		resourceQueryHandler.SetNext(c, &resourceIdHandler)
+		if err != nil {
+			return err
+		}
+
+		// Resource handlers
+		// Chain would be:
+		// resourceIdHandler -> resourceVersionTimeHandler -> resourceCollectionIdHandler -> resourceNameHandler -> resourceTypeHandler -> resourceVersionHandler -> resourceMetadataHandler -> stopHandler
+		err = resourceIdHandler.SetNext(c, &resourceVersionTimeHandler)
+		if err != nil {
+			return err
+		}
+
+		err = resourceVersionTimeHandler.SetNext(c, &resourceCollectionIdHandler)
+		if err != nil {
+			return err
+		}
+
+		err = resourceCollectionIdHandler.SetNext(c, &resourceNameHandler)
+		if err != nil {
+			return err
+		}
+
+		err = resourceNameHandler.SetNext(c, &resourceTypeHandler)
+		if err != nil {
+			return err
+		}
+		
+		err = resourceTypeHandler.SetNext(c, &resourceVersionHandler)
+		if err != nil {
+			return err
+		}
+
+		err = resourceVersionHandler.SetNext(c, &resourceMetadataHandler)
+		if err != nil {
+			return err
+		}
+
+		err = resourceMetadataHandler.SetNext(c, &stopHandler)
+		if err != nil {
+			return err
+		}
+
+	} else {
+		err = relativeRefHandler.SetNext(c, &stopHandler)
+		if err != nil {
+			return err
+		}
 	}
 
 	dd.FirstHandler = &didQueryHandler

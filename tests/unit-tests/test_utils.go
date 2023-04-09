@@ -44,7 +44,7 @@ const (
 	InvalidDid        = "did:" + InvalidMethod + ":" + InvalidNamespace + ":" + InvalidIdentifier
 	InvalidResourceId = "invalid_resource_id"
 	InvalidVersionId  = "invalid_uuid_identifier"
-	InvalidServiceId = "not_found_service_id"
+	InvalidServiceId  = "not_found_service_id"
 )
 
 const (
@@ -110,7 +110,7 @@ var (
 	validQuery, _           = url.ParseQuery("attr=value")
 )
 
-var dereferencedResourceList = types.NewDereferencedResourceList(ValidDid, []*resourceTypes.Metadata{validResource.Metadata})
+var dereferencedResourceList = types.NewDereferencedResourceListStruct(ValidDid, []*resourceTypes.Metadata{validResource.Metadata})
 
 func ValidVerificationMethod() didTypes.VerificationMethod {
 	return didTypes.VerificationMethod{
