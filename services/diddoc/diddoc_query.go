@@ -80,7 +80,6 @@ func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext)
 }
 
 func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverContext) error {
-
 	stopHandler := queries.StopHandler{}
 
 	// Create Chain of responsibility
@@ -145,11 +144,9 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHanlders(startHandler qu
 		return nil, err
 	}
 	return &relativeRefHandler, nil
-
 }
 
 func (dd *QueryDIDDocRequestService) RegisterResourceQueryHandlers(startHandler queries.BaseQueryHandlerI, c services.ResolverContext) (queries.BaseQueryHandlerI, error) {
-
 	// Resource handlers
 	resourceQueryHandler := resourceQueries.ResourceQueryHandler{}
 	resourceIdHandler := resourceQueries.ResourceIdHandler{}
@@ -213,7 +210,6 @@ func (dd *QueryDIDDocRequestService) RegisterResourceQueryHandlers(startHandler 
 	}
 
 	return &resourceMetadataHandler, nil
-
 }
 
 func (dd *QueryDIDDocRequestService) Query(c services.ResolverContext) error {
