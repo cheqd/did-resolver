@@ -1,12 +1,13 @@
-package queries
+package diddoc
 
 import (
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
+	"github.com/cheqd/did-resolver/services/queries"
 )
 
 type RelativeRefHandler struct {
-	BaseQueryHandler
+	queries.BaseQueryHandler
 }
 
 func (r *RelativeRefHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {

@@ -1,4 +1,4 @@
-package queries
+package resources
 
 // import "github.com/cheqd/did-resolver/types"
 

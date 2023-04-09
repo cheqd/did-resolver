@@ -1,12 +1,13 @@
-package queries
+package diddoc
 
 import (
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
+	"github.com/cheqd/did-resolver/services/queries"
 )
 
 type VersionTimeHandler struct {
-	BaseQueryHandler
+	queries.BaseQueryHandler
 }
 
 func (v *VersionTimeHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {

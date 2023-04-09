@@ -1,9 +1,11 @@
 package types
 
 import (
+	"sort"
 	"time"
 
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	"github.com/cheqd/did-resolver/utils"
 )
 
 type DereferencedResource struct {
@@ -105,6 +107,38 @@ func (e DereferencedResourceList) FilterByResourceName(resourceName string) Dere
 		}
 	}
 	return filteredResources
+}
+
+func (e DereferencedResourceList) FindBeforeTime(stime string) (string, error) {
+	search_time, err := utils.ParseFromStringTimeToGoTime(stime)
+	if err != nil {
+		return "", err
+	}
+	// Firstly - sort versions by Updated time
+	versions := e
+	sort.Sort(DereferencedResourceList(versions))
+	if len(versions) == 0 {
+		return "", nil
+	}
+	for _, v := range versions {
+		if v.Created.Before(search_time) {
+			return v.ResourceId, nil
+		}
+	}
+	return "", nil
+}
+
+func (dr DereferencedResourceList) Len() int {
+	return len(dr)
+}
+
+// Sort in reverse order
+func (dr DereferencedResourceList) Less(i, j int) bool {
+	return dr[i].Created.After(*dr[j].Created)
+}
+
+func (dr DereferencedResourceList) Swap(i, j int) {
+	dr[i], dr[j] = dr[j], dr[i]
 }
 
 // DereferencedResourceData

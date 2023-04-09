@@ -7,6 +7,8 @@ import (
 
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/services/queries"
+	diddocQueries "github.com/cheqd/did-resolver/services/queries/diddoc"
+	resourceQueries "github.com/cheqd/did-resolver/services/queries/resources"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
 )
@@ -79,21 +81,21 @@ func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext)
 
 func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverContext) error {
 	// ToDo register query handlers
-	relativeRefHandler := queries.RelativeRefHandler{}
-	serviceHandler := queries.ServiceHandler{}
-	versionIdHandler := queries.VersionIdHandler{}
-	versionTimeHandler := queries.VersionTimeHandler{}
-	didQueryHandler := queries.DidQueryHandler{}
+	relativeRefHandler := diddocQueries.RelativeRefHandler{}
+	serviceHandler := diddocQueries.ServiceHandler{}
+	versionIdHandler := diddocQueries.VersionIdHandler{}
+	versionTimeHandler := diddocQueries.VersionTimeHandler{}
+	didQueryHandler := diddocQueries.DidQueryHandler{}
 
 	// Resource handlers
-	resourceQueryHandler := queries.ResourceQueryHandler{}
-	resourceIdHandler := queries.ResourceIdHandler{}
-	resourceMetadataHandler := queries.ResourceMetadataHandler{}
-	resourceCollectionIdHandler := queries.ResourceCollectionIdHandler{}
-	resourceNameHandler := queries.ResourceNameHandler{}
-	resourceTypeHandler := queries.ResourceTypeHandler{}
-	resourceVersionHandler := queries.ResourceVersionHandler{}
-	resourceVersionTimeHandler := queries.ResourceVersionTimeHandler{}
+	resourceQueryHandler := resourceQueries.ResourceQueryHandler{}
+	resourceIdHandler := resourceQueries.ResourceIdHandler{}
+	resourceMetadataHandler := resourceQueries.ResourceMetadataHandler{}
+	resourceCollectionIdHandler := resourceQueries.ResourceCollectionIdHandler{}
+	resourceNameHandler := resourceQueries.ResourceNameHandler{}
+	resourceTypeHandler := resourceQueries.ResourceTypeHandler{}
+	resourceVersionHandler := resourceQueries.ResourceVersionHandler{}
+	resourceVersionTimeHandler := resourceQueries.ResourceVersionTimeHandler{}
 
 
 	stopHandler := queries.StopHandler{}

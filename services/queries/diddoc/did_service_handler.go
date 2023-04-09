@@ -1,12 +1,13 @@
-package queries
+package diddoc
 
 import (
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
+	"github.com/cheqd/did-resolver/services/queries"
 )
 
 type ServiceHandler struct {
-	BaseQueryHandler
+	queries.BaseQueryHandler
 }
 
 func (s *ServiceHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
@@ -15,7 +16,7 @@ func (s *ServiceHandler) Handle(c services.ResolverContext, service services.Req
 
 	// If serviceValue is empty, call the next handler. We don't need to handle it here
 	if serviceValue == "" {
-		return s.next.Handle(c, service, response)
+		return s.Continue(c, service, response)
 	}
 
 	// We expect here only DidResolution
