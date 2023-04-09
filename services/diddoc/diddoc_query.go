@@ -96,6 +96,7 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 	resourceTypeHandler := resourceQueries.ResourceTypeHandler{}
 	resourceVersionHandler := resourceQueries.ResourceVersionHandler{}
 	resourceVersionTimeHandler := resourceQueries.ResourceVersionTimeHandler{}
+	resourceValidationHandler := resourceQueries.ResourceValidationHandler{}
 
 
 	stopHandler := queries.StopHandler{}
@@ -136,6 +137,7 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 			return err
 		}
 
+		// It's a resource query to fetch the collection of resources
 		resourceQueryHandler.SetNext(c, &resourceIdHandler)
 		if err != nil {
 			return err
@@ -143,7 +145,9 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 
 		// Resource handlers
 		// Chain would be:
-		// resourceIdHandler -> resourceVersionTimeHandler -> resourceCollectionIdHandler -> resourceNameHandler -> resourceTypeHandler -> resourceVersionHandler -> resourceMetadataHandler -> stopHandler
+		// resourceIdHandler -> resourceVersionTimeHandler -> resourceCollectionIdHandler -> 
+		// -> resourceNameHandler -> resourceTypeHandler -> resourceVersionHandler -> 
+		// -> resourceValidationHandler -> resourceMetadataHandler -> stopHandler
 		err = resourceIdHandler.SetNext(c, &resourceVersionTimeHandler)
 		if err != nil {
 			return err
@@ -169,7 +173,12 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 			return err
 		}
 
-		err = resourceVersionHandler.SetNext(c, &resourceMetadataHandler)
+		err = resourceVersionHandler.SetNext(c, &resourceValidationHandler)
+		if err != nil {
+			return err
+		}
+
+		err = resourceValidationHandler.SetNext(c, &resourceMetadataHandler)
 		if err != nil {
 			return err
 		}

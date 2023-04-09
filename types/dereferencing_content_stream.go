@@ -19,6 +19,7 @@ type DereferencedResource struct {
 	Checksum          string     `json:"checksum" example:"a95380f460e63ad939541a57aecbfd795fcd37c6d78ee86c885340e33a91b559"`
 	PreviousVersionId *string    `json:"previousVersionId" example:"ad7a8442-3531-46eb-a024-53953ec6e4ff"`
 	NextVersionId     *string    `json:"nextVersionId" example:"d4829ac7-4566-478c-a408-b44767eddadc"`
+	Version           string     `json:"version" example:"1"`
 }
 
 func NewDereferencedResource(did string, resource *resourceTypes.Metadata) *DereferencedResource {
@@ -39,6 +40,7 @@ func NewDereferencedResource(did string, resource *resourceTypes.Metadata) *Dere
 		MediaType:         resource.MediaType,
 		Created:           &created,
 		Checksum:          resource.Checksum,
+		Version:           resource.Version,
 		PreviousVersionId: previousVersionId,
 		NextVersionId:     nextVersionId,
 	}
@@ -66,6 +68,7 @@ func (e *DereferencedResourceListStruct) GetBytes() []byte              { return
 // DereferencedResourceList
 
 type DereferencedResourceList []DereferencedResource
+
 func (e *DereferencedResourceList) AddContext(newProtocol string) {}
 func (e *DereferencedResourceList) RemoveContext()                {}
 func (e *DereferencedResourceList) GetBytes() []byte              { return []byte{} }
@@ -103,6 +106,16 @@ func (e DereferencedResourceList) FilterByResourceName(resourceName string) Dere
 	filteredResources := DereferencedResourceList{}
 	for _, r := range e {
 		if r.Name == resourceName {
+			filteredResources = append(filteredResources, r)
+		}
+	}
+	return filteredResources
+}
+
+func (e DereferencedResourceList) FilterByVersion(version string) DereferencedResourceList {
+	filteredResources := DereferencedResourceList{}
+	for _, r := range e {
+		if r.Version == version {
 			filteredResources = append(filteredResources, r)
 		}
 	}
