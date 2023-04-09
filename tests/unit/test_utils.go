@@ -165,6 +165,13 @@ func defineContentType(expectedContentType types.ContentType, resolutionType typ
 	return expectedContentType
 }
 
+type redirectDIDTestCase struct {
+	didURL                 string
+	resolutionType         types.ContentType
+	expectedDidURLRedirect string
+	expectedError          error
+}
+
 func setupEmptyContext(request *http.Request, resolutionType types.ContentType, ledgerService services.LedgerServiceI) (echo.Context, *httptest.ResponseRecorder) {
 	e := echo.New()
 	didDocServices.SetRoutes(e)

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 
+	"github.com/labstack/echo/v4"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -207,6 +208,39 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 			expectedError: types.NewRepresentationNotSupportedError(ValidDid, types.JSON, nil, false),
 		},
 	),
-	// TODO: add more unit tests for:
-	// - redirect integration tests.
+)
+
+var _ = DescribeTable("Test redirect DID", func(testCase redirectDIDTestCase) {
+	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
+	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
+
+	err := didDocServices.DidDocEchoHandler(context)
+	if err != nil {
+		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
+	} else {
+		Expect(testCase.expectedError).To(BeNil())
+		Expect(http.StatusMovedPermanently).To(Equal(rec.Code))
+		Expect(testCase.expectedDidURLRedirect).To(Equal(rec.Header().Get(echo.HeaderLocation)))
+	}
+},
+
+	Entry(
+		"can redirect when it try to get DIDDoc with an old 16 characters Indy style DID",
+		redirectDIDTestCase{
+			didURL:                 fmt.Sprintf("/1.0/identifiers/%s", testconstants.OldIndy16CharStyleTestnetDid),
+			resolutionType:         types.DIDJSONLD,
+			expectedDidURLRedirect: fmt.Sprintf("/1.0/identifiers/%s", testconstants.MigratedIndy16CharStyleTestnetDid),
+			expectedError:          nil,
+		},
+	),
+
+	Entry(
+		"can redirect when it try to get DIDDoc with an old 32 characters Indy style DID",
+		redirectDIDTestCase{
+			didURL:                 fmt.Sprintf("/1.0/identifiers/%s", testconstants.OldIndy32CharStyleTestnetDid),
+			resolutionType:         types.DIDJSONLD,
+			expectedDidURLRedirect: fmt.Sprintf("/1.0/identifiers/%s", testconstants.MigratedIndy32CharStyleTestnetDid),
+			expectedError:          nil,
+		},
+	),
 )

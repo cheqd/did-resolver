@@ -5,10 +5,12 @@ import (
 	"net/http"
 	"net/http/httptest"
 
+	"github.com/labstack/echo/v4"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	resourceServices "github.com/cheqd/did-resolver/services/resource"
+	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	"github.com/cheqd/did-resolver/types"
 )
 
@@ -96,7 +98,55 @@ var _ = DescribeTable("Test ResourceDataEchoHandler function", func(testCase res
 			expectedError:    types.NewRepresentationNotSupportedError(ValidDid, types.JSON, nil, true),
 		},
 	),
+)
 
-	// TODO: add more unit tests for:
-	// - redirect integration tests.
+var _ = DescribeTable("Test redirect DID", func(testCase redirectDIDTestCase) {
+	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
+	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
+
+	err := resourceServices.ResourceDataEchoHandler(context)
+	if err != nil {
+		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
+	} else {
+		Expect(testCase.expectedError).To(BeNil())
+		Expect(http.StatusMovedPermanently).To(Equal(rec.Code))
+		Expect(testCase.expectedDidURLRedirect).To(Equal(rec.Header().Get(echo.HeaderLocation)))
+	}
+},
+
+	Entry(
+		"can redirect when it try to get resource data with an old 16 characters Indy style DID",
+		redirectDIDTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s/resources/%s",
+				testconstants.OldIndy16CharStyleTestnetDid,
+				testconstants.ValidIdentifier,
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDidURLRedirect: fmt.Sprintf(
+				"/1.0/identifiers/%s/resources/%s",
+				testconstants.MigratedIndy16CharStyleTestnetDid,
+				testconstants.ValidIdentifier,
+			),
+			expectedError: nil,
+		},
+	),
+
+	Entry(
+		"can redirect when it try to get resource data with an old 32 characters Indy style DID",
+		redirectDIDTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s/resources/%s",
+				testconstants.OldIndy32CharStyleTestnetDid,
+				"214b8b61-a861-416b-a7e4-45533af40ada",
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDidURLRedirect: fmt.Sprintf(
+				"/1.0/identifiers/%s/resources/%s",
+				testconstants.MigratedIndy32CharStyleTestnetDid,
+				"214b8b61-a861-416b-a7e4-45533af40ada",
+			),
+			expectedError: nil,
+		},
+	),
 )
