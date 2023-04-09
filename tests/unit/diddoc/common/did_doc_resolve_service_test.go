@@ -1,4 +1,6 @@
-package tests
+//go:build unit
+
+package common
 
 import (
 	. "github.com/onsi/ginkgo/v2"
@@ -6,6 +8,8 @@ import (
 
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/services"
+	testconstants "github.com/cheqd/did-resolver/tests/constants"
+	utils "github.com/cheqd/did-resolver/tests/unit"
 	"github.com/cheqd/did-resolver/types"
 )
 
@@ -17,7 +21,7 @@ type resolveTestCase struct {
 }
 
 var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
-	diddocService := services.NewDIDDocService("cheqd", mockLedgerService)
+	diddocService := services.NewDIDDocService("cheqd", utils.MockLedger)
 
 	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
 		testCase.expectedDIDResolution.Did.Context = []string{types.DIDSchemaJSONLD, types.JsonWebKey2020JSONLD}
@@ -25,7 +29,7 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 		testCase.expectedDIDResolution.Did.Context = nil
 	}
 
-	expectedContentType := defineContentType(
+	expectedContentType := utils.DefineContentType(
 		testCase.expectedDIDResolution.ResolutionMetadata.ContentType, testCase.resolutionType,
 	)
 
@@ -45,20 +49,20 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 	Entry(
 		"Successful resolution",
 		resolveTestCase{
-			did:            ValidDid,
+			did:            testconstants.ValidDid,
 			resolutionType: types.DIDJSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        ValidDid,
-						MethodSpecificId: ValidIdentifier,
-						Method:           ValidMethod,
+						DidString:        testconstants.ValidDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
 					},
 				},
-				Did: &validDIDDocResolution,
+				Did: &testconstants.ValidDIDDocResolution,
 				Metadata: types.NewResolutionDidDocMetadata(
-					ValidDid, &validMetadata,
-					[]*resourceTypes.Metadata{validResource.Metadata},
+					testconstants.ValidDid, &testconstants.ValidMetadata,
+					[]*resourceTypes.Metadata{testconstants.ValidResource.Metadata},
 				),
 			},
 			expectedError: nil,
@@ -68,20 +72,20 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 	Entry(
 		"DID not found",
 		resolveTestCase{
-			did:            NotExistDID,
+			did:            testconstants.NotExistentTestnetDid,
 			resolutionType: types.DIDJSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        NotExistDID,
-						MethodSpecificId: NotExistIdentifier,
-						Method:           ValidMethod,
+						DidString:        testconstants.NotExistentTestnetDid,
+						MethodSpecificId: testconstants.NotExistentIdentifier,
+						Method:           testconstants.ValidMethod,
 					},
 				},
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewNotFoundError(NotExistDID, types.DIDJSONLD, nil, false),
+			expectedError: types.NewNotFoundError(testconstants.NotExistentTestnetDid, types.DIDJSONLD, nil, false),
 		},
 	),
 )

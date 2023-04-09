@@ -1,10 +1,14 @@
-package tests
+//go:build unit
+
+package common
 
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	"github.com/cheqd/did-resolver/services"
+	testconstants "github.com/cheqd/did-resolver/tests/constants"
+	utils "github.com/cheqd/did-resolver/tests/unit"
 	"github.com/cheqd/did-resolver/types"
 )
 
@@ -16,9 +20,9 @@ type dereferenceCollectionResourcesTestCase struct {
 }
 
 var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCase dereferenceCollectionResourcesTestCase) {
-	resourceService := services.NewResourceService(ValidMethod, mockLedgerService)
+	resourceService := services.NewResourceService(testconstants.ValidMethod, utils.MockLedger)
 
-	expectedContentType := defineContentType(
+	expectedContentType := utils.DefineContentType(
 		testCase.expectedResourceDereferencing.DereferencingMetadata.ContentType,
 		testCase.dereferencingType,
 	)
@@ -40,17 +44,17 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	Entry(
 		"successful dereferencing for collection resources",
 		dereferenceCollectionResourcesTestCase{
-			did:               ValidDid,
+			did:               testconstants.ValidDid,
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        ValidDid,
-						MethodSpecificId: ValidIdentifier,
-						Method:           ValidMethod,
+						DidString:        testconstants.ValidDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: dereferencedResourceList,
+				ContentStream: testconstants.ValidDereferencedResourceList,
 				Metadata:      types.ResolutionResourceMetadata{},
 			},
 			expectedError: nil,
@@ -60,19 +64,19 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	Entry(
 		"not found DID",
 		dereferenceCollectionResourcesTestCase{
-			did:               NotExistDID,
+			did:               testconstants.NotExistentTestnetDid,
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        NotExistDID,
-						MethodSpecificId: NotExistIdentifier,
-						Method:           ValidMethod,
+						DidString:        testconstants.NotExistentTestnetDid,
+						MethodSpecificId: testconstants.NotExistentIdentifier,
+						Method:           testconstants.ValidMethod,
 					},
 				},
 				Metadata: types.ResolutionResourceMetadata{},
 			},
-			expectedError: types.NewNotFoundError(InvalidDid, types.DIDJSONLD, nil, true),
+			expectedError: types.NewNotFoundError(testconstants.NotExistentTestnetDid, types.DIDJSONLD, nil, true),
 		},
 	),
 )

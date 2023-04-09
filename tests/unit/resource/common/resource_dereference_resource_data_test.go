@@ -1,4 +1,6 @@
-package tests
+//go:build unit
+
+package common
 
 import (
 	"strings"
@@ -7,6 +9,8 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/cheqd/did-resolver/services"
+	testconstants "github.com/cheqd/did-resolver/tests/constants"
+	utils "github.com/cheqd/did-resolver/tests/unit"
 	"github.com/cheqd/did-resolver/types"
 )
 
@@ -19,9 +23,9 @@ type dereferenceResourceDataTestCase struct {
 }
 
 var _ = DescribeTable("Test DereferenceResourceData method", func(testCase dereferenceResourceDataTestCase) {
-	resourceService := services.NewResourceService(ValidMethod, mockLedgerService)
+	resourceService := services.NewResourceService(testconstants.ValidMethod, utils.MockLedger)
 
-	expectedContentType := types.ContentType(validResource.Metadata.MediaType)
+	expectedContentType := types.ContentType(testconstants.ValidResource.Metadata.MediaType)
 	dereferencingResult, err := resourceService.DereferenceResourceData(testCase.did, testCase.resourceId, testCase.dereferencingType)
 	if err != nil {
 		Expect(testCase.expectedError.Code).To(Equal(err.Code))
@@ -38,18 +42,18 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 	Entry(
 		"successful dereferencing for resource",
 		dereferenceResourceDataTestCase{
-			did:               ValidDid,
-			resourceId:        ValidResourceId,
+			did:               testconstants.ValidDid,
+			resourceId:        testconstants.ValidResourceId,
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        ValidDid,
-						MethodSpecificId: ValidIdentifier,
-						Method:           ValidMethod,
+						DidString:        testconstants.ValidDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: &validResourceDereferencing,
+				ContentStream: &testconstants.ValidResourceDereferencing,
 				Metadata:      types.ResolutionResourceMetadata{},
 			},
 			expectedError: nil,
@@ -59,18 +63,18 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 	Entry(
 		"successful dereferencing for resource (upper case UUID)",
 		dereferenceResourceDataTestCase{
-			did:               ValidDid,
-			resourceId:        strings.ToUpper(ValidResourceId),
+			did:               testconstants.ValidDid,
+			resourceId:        strings.ToUpper(testconstants.ValidResourceId),
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        ValidDid,
-						MethodSpecificId: ValidIdentifier,
-						Method:           ValidMethod,
+						DidString:        testconstants.ValidDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: &validResourceDereferencing,
+				ContentStream: &testconstants.ValidResourceDereferencing,
 				Metadata:      types.ResolutionResourceMetadata{},
 			},
 			expectedError: nil,
@@ -80,60 +84,60 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 	Entry(
 		"not existent DID and a valid resourceId",
 		dereferenceResourceDataTestCase{
-			did:               NotExistDID,
-			resourceId:        ValidIdentifier,
+			did:               testconstants.NotExistentTestnetDid,
+			resourceId:        testconstants.ValidIdentifier,
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        NotExistDID,
-						MethodSpecificId: NotExistIdentifier,
-						Method:           ValidMethod,
+						DidString:        testconstants.NotExistentTestnetDid,
+						MethodSpecificId: testconstants.NotExistentIdentifier,
+						Method:           testconstants.ValidMethod,
 					},
 				},
 				Metadata: types.ResolutionResourceMetadata{},
 			},
-			expectedError: types.NewNotFoundError(NotExistDID, types.DIDJSONLD, nil, true),
+			expectedError: types.NewNotFoundError(testconstants.NotExistentTestnetDid, types.DIDJSONLD, nil, true),
 		},
 	),
 
 	Entry(
 		"an existent DID, but not existent resourceId",
 		dereferenceResourceDataTestCase{
-			did:               ValidDid,
-			resourceId:        ValidIdentifier,
+			did:               testconstants.ValidDid,
+			resourceId:        testconstants.ValidIdentifier,
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        ValidDid,
-						MethodSpecificId: ValidIdentifier,
-						Method:           ValidMethod,
+						DidString:        testconstants.ValidDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
 					},
 				},
 				Metadata: types.ResolutionResourceMetadata{},
 			},
-			expectedError: types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, true),
+			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 
 	Entry(
 		"not existent DID and resourceId",
 		dereferenceResourceDataTestCase{
-			did:               NotExistDID,
-			resourceId:        NotExistIdentifier,
+			did:               testconstants.NotExistentTestnetDid,
+			resourceId:        testconstants.NotExistentIdentifier,
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        NotExistDID,
-						MethodSpecificId: NotExistIdentifier,
-						Method:           ValidMethod,
+						DidString:        testconstants.NotExistentTestnetDid,
+						MethodSpecificId: testconstants.NotExistentIdentifier,
+						Method:           testconstants.ValidMethod,
 					},
 				},
 				Metadata: types.ResolutionResourceMetadata{},
 			},
-			expectedError: types.NewNotFoundError(NotExistDID, types.DIDJSONLD, nil, true),
+			expectedError: types.NewNotFoundError(testconstants.NotExistentTestnetDid, types.DIDJSONLD, nil, true),
 		},
 	),
 )

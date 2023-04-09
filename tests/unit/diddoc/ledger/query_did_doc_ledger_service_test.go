@@ -1,10 +1,14 @@
-package tests
+//go:build unit
+
+package ledger
 
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
+	testconstants "github.com/cheqd/did-resolver/tests/constants"
+	utils "github.com/cheqd/did-resolver/tests/unit"
 	"github.com/cheqd/did-resolver/types"
 )
 
@@ -15,7 +19,7 @@ type queryDIDDocTestCase struct {
 }
 
 var _ = DescribeTable("Test QueryDIDDoc method", func(testCase queryDIDDocTestCase) {
-	didDocWithMetadata, err := mockLedgerService.QueryDIDDoc(testCase.did, "")
+	didDocWithMetadata, err := utils.MockLedger.QueryDIDDoc(testCase.did, "")
 	if err != nil {
 		Expect(testCase.expectedError.Code).To(Equal(err.Code))
 		Expect(testCase.expectedError.Message).To(Equal(err.Message))
@@ -28,10 +32,10 @@ var _ = DescribeTable("Test QueryDIDDoc method", func(testCase queryDIDDocTestCa
 	Entry(
 		"existent DID",
 		queryDIDDocTestCase{
-			did: ValidDid,
+			did: testconstants.ValidDid,
 			expectedDidDocWithMetadata: &didTypes.DidDocWithMetadata{
-				DidDoc:   &validDIDDoc,
-				Metadata: &validMetadata,
+				DidDoc:   &testconstants.ValidDIDDoc,
+				Metadata: &testconstants.ValidMetadata,
 			},
 			expectedError: nil,
 		},
@@ -40,9 +44,9 @@ var _ = DescribeTable("Test QueryDIDDoc method", func(testCase queryDIDDocTestCa
 	Entry(
 		"not existent DID",
 		queryDIDDocTestCase{
-			did:                        NotExistDID,
+			did:                        testconstants.NotExistentTestnetDid,
 			expectedDidDocWithMetadata: nil,
-			expectedError:              types.NewNotFoundError(NotExistDID, types.JSON, nil, true),
+			expectedError:              types.NewNotFoundError(testconstants.NotExistentTestnetDid, types.JSON, nil, true),
 		},
 	),
 )

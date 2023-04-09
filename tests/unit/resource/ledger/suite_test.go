@@ -1,4 +1,4 @@
-package tests
+package ledger_test
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestTestsGeneral(t *testing.T) {
+func TestLedger(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "UNIT TESTS")
+	RunSpecs(t, "Resource Ledger Service")
 }

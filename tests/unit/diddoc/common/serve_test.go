@@ -1,10 +1,14 @@
-package tests
+//go:build unit
+
+package common
 
 import (
 	"net/http"
 	"net/http/httptest"
 
 	diddocServices "github.com/cheqd/did-resolver/services/diddoc"
+	testconstants "github.com/cheqd/did-resolver/tests/constants"
+	utils "github.com/cheqd/did-resolver/tests/unit"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
 	. "github.com/onsi/ginkgo/v2"
@@ -16,8 +20,8 @@ var _ = Describe("Content/Accept encoding checks", func() {
 	var rec *httptest.ResponseRecorder
 
 	BeforeEach(func() {
-		request := httptest.NewRequest(http.MethodGet, "/1.0/identifiers/"+ValidDid, nil)
-		context, rec = setupEmptyContext(request, types.DIDJSON, mockLedgerService)
+		request := httptest.NewRequest(http.MethodGet, "/1.0/identifiers/"+testconstants.ValidDid, nil)
+		context, rec = utils.SetupEmptyContext(request, types.DIDJSON, utils.MockLedger)
 	})
 	Context("Gzip in Accept-Encoding", func() {
 		It("should return gzip in Content-Encoding", func() {

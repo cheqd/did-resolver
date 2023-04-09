@@ -1,4 +1,6 @@
-package tests
+//go:build unit
+
+package request
 
 import (
 	"encoding/json"
@@ -13,6 +15,7 @@ import (
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	resourceServices "github.com/cheqd/did-resolver/services/resource"
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
+	utils "github.com/cheqd/did-resolver/tests/unit"
 	"github.com/cheqd/did-resolver/types"
 )
 
@@ -25,7 +28,7 @@ type resourceCollectionTestCase struct {
 
 var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCase resourceCollectionTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
-	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
+	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, utils.MockLedger)
 
 	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
 		testCase.expectedDereferencingResult.ContentStream.AddContext(types.DIDSchemaJSONLD)
@@ -33,7 +36,7 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 		testCase.expectedDereferencingResult.ContentStream.RemoveContext()
 	}
 
-	expectedContentType := defineContentType(testCase.expectedDereferencingResult.DereferencingMetadata.ContentType, testCase.resolutionType)
+	expectedContentType := utils.DefineContentType(testCase.expectedDereferencingResult.DereferencingMetadata.ContentType, testCase.resolutionType)
 
 	err := resourceServices.ResourceCollectionEchoHandler(context)
 	if testCase.expectedError != nil {
@@ -54,19 +57,19 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 	Entry(
 		"successful resolution",
 		resourceCollectionTestCase{
-			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", ValidDid),
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.ValidDid),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
 				DereferencingMetadata: &types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        ValidDid,
-						MethodSpecificId: ValidIdentifier,
-						Method:           ValidMethod,
+						DidString:        testconstants.ValidDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
 					},
 				},
 				ContentStream: types.NewDereferencedResourceList(
-					ValidDid,
-					[]*resourceTypes.Metadata{validResource.Metadata},
+					testconstants.ValidDid,
+					[]*resourceTypes.Metadata{testconstants.ValidResource.Metadata},
 				),
 				Metadata: &types.ResolutionDidDocMetadata{},
 			},
@@ -77,95 +80,95 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 	Entry(
 		"DID not found",
 		resourceCollectionTestCase{
-			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", NotExistDID),
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.NotExistentTestnetDid),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
 				DereferencingMetadata: &types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        NotExistDID,
-						MethodSpecificId: NotExistIdentifier,
-						Method:           ValidMethod,
+						DidString:        testconstants.NotExistentTestnetDid,
+						MethodSpecificId: testconstants.NotExistentIdentifier,
+						Method:           testconstants.ValidMethod,
 					},
 				},
 				ContentStream: nil,
 				Metadata:      &types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewNotFoundError(NotExistDID, types.DIDJSONLD, nil, false),
+			expectedError: types.NewNotFoundError(testconstants.NotExistentTestnetDid, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
 		"invalid DID",
 		resourceCollectionTestCase{
-			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", InvalidDid),
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.InvalidDID),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
 				DereferencingMetadata: &types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        InvalidDid,
-						MethodSpecificId: InvalidIdentifier,
-						Method:           InvalidMethod,
+						DidString:        testconstants.InvalidDID,
+						MethodSpecificId: testconstants.InvalidIdentifier,
+						Method:           testconstants.InvalidMethod,
 					},
 				},
 				ContentStream: nil,
 				Metadata:      &types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewMethodNotSupportedError(InvalidDid, types.DIDJSONLD, nil, false),
+			expectedError: types.NewMethodNotSupportedError(testconstants.InvalidDID, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
 		"invalid representation",
 		resourceCollectionTestCase{
-			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", ValidDid),
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.ValidDid),
 			resolutionType: types.JSON,
 			expectedDereferencingResult: &DereferencingResult{
 				DereferencingMetadata: &types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        ValidDid,
-						MethodSpecificId: ValidIdentifier,
-						Method:           ValidMethod,
+						DidString:        testconstants.ValidDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
 					},
 				},
 				ContentStream: nil,
 				Metadata:      &types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewRepresentationNotSupportedError(ValidDid, types.JSON, nil, false),
+			expectedError: types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.JSON, nil, false),
 		},
 	),
 )
 
-var _ = DescribeTable("Test redirect DID", func(testCase redirectDIDTestCase) {
-	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
-	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
+var _ = DescribeTable("Test redirect DID", func(testCase utils.RedirectDIDTestCase) {
+	request := httptest.NewRequest(http.MethodGet, testCase.DidURL, nil)
+	context, rec := utils.SetupEmptyContext(request, testCase.ResolutionType, utils.MockLedger)
 
 	err := resourceServices.ResourceCollectionEchoHandler(context)
 	if err != nil {
-		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
+		Expect(testCase.ExpectedError.Error()).To(Equal(err.Error()))
 	} else {
-		Expect(testCase.expectedError).To(BeNil())
+		Expect(testCase.ExpectedError).To(BeNil())
 		Expect(http.StatusMovedPermanently).To(Equal(rec.Code))
-		Expect(testCase.expectedDidURLRedirect).To(Equal(rec.Header().Get(echo.HeaderLocation)))
+		Expect(testCase.ExpectedDidURLRedirect).To(Equal(rec.Header().Get(echo.HeaderLocation)))
 	}
 },
 
 	Entry(
 		"can redirect when it try to get collection of resources with an old 16 characters Indy style DID",
-		redirectDIDTestCase{
-			didURL:                 fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.OldIndy16CharStyleTestnetDid),
-			resolutionType:         types.DIDJSONLD,
-			expectedDidURLRedirect: fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.MigratedIndy16CharStyleTestnetDid),
-			expectedError:          nil,
+		utils.RedirectDIDTestCase{
+			DidURL:                 fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.OldIndy16CharStyleTestnetDid),
+			ResolutionType:         types.DIDJSONLD,
+			ExpectedDidURLRedirect: fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.MigratedIndy16CharStyleTestnetDid),
+			ExpectedError:          nil,
 		},
 	),
 
 	Entry(
 		"can redirect when it try to get collection of resources with an old 32 characters Indy style DID",
-		redirectDIDTestCase{
-			didURL:                 fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.OldIndy32CharStyleTestnetDid),
-			resolutionType:         types.DIDJSONLD,
-			expectedDidURLRedirect: fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.MigratedIndy32CharStyleTestnetDid),
-			expectedError:          nil,
+		utils.RedirectDIDTestCase{
+			DidURL:                 fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.OldIndy32CharStyleTestnetDid),
+			ResolutionType:         types.DIDJSONLD,
+			ExpectedDidURLRedirect: fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.MigratedIndy32CharStyleTestnetDid),
+			ExpectedError:          nil,
 		},
 	),
 )

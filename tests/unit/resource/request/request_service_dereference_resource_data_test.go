@@ -1,4 +1,6 @@
-package tests
+//go:build unit
+
+package request
 
 import (
 	"fmt"
@@ -11,6 +13,7 @@ import (
 
 	resourceServices "github.com/cheqd/did-resolver/services/resource"
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
+	utils "github.com/cheqd/did-resolver/tests/unit"
 	"github.com/cheqd/did-resolver/types"
 )
 
@@ -21,13 +24,11 @@ type resourceDataTestCase struct {
 	expectedError    error
 }
 
-var validResourceDereferencing = types.DereferencedResourceData(validResource.Resource.Data)
-
 var _ = DescribeTable("Test ResourceDataEchoHandler function", func(testCase resourceDataTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
-	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
+	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, utils.MockLedger)
 
-	expectedContentType := types.ContentType(validResource.Metadata.MediaType)
+	expectedContentType := types.ContentType(testconstants.ValidResource.Metadata.MediaType)
 
 	err := resourceServices.ResourceDataEchoHandler(context)
 	if testCase.expectedError != nil {
@@ -42,9 +43,13 @@ var _ = DescribeTable("Test ResourceDataEchoHandler function", func(testCase res
 	Entry(
 		"successful resolution",
 		resourceDataTestCase{
-			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", ValidDid, ValidResourceId),
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s/resources/%s",
+				testconstants.ValidDid,
+				testconstants.ValidResourceId,
+			),
 			resolutionType:   types.DIDJSONLD,
-			expectedResource: &validResourceDereferencing,
+			expectedResource: &testconstants.ValidResourceDereferencing,
 			expectedError:    nil,
 		},
 	),
@@ -52,101 +57,121 @@ var _ = DescribeTable("Test ResourceDataEchoHandler function", func(testCase res
 	Entry(
 		"DID not found",
 		resourceDataTestCase{
-			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", NotExistDID, ValidResourceId),
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s/resources/%s",
+				testconstants.NotExistentTestnetDid,
+				testconstants.ValidResourceId,
+			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError:    types.NewNotFoundError(NotExistDID, types.DIDJSONLD, nil, false),
+			expectedError:    types.NewNotFoundError(testconstants.NotExistentTestnetDid, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
 		"invalid DID",
 		resourceDataTestCase{
-			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", InvalidDid, ValidResourceId),
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s/resources/%s",
+				testconstants.InvalidDID,
+				testconstants.ValidResourceId,
+			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError:    types.NewMethodNotSupportedError(InvalidDid, types.DIDJSONLD, nil, false),
+			expectedError:    types.NewMethodNotSupportedError(testconstants.InvalidDID, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
 		"a valid DID, but not existent resourceId",
 		resourceDataTestCase{
-			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", ValidDid, NotExistIdentifier),
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s/resources/%s",
+				testconstants.ValidDid,
+				testconstants.NotExistentIdentifier,
+			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError:    types.NewNotFoundError(ValidDid, types.DIDJSONLD, nil, false),
+			expectedError:    types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
 		"a valid DID, but an invalid resourceId",
 		resourceDataTestCase{
-			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", ValidDid, InvalidIdentifier),
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s/resources/%s",
+				testconstants.ValidDid,
+				testconstants.InvalidIdentifier,
+			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError:    types.NewInvalidDIDUrlError(ValidDid, types.DIDJSONLD, nil, false),
+			expectedError:    types.NewInvalidDIDUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
 		"invalid representation",
 		resourceDataTestCase{
-			didURL:           fmt.Sprintf("/1.0/identifiers/%s/resources/%s", ValidDid, ValidResourceId),
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s/resources/%s",
+				testconstants.ValidDid,
+				testconstants.ValidResourceId,
+			),
 			resolutionType:   types.JSON,
 			expectedResource: nil,
-			expectedError:    types.NewRepresentationNotSupportedError(ValidDid, types.JSON, nil, true),
+			expectedError:    types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.JSON, nil, true),
 		},
 	),
 )
 
-var _ = DescribeTable("Test redirect DID", func(testCase redirectDIDTestCase) {
-	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
-	context, rec := setupEmptyContext(request, testCase.resolutionType, mockLedgerService)
+var _ = DescribeTable("Test redirect DID", func(testCase utils.RedirectDIDTestCase) {
+	request := httptest.NewRequest(http.MethodGet, testCase.DidURL, nil)
+	context, rec := utils.SetupEmptyContext(request, testCase.ResolutionType, utils.MockLedger)
 
 	err := resourceServices.ResourceDataEchoHandler(context)
 	if err != nil {
-		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
+		Expect(testCase.ExpectedError.Error()).To(Equal(err.Error()))
 	} else {
-		Expect(testCase.expectedError).To(BeNil())
+		Expect(testCase.ExpectedError).To(BeNil())
 		Expect(http.StatusMovedPermanently).To(Equal(rec.Code))
-		Expect(testCase.expectedDidURLRedirect).To(Equal(rec.Header().Get(echo.HeaderLocation)))
+		Expect(testCase.ExpectedDidURLRedirect).To(Equal(rec.Header().Get(echo.HeaderLocation)))
 	}
 },
 
 	Entry(
 		"can redirect when it try to get resource data with an old 16 characters Indy style DID",
-		redirectDIDTestCase{
-			didURL: fmt.Sprintf(
+		utils.RedirectDIDTestCase{
+			DidURL: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s",
 				testconstants.OldIndy16CharStyleTestnetDid,
 				testconstants.ValidIdentifier,
 			),
-			resolutionType: types.DIDJSONLD,
-			expectedDidURLRedirect: fmt.Sprintf(
+			ResolutionType: types.DIDJSONLD,
+			ExpectedDidURLRedirect: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s",
 				testconstants.MigratedIndy16CharStyleTestnetDid,
 				testconstants.ValidIdentifier,
 			),
-			expectedError: nil,
+			ExpectedError: nil,
 		},
 	),
 
 	Entry(
 		"can redirect when it try to get resource data with an old 32 characters Indy style DID",
-		redirectDIDTestCase{
-			didURL: fmt.Sprintf(
+		utils.RedirectDIDTestCase{
+			DidURL: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s",
 				testconstants.OldIndy32CharStyleTestnetDid,
 				"214b8b61-a861-416b-a7e4-45533af40ada",
 			),
-			resolutionType: types.DIDJSONLD,
-			expectedDidURLRedirect: fmt.Sprintf(
+			ResolutionType: types.DIDJSONLD,
+			ExpectedDidURLRedirect: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s",
 				testconstants.MigratedIndy32CharStyleTestnetDid,
 				"214b8b61-a861-416b-a7e4-45533af40ada",
 			),
-			expectedError: nil,
+			ExpectedError: nil,
 		},
 	),
 )
