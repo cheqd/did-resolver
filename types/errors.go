@@ -57,11 +57,11 @@ func NewIdentityError(code int, message string, isDereferencing bool, did string
 	return &e
 }
 
-func NewInvalidDIDError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
+func NewInvalidDidError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
 	return NewIdentityError(InvalidDidHttpCode, "invalidDid", isDereferencing, did, contentType, err)
 }
 
-func NewInvalidDIDUrlError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
+func NewInvalidDidUrlError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
 	return NewIdentityError(InvalidDidUrlHttpCode, "invalidDidUrl", isDereferencing, did, contentType, err)
 }
 
