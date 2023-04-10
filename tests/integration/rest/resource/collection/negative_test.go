@@ -5,11 +5,11 @@ package collection
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	utils "github.com/cheqd/did-resolver/tests/integration/rest"
 	"github.com/cheqd/did-resolver/types"
+	errors "github.com/cheqd/did-resolver/types"
 	"github.com/go-resty/resty/v2"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -49,7 +49,7 @@ var _ = DescribeTable("Negative: Get collection of resources", func(testCase uti
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: http.StatusNotAcceptable,
+			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
 		},
 	),
 
@@ -71,7 +71,7 @@ var _ = DescribeTable("Negative: Get collection of resources", func(testCase uti
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: http.StatusNotAcceptable,
+			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
 		},
 	),
 
@@ -97,7 +97,7 @@ var _ = DescribeTable("Negative: Get collection of resources", func(testCase uti
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: http.StatusNotFound,
+			ExpectedStatusCode: errors.NotFoundHttpCode,
 		},
 	),
 
@@ -123,7 +123,7 @@ var _ = DescribeTable("Negative: Get collection of resources", func(testCase uti
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: http.StatusNotImplemented,
+			ExpectedStatusCode: errors.MethodNotSupportedHttpCode,
 		},
 	),
 )

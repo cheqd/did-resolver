@@ -41,7 +41,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
 				testconstants.UUIDStyleTestnetDid,
-				"9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
+				testconstants.UUIDStyleTestnetDidResourceId,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
 			EncodingType:         testconstants.DefaultEncodingType,
@@ -60,7 +60,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
 				testconstants.OldIndy32CharStyleTestnetDid,
-				"214b8b61-a861-416b-a7e4-45533af40ada",
+				testconstants.OldIndy32CharStyleTestnetDidIdentifierResourceId,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
 			EncodingType:         testconstants.DefaultEncodingType,
@@ -76,7 +76,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
 				testconstants.UUIDStyleTestnetDid,
-				"9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
+				testconstants.UUIDStyleTestnetDidResourceId,
 			),
 			ResolutionType:       string(types.DIDJSON),
 			EncodingType:         testconstants.DefaultEncodingType,
@@ -92,7 +92,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
 				testconstants.UUIDStyleTestnetDid,
-				"9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
+				testconstants.UUIDStyleTestnetDidResourceId,
 			),
 			ResolutionType:       string(types.DIDJSONLD),
 			EncodingType:         testconstants.DefaultEncodingType,
@@ -108,7 +108,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
 				testconstants.UUIDStyleTestnetDid,
-				"9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
+				testconstants.UUIDStyleTestnetDidResourceId,
 			),
 			ResolutionType:       string(types.JSONLD),
 			EncodingType:         testconstants.DefaultEncodingType,
@@ -124,7 +124,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
 				testconstants.UUIDStyleTestnetDid,
-				"9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
+				testconstants.UUIDStyleTestnetDidResourceId,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
 			EncodingType:         "gzip",
@@ -140,7 +140,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
 				testconstants.UUIDStyleTestnetDid,
-				"9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
+				testconstants.UUIDStyleTestnetDidResourceId,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
 			EncodingType:       testconstants.NotSupportedEncodingType,
