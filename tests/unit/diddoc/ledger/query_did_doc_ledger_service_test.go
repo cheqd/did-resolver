@@ -50,7 +50,3 @@ var _ = DescribeTable("Test QueryDIDDoc method", func(testCase queryDIDDocTestCa
 		},
 	),
 )
-
-// TODO: add unit tests for testing other Ledger services:
-// - QueryAllDidDocVersionsMetadata
-// - QueryCollectionResources
