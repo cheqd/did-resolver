@@ -225,7 +225,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version", func(testCase utils.Negati
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "InvalidDidUrl",
+					ResolutionError: "invalidDidUrl",
 					DidProperties:   types.DidProperties{},
 				},
 				Did:      nil,

@@ -225,7 +225,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "InvalidDidUrl",
+					ResolutionError: "invalidDidUrl",
 					DidProperties:   types.DidProperties{},
 				},
 				ContentStream: nil,
