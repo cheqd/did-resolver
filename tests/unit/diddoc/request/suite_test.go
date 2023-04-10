@@ -9,5 +9,5 @@ import (
 
 func TestRequest(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "DIDDoc Request Service")
+	RunSpecs(t, "[Unit Test]: DIDDoc Request Service")
 }

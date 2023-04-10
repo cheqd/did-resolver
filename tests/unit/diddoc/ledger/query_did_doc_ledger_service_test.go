@@ -30,9 +30,9 @@ var _ = DescribeTable("Test QueryDIDDoc method", func(testCase queryDIDDocTestCa
 },
 
 	Entry(
-		"existent DID",
+		"can get DIDDoc with an existent DID",
 		queryDIDDocTestCase{
-			did: testconstants.ValidDid,
+			did: testconstants.ExistentDid,
 			expectedDidDocWithMetadata: &didTypes.DidDocWithMetadata{
 				DidDoc:   &testconstants.ValidDIDDoc,
 				Metadata: &testconstants.ValidMetadata,
@@ -42,7 +42,7 @@ var _ = DescribeTable("Test QueryDIDDoc method", func(testCase queryDIDDocTestCa
 	),
 
 	Entry(
-		"not existent DID",
+		"cannot get DIDDoc with not existent DID",
 		queryDIDDocTestCase{
 			did:                        testconstants.NotExistentTestnetDid,
 			expectedDidDocWithMetadata: nil,

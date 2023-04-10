@@ -9,5 +9,5 @@ import (
 
 func TestCollection(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Collection of Resources Integration Tests")
+	RunSpecs(t, "[Integration Test]: Collection of Resources")
 }

@@ -34,7 +34,7 @@ func (dr ResourceDataDereferencingService) Redirect(c services.ResolverContext) 
 
 func (dr *ResourceDataDereferencingService) SpecificValidation(c services.ResolverContext) error {
 	if !utils.IsValidUUID(dr.ResourceId) {
-		return types.NewInvalidDIDUrlError(dr.ResourceId, dr.RequestedContentType, nil, dr.IsDereferencing)
+		return types.NewInvalidDidUrlError(dr.ResourceId, dr.RequestedContentType, nil, dr.IsDereferencing)
 	}
 	return nil
 }

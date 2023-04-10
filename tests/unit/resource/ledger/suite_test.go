@@ -9,5 +9,5 @@ import (
 
 func TestLedger(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Resource Ledger Service")
+	RunSpecs(t, "[Unit Test]: Resource Ledger Service")
 }

@@ -48,12 +48,12 @@ func NewIdentityError(code int, message string, isDereferencing bool, did string
 	return &e
 }
 
-func NewInvalidDIDError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
-	return NewIdentityError(400, "invalidDid", isDereferencing, did, contentType, err)
+func NewInvalidDidError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
+	return NewIdentityError(400, "InvalidDid", isDereferencing, did, contentType, err)
 }
 
-func NewInvalidDIDUrlError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
-	return NewIdentityError(400, "invalidDidUrl", isDereferencing, did, contentType, err)
+func NewInvalidDidUrlError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
+	return NewIdentityError(400, "InvalidDidUrl", isDereferencing, did, contentType, err)
 }
 
 func NewNotFoundError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {

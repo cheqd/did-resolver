@@ -43,7 +43,6 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
 	} else {
 		var resolutionResult types.DidResolution
-
 		Expect(err).To(BeNil())
 		Expect(json.Unmarshal(rec.Body.Bytes(), &resolutionResult)).To(BeNil())
 		Expect(testCase.expectedDIDResolution.Did).To(Equal(resolutionResult.Did))
@@ -55,21 +54,21 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 },
 
 	Entry(
-		"successful resolution",
+		"can get DIDDoc with an existent DID",
 		resolveDIDDocTestCase{
-			didURL:         fmt.Sprintf("/1.0/identifiers/%s", testconstants.ValidDid),
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s", testconstants.ExistentDid),
 			resolutionType: types.DIDJSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
 				Did: &testconstants.ValidDIDDocResolution,
 				Metadata: types.NewResolutionDidDocMetadata(
-					testconstants.ValidDid, &testconstants.ValidMetadata,
+					testconstants.ExistentDid, &testconstants.ValidMetadata,
 					[]*resourceTypes.Metadata{testconstants.ValidResource.Metadata},
 				),
 			},
@@ -78,7 +77,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 	),
 
 	Entry(
-		"DID not found",
+		"cannot get DIDDoc with not existent DID",
 		resolveDIDDocTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s", testconstants.NotExistentTestnetDid),
 			resolutionType: types.DIDJSONLD,
@@ -98,7 +97,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 	),
 
 	Entry(
-		"invalid DID method",
+		"cannot get DIDDoc with an invalid DID method",
 		resolveDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s",
@@ -139,7 +138,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 	),
 
 	Entry(
-		"invalid DID namespace",
+		"cannot get DIDDoc with an invalid DID namespace",
 		resolveDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s",
@@ -167,7 +166,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewInvalidDIDError(
+			expectedError: types.NewInvalidDidError(
 				fmt.Sprintf(
 					testconstants.DIDStructure,
 					testconstants.ValidMethod,
@@ -180,7 +179,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 	),
 
 	Entry(
-		"invalid DID identifier",
+		"cannot get DIDDoc with an invalid DID identifier",
 		resolveDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s",
@@ -208,7 +207,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewInvalidDIDError(
+			expectedError: types.NewInvalidDidError(
 				fmt.Sprintf(
 					testconstants.DIDStructure,
 					testconstants.ValidMethod,
@@ -221,14 +220,14 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 	),
 
 	Entry(
-		"invalid DID",
+		"cannot get DIDDoc with an invalid DID",
 		resolveDIDDocTestCase{
-			didURL:         fmt.Sprintf("/1.0/identifiers/%s", testconstants.InvalidDID),
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s", testconstants.InvalidDid),
 			resolutionType: types.DIDJSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.InvalidDID,
+						DidString:        testconstants.InvalidDid,
 						MethodSpecificId: testconstants.InvalidIdentifier,
 						Method:           testconstants.InvalidMethod,
 					},
@@ -236,19 +235,19 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewMethodNotSupportedError(testconstants.InvalidDID, types.DIDJSONLD, nil, false),
+			expectedError: types.NewMethodNotSupportedError(testconstants.InvalidDid, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
-		"invalid representation",
+		"cannot get DIDDoc with an invalid representation",
 		resolveDIDDocTestCase{
-			didURL:         fmt.Sprintf("/1.0/identifiers/%s", testconstants.ValidDid),
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s", testconstants.ExistentDid),
 			resolutionType: types.JSON,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
@@ -256,7 +255,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.JSON, nil, false),
+			expectedError: types.NewRepresentationNotSupportedError(testconstants.ExistentDid, types.JSON, nil, false),
 		},
 	),
 )

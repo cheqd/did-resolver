@@ -9,5 +9,5 @@ import (
 
 func TestVersions(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "DIDDoc Versions Integration Tests")
+	RunSpecs(t, "[Integration Test]: DIDDoc Versions")
 }

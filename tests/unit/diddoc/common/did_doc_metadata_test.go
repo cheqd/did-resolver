@@ -31,8 +31,8 @@ var _ = Describe("Test NewResolutionDIDDocMetadata function", func() {
 			Resources:   []types.DereferencedResource{testconstants.ValidMetadataResource},
 		}
 
-		result := types.NewResolutionDidDocMetadata(testconstants.ValidDid, metadata, resources)
-		Expect(result).To(Equal(expectedResult))
+		result := types.NewResolutionDidDocMetadata(testconstants.ExistentDid, metadata, resources)
+		Expect(expectedResult).To(Equal(result))
 	})
 
 	It("can create the structure without resource", func() {
@@ -50,7 +50,7 @@ var _ = Describe("Test NewResolutionDIDDocMetadata function", func() {
 			Deactivated: false,
 		}
 
-		result := types.NewResolutionDidDocMetadata(testconstants.ValidDid, metadata, []*resourceTypes.Metadata{})
-		Expect(result).To(Equal(expectedResult))
+		result := types.NewResolutionDidDocMetadata(testconstants.ExistentDid, metadata, []*resourceTypes.Metadata{})
+		Expect(expectedResult).To(Equal(result))
 	})
 })

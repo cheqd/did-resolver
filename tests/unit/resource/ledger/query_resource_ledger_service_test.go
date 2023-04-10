@@ -30,37 +30,37 @@ var _ = DescribeTable("Test QueryResource method", func(testCase queryResourceTe
 },
 
 	Entry(
-		"existent collectionId and resourceId",
+		"can get resource data with an existent collectionId and resourceId",
 		queryResourceTestCase{
-			collectionId:     testconstants.ValidDid,
-			resourceId:       testconstants.ValidResourceId,
+			collectionId:     testconstants.ExistentDid,
+			resourceId:       testconstants.ExistentResourceId,
 			expectedResource: &testconstants.ValidResource,
 			expectedError:    nil,
 		},
 	),
 
 	Entry(
-		"existent collectionId, but not existent resourceId",
+		"cannot get resource data with an existent collectionId, but not existent resourceId",
 		queryResourceTestCase{
-			collectionId:     testconstants.ValidDid,
+			collectionId:     testconstants.ExistentDid,
 			resourceId:       testconstants.NotExistentIdentifier,
 			expectedResource: nil,
-			expectedError:    types.NewNotFoundError(testconstants.ValidDid, types.JSON, nil, true),
+			expectedError:    types.NewNotFoundError(testconstants.ExistentDid, types.JSON, nil, true),
 		},
 	),
 
 	Entry(
-		"not existent collectionId, but existent resourceId",
+		"cannot get resource data with not existent collectionId, but existent resourceId",
 		queryResourceTestCase{
 			collectionId:     testconstants.NotExistentTestnetDid,
-			resourceId:       testconstants.ValidResourceId,
+			resourceId:       testconstants.ExistentResourceId,
 			expectedResource: nil,
 			expectedError:    types.NewNotFoundError(testconstants.NotExistentTestnetDid, types.JSON, nil, true),
 		},
 	),
 
 	Entry(
-		"not existent collectionId and resourceId",
+		"cannot get resource data with not existent collectionId and resourceId",
 		queryResourceTestCase{
 			collectionId:     testconstants.NotExistentTestnetDid,
 			resourceId:       testconstants.NotExistentIdentifier,

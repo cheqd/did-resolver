@@ -106,7 +106,7 @@ var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.Negat
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/versions",
-				testconstants.InvalidDID,
+				testconstants.InvalidDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
 			ExpectedResult: utils.DereferencingResult{
@@ -115,7 +115,7 @@ var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.Negat
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.InvalidDID,
+						DidString:        testconstants.InvalidDid,
 						MethodSpecificId: testconstants.InvalidIdentifier,
 						Method:           testconstants.InvalidMethod,
 					},

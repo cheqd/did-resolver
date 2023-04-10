@@ -31,7 +31,6 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	if err != nil {
 		Expect(testCase.expectedError.Code).To(Equal(err.Code))
 		Expect(testCase.expectedError.Message).To(Equal(err.Message))
-
 	} else {
 		Expect(testCase.expectedResourceDereferencing.ContentStream, dereferencingResult.ContentStream)
 		Expect(testCase.expectedResourceDereferencing.Metadata, dereferencingResult.Metadata)
@@ -42,14 +41,14 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 },
 
 	Entry(
-		"successful dereferencing for collection resources",
+		"can get collection of resources with an existent DID",
 		dereferenceCollectionResourcesTestCase{
-			did:               testconstants.ValidDid,
+			did:               testconstants.ExistentDid,
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
@@ -62,7 +61,7 @@ var _ = DescribeTable("Test DereferenceCollectionResources method", func(testCas
 	),
 
 	Entry(
-		"not found DID",
+		"cannot get collection of resources with not existent DID",
 		dereferenceCollectionResourcesTestCase{
 			did:               testconstants.NotExistentTestnetDid,
 			dereferencingType: types.DIDJSON,

@@ -40,15 +40,15 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 },
 
 	Entry(
-		"successful dereferencing for resource",
+		"can get resource data with an existent DID and resourceId",
 		dereferenceResourceDataTestCase{
-			did:               testconstants.ValidDid,
-			resourceId:        testconstants.ValidResourceId,
+			did:               testconstants.ExistentDid,
+			resourceId:        testconstants.ExistentResourceId,
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
@@ -61,15 +61,15 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 	),
 
 	Entry(
-		"successful dereferencing for resource (upper case UUID)",
+		"can get resource data with an existent DID and upper case resourceId",
 		dereferenceResourceDataTestCase{
-			did:               testconstants.ValidDid,
-			resourceId:        strings.ToUpper(testconstants.ValidResourceId),
+			did:               testconstants.ExistentDid,
+			resourceId:        strings.ToUpper(testconstants.ExistentResourceId),
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
@@ -82,7 +82,7 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 	),
 
 	Entry(
-		"not existent DID and a valid resourceId",
+		"cannot get resource data with not existent DID and a valid resourceId",
 		dereferenceResourceDataTestCase{
 			did:               testconstants.NotExistentTestnetDid,
 			resourceId:        testconstants.ValidIdentifier,
@@ -102,27 +102,27 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 	),
 
 	Entry(
-		"an existent DID, but not existent resourceId",
+		"cannot get resource data with an existent DID, but not existent resourceId",
 		dereferenceResourceDataTestCase{
-			did:               testconstants.ValidDid,
+			did:               testconstants.ExistentDid,
 			resourceId:        testconstants.ValidIdentifier,
 			dereferencingType: types.DIDJSON,
 			expectedResourceDereferencing: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
 				Metadata: types.ResolutionResourceMetadata{},
 			},
-			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError: types.NewNotFoundError(testconstants.ExistentDid, types.DIDJSONLD, nil, true),
 		},
 	),
 
 	Entry(
-		"not existent DID and resourceId",
+		"cannot get resource data with not existent DID and resourceId",
 		dereferenceResourceDataTestCase{
 			did:               testconstants.NotExistentTestnetDid,
 			resourceId:        testconstants.NotExistentIdentifier,

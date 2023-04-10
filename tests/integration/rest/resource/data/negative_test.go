@@ -109,7 +109,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
-				testconstants.InvalidDID,
+				testconstants.InvalidDid,
 				testconstants.ValidIdentifier,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -119,7 +119,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.InvalidDID,
+						DidString:        testconstants.InvalidDid,
 						MethodSpecificId: testconstants.InvalidIdentifier,
 						Method:           testconstants.InvalidMethod,
 					},
@@ -171,7 +171,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "invalidDidUrl",
+					ResolutionError: "InvalidDidUrl",
 					DidProperties:   types.DidProperties{},
 				},
 				ContentStream: nil,
@@ -194,7 +194,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "invalidDidUrl",
+					ResolutionError: "InvalidDidUrl",
 					DidProperties:   types.DidProperties{},
 				},
 				ContentStream: nil,
@@ -217,7 +217,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "invalidDidUrl",
+					ResolutionError: "InvalidDidUrl",
 					DidProperties:   types.DidProperties{},
 				},
 				ContentStream: nil,

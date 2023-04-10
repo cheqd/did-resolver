@@ -9,5 +9,5 @@ import (
 
 func TestCommon(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "DIDDoc common methods and functions")
+	RunSpecs(t, "[Unit Test]: DIDDoc common methods and functions")
 }

@@ -9,5 +9,5 @@ import (
 
 func TestRequest(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Resource Request Service")
+	RunSpecs(t, "[Unit Test]: Resource Request Service")
 }

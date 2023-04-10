@@ -43,7 +43,7 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 	method, namespace, _, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
-		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
+		return nil, types.NewInvalidDidError(did, types.JSON, nil, false)
 	}
 
 	conn, err := ls.openGRPCConnection(serverAddr)
@@ -78,7 +78,7 @@ func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.
 	method, namespace, _, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
-		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
+		return nil, types.NewInvalidDidError(did, types.JSON, nil, false)
 	}
 
 	conn, err := ls.openGRPCConnection(serverAddr)
@@ -103,7 +103,7 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resourceT
 	method, namespace, collectionId, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
-		return nil, types.NewInvalidDIDError(did, types.JSON, nil, true)
+		return nil, types.NewInvalidDidError(did, types.JSON, nil, true)
 	}
 
 	conn, err := ls.openGRPCConnection(serverAddr)
@@ -130,7 +130,7 @@ func (ls LedgerService) QueryCollectionResources(did string) ([]*resourceTypes.M
 	method, namespace, collectionId, _ := types.TrySplitDID(did)
 	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
-		return nil, types.NewInvalidDIDError(did, types.JSON, nil, false)
+		return nil, types.NewInvalidDidError(did, types.JSON, nil, false)
 	}
 
 	conn, err := ls.openGRPCConnection(serverAddr)

@@ -34,11 +34,11 @@ var (
 )
 
 var (
-	MainnetDIDWithInvalidMethod = fmt.Sprintf(DIDStructure, InvalidMethod, ValidMainnetNamespace, ValidIdentifier)
-	TestnetDIDWithInvalidMethod = fmt.Sprintf(DIDStructure, InvalidMethod, ValidTestnetNamespace, ValidIdentifier)
+	MainnetDidWithInvalidMethod = fmt.Sprintf(DIDStructure, InvalidMethod, ValidMainnetNamespace, ValidIdentifier)
+	TestnetDidWithInvalidMethod = fmt.Sprintf(DIDStructure, InvalidMethod, ValidTestnetNamespace, ValidIdentifier)
 
-	DIDWithInvalidNamespace = fmt.Sprintf(DIDStructure, ValidMethod, InvalidNamespace, ValidIdentifier)
-	InvalidDID              = fmt.Sprintf(DIDStructure, InvalidMethod, InvalidNamespace, InvalidIdentifier)
+	DidWithInvalidNamespace = fmt.Sprintf(DIDStructure, ValidMethod, InvalidNamespace, ValidIdentifier)
+	InvalidDid              = fmt.Sprintf(DIDStructure, InvalidMethod, InvalidNamespace, InvalidIdentifier)
 )
 
 var (
@@ -53,15 +53,18 @@ var (
 		"\"kty\":\"OKP\"," +
 		"\"x\":\"VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ\"" +
 		"}"
-	ValidDid = fmt.Sprintf(DIDStructure, ValidMethod, ValidMainnetNamespace, ValidIdentifier)
 )
 
 var (
-	ValidResourceId       = "a09abea0-22e0-4b35-8f70-9cc3a6d0b5fd"
+	ExistentDid        = fmt.Sprintf(DIDStructure, ValidMethod, ValidMainnetNamespace, ValidIdentifier)
+	ExistentResourceId = "a09abea0-22e0-4b35-8f70-9cc3a6d0b5fd"
+)
+
+var (
 	ValidResourceData     = []byte("test_checksum")
 	ValidResourceMetadata = resourceTypes.Metadata{
 		CollectionId: ValidIdentifier,
-		Id:           ValidResourceId,
+		Id:           ExistentResourceId,
 		Name:         "Existing Resource Name",
 		ResourceType: "CL-Schema",
 		MediaType:    "application/json",
@@ -69,7 +72,7 @@ var (
 	}
 
 	ValidMetadataResource = types.DereferencedResource{
-		ResourceURI:       ValidDid + types.RESOURCE_PATH + ValidResourceMetadata.Id,
+		ResourceURI:       ExistentDid + types.RESOURCE_PATH + ValidResourceMetadata.Id,
 		CollectionId:      ValidResourceMetadata.CollectionId,
 		ResourceId:        ValidResourceMetadata.Id,
 		Name:              ValidResourceMetadata.Name,
@@ -114,9 +117,9 @@ var (
 	ValidVerificationMethod       = generateVerificationMethod()
 	ValidService                  = generateService()
 	ValidDIDDocResolution         = types.NewDidDoc(&ValidDIDDoc)
-	ValidFragmentMetadata         = types.NewResolutionDidDocMetadata(ValidDid, &ValidMetadata, []*resourceTypes.Metadata{})
+	ValidFragmentMetadata         = types.NewResolutionDidDocMetadata(ExistentDid, &ValidMetadata, []*resourceTypes.Metadata{})
 	ValidResourceDereferencing    = types.DereferencedResourceData(ValidResource.Resource.Data)
-	ValidDereferencedResourceList = types.NewDereferencedResourceList(ValidDid, []*resourceTypes.Metadata{ValidResource.Metadata})
+	ValidDereferencedResourceList = types.NewDereferencedResourceList(ExistentDid, []*resourceTypes.Metadata{ValidResource.Metadata})
 )
 
 var DIDStructure = "did:%s:%s:%s"

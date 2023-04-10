@@ -9,5 +9,5 @@ import (
 
 func TestLedger(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "DIDDoc Ledger Service")
+	RunSpecs(t, "[Unit Test]: DIDDoc Ledger Service")
 }

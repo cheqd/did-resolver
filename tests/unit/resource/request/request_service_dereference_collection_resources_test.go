@@ -43,7 +43,6 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 		Expect(testCase.expectedError.Error(), err.Error())
 	} else {
 		var dereferencingResult DereferencingResult
-
 		Expect(err).To(BeNil())
 		Expect(json.Unmarshal(rec.Body.Bytes(), &dereferencingResult)).To(BeNil())
 		Expect(testCase.expectedDereferencingResult.ContentStream).To(Equal(dereferencingResult.ContentStream))
@@ -55,20 +54,20 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 },
 
 	Entry(
-		"successful resolution",
+		"can get collection of resource with an existent DID",
 		resourceCollectionTestCase{
-			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.ValidDid),
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.ExistentDid),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
 				DereferencingMetadata: &types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
 				ContentStream: types.NewDereferencedResourceList(
-					testconstants.ValidDid,
+					testconstants.ExistentDid,
 					[]*resourceTypes.Metadata{testconstants.ValidResource.Metadata},
 				),
 				Metadata: &types.ResolutionDidDocMetadata{},
@@ -78,7 +77,7 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 	),
 
 	Entry(
-		"DID not found",
+		"cannot get collection of resources with not existent DID",
 		resourceCollectionTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.NotExistentTestnetDid),
 			resolutionType: types.DIDJSONLD,
@@ -98,14 +97,14 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 	),
 
 	Entry(
-		"invalid DID",
+		"cannot get collection of resources with a invalid DID",
 		resourceCollectionTestCase{
-			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.InvalidDID),
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.InvalidDid),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
 				DereferencingMetadata: &types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.InvalidDID,
+						DidString:        testconstants.InvalidDid,
 						MethodSpecificId: testconstants.InvalidIdentifier,
 						Method:           testconstants.InvalidMethod,
 					},
@@ -113,19 +112,19 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 				ContentStream: nil,
 				Metadata:      &types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewMethodNotSupportedError(testconstants.InvalidDID, types.DIDJSONLD, nil, false),
+			expectedError: types.NewMethodNotSupportedError(testconstants.InvalidDid, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
 		"invalid representation",
 		resourceCollectionTestCase{
-			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.ValidDid),
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.ExistentDid),
 			resolutionType: types.JSON,
 			expectedDereferencingResult: &DereferencingResult{
 				DereferencingMetadata: &types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
@@ -133,7 +132,7 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 				ContentStream: nil,
 				Metadata:      &types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.JSON, nil, false),
+			expectedError: types.NewRepresentationNotSupportedError(testconstants.ExistentDid, types.JSON, nil, false),
 		},
 	),
 )

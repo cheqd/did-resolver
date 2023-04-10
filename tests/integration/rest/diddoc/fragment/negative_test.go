@@ -107,7 +107,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%skey1",
-				testconstants.InvalidDID+url.PathEscape(testconstants.HashTag),
+				testconstants.InvalidDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
 			ExpectedResult: utils.DereferencingResult{
@@ -116,7 +116,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.InvalidDID,
+						DidString:        testconstants.InvalidDid,
 						MethodSpecificId: testconstants.InvalidIdentifier,
 						Method:           testconstants.InvalidMethod,
 					},

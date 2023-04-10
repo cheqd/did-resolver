@@ -49,7 +49,6 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
 	} else {
 		var dereferencingResult DereferencingResult
-
 		Expect(err).To(BeNil())
 		Expect(json.Unmarshal(rec.Body.Bytes(), &dereferencingResult)).To(BeNil())
 		Expect(testCase.expectedDereferencingResult.ContentStream, dereferencingResult.ContentStream)
@@ -60,24 +59,24 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 	}
 },
 	Entry(
-		"successful resolution",
+		"can get resource metadata with an existent DID and resourceId",
 		resourceMetadataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.ValidDid,
-				testconstants.ValidResourceId,
+				testconstants.ExistentDid,
+				testconstants.ExistentResourceId,
 			),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
 				DereferencingMetadata: &types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
 				ContentStream: types.NewDereferencedResourceList(
-					testconstants.ValidDid,
+					testconstants.ExistentDid,
 					[]*resourceTypes.Metadata{testconstants.ValidResource.Metadata},
 				),
 				Metadata: &types.ResolutionDidDocMetadata{},
@@ -87,12 +86,12 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 	),
 
 	Entry(
-		"DID not found",
+		"cannot get resource metadata with not existent DID",
 		resourceMetadataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s/metadata",
 				testconstants.NotExistentTestnetDid,
-				testconstants.ValidResourceId,
+				testconstants.ExistentResourceId,
 			),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
@@ -111,18 +110,18 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 	),
 
 	Entry(
-		"invalid DID",
+		"cannot get resource metadata with an invalid DID",
 		resourceMetadataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.InvalidDID,
-				testconstants.ValidResourceId,
+				testconstants.InvalidDid,
+				testconstants.ExistentResourceId,
 			),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
 				DereferencingMetadata: &types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.InvalidDID,
+						DidString:        testconstants.InvalidDid,
 						MethodSpecificId: testconstants.InvalidIdentifier,
 						Method:           testconstants.InvalidMethod,
 					},
@@ -130,23 +129,23 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 				ContentStream: nil,
 				Metadata:      &types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewMethodNotSupportedError(testconstants.InvalidDID, types.DIDJSONLD, nil, false),
+			expectedError: types.NewMethodNotSupportedError(testconstants.InvalidDid, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
-		"a valid DID, but not existent resourceId",
+		"cannot get resource metadata with an existent DID, but not existent resourceId",
 		resourceMetadataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.ValidDid,
+				testconstants.ExistentDid,
 				testconstants.NotExistentIdentifier,
 			),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
 				DereferencingMetadata: &types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
@@ -154,23 +153,23 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 				ContentStream: nil,
 				Metadata:      &types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError: types.NewNotFoundError(testconstants.ExistentDid, types.DIDJSONLD, nil, true),
 		},
 	),
 
 	Entry(
-		"a valid DID, but an invalid resourceId",
+		"cannot get resource metadata with an existent DID, but an invalid resourceId",
 		resourceMetadataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.ValidDid,
+				testconstants.ExistentDid,
 				testconstants.InvalidIdentifier,
 			),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
 				DereferencingMetadata: &types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
@@ -178,47 +177,23 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 				ContentStream: nil,
 				Metadata:      &types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewInvalidDIDUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError: types.NewInvalidDidUrlError(testconstants.ExistentDid, types.DIDJSONLD, nil, true),
 		},
 	),
 
 	Entry(
-		"DID not found",
+		"cannot get resource metadata with an invalid representation",
 		resourceMetadataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.NotExistentTestnetDid,
-				testconstants.ValidResourceId,
-			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        testconstants.NotExistentTestnetDid,
-						MethodSpecificId: testconstants.NotExistentIdentifier,
-						Method:           testconstants.ValidMethod,
-					},
-				},
-				ContentStream: nil,
-				Metadata:      &types.ResolutionDidDocMetadata{},
-			},
-			expectedError: types.NewNotFoundError(testconstants.NotExistentTestnetDid, types.DIDJSONLD, nil, false),
-		},
-	),
-
-	Entry(
-		"invalid representation",
-		resourceMetadataTestCase{
-			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.ValidDid,
-				testconstants.ValidResourceId,
+				testconstants.ExistentDid,
+				testconstants.ExistentResourceId,
 			),
 			resolutionType: types.JSON,
 			expectedDereferencingResult: &DereferencingResult{
 				DereferencingMetadata: &types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
@@ -226,7 +201,7 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 				ContentStream: nil,
 				Metadata:      &types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.JSON, nil, false),
+			expectedError: types.NewRepresentationNotSupportedError(testconstants.ExistentDid, types.JSON, nil, false),
 		},
 	),
 )

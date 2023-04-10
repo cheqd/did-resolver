@@ -20,7 +20,7 @@ type dereferencingTestCase struct {
 	expectedError            *types.IdentityError
 }
 
-var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTestCase) {
+var _ = DescribeTable("Test DereferenceSecondary method", func(testCase dereferencingTestCase) {
 	diddocService := services.NewDIDDocService("cheqd", utils.MockLedger)
 
 	expectedContentType := utils.DefineContentType(
@@ -42,15 +42,15 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 },
 
 	Entry(
-		"successful Secondary dereferencing (verification method)",
+		"can successful dereferencing secondary (verification method) with an existent DID and verificationMethodId",
 		dereferencingTestCase{
-			did:               testconstants.ValidDid,
+			did:               testconstants.ExistentDid,
 			fragmentId:        testconstants.ValidVerificationMethod.Id,
 			dereferencingType: types.DIDJSON,
 			expectedDidDereferencing: &types.DidDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
@@ -63,15 +63,15 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 	),
 
 	Entry(
-		"successful Secondary dereferencing (service)",
+		"can successful dereferencing secondary (service) with an existent DID and serviceId",
 		dereferencingTestCase{
-			did:               testconstants.ValidDid,
+			did:               testconstants.ExistentDid,
 			fragmentId:        testconstants.ValidService.Id,
 			dereferencingType: types.DIDJSON,
 			expectedDidDereferencing: &types.DidDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
@@ -84,15 +84,15 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 	),
 
 	Entry(
-		"key not found",
+		"cannot dereferencing secondary with an existent DID, but not existent fragment",
 		dereferencingTestCase{
-			did:               testconstants.ValidDid,
+			did:               testconstants.ExistentDid,
 			fragmentId:        testconstants.NotExistentFragment,
 			dereferencingType: types.DIDJSONLD,
 			expectedDidDereferencing: &types.DidDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
@@ -100,7 +100,7 @@ var _ = DescribeTable("Test Dereferencing method", func(testCase dereferencingTe
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, false),
+			expectedError: types.NewNotFoundError(testconstants.ExistentDid, types.DIDJSONLD, nil, false),
 		},
 	),
 )

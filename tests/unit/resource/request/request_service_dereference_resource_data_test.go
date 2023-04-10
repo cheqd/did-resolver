@@ -41,12 +41,12 @@ var _ = DescribeTable("Test ResourceDataEchoHandler function", func(testCase res
 },
 
 	Entry(
-		"successful resolution",
+		"can get resource data with an existent DID and resourceId",
 		resourceDataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s",
-				testconstants.ValidDid,
-				testconstants.ValidResourceId,
+				testconstants.ExistentDid,
+				testconstants.ExistentResourceId,
 			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: &testconstants.ValidResourceDereferencing,
@@ -55,12 +55,12 @@ var _ = DescribeTable("Test ResourceDataEchoHandler function", func(testCase res
 	),
 
 	Entry(
-		"DID not found",
+		"cannot get resource data with not existent DID",
 		resourceDataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s",
 				testconstants.NotExistentTestnetDid,
-				testconstants.ValidResourceId,
+				testconstants.ExistentResourceId,
 			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
@@ -69,58 +69,58 @@ var _ = DescribeTable("Test ResourceDataEchoHandler function", func(testCase res
 	),
 
 	Entry(
-		"invalid DID",
+		"cannot get resource data with an invalid DID",
 		resourceDataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s",
-				testconstants.InvalidDID,
-				testconstants.ValidResourceId,
+				testconstants.InvalidDid,
+				testconstants.ExistentResourceId,
 			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError:    types.NewMethodNotSupportedError(testconstants.InvalidDID, types.DIDJSONLD, nil, false),
+			expectedError:    types.NewMethodNotSupportedError(testconstants.InvalidDid, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
-		"a valid DID, but not existent resourceId",
+		"cannot get resource data with an existent DID, but not existent resourceId",
 		resourceDataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s",
-				testconstants.ValidDid,
+				testconstants.ExistentDid,
 				testconstants.NotExistentIdentifier,
 			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError:    types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, false),
+			expectedError:    types.NewNotFoundError(testconstants.ExistentDid, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
-		"a valid DID, but an invalid resourceId",
+		"cannot get resource data with an existent DID, but an invalid resourceId",
 		resourceDataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s",
-				testconstants.ValidDid,
+				testconstants.ExistentDid,
 				testconstants.InvalidIdentifier,
 			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError:    types.NewInvalidDIDUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, false),
+			expectedError:    types.NewInvalidDidUrlError(testconstants.ExistentDid, types.DIDJSONLD, nil, false),
 		},
 	),
 
 	Entry(
-		"invalid representation",
+		"cannot get resource data with invalid representation",
 		resourceDataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s",
-				testconstants.ValidDid,
-				testconstants.ValidResourceId,
+				testconstants.ExistentDid,
+				testconstants.ExistentResourceId,
 			),
 			resolutionType:   types.JSON,
 			expectedResource: nil,
-			expectedError:    types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.JSON, nil, true),
+			expectedError:    types.NewRepresentationNotSupportedError(testconstants.ExistentDid, types.JSON, nil, true),
 		},
 	),
 )

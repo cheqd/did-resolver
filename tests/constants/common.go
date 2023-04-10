@@ -10,16 +10,16 @@ import (
 
 func generateVerificationMethod() didTypes.VerificationMethod {
 	return didTypes.VerificationMethod{
-		Id:                     ValidDid + "#key-1",
+		Id:                     ExistentDid + "#key-1",
 		VerificationMethodType: "JsonWebKey2020",
-		Controller:             ValidDid,
+		Controller:             ExistentDid,
 		VerificationMaterial:   ValidPubKeyJWK,
 	}
 }
 
 func generateService() didTypes.Service {
 	return didTypes.Service{
-		Id:              ValidDid + "#service-1",
+		Id:              ExistentDid + "#service-1",
 		ServiceType:     "DIDCommMessaging",
 		ServiceEndpoint: []string{"http://example.com"},
 	}
@@ -30,7 +30,7 @@ func generateDIDDoc() didTypes.DidDoc {
 	verificationMethod := generateVerificationMethod()
 
 	return didTypes.DidDoc{
-		Id:                 ValidDid,
+		Id:                 ExistentDid,
 		VerificationMethod: []*didTypes.VerificationMethod{&verificationMethod},
 		Service:            []*didTypes.Service{&service},
 	}
@@ -45,7 +45,7 @@ func generateResource() resourceTypes.ResourceWithMetadata {
 		},
 		Metadata: &resourceTypes.Metadata{
 			CollectionId: ValidIdentifier,
-			Id:           ValidResourceId,
+			Id:           ExistentResourceId,
 			Name:         "Existing Resource Name",
 			ResourceType: "string",
 			MediaType:    "application/json",

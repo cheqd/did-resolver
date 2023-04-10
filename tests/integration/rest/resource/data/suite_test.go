@@ -9,5 +9,5 @@ import (
 
 func TestData(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Resource Data Integration Tests")
+	RunSpecs(t, "[Integration Test]: Resource Data")
 }

@@ -20,13 +20,13 @@ var _ = Describe("Content/Accept encoding checks", func() {
 	var rec *httptest.ResponseRecorder
 
 	BeforeEach(func() {
-		request := httptest.NewRequest(http.MethodGet, "/1.0/identifiers/"+testconstants.ValidDid, nil)
+		request := httptest.NewRequest(http.MethodGet, "/1.0/identifiers/"+testconstants.ExistentDid, nil)
 		context, rec = utils.SetupEmptyContext(request, types.DIDJSON, utils.MockLedger)
 	})
 	Context("Gzip in Accept-Encoding", func() {
 		It("should return gzip in Content-Encoding", func() {
 			// Setup Accept header to gzip
-			context.Request().Header.Set(echo.HeaderAcceptEncoding, "gzip") // change echo.HeaderAcceptEncoding to echo constant.
+			context.Request().Header.Set(echo.HeaderAcceptEncoding, "gzip")
 
 			err := diddocServices.DidDocEchoHandler(context)
 			Expect(err).To(BeNil())
@@ -41,7 +41,7 @@ var _ = Describe("Content/Accept encoding checks", func() {
 			Expect(err).To(BeNil())
 
 			// Check if Content-Encoding is Empty
-			Expect(rec.Header().Get(echo.HeaderContentEncoding)).To(BeEmpty()) // change echo.HeaderContentEncoding to echo constant.
+			Expect(rec.Header().Get(echo.HeaderContentEncoding)).To(BeEmpty())
 		})
 	})
 	Context("Not supported compressing", func() {

@@ -13,24 +13,29 @@ import (
 	"github.com/cheqd/did-resolver/types"
 )
 
-type resolveTestCase struct {
+type resolveDidDocTestCase struct {
 	did                   string
 	resolutionType        types.ContentType
 	expectedDIDResolution *types.DidResolution
 	expectedError         *types.IdentityError
 }
 
-var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
+var _ = DescribeTable("Test Resolve method", func(testCase resolveDidDocTestCase) {
 	diddocService := services.NewDIDDocService("cheqd", utils.MockLedger)
 
-	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
-		testCase.expectedDIDResolution.Did.Context = []string{types.DIDSchemaJSONLD, types.JsonWebKey2020JSONLD}
+	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) &&
+		(testCase.expectedError == nil) {
+		testCase.expectedDIDResolution.Did.Context = []string{
+			types.DIDSchemaJSONLD,
+			types.JsonWebKey2020JSONLD,
+		}
 	} else if testCase.expectedDIDResolution.Did != nil {
 		testCase.expectedDIDResolution.Did.Context = nil
 	}
 
 	expectedContentType := utils.DefineContentType(
-		testCase.expectedDIDResolution.ResolutionMetadata.ContentType, testCase.resolutionType,
+		testCase.expectedDIDResolution.ResolutionMetadata.ContentType,
+		testCase.resolutionType,
 	)
 
 	resolutionResult, err := diddocService.Resolve(testCase.did, "", testCase.resolutionType)
@@ -47,21 +52,21 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 },
 
 	Entry(
-		"Successful resolution",
-		resolveTestCase{
-			did:            testconstants.ValidDid,
+		"can successful resolution DIDDoc with an existent DID",
+		resolveDidDocTestCase{
+			did:            testconstants.ExistentDid,
 			resolutionType: types.DIDJSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.ValidDid,
+						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
 				Did: &testconstants.ValidDIDDocResolution,
 				Metadata: types.NewResolutionDidDocMetadata(
-					testconstants.ValidDid, &testconstants.ValidMetadata,
+					testconstants.ExistentDid, &testconstants.ValidMetadata,
 					[]*resourceTypes.Metadata{testconstants.ValidResource.Metadata},
 				),
 			},
@@ -70,8 +75,8 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveTestCase) {
 	),
 
 	Entry(
-		"DID not found",
-		resolveTestCase{
+		"cannot resolution DIDDoc with not existent DID",
+		resolveDidDocTestCase{
 			did:            testconstants.NotExistentTestnetDid,
 			resolutionType: types.DIDJSONLD,
 			expectedDIDResolution: &types.DidResolution{
