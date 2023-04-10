@@ -113,7 +113,7 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 	),
 
 	Entry(
-		"can get collection of resources with an existent DID, and supported gzip resolution type",
+		"can get collection of resources with an existent DID, and supported gzip encoding type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/metadata",
@@ -128,7 +128,7 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 	),
 
 	Entry(
-		"can get collection of resources with an existent DID, and not supported resolution type",
+		"can get collection of resources with an existent DID, and not supported encoding type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/metadata",
