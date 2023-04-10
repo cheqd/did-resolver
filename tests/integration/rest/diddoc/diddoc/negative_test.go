@@ -5,10 +5,10 @@ package diddoc
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	utils "github.com/cheqd/did-resolver/tests/integration/rest"
+	errors "github.com/cheqd/did-resolver/types"
 
 	"github.com/cheqd/did-resolver/types"
 	"github.com/go-resty/resty/v2"
@@ -51,7 +51,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: http.StatusNotAcceptable,
+			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
 		},
 	),
 
@@ -73,7 +73,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: http.StatusNotAcceptable,
+			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
 		},
 	),
 
@@ -99,7 +99,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: http.StatusNotFound,
+			ExpectedStatusCode: errors.NotFoundHttpCode,
 		},
 	),
 
@@ -125,7 +125,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: http.StatusNotFound,
+			ExpectedStatusCode: errors.NotFoundHttpCode,
 		},
 	),
 
@@ -151,7 +151,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: http.StatusNotImplemented,
+			ExpectedStatusCode: errors.MethodNotSupportedHttpCode,
 		},
 	),
 
@@ -177,7 +177,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: http.StatusNotImplemented,
+			ExpectedStatusCode: errors.MethodNotSupportedHttpCode,
 		},
 	),
 
@@ -203,7 +203,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: http.StatusBadRequest,
+			ExpectedStatusCode: errors.InvalidDidUrlHttpCode,
 		},
 	),
 
@@ -229,7 +229,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: http.StatusNotImplemented,
+			ExpectedStatusCode: errors.MethodNotSupportedHttpCode,
 		},
 	),
 )

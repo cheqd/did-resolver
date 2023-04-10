@@ -5,6 +5,15 @@ import (
 	"fmt"
 )
 
+var (
+	InvalidDidHttpCode                 = 400
+	InvalidDidUrlHttpCode              = 400
+	NotFoundHttpCode                   = 404
+	RepresentationNotSupportedHttpCode = 406
+	InternalErrorHttpCode              = 500
+	MethodNotSupportedHttpCode         = 501
+)
+
 type IdentityError struct {
 	Code            int
 	Message         string
@@ -48,28 +57,28 @@ func NewIdentityError(code int, message string, isDereferencing bool, did string
 	return &e
 }
 
-func NewInvalidDidError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
-	return NewIdentityError(400, "InvalidDid", isDereferencing, did, contentType, err)
+func NewInvalidDIDError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
+	return NewIdentityError(InvalidDidHttpCode, "invalidDid", isDereferencing, did, contentType, err)
 }
 
-func NewInvalidDidUrlError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
-	return NewIdentityError(400, "InvalidDidUrl", isDereferencing, did, contentType, err)
+func NewInvalidDIDUrlError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
+	return NewIdentityError(InvalidDidUrlHttpCode, "invalidDidUrl", isDereferencing, did, contentType, err)
 }
 
 func NewNotFoundError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
-	return NewIdentityError(404, "notFound", isDereferencing, did, contentType, err)
+	return NewIdentityError(NotFoundHttpCode, "notFound", isDereferencing, did, contentType, err)
 }
 
 func NewRepresentationNotSupportedError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
-	return NewIdentityError(406, "representationNotSupported", isDereferencing, did, contentType, err)
-}
-
-func NewMethodNotSupportedError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
-	return NewIdentityError(501, "methodNotSupported", isDereferencing, did, contentType, err)
+	return NewIdentityError(RepresentationNotSupportedHttpCode, "representationNotSupported", isDereferencing, did, contentType, err)
 }
 
 func NewInternalError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
-	return NewIdentityError(500, "internalError", isDereferencing, did, contentType, err)
+	return NewIdentityError(InternalErrorHttpCode, "internalError", isDereferencing, did, contentType, err)
+}
+
+func NewMethodNotSupportedError(did string, contentType ContentType, err error, isDereferencing bool) *IdentityError {
+	return NewIdentityError(MethodNotSupportedHttpCode, "methodNotSupported", isDereferencing, did, contentType, err)
 }
 
 func NewInvalidIdentifierError() error {

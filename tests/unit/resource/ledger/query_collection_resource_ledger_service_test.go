@@ -17,7 +17,7 @@ type queryCollectionResourcesTestCase struct {
 	expectedError      *types.IdentityError
 }
 
-var _ = DescribeTable("Test something", func(testCase queryCollectionResourcesTestCase) {
+var _ = DescribeTable("Test QueryCollectionResources method", func(testCase queryCollectionResourcesTestCase) {
 	collection, err := utils.MockLedger.QueryCollectionResources(testCase.did)
 	if err != nil {
 		Expect(testCase.expectedError.Code).To(Equal(err.Code))

@@ -182,7 +182,7 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 	),
 
 	Entry(
-		"cannot get resource metadata with an invalid representation",
+		"cannot get resource metadata with an invalid content type",
 		resourceMetadataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s/resources/%s/metadata",
