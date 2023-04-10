@@ -30,7 +30,7 @@ func (dd *DIDDocAllVersionMetadataRequestService) SpecificValidation(c services.
 }
 
 func (dd *DIDDocAllVersionMetadataRequestService) Query(c services.ResolverContext) error {
-	result, err := c.DidDocService.GetAllDidDocVersionsMetadata(dd.Did, dd.RequestedContentType)
+	result, err := c.DidDocService.GetAllDidDocVersionsMetadata(dd.Did, dd.GetContentType())
 	if err != nil {
 		return err
 	}

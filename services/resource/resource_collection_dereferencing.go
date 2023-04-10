@@ -34,7 +34,7 @@ func (dr *ResourceCollectionDereferencingService) SpecificValidation(c services.
 }
 
 func (dr *ResourceCollectionDereferencingService) Query(c services.ResolverContext) error {
-	result, err := c.ResourceService.DereferenceCollectionResources(dr.Did, dr.RequestedContentType)
+	result, err := c.ResourceService.DereferenceCollectionResources(dr.Did, dr.GetContentType())
 	if err != nil {
 		err.IsDereferencing = dr.IsDereferencing
 		return err

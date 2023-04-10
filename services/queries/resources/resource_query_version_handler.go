@@ -13,6 +13,9 @@ type ResourceVersionHandler struct {
 
 func (d *ResourceVersionHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
 	resourceVersion := service.GetQueryParam(types.ResourceVersion)
+	if resourceVersion == "" {
+		return d.Continue(c, service, response)
+	}
 
 	// Cast to just list of resources
 	resourceCollection, err := d.CastToContent(service, response)

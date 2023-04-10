@@ -26,12 +26,12 @@ func (dd *QueryDIDDocRequestService) Setup(c services.ResolverContext) error {
 func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
 	_, err := url.QueryUnescape(dd.Did)
 	if err != nil {
-		return types.NewInvalidDIDUrlError(dd.Did, dd.RequestedContentType, err, dd.IsDereferencing)
+		return types.NewInvalidDIDUrlError(dd.Did, dd.GetContentType(), err, dd.IsDereferencing)
 	}
 
 	diff := types.AllSupportedQueries.DiffWithUrlValues(dd.Queries)
 	if len(diff) > 0 {
-		return types.NewRepresentationNotSupportedError("Queries from list: "+strings.Join(diff, ","), dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewRepresentationNotSupportedError("Queries from list: "+strings.Join(diff, ","), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	versionId := dd.GetQueryParam(types.VersionId)
@@ -41,24 +41,24 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 
 	// Validation of query parameters
 	if versionId != "" && versionTime != "" {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	// relativeRef should be only with service parameter also
 	if relativeRef != "" && service == "" {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	if versionTime != "" {
 		_, err := utils.ParseFromStringTimeToGoTime(versionTime)
 		if err != nil {
-			return types.NewRepresentationNotSupportedError(versionTime, dd.RequestedContentType, err, dd.IsDereferencing)
+			return types.NewRepresentationNotSupportedError(versionTime, dd.GetContentType(), err, dd.IsDereferencing)
 		}
 	}
 
 	// Validate that versionId is UUID
 	if versionId != "" && !utils.IsValidUUID(versionId) {
-		return types.NewInvalidDIDUrlError(versionId, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewInvalidDIDUrlError(versionId, dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	return nil
@@ -71,7 +71,7 @@ func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext)
 		return err
 	}
 	if flag != nil {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 	dd.Queries = queries
 
@@ -218,14 +218,30 @@ func (dd *QueryDIDDocRequestService) Query(c services.ResolverContext) error {
 		return err
 	}
 	if result == nil {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 	return dd.SetResponse(result)
+}
+
+func (dd *QueryDIDDocRequestService) IsResourceData(result types.ResolutionResultI) bool {
+	// If ContentStream is not DereferencedResourceData then it's not a resource data
+	_result, ok := result.(*types.ResourceDereferencing)
+	if !ok {
+		return false
+	}
+	_, ok = _result.ContentStream.(*types.DereferencedResourceData)
+	if !ok {
+		return false
+	}
+	return true
 }
 
 func (dd QueryDIDDocRequestService) Respond(c services.ResolverContext) error {
 	if dd.Result.IsRedirect() {
 		return c.Redirect(http.StatusSeeOther, string(dd.Result.GetBytes()))
+	}
+	if dd.IsResourceData(dd.Result) {
+		return dd.RespondWithResourceData(c)
 	}
 	return c.JSONPretty(http.StatusOK, dd.Result, "  ")
 }

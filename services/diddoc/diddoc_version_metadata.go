@@ -33,13 +33,13 @@ func (dd DIDDocVersionMetadataRequestService) Redirect(c services.ResolverContex
 
 func (dd *DIDDocVersionMetadataRequestService) SpecificValidation(c services.ResolverContext) error {
 	if !utils.IsValidUUID(dd.Version) {
-		return types.NewInvalidDIDUrlError(dd.Version, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewInvalidDIDUrlError(dd.Version, dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 	return nil
 }
 
 func (dd *DIDDocVersionMetadataRequestService) Query(c services.ResolverContext) error {
-	result, err := c.DidDocService.GetDIDDocVersionsMetadata(dd.Did, dd.Version, dd.RequestedContentType)
+	result, err := c.DidDocService.GetDIDDocVersionsMetadata(dd.Did, dd.Version, dd.GetContentType())
 	if err != nil {
 		return err
 	}

@@ -25,7 +25,7 @@ func (d *ResourceVersionTimeHandler) Handle(c services.ResolverContext, service 
 	// Get resourceId of the resource with the closest time to the requested time
 	resourceId, err := resourceCollection.Resources.FindBeforeTime(resourceVersionTime)
 	if err != nil {
-		return nil, types.NewInternalError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
+		return nil, types.NewRepresentationNotSupportedError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 	}
 	if resourceId == "" {
 		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)

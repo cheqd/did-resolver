@@ -18,7 +18,7 @@ func (d *ResourceValidationHandler) Handle(c services.ResolverContext, service s
 		return nil, err
 	}
 
-	if len(resourceCollection.Resources) == 0 {
+	if len(resourceCollection.Resources) != 1 {
 		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 	}
 

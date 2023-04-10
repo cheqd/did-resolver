@@ -46,7 +46,7 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 
 	// Get Accept header
 	dd.RequestedContentType = GetContentType(c.Request().Header.Get(echo.HeaderAccept))
-	if !dd.RequestedContentType.IsSupported() {
+	if !dd.GetContentType().IsSupported() {
 		return types.NewRepresentationNotSupportedError(dd.Did, types.JSON, nil, dd.IsDereferencing)
 	}
 
@@ -66,12 +66,12 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 func (dd BaseRequestService) BasicValidation(c ResolverContext) error {
 	didMethod, _, _, _ := utils.TrySplitDID(dd.Did)
 	if didMethod != types.DID_METHOD {
-		return types.NewMethodNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewMethodNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	err := utils.ValidateDID(dd.Did, "", c.LedgerService.GetNamespaces())
 	if err != nil {
-		return types.NewInvalidDIDError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewInvalidDIDError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	return nil
@@ -97,7 +97,7 @@ func (dd BaseRequestService) Redirect(c ResolverContext) error {
 }
 
 func (dd *BaseRequestService) Query(c ResolverContext) error {
-	result, err := c.DidDocService.Resolve(dd.Did, dd.Version, dd.RequestedContentType)
+	result, err := c.DidDocService.Resolve(dd.Did, dd.Version, dd.GetContentType())
 	if err != nil {
 		err.IsDereferencing = false
 		return err
@@ -122,4 +122,12 @@ func (dd BaseRequestService) Respond(c ResolverContext) error {
 func (dd *BaseRequestService) SetResponse(response types.ResolutionResultI) error {
 	dd.Result = response
 	return nil
+}
+
+// Helpers
+
+func (dd *BaseRequestService) RespondWithResourceData(c ResolverContext) error {
+	c.Response().Header().Set(echo.HeaderContentType, dd.Result.GetContentType())
+
+	return c.Blob(http.StatusOK, dd.Result.GetContentType(), dd.Result.GetBytes())
 }
