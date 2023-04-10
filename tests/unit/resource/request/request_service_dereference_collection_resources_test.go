@@ -97,7 +97,7 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 	),
 
 	Entry(
-		"cannot get collection of resources with a invalid DID",
+		"cannot get collection of resources with an invalid DID",
 		resourceCollectionTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.InvalidDid),
 			resolutionType: types.DIDJSONLD,

@@ -44,7 +44,7 @@ var _ = DescribeTable("Test QueryAllDidDocVersionsMetadata method", func(testCas
 	),
 
 	Entry(
-		"can get DIDDoc versions with not existent DID",
+		"cannot get DIDDoc versions with not existent DID",
 		queryDIDDocVersionsTestCase{
 			did:                    testconstants.NotExistentTestnetDid,
 			expectedDidDocVersions: nil,
