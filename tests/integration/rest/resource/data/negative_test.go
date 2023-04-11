@@ -171,7 +171,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "InvalidDidUrl",
+					ResolutionError: "invalidDidUrl",
 					DidProperties:   types.DidProperties{},
 				},
 				ContentStream: nil,
@@ -194,7 +194,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "InvalidDidUrl",
+					ResolutionError: "invalidDidUrl",
 					DidProperties:   types.DidProperties{},
 				},
 				ContentStream: nil,
@@ -217,7 +217,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "InvalidDidUrl",
+					ResolutionError: "invalidDidUrl",
 					DidProperties:   types.DidProperties{},
 				},
 				ContentStream: nil,

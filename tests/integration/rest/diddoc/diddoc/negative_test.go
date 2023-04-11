@@ -193,7 +193,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "InvalidDid",
+					ResolutionError: "invalidDid",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.DidWithInvalidNamespace,
 						MethodSpecificId: testconstants.ValidIdentifier,

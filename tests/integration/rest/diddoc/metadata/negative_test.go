@@ -225,7 +225,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase uti
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "InvalidDidUrl",
+					ResolutionError: "invalidDidUrl",
 					DidProperties:   types.DidProperties{},
 				},
 				ContentStream: nil,
