@@ -1,6 +1,12 @@
 package testconstants
 
-import "fmt"
+import (
+	"fmt"
+
+	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	"github.com/cheqd/did-resolver/types"
+	"google.golang.org/protobuf/types/known/timestamppb"
+)
 
 var (
 	DefaultResolutionType    = "*/*"
@@ -40,11 +46,11 @@ var (
 )
 
 var (
-	MainnetDIDWithInvalidMethod = fmt.Sprintf(DIDStructure, InvalidMethod, ValidMainnetNamespace, ValidIdentifier)
-	TestnetDIDWithInvalidMethod = fmt.Sprintf(DIDStructure, InvalidMethod, ValidTestnetNamespace, ValidIdentifier)
+	MainnetDidWithInvalidMethod = fmt.Sprintf(DIDStructure, InvalidMethod, ValidMainnetNamespace, ValidIdentifier)
+	TestnetDidWithInvalidMethod = fmt.Sprintf(DIDStructure, InvalidMethod, ValidTestnetNamespace, ValidIdentifier)
 
-	DIDWithInvalidNamespace = fmt.Sprintf(DIDStructure, ValidMethod, InvalidNamespace, ValidIdentifier)
-	InvalidDID              = fmt.Sprintf(DIDStructure, InvalidMethod, InvalidNamespace, InvalidIdentifier)
+	DidWithInvalidNamespace = fmt.Sprintf(DIDStructure, ValidMethod, InvalidNamespace, ValidIdentifier)
+	InvalidDid              = fmt.Sprintf(DIDStructure, InvalidMethod, InvalidNamespace, InvalidIdentifier)
 )
 
 var (
@@ -52,6 +58,43 @@ var (
 	ValidMainnetNamespace = "mainnet"
 	ValidTestnetNamespace = "testnet"
 	ValidIdentifier       = "fb53dd05-329b-4614-a3f2-c0a8c7554ee3"
+	ValidVersionId        = "valid_version_id"
+	ValidPubKeyJWK        = "{" +
+		"\"crv\":\"Ed25519\"," +
+		"\"kid\":\"_Qq0UL2Fq651Q0Fjd6TvnYE-faHiOpRlPVQcY_-tA4A\"," +
+		"\"kty\":\"OKP\"," +
+		"\"x\":\"VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ\"" +
+		"}"
+)
+
+var (
+	ExistentDid        = fmt.Sprintf(DIDStructure, ValidMethod, ValidMainnetNamespace, ValidIdentifier)
+	ExistentResourceId = "a09abea0-22e0-4b35-8f70-9cc3a6d0b5fd"
+)
+
+var (
+	ValidResourceData     = []byte("test_checksum")
+	ValidResourceMetadata = resourceTypes.Metadata{
+		CollectionId: ValidIdentifier,
+		Id:           ExistentResourceId,
+		Name:         "Existing Resource Name",
+		ResourceType: "CL-Schema",
+		MediaType:    "application/json",
+		Checksum:     generateChecksum(ValidResourceData),
+	}
+
+	ValidMetadataResource = types.DereferencedResource{
+		ResourceURI:       ExistentDid + types.RESOURCE_PATH + ValidResourceMetadata.Id,
+		CollectionId:      ValidResourceMetadata.CollectionId,
+		ResourceId:        ValidResourceMetadata.Id,
+		Name:              ValidResourceMetadata.Name,
+		ResourceType:      ValidResourceMetadata.ResourceType,
+		MediaType:         ValidResourceMetadata.MediaType,
+		Created:           &EmptyTime,
+		Checksum:          ValidResourceMetadata.Checksum,
+		PreviousVersionId: nil,
+		NextVersionId:     nil,
+	}
 )
 
 var (
@@ -63,6 +106,32 @@ var (
 	InvalidMethod     = "invalid_method"
 	InvalidNamespace  = "invalid_namespace"
 	InvalidIdentifier = "invalid_identifier"
+)
+
+var (
+	EmptyTimestamp = &timestamppb.Timestamp{
+		Seconds: 0,
+		Nanos:   0,
+	}
+	EmptyTime = EmptyTimestamp.AsTime()
+
+	NotEmptyTimestamp = &timestamppb.Timestamp{
+		Seconds: 123456789,
+		Nanos:   0,
+	}
+	NotEmptyTime = NotEmptyTimestamp.AsTime()
+)
+
+var (
+	ValidDIDDoc                   = generateDIDDoc()
+	ValidMetadata                 = generateMetadata()
+	ValidResource                 = generateResource()
+	ValidVerificationMethod       = generateVerificationMethod()
+	ValidService                  = generateService()
+	ValidDIDDocResolution         = types.NewDidDoc(&ValidDIDDoc)
+	ValidFragmentMetadata         = types.NewResolutionDidDocMetadata(ExistentDid, &ValidMetadata, []*resourceTypes.Metadata{})
+	ValidResourceDereferencing    = types.DereferencedResourceData(ValidResource.Resource.Data)
+	ValidDereferencedResourceList = types.NewDereferencedResourceList(ExistentDid, []*resourceTypes.Metadata{ValidResource.Metadata})
 )
 
 var DIDStructure = "did:%s:%s:%s"

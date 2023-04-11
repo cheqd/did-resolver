@@ -25,7 +25,7 @@ jobs:
       
       - name: Run Golang unit tests
         working-directory: ./tests/unit/
-        run: ginkgo -r --race --randomize-all --randomize-suites --keep-going --trace
+        run: ginkgo -r --tags unit --race --randomize-all --randomize-suites --keep-going --trace
 
   integration-tests:
     name: "Integration Tests"

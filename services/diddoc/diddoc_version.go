@@ -33,7 +33,7 @@ func (dd DIDDocVersionRequestService) Redirect(c services.ResolverContext) error
 
 func (dd *DIDDocVersionRequestService) SpecificValidation(c services.ResolverContext) error {
 	if !utils.IsValidUUID(dd.Version) {
-		return types.NewInvalidDIDUrlError(dd.Version, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(dd.Version, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 	return nil
 }

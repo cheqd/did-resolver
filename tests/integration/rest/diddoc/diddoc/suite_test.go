@@ -1,3 +1,5 @@
+//go:build integration
+
 package diddoc_test
 
 import (
@@ -9,5 +11,5 @@ import (
 
 func TestDiddoc(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "DIDDoc Integration Tests")
+	RunSpecs(t, "[Integration Test]: DIDDoc")
 }

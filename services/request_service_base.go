@@ -35,7 +35,7 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 	// Get DID from request
 	did, err := GetDidParam(c)
 	if err != nil {
-		return types.NewInvalidDIDUrlError(c.Param("did"), dd.RequestedContentType, err, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(c.Param("did"), dd.RequestedContentType, err, dd.IsDereferencing)
 	}
 
 	// Get Did
@@ -53,7 +53,7 @@ func (dd BaseRequestService) BasicValidation(c ResolverContext) error {
 
 	err := utils.ValidateDID(dd.Did, "", c.LedgerService.GetNamespaces())
 	if err != nil {
-		return types.NewInvalidDIDError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewInvalidDidError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
 	return nil

@@ -1,3 +1,5 @@
+//go:build integration
+
 package metadata_test
 
 import (
@@ -9,5 +11,5 @@ import (
 
 func TestMetadata(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Resource Metadata Integration Tests")
+	RunSpecs(t, "[Integration Test]: Resource Metadata")
 }
