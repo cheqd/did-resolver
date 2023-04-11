@@ -1,3 +1,5 @@
+//go:build integration
+
 package version_test
 
 import (
@@ -9,5 +11,5 @@ import (
 
 func TestVersion(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "DIDDoc Version Integration Tests")
+	RunSpecs(t, "[Integration Test]: DIDDoc Version")
 }

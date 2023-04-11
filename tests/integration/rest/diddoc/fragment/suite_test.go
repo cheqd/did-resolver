@@ -1,3 +1,5 @@
+//go:build integration
+
 package fragment_test
 
 import (
@@ -9,5 +11,5 @@ import (
 
 func TestFragment(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "DIDDoc Fragment Integration Tests")
+	RunSpecs(t, "[Integration Test]: DIDDoc Fragment")
 }

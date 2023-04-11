@@ -134,7 +134,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s",
-				testconstants.MainnetDIDWithInvalidMethod,
+				testconstants.MainnetDidWithInvalidMethod,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
 			ExpectedResult: types.DidResolution{
@@ -143,7 +143,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.MainnetDIDWithInvalidMethod,
+						DidString:        testconstants.MainnetDidWithInvalidMethod,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.InvalidMethod,
 					},
@@ -160,7 +160,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s",
-				testconstants.TestnetDIDWithInvalidMethod,
+				testconstants.TestnetDidWithInvalidMethod,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
 			ExpectedResult: types.DidResolution{
@@ -169,7 +169,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.TestnetDIDWithInvalidMethod,
+						DidString:        testconstants.TestnetDidWithInvalidMethod,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.InvalidMethod,
 					},
@@ -186,7 +186,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s",
-				testconstants.DIDWithInvalidNamespace,
+				testconstants.DidWithInvalidNamespace,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
 			ExpectedResult: types.DidResolution{
@@ -195,7 +195,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "invalidDid",
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.DIDWithInvalidNamespace,
+						DidString:        testconstants.DidWithInvalidNamespace,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
@@ -212,7 +212,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s",
-				testconstants.InvalidDID,
+				testconstants.InvalidDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
 			ExpectedResult: types.DidResolution{
@@ -221,7 +221,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
-						DidString:        testconstants.InvalidDID,
+						DidString:        testconstants.InvalidDid,
 						MethodSpecificId: testconstants.InvalidIdentifier,
 						Method:           testconstants.InvalidMethod,
 					},

@@ -26,7 +26,7 @@ func (dd *QueryDIDDocRequestService) Setup(c services.ResolverContext) error {
 func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
 	_, err := url.QueryUnescape(dd.Did)
 	if err != nil {
-		return types.NewInvalidDIDUrlError(dd.Did, dd.GetContentType(), err, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(dd.Did, dd.RequestedContentType, err, dd.IsDereferencing)
 	}
 
 	diff := types.AllSupportedQueries.DiffWithUrlValues(dd.Queries)
@@ -57,8 +57,8 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	}
 
 	// Validate that versionId is UUID
-	if versionId != "" && !utils.IsValidUUID(versionId) {
-		return types.NewInvalidDIDUrlError(versionId, dd.GetContentType(), nil, dd.IsDereferencing)
+	if !utils.IsValidUUID(dd.Version) {
+		return types.NewInvalidDidUrlError(dd.Version, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
 	return nil

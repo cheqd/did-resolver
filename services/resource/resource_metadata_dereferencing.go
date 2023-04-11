@@ -33,7 +33,7 @@ func (dr ResourceMetadataDereferencingService) Redirect(c services.ResolverConte
 
 func (dr *ResourceMetadataDereferencingService) SpecificValidation(c services.ResolverContext) error {
 	if !utils.IsValidUUID(dr.ResourceId) {
-		return types.NewInvalidDIDUrlError(dr.ResourceId, dr.GetContentType(), nil, dr.IsDereferencing)
+		return types.NewInvalidDidUrlError(dr.ResourceId, dr.RequestedContentType, nil, dr.IsDereferencing)
 	}
 	return nil
 }
