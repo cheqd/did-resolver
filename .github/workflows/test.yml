@@ -24,6 +24,7 @@ jobs:
           go install github.com/onsi/ginkgo/v2/ginkgo@latest
       
       - name: Run Golang unit tests
+        working-directory: ./tests/unit/
         run: ginkgo -r --race --randomize-all --randomize-suites --keep-going --trace
 
   integration-tests:
@@ -46,15 +47,27 @@ jobs:
       - name: Set up Docker container for test
         run: docker compose -f tests/docker-compose-testing.yml up --detach --no-build
 
-      - name: Setup Python environment
-        working-directory: ./tests/pytest
-        run: |
-          set -euo pipefail
-          pip3 install -r requirements.txt >> /dev/null
-          sudo chmod -R 775 /home/runner/
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: ./go.mod
+          cache: true
 
-      - name: Run tests
-        working-directory: ./tests/pytest
+      - name: Install ginkgo
+        working-directory: ./..
+        run: go install github.com/onsi/ginkgo/v2/ginkgo@latest
+  
+      - name: Run Ginkgo integration tests
+        working-directory: ./tests/integration/rest
         run: |
-          set -euo pipefail
-          pytest -v -rP ./*.py
+          ginkgo -r --tags integration --race --randomize-suites --keep-going --trace --junit-report ./report-integration.xml
+      
+      - name: Show logs
+        if: failure()
+        working-directory: ./docker/localnet
+        run: docker compose -f tests/docker-compose-testing.yml logs --tail --follow
+
+      - name: Upload integration tests result
+        uses: actions/upload-artifact@v3
+        with:
+          name: report-integration.xml
+          path: tests/integration/rest/report-integration.xml

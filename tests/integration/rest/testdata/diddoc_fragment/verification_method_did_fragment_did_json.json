@@ -1,0 +1,21 @@
+{
+    "dereferencingMetadata": {
+        "contentType": "application/did+json",
+        "retrieved": "2023-04-04T07:09:52Z",
+        "did": {
+            "didString": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN",
+            "methodSpecificId": "Ps1ysXP2Ae6GBfxNhNQNKN",
+            "method": "cheqd"
+        }
+    },
+    "contentStream": {
+        "id": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN#key1",
+        "type": "Ed25519VerificationKey2020",
+        "controller": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN",
+        "publicKeyMultibase": "z6Mkta7joRuvDh7UnoESdgpr9dDUMh5LvdoECDi3WGrJoscA"
+    },
+    "contentMetadata": {
+        "created": "2022-04-05T11:49:19Z",
+        "versionId": "4fa8e367-c70e-533e-babf-3732d9761061"
+    }
+}

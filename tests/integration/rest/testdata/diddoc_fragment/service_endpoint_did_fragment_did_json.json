@@ -1,0 +1,22 @@
+{
+    "dereferencingMetadata": {
+        "contentType": "application/did+json",
+        "retrieved": "2023-04-06T08:38:18Z",
+        "did": {
+            "didString": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN",
+            "methodSpecificId": "Ps1ysXP2Ae6GBfxNhNQNKN",
+            "method": "cheqd"
+        }
+    },
+    "contentStream": {
+        "id": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN#website",
+        "type": "LinkedDomains",
+        "serviceEndpoint": [
+            "https://www.cheqd.io"
+        ]
+    },
+    "contentMetadata": {
+        "created": "2022-04-05T11:49:19Z",
+        "versionId": "4fa8e367-c70e-533e-babf-3732d9761061"
+    }
+}

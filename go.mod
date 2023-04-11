@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/cheqd/cheqd-node/api/v2 v2.1.0
+	github.com/go-resty/resty/v2 v2.7.0
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.10.2
 	github.com/mr-tron/base58 v1.2.0
