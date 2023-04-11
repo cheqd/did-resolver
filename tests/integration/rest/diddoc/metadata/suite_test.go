@@ -1,3 +1,5 @@
+//go:build integration
+
 package metadata_test
 
 import (

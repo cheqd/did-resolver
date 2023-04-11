@@ -11,5 +11,5 @@ import (
 
 func TestTestsGeneral(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "REST API Integration tests")
+	RunSpecs(t, "[Integration Test]: REST API")
 }
