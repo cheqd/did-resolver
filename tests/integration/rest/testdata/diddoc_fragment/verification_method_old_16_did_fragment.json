@@ -1,0 +1,29 @@
+{
+    "@context": "https://w3id.org/did-resolution/v1",
+    "dereferencingMetadata": {
+        "contentType": "application/did+ld+json",
+        "retrieved": "2023-04-03T10:54:17Z",
+        "did": {
+            "didString": "did:cheqd:testnet:CpeMubv5yw63jXyrgRRsxR",
+            "methodSpecificId": "CpeMubv5yw63jXyrgRRsxR",
+            "method": "cheqd"
+        }
+    },
+    "contentStream": {
+        "@context": [
+            "https://www.w3.org/ns/did/v1"
+        ],
+        "id": "did:cheqd:testnet:CpeMubv5yw63jXyrgRRsxR#key-1",
+        "type": "JsonWebKey2020",
+        "controller": "did:cheqd:testnet:CpeMubv5yw63jXyrgRRsxR",
+        "publicKeyJwk": {
+            "crv": "Ed25519",
+            "kty": "OKP",
+            "x": "-i4BlSGbjoUqmqRePrQhBvHbvqrrQjVIDL_lAoceRGw"
+        }
+    },
+    "contentMetadata": {
+        "created": "2022-10-13T06:09:04Z",
+        "versionId": "674e6cb5-8d7c-5c50-b0ff-d91bcbcbd5d6"
+    }
+}

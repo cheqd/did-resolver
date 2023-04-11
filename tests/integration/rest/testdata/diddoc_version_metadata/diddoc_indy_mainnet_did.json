@@ -1,0 +1,17 @@
+{
+    "@context": "https://w3id.org/did-resolution/v1",
+    "dereferencingMetadata": {
+        "contentType": "application/did+ld+json",
+        "retrieved": "2023-03-26T13:33:59Z",
+        "did": {
+            "didString": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN",
+            "methodSpecificId": "Ps1ysXP2Ae6GBfxNhNQNKN",
+            "method": "cheqd"
+        }
+    },
+    "contentStream": {
+        "created": "2022-04-05T11:49:19Z",
+        "versionId": "4fa8e367-c70e-533e-babf-3732d9761061"
+    },
+    "contentMetadata": {}
+}

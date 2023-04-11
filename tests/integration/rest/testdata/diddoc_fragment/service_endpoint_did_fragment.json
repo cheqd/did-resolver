@@ -1,0 +1,26 @@
+{
+    "@context": "https://w3id.org/did-resolution/v1",
+    "dereferencingMetadata": {
+        "contentType": "application/did+ld+json",
+        "retrieved": "2023-03-27T07:01:21Z",
+        "did": {
+            "didString": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN",
+            "methodSpecificId": "Ps1ysXP2Ae6GBfxNhNQNKN",
+            "method": "cheqd"
+        }
+    },
+    "contentStream": {
+        "@context": [
+            "https://www.w3.org/ns/did/v1"
+        ],
+        "id": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN#website",
+        "type": "LinkedDomains",
+        "serviceEndpoint": [
+            "https://www.cheqd.io"
+        ]
+    },
+    "contentMetadata": {
+        "created": "2022-04-05T11:49:19Z",
+        "versionId": "4fa8e367-c70e-533e-babf-3732d9761061"
+    }
+}
