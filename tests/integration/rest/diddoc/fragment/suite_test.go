@@ -1,3 +1,5 @@
+//go:build integration
+
 package fragment_test
 
 import (
