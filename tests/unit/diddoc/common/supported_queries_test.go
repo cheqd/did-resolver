@@ -1,4 +1,6 @@
-package tests
+//go:build unit
+
+package common
 
 import (
 	"github.com/cheqd/did-resolver/types"

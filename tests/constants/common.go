@@ -6,6 +6,7 @@ import (
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func generateVerificationMethod() didTypes.VerificationMethod {
@@ -19,7 +20,7 @@ func generateVerificationMethod() didTypes.VerificationMethod {
 
 func generateService() didTypes.Service {
 	return didTypes.Service{
-		Id:              ExistentDid + "#service-1",
+		Id:              ExistentDid + "#" + ValidServiceId,
 		ServiceType:     "DIDCommMessaging",
 		ServiceEndpoint: []string{"http://example.com"},
 	}
@@ -55,7 +56,11 @@ func generateResource() resourceTypes.ResourceWithMetadata {
 }
 
 func generateMetadata() didTypes.Metadata {
-	return didTypes.Metadata{VersionId: "test_version_id", Deactivated: false}
+	return didTypes.Metadata{
+		VersionId: ValidVersionId, 
+		Deactivated: false,
+		Created: timestamppb.New(ValidCreated),
+	}
 }
 
 func generateChecksum(data []byte) string {

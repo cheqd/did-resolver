@@ -2,6 +2,7 @@ package testconstants
 
 import (
 	"fmt"
+	"time"
 
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/types"
@@ -58,7 +59,8 @@ var (
 	ValidMainnetNamespace = "mainnet"
 	ValidTestnetNamespace = "testnet"
 	ValidIdentifier       = "fb53dd05-329b-4614-a3f2-c0a8c7554ee3"
-	ValidVersionId        = "valid_version_id"
+	ValidVersionId        = "32e0613e-bee4-4ea4-952c-bba3e857fa2a"
+	ValidServiceId        = "service-1"
 	ValidPubKeyJWK        = "{" +
 		"\"crv\":\"Ed25519\"," +
 		"\"kid\":\"_Qq0UL2Fq651Q0Fjd6TvnYE-faHiOpRlPVQcY_-tA4A\"," +
@@ -106,6 +108,8 @@ var (
 	InvalidMethod     = "invalid_method"
 	InvalidNamespace  = "invalid_namespace"
 	InvalidIdentifier = "invalid_identifier"
+	InvalidVersionId  = "invalid_uuid_identifier"
+	InvalidServiceId  = "not_found_service_id"
 )
 
 var (
@@ -119,7 +123,13 @@ var (
 		Seconds: 123456789,
 		Nanos:   0,
 	}
-	NotEmptyTime = NotEmptyTimestamp.AsTime()
+	NotEmptyTime     = NotEmptyTimestamp.AsTime()
+	ValidCreated, _  = time.Parse(time.RFC3339, "2021-08-23T09:00:00Z")
+	CreatedAfter, _  = time.Parse(time.RFC3339, "2021-08-23T09:00:01Z")
+	CreatedBefore, _ = time.Parse(time.RFC3339, "2021-08-23T08:00:00Z")
+	ValidUpdated, _  = time.Parse(time.RFC3339, "2021-08-23T09:30:00Z")
+	UpdatedAfter, _  = time.Parse(time.RFC3339, "2021-08-23T09:30:01Z")
+	UpdatedBefore, _ = time.Parse(time.RFC3339, "2021-08-23T09:20:00Z")
 )
 
 var (
@@ -131,7 +141,8 @@ var (
 	ValidDIDDocResolution         = types.NewDidDoc(&ValidDIDDoc)
 	ValidFragmentMetadata         = types.NewResolutionDidDocMetadata(ExistentDid, &ValidMetadata, []*resourceTypes.Metadata{})
 	ValidResourceDereferencing    = types.DereferencedResourceData(ValidResource.Resource.Data)
-	ValidDereferencedResourceList = types.NewDereferencedResourceList(ExistentDid, []*resourceTypes.Metadata{ValidResource.Metadata})
+	ValidDereferencedResourceList = types.NewDereferencedResourceListStruct(ExistentDid, []*resourceTypes.Metadata{ValidResource.Metadata})
+	ValidDid                      = ValidDIDDoc.Id
 )
 
 var DIDStructure = "did:%s:%s:%s"

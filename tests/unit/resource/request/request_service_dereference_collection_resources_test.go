@@ -66,7 +66,7 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceList(
+				ContentStream: types.NewDereferencedResourceListStruct(
 					testconstants.ExistentDid,
 					[]*resourceTypes.Metadata{testconstants.ValidResource.Metadata},
 				),

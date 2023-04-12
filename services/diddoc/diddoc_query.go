@@ -38,6 +38,8 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	versionTime := dd.GetQueryParam(types.VersionTime)
 	service := dd.GetQueryParam(types.ServiceQ)
 	relativeRef := dd.GetQueryParam(types.RelativeRef)
+	resourceId := dd.GetQueryParam(types.ResourceId)
+	resourceVersionTime := dd.GetQueryParam(types.ResourceVersionTime)
 
 	// Validation of query parameters
 	if versionId != "" && versionTime != "" {
@@ -49,6 +51,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
+	// Validate time format
 	if versionTime != "" {
 		_, err := utils.ParseFromStringTimeToGoTime(versionTime)
 		if err != nil {
@@ -56,9 +59,22 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 		}
 	}
 
+	// Validate time format
+	if resourceVersionTime != "" {
+		_, err := utils.ParseFromStringTimeToGoTime(resourceVersionTime)
+		if err != nil {
+			return types.NewRepresentationNotSupportedError(resourceVersionTime, dd.GetContentType(), err, dd.IsDereferencing)
+		}
+	}
+
 	// Validate that versionId is UUID
-	if !utils.IsValidUUID(dd.Version) {
-		return types.NewInvalidDidUrlError(dd.Version, dd.RequestedContentType, nil, dd.IsDereferencing)
+	if versionId != "" && !utils.IsValidUUID(versionId) {
+		return types.NewInvalidDidUrlError(versionId, dd.RequestedContentType, nil, dd.IsDereferencing)
+	}
+
+	// Validate that resourceId is UUID
+	if resourceId != "" && !utils.IsValidUUID(resourceId) {
+		return types.NewInvalidDidUrlError(resourceId, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
 	return nil
@@ -171,15 +187,10 @@ func (dd *QueryDIDDocRequestService) RegisterResourceQueryHandlers(startHandler 
 
 	// Resource handlers
 	// Chain would be:
-	// resourceIdHandler -> resourceVersionTimeHandler -> resourceCollectionIdHandler ->
+	// resourceIdHandler -> resourceCollectionIdHandler ->
 	// -> resourceNameHandler -> resourceTypeHandler -> resourceVersionHandler ->
-	// -> resourceValidationHandler -> resourceMetadataHandler -> stopHandler
-	err = resourceIdHandler.SetNext(c, &resourceVersionTimeHandler)
-	if err != nil {
-		return nil, err
-	}
-
-	err = resourceVersionTimeHandler.SetNext(c, &resourceCollectionIdHandler)
+	// -> resourceVersionTimeHandler -> resourceValidationHandler -> resourceMetadataHandler -> stopHandler
+	err = resourceIdHandler.SetNext(c, &resourceCollectionIdHandler)
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +210,12 @@ func (dd *QueryDIDDocRequestService) RegisterResourceQueryHandlers(startHandler 
 		return nil, err
 	}
 
-	err = resourceVersionHandler.SetNext(c, &resourceValidationHandler)
+	err = resourceVersionHandler.SetNext(c, &resourceVersionTimeHandler)
+	if err != nil {
+		return nil, err
+	}
+
+	err = resourceVersionTimeHandler.SetNext(c, &resourceValidationHandler)
 	if err != nil {
 		return nil, err
 	}
