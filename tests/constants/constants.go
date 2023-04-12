@@ -19,8 +19,9 @@ var (
 	IndyStyleMainnetDid = "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN"
 	IndyStyleTestnetDid = "did:cheqd:testnet:73wnEyHhkhXiH1Nq7w5Kgq"
 
+	UUIDStyleTestnetId  = "c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0"
 	UUIDStyleMainnetDid = "did:cheqd:mainnet:c82f2b02-bdab-4dd7-b833-3e143745d612"
-	UUIDStyleTestnetDid = "did:cheqd:testnet:c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0"
+	UUIDStyleTestnetDid = "did:cheqd:testnet:" + UUIDStyleTestnetId
 
 	OldIndy16CharStyleTestnetDid      = "did:cheqd:testnet:zHqbcXb3irKRCMst"
 	MigratedIndy16CharStyleTestnetDid = "did:cheqd:testnet:CpeMubv5yw63jXyrgRRsxR"
@@ -39,6 +40,17 @@ var (
 var (
 	UUIDStyleTestnetDidResourceId                    = "9ba3922e-d5f5-4f53-b265-fc0d4e988c77"
 	OldIndy32CharStyleTestnetDidIdentifierResourceId = "214b8b61-a861-416b-a7e4-45533af40ada"
+	ExistentResourceName                             = "Demo Resource"
+	ExistentResourceType                             = "String"
+	ExistentResourceVersion                          = ""
+	ExistentResourceMediaType                        = "application/json"
+	ExistentResourceChecksum                         = "e1dbc03b50bdb995961dc8843df6539b79d03bf49787ed6462189ee97d27eaf3"
+	ExistentResource                                 = types.DereferencedResource{
+		ResourceURI:  UUIDStyleTestnetId + types.RESOURCE_PATH + UUIDStyleTestnetDidResourceId,
+		CollectionId: UUIDStyleTestnetId,
+		ResourceId:   UUIDStyleTestnetDidResourceId,
+		Name:         ExistentResourceName,
+	}
 )
 
 var (

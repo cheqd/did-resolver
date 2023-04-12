@@ -246,10 +246,7 @@ func (dd *QueryDIDDocRequestService) IsResourceData(result types.ResolutionResul
 		return false
 	}
 	_, ok = _result.ContentStream.(*types.DereferencedResourceData)
-	if !ok {
-		return false
-	}
-	return true
+	return ok
 }
 
 func (dd QueryDIDDocRequestService) Respond(c services.ResolverContext) error {

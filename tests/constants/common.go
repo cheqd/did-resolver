@@ -57,9 +57,9 @@ func generateResource() resourceTypes.ResourceWithMetadata {
 
 func generateMetadata() didTypes.Metadata {
 	return didTypes.Metadata{
-		VersionId: ValidVersionId, 
+		VersionId:   ValidVersionId,
 		Deactivated: false,
-		Created: timestamppb.New(ValidCreated),
+		Created:     timestamppb.New(ValidCreated),
 	}
 }
 
