@@ -26,7 +26,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	// ToDo make list of supported queries
 	// For now we support only versionId
 	if dd.Version == "" {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
 	// Validate that versionId is UUID
