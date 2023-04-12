@@ -31,10 +31,10 @@ var (
 )
 
 var (
-	IndyStyleMainnetDidIdentifier = "4fa8e367-c70e-533e-babf-3732d9761061"
-	IndyStyleTestnetDidIdentifier = "60bb3b62-e0f0-545b-a552-63aab5cd1aef"
-	UUIDStyleMainnetDidIdentifier = "76e546ee-78cd-5372-b34e-8b47461626e1"
-	UUIDStyleTestnetDidIdentifier = "e5615fc2-6f13-42b1-989c-49576a574cef"
+	IndyStyleMainnetVersionId = "4fa8e367-c70e-533e-babf-3732d9761061"
+	IndyStyleTestnetVersionId = "60bb3b62-e0f0-545b-a552-63aab5cd1aef"
+	UUIDStyleMainnetVersionId = "76e546ee-78cd-5372-b34e-8b47461626e1"
+	UUIDStyleTestnetVersionId = "e5615fc2-6f13-42b1-989c-49576a574cef"
 )
 
 var (
@@ -45,6 +45,9 @@ var (
 	ExistentResourceVersion                          = ""
 	ExistentResourceMediaType                        = "application/json"
 	ExistentResourceChecksum                         = "e1dbc03b50bdb995961dc8843df6539b79d03bf49787ed6462189ee97d27eaf3"
+	ExistentResourceCreated                          = "2023-01-25T12:08:39.63Z"
+	ExistentResourceVersionTimeAfter                 = "2023-01-26T12:08:39.63Z"
+	ExistentResourceVersionTimeBefore                = "2023-01-24T12:08:39.63Z"
 	ExistentResource                                 = types.DereferencedResource{
 		ResourceURI:  UUIDStyleTestnetId + types.RESOURCE_PATH + UUIDStyleTestnetDidResourceId,
 		CollectionId: UUIDStyleTestnetId,

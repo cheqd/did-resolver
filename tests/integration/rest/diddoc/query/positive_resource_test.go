@@ -6,10 +6,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	utils "github.com/cheqd/did-resolver/tests/integration/rest"
-	// "github.com/cheqd/did-resolver/types"
+
 	"github.com/go-resty/resty/v2"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -52,11 +53,59 @@ var _ = DescribeTable("Positive: Get resource", func(testCase utils.PositiveTest
 	),
 
 	Entry(
-		"can get resource with only resourceId",
+		"can get resource with only resourceName (there is only one resource with such name)",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?resourceName=%s",
 				testconstants.UUIDStyleTestnetDid,
+				strings.ReplaceAll(testconstants.ExistentResourceName, " ", "%20"),
+			),
+			ResolutionType:       testconstants.DefaultResolutionType,
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/resource_data/resource.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+	Entry(
+		"can get resource with resourceVersionTime",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?resourceVersionTime=%s",
+				testconstants.UUIDStyleTestnetDid,
+				testconstants.ExistentResourceVersionTimeAfter,
+			),
+			ResolutionType:       testconstants.DefaultResolutionType,
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/resource_data/resource.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+	Entry(
+		"can get resource with combination resourceName and resourceType (there is only one resource with such name)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?resourceName=%s&resourceType=%s",
+				testconstants.UUIDStyleTestnetDid,
+				strings.ReplaceAll(testconstants.ExistentResourceName, " ", "%20"),
+				testconstants.ExistentResourceType,
+			),
+			ResolutionType:       testconstants.DefaultResolutionType,
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/resource_data/resource.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+	Entry(
+		"can get resource with combination resourceId, resourceName and resourceType (there is only one resource with such name)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?resourceName=%s&resourceType=%s&resourceId=%s",
+				testconstants.UUIDStyleTestnetDid,
+				strings.ReplaceAll(testconstants.ExistentResourceName, " ", "%20"),
+				testconstants.ExistentResourceType,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -66,163 +115,105 @@ var _ = DescribeTable("Positive: Get resource", func(testCase utils.PositiveTest
 			ExpectedStatusCode:   http.StatusOK,
 		},
 	),
+	Entry(
+		"can get resource with combination resourceId, resourceVersionTime, resourceName and resourceType (there is only one resource with such name)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?resourceName=%s&resourceType=%s&resourceId=%s&resourceVersionTime=%s",
+				testconstants.UUIDStyleTestnetDid,
+				strings.ReplaceAll(testconstants.ExistentResourceName, " ", "%20"),
+				testconstants.ExistentResourceType,
+				testconstants.UUIDStyleTestnetDidResourceId,
+				testconstants.ExistentResourceVersionTimeAfter,
+			),
+			ResolutionType:       testconstants.DefaultResolutionType,
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/resource_data/resource.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+	Entry(
+		"can get resource with combination resourceId, resourceVersionTime, resourceName and resourceType (there is only one resource with such name)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?resourceName=%s&resourceType=%s&resourceId=%s&resourceVersionTime=%s",
+				testconstants.UUIDStyleTestnetDid,
+				strings.ReplaceAll(testconstants.ExistentResourceName, " ", "%20"),
+				testconstants.ExistentResourceType,
+				testconstants.UUIDStyleTestnetDidResourceId,
+				testconstants.ExistentResourceVersionTimeAfter,
+			),
+			ResolutionType:       testconstants.DefaultResolutionType,
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/resource_data/resource.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+	Entry(
+		"can get resource with combination versionId, resourceId, resourceVersionTime, resourceName and resourceType (there is only one resource with such name)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?resourceName=%s&resourceType=%s&resourceId=%s&resourceVersionTime=%s&versionId=%s",
+				testconstants.UUIDStyleTestnetDid,
+				strings.ReplaceAll(testconstants.ExistentResourceName, " ", "%20"),
+				testconstants.ExistentResourceType,
+				testconstants.UUIDStyleTestnetDidResourceId,
+				testconstants.ExistentResourceVersionTimeAfter,
+				testconstants.UUIDStyleTestnetVersionId,
+			),
+			ResolutionType:       testconstants.DefaultResolutionType,
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/resource_data/resource.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get resource with combination versionTime, resourceId, resourceVersionTime, resourceName and resourceType (there is only one resource with such name)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?resourceName=%s&resourceType=%s&resourceId=%s&resourceVersionTime=%s&versionTime=%s",
+				testconstants.UUIDStyleTestnetDid,
+				strings.ReplaceAll(testconstants.ExistentResourceName, " ", "%20"),
+				testconstants.ExistentResourceType,
+				testconstants.UUIDStyleTestnetDidResourceId,
+				testconstants.ExistentResourceVersionTimeAfter,
+				"2023-01-26T11:58:10.39Z",
+			),
+			ResolutionType:       testconstants.DefaultResolutionType,
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/resource_data/resource.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+	// ToDo uncomment this test after allowing versionId and versionTime in the same request
 
 	// Entry(
-	// 	"can get DIDDoc version metadata with an existent 22 bytes INDY style testnet DID and versionId",
+	// 	"can get resource with combination versionId, versionTime, resourceId, resourceVersionTime, resourceName and resourceType (there is only one resource with such name)",
 	// 	utils.PositiveTestCase{
 	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
-	// 			testconstants.IndyStyleTestnetDid,
-	// 			testconstants.IndyStyleTestnetDidIdentifier,
+	// 			"http://localhost:8080/1.0/identifiers/%s?resourceName=%s&resourceType=%s&resourceId=%s&resourceVersionTime=%s&versionTime=%s&versionId=%s",
+	// 			testconstants.UUIDStyleTestnetDid,
+	// 			strings.ReplaceAll(testconstants.ExistentResourceName, " ", "%20"),
+	// 			testconstants.ExistentResourceType,
+	// 			testconstants.UUIDStyleTestnetDidResourceId,
+	// 			testconstants.ExistentResourceVersionTimeAfter,
+	// 			"2023-01-26T11:58:10.39Z",
+	// 			testconstants.UUIDStyleTestnetVersionId,
 	// 		),
 	// 		ResolutionType:       testconstants.DefaultResolutionType,
 	// 		EncodingType:         testconstants.DefaultEncodingType,
 	// 		ExpectedEncodingType: "gzip",
-	// 		ExpectedJSONPath:     "../../testdata/diddoc_version_metadata/diddoc_indy_testnet_did.json",
+	// 		ExpectedJSONPath:     "../../testdata/resource_data/resource.json",
 	// 		ExpectedStatusCode:   http.StatusOK,
-	// 	},
-	// ),
-
-	// Entry(
-	// 	"can get DIDDoc version metadata with an existent UUID style mainnet DID and versionId",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
-	// 			testconstants.UUIDStyleMainnetDid,
-	// 			testconstants.UUIDStyleMainnetDidIdentifier,
-	// 		),
-	// 		ResolutionType:       testconstants.DefaultResolutionType,
-	// 		EncodingType:         testconstants.DefaultEncodingType,
-	// 		ExpectedEncodingType: "gzip",
-	// 		ExpectedJSONPath:     "../../testdata/diddoc_version_metadata/diddoc_uuid_mainnet_did.json",
-	// 		ExpectedStatusCode:   http.StatusOK,
-	// 	},
-	// ),
-
-	// Entry(
-	// 	"can get DIDDoc version metadata with an existent UUID style testnet DID and versionId",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
-	// 			testconstants.UUIDStyleTestnetDid,
-	// 			testconstants.UUIDStyleTestnetDidIdentifier,
-	// 		),
-	// 		ResolutionType:       testconstants.DefaultResolutionType,
-	// 		EncodingType:         testconstants.DefaultEncodingType,
-	// 		ExpectedEncodingType: "gzip",
-	// 		ExpectedJSONPath:     "../../testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",
-	// 		ExpectedStatusCode:   http.StatusOK,
-	// 	},
-	// ),
-
-	// Entry(
-	// 	"can get DIDDoc version metadata with an existent old 16 characters Indy style testnet DID and versionId",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
-	// 			testconstants.OldIndy16CharStyleTestnetDid,
-	// 			"674e6cb5-8d7c-5c50-b0ff-d91bcbcbd5d6",
-	// 		),
-	// 		ResolutionType:       testconstants.DefaultResolutionType,
-	// 		EncodingType:         testconstants.DefaultEncodingType,
-	// 		ExpectedEncodingType: "gzip",
-	// 		ExpectedJSONPath:     "../../testdata/diddoc_version_metadata/diddoc_old_16_indy_testnet_did.json",
-	// 		ExpectedStatusCode:   http.StatusOK,
-	// 	},
-	// ),
-
-	// Entry(
-	// 	"can get DIDDoc version metadata with an existent old 32 characters Indy style testnet DID and versionId",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
-	// 			testconstants.OldIndy32CharStyleTestnetDid,
-	// 			"1dc202d4-26ee-54a9-b091-8d2e1f609722",
-	// 		),
-	// 		ResolutionType:       testconstants.DefaultResolutionType,
-	// 		EncodingType:         testconstants.DefaultEncodingType,
-	// 		ExpectedEncodingType: "gzip",
-	// 		ExpectedJSONPath:     "../../testdata/diddoc_version_metadata/diddoc_old_32_indy_testnet_did.json",
-	// 		ExpectedStatusCode:   http.StatusOK,
-	// 	},
-	// ),
-
-	// Entry(
-	// 	"can get DIDDoc version metadata with an existent DID and versionId, and supported DIDJSON resolution type",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
-	// 			testconstants.UUIDStyleTestnetDid,
-	// 			testconstants.UUIDStyleTestnetDidIdentifier,
-	// 		),
-	// 		ResolutionType:       string(types.DIDJSON),
-	// 		EncodingType:         testconstants.DefaultEncodingType,
-	// 		ExpectedEncodingType: "gzip",
-	// 		ExpectedJSONPath:     "../../testdata/diddoc_version_metadata/diddoc_did_json.json",
-	// 		ExpectedStatusCode:   http.StatusOK,
-	// 	},
-	// ),
-
-	// Entry(
-	// 	"can get DIDDoc version metadata with an existent DID and versionId, and supported DIDJSONLD resolution type",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
-	// 			testconstants.UUIDStyleTestnetDid,
-	// 			testconstants.UUIDStyleTestnetDidIdentifier,
-	// 		),
-	// 		ResolutionType:       string(types.DIDJSONLD),
-	// 		EncodingType:         testconstants.DefaultEncodingType,
-	// 		ExpectedEncodingType: "gzip",
-	// 		ExpectedJSONPath:     "../../testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",
-	// 		ExpectedStatusCode:   http.StatusOK,
-	// 	},
-	// ),
-
-	// Entry(
-	// 	"can get DIDDoc version metadata with an existent DID and versionId, and supported JSONLD resolution type",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
-	// 			testconstants.UUIDStyleTestnetDid,
-	// 			testconstants.UUIDStyleTestnetDidIdentifier,
-	// 		),
-	// 		ResolutionType:       string(types.JSONLD),
-	// 		EncodingType:         testconstants.DefaultEncodingType,
-	// 		ExpectedEncodingType: "gzip",
-	// 		ExpectedJSONPath:     "../../testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",
-	// 		ExpectedStatusCode:   http.StatusOK,
-	// 	},
-	// ),
-
-	// Entry(
-	// 	"can get DIDDoc version metadata with an existent DID and versionId, and supported gzip encoding type",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
-	// 			testconstants.UUIDStyleTestnetDid,
-	// 			testconstants.UUIDStyleTestnetDidIdentifier,
-	// 		),
-	// 		ResolutionType:       testconstants.DefaultResolutionType,
-	// 		EncodingType:         "gzip",
-	// 		ExpectedEncodingType: "gzip",
-	// 		ExpectedJSONPath:     "../../testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",
-	// 		ExpectedStatusCode:   http.StatusOK,
-	// 	},
-	// ),
-
-	// Entry(
-	// 	"can get DIDDoc version metadata with an existent DID and versionId, and not supported encoding type",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s/version/%s/metadata",
-	// 			testconstants.UUIDStyleTestnetDid,
-	// 			testconstants.UUIDStyleTestnetDidIdentifier,
-	// 		),
-	// 		ResolutionType:     testconstants.DefaultResolutionType,
-	// 		EncodingType:       testconstants.NotSupportedEncodingType,
-	// 		ExpectedJSONPath:   "../../testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",
-	// 		ExpectedStatusCode: http.StatusOK,
 	// 	},
 	// ),
 )
+
+
+
+	

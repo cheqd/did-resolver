@@ -11,12 +11,13 @@ import (
 )
 
 type PositiveTestCase struct {
-	DidURL               string
-	ResolutionType       string
-	EncodingType         string
-	ExpectedEncodingType string
-	ExpectedJSONPath     string
-	ExpectedStatusCode   int
+	DidURL                 string
+	ResolutionType         string
+	EncodingType           string
+	ExpectedEncodingType   string
+	ExpectedJSONPath       string
+	ExpectedStatusCode     int
+	ExpectedLocationHeader string
 }
 
 type NegativeTestCase struct {
@@ -64,4 +65,13 @@ func ConvertJsonFileToType(path string, v any) error {
 	}
 
 	return nil
+}
+
+func GetTextResource(path string) (string, error) {
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return "", err
+	}
+
+	return string(content), nil
 }
