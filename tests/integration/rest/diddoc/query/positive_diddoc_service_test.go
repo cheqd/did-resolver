@@ -23,6 +23,7 @@ var _ = DescribeTable("Positive: Get Service param", func(testCase utils.Positiv
 	client := resty.New()
 	client.SetRedirectPolicy(resty.NoRedirectPolicy())
 
+	fmt.Println(testCase.DidURL)
 	resp, err := client.R().
 		SetHeader("Accept", testCase.ResolutionType).
 		Get(testCase.DidURL)
@@ -71,21 +72,20 @@ var _ = DescribeTable("Positive: Get Service param", func(testCase utils.Positiv
 			ExpectedLocationHeader: ExpectedLocationHeader + "foo",
 		},
 	),
-	// ToDo uncomment this test when versionId ad versionTime will be permitted in one query
 
-	// Entry(
-	// 	"can redirect to service endpoint with relativeRef and with versionId and versionTime",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s?service=%s&relativeRef=foo&versionId=%s&versionTime=%s",
-	// 			SeveralVersionsDID,
-	// 			ServiceId,
-	// 			SeveralVersionVersionId,
-	// 			SeveralVersionTimeAfter,
-	// 		),
-	// 		ResolutionType:         testconstants.DefaultResolutionType,
-	// 		ExpectedStatusCode:     http.StatusSeeOther,
-	// 		ExpectedLocationHeader: ExpectedLocationHeader + "foo",
-	// 	},
-	// ),
+	Entry(
+		"can redirect to service endpoint with relativeRef and with versionId and versionTime",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?service=%s&relativeRef=foo&versionId=%s&versionTime=%s",
+				SeveralVersionsDID,
+				ServiceId,
+				SeveralVersionVersionId,
+				SeveralVersionTimeAfter,
+			),
+			ResolutionType:         testconstants.DefaultResolutionType,
+			ExpectedStatusCode:     http.StatusSeeOther,
+			ExpectedLocationHeader: ExpectedLocationHeader + "foo",
+		},
+	),
 )

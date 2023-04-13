@@ -2,18 +2,18 @@ package resources
 
 import (
 	"github.com/cheqd/did-resolver/services"
-	"github.com/cheqd/did-resolver/services/queries"
+	"github.com/cheqd/did-resolver/services/diddoc/queries"
 	"github.com/cheqd/did-resolver/types"
 )
 
-type ResourceCollectionIdHandler struct {
+type ResourceIdHandler struct {
 	queries.BaseQueryHandler
 	ResourceHelperHandler
 }
 
-func (d *ResourceCollectionIdHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
-	resourceCollectionId := service.GetQueryParam(types.ResourceCollectionId)
-	if resourceCollectionId == "" {
+func (d *ResourceIdHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
+	resourceId := service.GetQueryParam(types.ResourceId)
+	if resourceId == "" {
 		return d.Continue(c, service, response)
 	}
 
@@ -22,9 +22,7 @@ func (d *ResourceCollectionIdHandler) Handle(c services.ResolverContext, service
 	if err != nil {
 		return nil, err
 	}
-
-	// Filter the list of metadatas by the resourceCollectionId
-	resourceCollectionFiltered := resourceCollection.Resources.FilterByCollectionId(resourceCollectionId)
+	resourceCollectionFiltered := resourceCollection.Resources.GetByResourceId(resourceId)
 	if len(resourceCollectionFiltered) == 0 {
 		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 	}

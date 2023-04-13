@@ -2,7 +2,7 @@ package resources
 
 import (
 	"github.com/cheqd/did-resolver/services"
-	"github.com/cheqd/did-resolver/services/queries"
+	"github.com/cheqd/did-resolver/services/diddoc/queries"
 	"github.com/cheqd/did-resolver/types"
 )
 

@@ -15,11 +15,11 @@ type DereferencedResource struct {
 	Name              string     `json:"resourceName" example:"Image Resource"`
 	ResourceType      string     `json:"resourceType" example:"Image"`
 	MediaType         string     `json:"mediaType" example:"image/png"`
+	Version           string     `json:"resourceVersion" example:"1"`
 	Created           *time.Time `json:"created" example:"2021-09-01T12:00:00Z"`
 	Checksum          string     `json:"checksum" example:"a95380f460e63ad939541a57aecbfd795fcd37c6d78ee86c885340e33a91b559"`
 	PreviousVersionId *string    `json:"previousVersionId" example:"ad7a8442-3531-46eb-a024-53953ec6e4ff"`
 	NextVersionId     *string    `json:"nextVersionId" example:"d4829ac7-4566-478c-a408-b44767eddadc"`
-	Version           string     `json:"version" example:"1"`
 }
 
 func NewDereferencedResource(did string, resource *resourceTypes.Metadata) *DereferencedResource {
@@ -38,9 +38,9 @@ func NewDereferencedResource(did string, resource *resourceTypes.Metadata) *Dere
 		Name:              resource.Name,
 		ResourceType:      resource.ResourceType,
 		MediaType:         resource.MediaType,
+		Version:           resource.Version,
 		Created:           &created,
 		Checksum:          resource.Checksum,
-		Version:           resource.Version,
 		PreviousVersionId: previousVersionId,
 		NextVersionId:     nextVersionId,
 	}
@@ -134,11 +134,31 @@ func (e DereferencedResourceList) FindBeforeTime(stime string) (string, error) {
 		return "", nil
 	}
 	for _, v := range versions {
-		if v.Created.Before(search_time) {
+		if v.Created.Before(search_time) || v.Created.Equal(search_time){
 			return v.ResourceId, nil
 		}
 	}
 	return "", nil
+}
+
+func (e DereferencedResourceList) FindAllBeforeTime(stime string) (DereferencedResourceList, error) {
+	var l = DereferencedResourceList{}
+	search_time, err := utils.ParseFromStringTimeToGoTime(stime)
+	if err != nil {
+		return l, err
+	}
+	// Firstly - sort versions by Updated time
+	versions := e
+	sort.Sort(versions)
+	if len(versions) == 0 {
+		return l, nil
+	}
+	for _, v := range versions {
+		if v.Created.Before(search_time) || v.Created.Equal(search_time.Add(time.Second)) {
+			l = append(l, v)
+		}
+	}
+	return l, nil
 }
 
 func (dr DereferencedResourceList) Len() int {

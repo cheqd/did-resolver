@@ -2,19 +2,18 @@ package resources
 
 import (
 	"github.com/cheqd/did-resolver/services"
-	"github.com/cheqd/did-resolver/services/queries"
+	"github.com/cheqd/did-resolver/services/diddoc/queries"
 	"github.com/cheqd/did-resolver/types"
 )
 
-type ResourceNameHandler struct {
+type ResourceCollectionIdHandler struct {
 	queries.BaseQueryHandler
 	ResourceHelperHandler
 }
 
-func (d *ResourceNameHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
-	resourceName := service.GetQueryParam(types.ResourceName)
-
-	if resourceName == "" {
+func (d *ResourceCollectionIdHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
+	resourceCollectionId := service.GetQueryParam(types.ResourceCollectionId)
+	if resourceCollectionId == "" {
 		return d.Continue(c, service, response)
 	}
 
@@ -25,7 +24,7 @@ func (d *ResourceNameHandler) Handle(c services.ResolverContext, service service
 	}
 
 	// Filter the list of metadatas by the resourceCollectionId
-	resourceCollectionFiltered := resourceCollection.Resources.FilterByResourceName(resourceName)
+	resourceCollectionFiltered := resourceCollection.Resources.FilterByCollectionId(resourceCollectionId)
 	if len(resourceCollectionFiltered) == 0 {
 		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 	}

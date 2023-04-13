@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	"github.com/cheqd/did-resolver/services"
-	"github.com/cheqd/did-resolver/services/queries"
-	diddocQueries "github.com/cheqd/did-resolver/services/queries/diddoc"
-	resourceQueries "github.com/cheqd/did-resolver/services/queries/resources"
+	"github.com/cheqd/did-resolver/services/diddoc/queries"
+	diddocQueries "github.com/cheqd/did-resolver/services/diddoc/queries/diddoc"
+	resourceQueries "github.com/cheqd/did-resolver/services/diddoc/queries/resources"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
 )
@@ -41,10 +41,10 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	resourceId := dd.GetQueryParam(types.ResourceId)
 	resourceVersionTime := dd.GetQueryParam(types.ResourceVersionTime)
 
-	// Validation of query parameters
-	if versionId != "" && versionTime != "" {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
-	}
+	// // Validation of query parameters
+	// if versionId != "" && versionTime != "" {
+	// 	return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+	// }
 
 	// relativeRef should be only with service parameter also
 	if relativeRef != "" && service == "" {
@@ -139,6 +139,7 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHanlders(startHandler qu
 	serviceHandler := diddocQueries.ServiceHandler{}
 	versionIdHandler := diddocQueries.VersionIdHandler{}
 	versionTimeHandler := diddocQueries.VersionTimeHandler{}
+	didDocResolveHandler := diddocQueries.DidDocResolveHandler{}
 
 	err := startHandler.SetNext(c, &versionIdHandler)
 	if err != nil {
@@ -150,7 +151,12 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHanlders(startHandler qu
 		return nil, err
 	}
 
-	err = versionTimeHandler.SetNext(c, &serviceHandler)
+	err = versionTimeHandler.SetNext(c, &didDocResolveHandler)
+	if err != nil {
+		return nil, err
+	}
+
+	err = didDocResolveHandler.SetNext(c, &serviceHandler)
 	if err != nil {
 		return nil, err
 	}

@@ -2,12 +2,13 @@ package diddoc
 
 import (
 	"github.com/cheqd/did-resolver/services"
-	"github.com/cheqd/did-resolver/services/queries"
+	"github.com/cheqd/did-resolver/services/diddoc/queries"
 	"github.com/cheqd/did-resolver/types"
 )
 
 type VersionTimeHandler struct {
 	queries.BaseQueryHandler
+	DidDocHelperHandler
 }
 
 func (v *VersionTimeHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
@@ -21,15 +22,9 @@ func (v *VersionTimeHandler) Handle(c services.ResolverContext, service services
 	did := service.GetDid()
 	contentType := service.GetContentType()
 
-	allMetadatas, err := c.DidDocService.GetAllDidDocVersionsMetadata(did, contentType)
+	allVersions, err := v.CastToContent(service, response)
 	if err != nil {
-		err.IsDereferencing = false
 		return nil, err
-	}
-
-	allVersions := allMetadatas.ContentStream.(*types.DereferencedDidVersionsList)
-	if len(allVersions.Versions) == 0 {
-		return nil, types.NewNotFoundError(did, contentType, nil, v.IsDereferencing)
 	}
 
 	versionId, _err := allVersions.FindBeforeTime(versionTime)
@@ -41,11 +36,12 @@ func (v *VersionTimeHandler) Handle(c services.ResolverContext, service services
 		return nil, types.NewNotFoundError(did, contentType, nil, v.IsDereferencing)
 	}
 
-	result, err := c.DidDocService.Resolve(did, versionId, contentType)
-	if err != nil {
-		err.IsDereferencing = v.IsDereferencing
-		return nil, err
+	versionsFiltered := allVersions.Versions.GetByVersionId(versionId)
+	if len(versionsFiltered) == 0 {
+		return nil, types.NewInternalError(did, contentType, nil, v.IsDereferencing)
 	}
+
+	result := v.CastToResult(versionsFiltered)
 
 	// Call the next handler
 	return v.Continue(c, service, result)

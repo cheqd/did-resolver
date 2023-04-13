@@ -2,7 +2,7 @@ package diddoc
 
 import (
 	"github.com/cheqd/did-resolver/services"
-	"github.com/cheqd/did-resolver/services/queries"
+	"github.com/cheqd/did-resolver/services/diddoc/queries"
 	"github.com/cheqd/did-resolver/types"
 )
 
@@ -11,18 +11,18 @@ type DidQueryHandler struct {
 }
 
 func (d *DidQueryHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
-	versionId := service.GetQueryParam(types.VersionId)
-	versionTime := service.GetQueryParam(types.VersionTime)
+	// versionId := service.GetQueryParam(types.VersionId)
+	// versionTime := service.GetQueryParam(types.VersionTime)
 
-	// Here we are handling only query DID without versionId and versionTime
-	if versionId != "" || versionTime != "" {
-		return d.Continue(c, service, response)
-	}
+	// // // Here we are handling only query DID without versionId and versionTime
+	// // if versionId != "" || versionTime != "" {
+	// // 	return d.Continue(c, service, response)
+	// // }
 	// Get Params
 	did := service.GetDid()
 	contentType := service.GetContentType()
 
-	result, err := c.DidDocService.Resolve(did, "", contentType)
+	result, err := c.DidDocService.GetAllDidDocVersionsMetadata(did, contentType)
 	if err != nil {
 		err.IsDereferencing = d.IsDereferencing
 		return nil, err

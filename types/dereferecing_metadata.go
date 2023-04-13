@@ -66,6 +66,15 @@ func (r ResourceDereferencing) IsRedirect() bool {
 
 type DidDocMetadataList []ResolutionDidDocMetadata
 
+func (dd DidDocMetadataList) GetByVersionId(versionId string) DidDocMetadataList {
+	for _, r := range dd {
+		if r.VersionId == versionId {
+			return DidDocMetadataList{r}
+		}
+	}
+	return DidDocMetadataList{}
+}
+
 func (dd DidDocMetadataList) Len() int {
 	return len(dd)
 }
