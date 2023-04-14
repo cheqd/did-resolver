@@ -36,6 +36,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 
 	versionId := dd.GetQueryParam(types.VersionId)
 	versionTime := dd.GetQueryParam(types.VersionTime)
+	transformKey := types.TransformKeyType(dd.GetQueryParam(types.TransformKey))
 	service := dd.GetQueryParam(types.ServiceQ)
 	relativeRef := dd.GetQueryParam(types.RelativeRef)
 	resourceId := dd.GetQueryParam(types.ResourceId)
@@ -45,6 +46,11 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	// if versionId != "" && versionTime != "" {
 	// 	return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
 	// }
+
+	// Validation transformKey is supported
+	if !transformKey.IsSupported() {
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+	}
 
 	// relativeRef should be only with service parameter also
 	if relativeRef != "" && service == "" {
@@ -140,6 +146,7 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHanlders(startHandler qu
 	versionIdHandler := diddocQueries.VersionIdHandler{}
 	versionTimeHandler := diddocQueries.VersionTimeHandler{}
 	didDocResolveHandler := diddocQueries.DidDocResolveHandler{}
+	transformKey := diddocQueries.TransformKeyHandler{}
 
 	err := startHandler.SetNext(c, &versionIdHandler)
 	if err != nil {
@@ -156,7 +163,12 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHanlders(startHandler qu
 		return nil, err
 	}
 
-	err = didDocResolveHandler.SetNext(c, &serviceHandler)
+	err = didDocResolveHandler.SetNext(c, &transformKey)
+	if err != nil {
+		return nil, err
+	}
+
+	err = transformKey.SetNext(c, &serviceHandler)
 	if err != nil {
 		return nil, err
 	}
