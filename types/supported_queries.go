@@ -39,6 +39,7 @@ func (s *SupportedQueriesT) Plus(s2 SupportedQueriesT) SupportedQueriesT {
 var DidSupportedQueries = SupportedQueriesT{
 	VersionId,
 	VersionTime,
+	TransformKey,
 	ServiceQ,
 	RelativeRef,
 }
