@@ -19,10 +19,14 @@ func (t *TransformKeyHandler) Handle(c services.ResolverContext, service service
 		return t.Continue(c, service, response)
 	}
 
+	if !transformKey.IsSupported() {
+		return nil, types.NewRepresentationNotSupportedError(service.GetDid(), types.DIDJSONLD, nil, t.IsDereferencing)
+	}
+
 	// We expect here only DidResolution
 	didResolution, ok := response.(*types.DidResolution)
 	if !ok {
-		return nil, types.NewInternalError("response is not DidResolution", types.DIDJSONLD, nil, t.IsDereferencing)
+		return nil, types.NewInternalError(service.GetDid(), types.DIDJSONLD, nil, t.IsDereferencing)
 	}
 
 	for i, vMethod := range didResolution.Did.VerificationMethod {

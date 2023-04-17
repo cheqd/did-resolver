@@ -10,9 +10,7 @@ import (
 func transformKeyEd25519VerificationKey2018ToEd25519VerificationKey2020(
 	verificationMethod types.VerificationMethod,
 ) (types.VerificationMethod, error) {
-	publicKeyMultibase, err := utils.Ed25519VerificationKey2018ToEd25519VerificationKey2020(
-		verificationMethod.PublicKeyBase58,
-	)
+	publicKeyMultibase, err := utils.Ed25519VerificationKey2018ToEd25519VerificationKey2020(verificationMethod.PublicKeyBase58)
 	if err != nil {
 		return verificationMethod, err
 	}
