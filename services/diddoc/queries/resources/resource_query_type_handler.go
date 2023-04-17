@@ -27,6 +27,8 @@ func (d *ResourceTypeHandler) Handle(c services.ResolverContext, service service
 		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 	}
 
+	resourceCollection.Resources = resourceCollectionFiltered
+
 	// Call the next handler
-	return d.Continue(c, service, d.CastToResult(resourceCollectionFiltered))
+	return d.Continue(c, service, resourceCollection)
 }

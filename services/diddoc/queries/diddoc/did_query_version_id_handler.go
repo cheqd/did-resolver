@@ -21,18 +21,18 @@ func (v *VersionIdHandler) Handle(c services.ResolverContext, service services.R
 	// Get Params
 	did := service.GetDid()
 	contentType := service.GetContentType()
-	content, err := v.CastToContent(service, response)
+	allVersions, err := v.CastToContent(service, response)
 	if err != nil {
 		return nil, err
 	}
 
-	versionFiltered := content.Versions.GetByVersionId(versionId)
-	if versionFiltered == nil {
+	versionFiltered := allVersions.GetByVersionId(versionId)
+	if len(versionFiltered) == 0 {
 		return nil, types.NewNotFoundError(did, contentType, nil, service.GetDereferencing())
 	}
 
-	result := v.CastToResult(versionFiltered)
+	versionFiltered[0].Resources = allVersions.GetResourcesBeforeNextVersion(versionId)
 
 	// Call the next handler
-	return v.Continue(c, service, result)
+	return v.Continue(c, service, versionFiltered)
 }

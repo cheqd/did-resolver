@@ -104,6 +104,12 @@ func (dds DIDDocService) GetAllDidDocVersionsMetadata(did string, contentType ty
 		return nil, err
 	}
 
+	resources, err := dds.ledgerService.QueryCollectionResources(did)
+	if err != nil {
+		err.ContentType = contentType
+		return nil, err
+	}
+
 	if len(versions) == 0 {
 		return nil, types.NewNotFoundError(did, contentType, err, false)
 	}
@@ -113,7 +119,11 @@ func (dds DIDDocService) GetAllDidDocVersionsMetadata(did string, contentType ty
 		context = types.ResolutionSchemaJSONLD
 	}
 
-	contentStream := types.NewDereferencedDidVersionsList(versions)
+	contentStream := types.NewDereferencedDidVersionsList(versions, resources)
+	for i, version := range contentStream.Versions {
+		filtered := contentStream.Versions.GetResourcesBeforeNextVersion(version.VersionId)
+		contentStream.Versions[i].Resources = filtered
+	}
 
 	return &types.DidDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }

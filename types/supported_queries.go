@@ -42,6 +42,7 @@ var DidSupportedQueries = SupportedQueriesT{
 	TransformKey,
 	ServiceQ,
 	RelativeRef,
+	Metadata,
 }
 
 var ResourceSupportedQueries = SupportedQueriesT{

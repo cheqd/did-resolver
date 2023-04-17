@@ -57,6 +57,7 @@ const (
 	VersionId            string = "versionId"
 	VersionTime          string = "versionTime"
 	TransformKey         string = "transformKey"
+	Metadata             string = "metadata"
 	ServiceQ             string = "service"
 	RelativeRef          string = "relativeRef"
 	ResourceId           string = "resourceId"

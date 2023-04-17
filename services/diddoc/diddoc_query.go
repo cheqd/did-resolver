@@ -141,6 +141,7 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHandlers(startHandler qu
 	versionTimeHandler := diddocQueries.VersionTimeHandler{}
 	didDocResolveHandler := diddocQueries.DidDocResolveHandler{}
 	transformKeyHandler := diddocQueries.TransformKeyHandler{}
+	didDocMetadataHandler := diddocQueries.DidDocMetadataHandler{}
 
 	err := startHandler.SetNext(c, &versionIdHandler)
 	if err != nil {
@@ -162,7 +163,12 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHandlers(startHandler qu
 		return nil, err
 	}
 
-	err = transformKeyHandler.SetNext(c, &serviceHandler)
+	err = transformKeyHandler.SetNext(c, &didDocMetadataHandler)
+	if err != nil {
+		return nil, err
+	}
+
+	err = didDocMetadataHandler.SetNext(c, &serviceHandler)
 	if err != nil {
 		return nil, err
 	}
@@ -171,6 +177,7 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHandlers(startHandler qu
 	if err != nil {
 		return nil, err
 	}
+
 	return &relativeRefHandler, nil
 }
 
