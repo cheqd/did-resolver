@@ -102,7 +102,7 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 	// First we need to just ask for Did:
 
 	// DidDoc handlers
-	startHandler := diddocQueries.DidQueryHandler{}
+	startHandler := diddocQueries.DidQueryAllVersionsHandler{}
 	lastHandler, err := dd.RegisterDidDocQueryHandlers(&startHandler, c)
 	if err != nil {
 		return err
