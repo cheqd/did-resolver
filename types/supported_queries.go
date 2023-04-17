@@ -41,6 +41,7 @@ var DidSupportedQueries = SupportedQueriesT{
 	VersionTime,
 	ServiceQ,
 	RelativeRef,
+	Metadata,
 }
 
 var ResourceSupportedQueries = SupportedQueriesT{

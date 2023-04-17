@@ -32,7 +32,12 @@ func (d *ResourceVersionTimeHandler) Handle(c services.ResolverContext, service 
 	}
 
 	resourceCollectionFiltered := resourceCollection.Resources.GetByResourceId(resourceId)
+	if len(resourceCollectionFiltered) == 0 {
+		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
+	}
+
+	resourceCollection.Resources = resourceCollectionFiltered
 
 	// Call the next handler
-	return d.Continue(c, service, d.CastToResult(resourceCollectionFiltered))
+	return d.Continue(c, service, resourceCollection)
 }

@@ -39,6 +39,7 @@ const (
 const (
 	VersionId            string = "versionId"
 	VersionTime          string = "versionTime"
+	Metadata             string = "metadata"
 	ServiceQ             string = "service"
 	RelativeRef          string = "relativeRef"
 	ResourceId           string = "resourceId"

@@ -17,18 +17,18 @@ func (d *ResourceQueryHandler) Handle(c services.ResolverContext, service servic
 		if err != nil {
 			return nil, err
 		}
+		content, ok := resolutionResult.ContentStream.(*types.ResolutionDidDocMetadata)
+		if !ok {
+			return nil, types.NewInternalError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
+		}
 		// Call the next handler
-		return d.Continue(c, service, resolutionResult)
+		return d.Continue(c, service, types.DidDocMetadataList{*content})
 	}
-	// Otherwise, we need to dereference the resource using information from previous handlers
-	rp, ok := response.(*types.DidResolution)
+	// Otherwise just use the result from previous handlers
+	// Call the next handler
+	casted, ok := response.(*types.DidResolution)
 	if !ok {
 		return nil, types.NewInternalError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 	}
-	resolutionResult, err := c.DidDocService.GetDIDDocVersionsMetadata(rp.Did.Id, rp.Metadata.VersionId, service.GetContentType())
-	if err != nil {
-		return nil, types.NewInternalError(service.GetDid(), service.GetContentType(), err, d.IsDereferencing)
-	}
-	// Call the next handler
-	return d.Continue(c, service, resolutionResult)
+	return d.Continue(c, service, &casted.Metadata)
 }

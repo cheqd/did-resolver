@@ -6,15 +6,15 @@ import (
 	"github.com/cheqd/did-resolver/types"
 )
 
-type DidDocResolveHandler struct {
+type DidDocMetadataHandler struct {
 	queries.BaseQueryHandler
 	DidDocHelperHandler
 }
 
-func (dd *DidDocResolveHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
+func (dd *DidDocMetadataHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
 	metadata := c.QueryParams().Get(types.Metadata)
 	// If metadata is set we don't need to resolve the DidDoc
-	if metadata != "" {
+	if metadata == "" {
 		return dd.Continue(c, service, response)
 	}
 
@@ -26,19 +26,16 @@ func (dd *DidDocResolveHandler) Handle(c services.ResolverContext, service servi
 		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, dd.IsDereferencing)
 	}
 
-	// Get the latest version. If versionId and versionTime handlers were called here, should be only 1 element.
+	// Get the latest version. If versionId and versionTime handlers were called, should be only 1 element.
 	// If versionId or versionTime was not called, we will return the latest version
+	// Cause allVersions are sorted in reverse order the latest version is the first element
 	versionId := allVersions[0].VersionId
 	filteredResources := allVersions[0].Resources
+	result, err := c.DidDocService.GetDIDDocVersionsMetadata(service.GetDid(), versionId, service.GetContentType())
+	// Fill the resources
+	content := result.ContentStream.(*types.ResolutionDidDocMetadata)
+	content.Resources = filteredResources
+	result.ContentStream = content
 
-	result, _err := c.DidDocService.Resolve(service.GetDid(), versionId, service.GetContentType())
-	if _err != nil {
-		_err.IsDereferencing = dd.IsDereferencing
-		return nil, _err
-	}
-
-	result.Metadata.Resources = filteredResources
-
-	// Call the next handler
 	return dd.Continue(c, service, result)
 }

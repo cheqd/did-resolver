@@ -27,7 +27,7 @@ func (v *VersionTimeHandler) Handle(c services.ResolverContext, service services
 		return nil, err
 	}
 
-	versionId, _err := allVersions.FindBeforeTime(versionTime)
+	versionId, _err := allVersions.FindActiveForTime(versionTime)
 	if _err != nil {
 		return nil, types.NewInternalError(did, contentType, _err, v.IsDereferencing)
 	}
@@ -36,13 +36,11 @@ func (v *VersionTimeHandler) Handle(c services.ResolverContext, service services
 		return nil, types.NewNotFoundError(did, contentType, nil, v.IsDereferencing)
 	}
 
-	versionsFiltered := allVersions.Versions.GetByVersionId(versionId)
+	versionsFiltered := allVersions.GetByVersionId(versionId)
 	if len(versionsFiltered) == 0 {
 		return nil, types.NewInternalError(did, contentType, nil, v.IsDereferencing)
 	}
 
-	result := v.CastToResult(versionsFiltered)
-
 	// Call the next handler
-	return v.Continue(c, service, result)
+	return v.Continue(c, service, versionsFiltered)
 }

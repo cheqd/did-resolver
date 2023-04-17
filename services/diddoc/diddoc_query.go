@@ -102,7 +102,7 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 	// First we need to just ask for Did:
 
 	// DidDoc handlers
-	startHandler := diddocQueries.DidQueryHandler{}
+	startHandler := diddocQueries.DidQueryAllVersionsHandler{}
 	lastHandler, err := dd.RegisterDidDocQueryHanlders(&startHandler, c)
 	if err != nil {
 		return err
@@ -134,12 +134,13 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHanlders(startHandler qu
 	// or
 	// - versionIdHandler
 	// After that we can find for service field if it's set.
-	// didQueryHandler -> versionIdHandler -> versionTimeHandler -> serviceHandler -> stopHandler
+	// VersionIdHandler -> VersionTimeHandler -> DidDocResolveHandler -> DidDocMetadataHandler -> ServiceHandler -> RelativeRefHandler
 	relativeRefHandler := diddocQueries.RelativeRefHandler{}
 	serviceHandler := diddocQueries.ServiceHandler{}
 	versionIdHandler := diddocQueries.VersionIdHandler{}
 	versionTimeHandler := diddocQueries.VersionTimeHandler{}
 	didDocResolveHandler := diddocQueries.DidDocResolveHandler{}
+	didDocMetadataHandler := diddocQueries.DidDocMetadataHandler{}
 
 	err := startHandler.SetNext(c, &versionIdHandler)
 	if err != nil {
@@ -156,7 +157,12 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHanlders(startHandler qu
 		return nil, err
 	}
 
-	err = didDocResolveHandler.SetNext(c, &serviceHandler)
+	err = didDocResolveHandler.SetNext(c, &didDocMetadataHandler)
+	if err != nil {
+		return nil, err
+	}
+
+	err = didDocMetadataHandler.SetNext(c, &serviceHandler)
 	if err != nil {
 		return nil, err
 	}
@@ -165,6 +171,7 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHanlders(startHandler qu
 	if err != nil {
 		return nil, err
 	}
+	
 	return &relativeRefHandler, nil
 }
 

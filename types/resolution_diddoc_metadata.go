@@ -43,6 +43,8 @@ func TransformToFragmentMetadata(metadata ResolutionDidDocMetadata) ResolutionDi
 func (e *ResolutionDidDocMetadata) AddContext(newProtocol string) {}
 func (e *ResolutionDidDocMetadata) RemoveContext()                {}
 func (e *ResolutionDidDocMetadata) GetBytes() []byte              { return []byte{} }
+func (e *ResolutionDidDocMetadata) GetContentType() string        { return "" }
+func (e *ResolutionDidDocMetadata) IsRedirect() bool              { return false }
 
 func toTime(value *timestamppb.Timestamp) (result *time.Time) {
 	if value == nil || value.AsTime().IsZero() {
