@@ -40,7 +40,6 @@ func (e DidDocMetadataList) FindActiveForTime(stime string) (string, error) {
 }
 
 func (dd DidDocMetadataList) GetResourcesBeforeNextVersion(versionId string) DereferencedResourceList {
-
 	if len(dd) == 1 {
 		return dd[0].Resources
 	}

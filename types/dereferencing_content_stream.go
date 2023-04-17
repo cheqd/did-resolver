@@ -134,7 +134,7 @@ func (e DereferencedResourceList) FindBeforeTime(stime string) (string, error) {
 		return "", nil
 	}
 	for _, v := range versions {
-		if v.Created.Before(search_time) || v.Created.Equal(search_time){
+		if v.Created.Before(search_time) || v.Created.Equal(search_time) {
 			return v.ResourceId, nil
 		}
 	}
@@ -142,7 +142,7 @@ func (e DereferencedResourceList) FindBeforeTime(stime string) (string, error) {
 }
 
 func (e DereferencedResourceList) FindAllBeforeTime(stime string) (DereferencedResourceList, error) {
-	var l = DereferencedResourceList{}
+	l := DereferencedResourceList{}
 	search_time, err := utils.ParseFromStringTimeToGoTime(stime)
 	if err != nil {
 		return l, err

@@ -1,7 +1,7 @@
 package types
 
 type (
-	DidDereferencing      struct {
+	DidDereferencing struct {
 		Context               string                   `json:"@context,omitempty" example:"https://w3id.org/did-resolution/v1"`
 		DereferencingMetadata DereferencingMetadata    `json:"dereferencingMetadata"`
 		ContentStream         ContentStreamI           `json:"contentStream"`

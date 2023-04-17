@@ -28,4 +28,3 @@ func NewDereferencedDidVersionsList(versions []*didTypes.Metadata, resources []*
 func (e *DereferencedDidVersionsList) AddContext(newProtocol string) {}
 func (e *DereferencedDidVersionsList) RemoveContext()                {}
 func (e *DereferencedDidVersionsList) GetBytes() []byte              { return []byte{} }
-

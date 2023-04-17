@@ -27,7 +27,7 @@ func (v *VersionIdHandler) Handle(c services.ResolverContext, service services.R
 	}
 
 	versionFiltered := allVersions.GetByVersionId(versionId)
-	if versionFiltered == nil || len(versionFiltered) == 0 {
+	if len(versionFiltered) == 0 {
 		return nil, types.NewNotFoundError(did, contentType, nil, service.GetDereferencing())
 	}
 

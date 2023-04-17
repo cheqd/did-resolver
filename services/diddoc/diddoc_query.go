@@ -171,7 +171,7 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHanlders(startHandler qu
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return &relativeRefHandler, nil
 }
 

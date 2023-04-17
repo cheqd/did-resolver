@@ -5,11 +5,9 @@ import (
 	"github.com/cheqd/did-resolver/types"
 )
 
-type ResourceHelperHandler struct {
-}
+type ResourceHelperHandler struct{}
 
 func (d *ResourceHelperHandler) CastToContent(service services.RequestServiceI, response types.ResolutionResultI) (*types.ResolutionDidDocMetadata, error) {
-
 	// Cast to DidDocMetadataList for getting the list of metadatas
 	rc, ok := response.(*types.ResolutionDidDocMetadata)
 	if !ok {

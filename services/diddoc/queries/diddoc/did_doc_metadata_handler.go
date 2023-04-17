@@ -31,7 +31,11 @@ func (dd *DidDocMetadataHandler) Handle(c services.ResolverContext, service serv
 	// Cause allVersions are sorted in reverse order the latest version is the first element
 	versionId := allVersions[0].VersionId
 	filteredResources := allVersions[0].Resources
-	result, err := c.DidDocService.GetDIDDocVersionsMetadata(service.GetDid(), versionId, service.GetContentType())
+	result, _err := c.DidDocService.GetDIDDocVersionsMetadata(service.GetDid(), versionId, service.GetContentType())
+	if _err != nil {
+		_err.IsDereferencing = dd.IsDereferencing
+		return nil, _err
+	}
 	// Fill the resources
 	content := result.ContentStream.(*types.ResolutionDidDocMetadata)
 	content.Resources = filteredResources
