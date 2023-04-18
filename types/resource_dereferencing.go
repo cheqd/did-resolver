@@ -7,6 +7,18 @@ type ResourceDereferencing struct {
 	Metadata              ResolutionResourceMetadata `json:"contentMetadata"`
 }
 
+func NewResourceDereferencingFromContent(did string, contentType ContentType, contentStream ContentStreamI) *ResourceDereferencing {
+	dereferenceMetadata := NewDereferencingMetadata(did, contentType, "")
+
+	var context string
+	if contentType == DIDJSONLD || contentType == JSONLD {
+		context = ResolutionSchemaJSONLD
+	}
+
+	return &ResourceDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}
+	
+}
+
 // Interface implementation
 
 func (d ResourceDereferencing) GetContentType() string {

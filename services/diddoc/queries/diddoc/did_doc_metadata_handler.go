@@ -1,6 +1,8 @@
 package diddoc
 
 import (
+	"sort"
+
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/services/diddoc/queries"
 	"github.com/cheqd/did-resolver/types"
@@ -14,7 +16,7 @@ type DidDocMetadataHandler struct {
 func (dd *DidDocMetadataHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
 	metadata := c.QueryParams().Get(types.Metadata)
 	// If metadata is set we don't need to resolve the DidDoc
-	if metadata == "" {
+	if metadata == "" && metadata != "true" {
 		return dd.Continue(c, service, response)
 	}
 
@@ -31,6 +33,9 @@ func (dd *DidDocMetadataHandler) Handle(c services.ResolverContext, service serv
 	// Cause allVersions are sorted in reverse order the latest version is the first element
 	versionId := allVersions[0].VersionId
 	filteredResources := allVersions[0].Resources
+	
+	// Filter in descending order
+	sort.Sort(filteredResources)
 	result, _err := c.DidDocService.GetDIDDocVersionsMetadata(service.GetDid(), versionId, service.GetContentType())
 	if _err != nil {
 		_err.IsDereferencing = dd.IsDereferencing

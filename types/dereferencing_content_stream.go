@@ -161,6 +161,32 @@ func (e DereferencedResourceList) FindAllBeforeTime(stime string) (DereferencedR
 	return l, nil
 }
 
+func (e DereferencedResourceList) AreResourceNamesTheSame() bool {
+	if len(e) == 0 {
+		return true
+	}
+	firstName := e[0].Name
+	for _, r := range e {
+		if r.Name != firstName {
+			return false
+		}
+	}
+	return true
+}
+
+func (e DereferencedResourceList) AreResourceTypesTheSame() bool {
+	if len(e) == 0 {
+		return true
+	}
+	firstType := e[0].ResourceType
+	for _, r := range e {
+		if r.ResourceType != firstType {
+			return false
+		}
+	}
+	return true
+}
+
 func (dr DereferencedResourceList) Len() int {
 	return len(dr)
 }

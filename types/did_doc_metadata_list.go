@@ -29,10 +29,10 @@ func (e DidDocMetadataList) FindActiveForTime(stime string) (string, error) {
 	versions := e
 	sort.Sort(versions)
 	for _, version := range versions {
-		if version.Updated != nil && version.Updated.Before(search_time) {
+		if version.Updated != nil && (version.Updated.Before(search_time) || version.Updated.Equal(search_time)) {
 			return version.VersionId, nil
 		}
-		if version.Updated == nil && version.Created.Before(search_time) {
+		if version.Updated == nil && (version.Created.Before(search_time) || version.Created.Equal(search_time)) {
 			return version.VersionId, nil
 		}
 	}

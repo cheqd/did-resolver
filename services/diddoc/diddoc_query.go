@@ -41,14 +41,9 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	resourceId := dd.GetQueryParam(types.ResourceId)
 	resourceVersionTime := dd.GetQueryParam(types.ResourceVersionTime)
 
-	// // Validation of query parameters
-	// if versionId != "" && versionTime != "" {
-	// 	return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
-	// }
-
 	// relativeRef should be only with service parameter also
 	if relativeRef != "" && service == "" {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	// Validate time format
@@ -75,6 +70,12 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	// Validate that resourceId is UUID
 	if resourceId != "" && !utils.IsValidUUID(resourceId) {
 		return types.NewInvalidDidUrlError(resourceId, dd.RequestedContentType, nil, dd.IsDereferencing)
+	}
+
+	// If there is only 1 query parameter and it's resourceVersionTime, 
+	// then we need to return RepresentationNotSupported error
+	if len(dd.Queries) == 1 && resourceVersionTime != "" {
+		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	return nil
