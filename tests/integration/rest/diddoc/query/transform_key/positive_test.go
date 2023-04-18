@@ -162,4 +162,34 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKey query parameter", 
 			ExpectedJSONPath:   "../../../testdata/query/transform_key/diddoc_jwk_2020_to_jwk_2020.json",
 		},
 	),
+
+	Entry(
+		"can get DIDDoc (Ed25519VerificationKey2018) with supported Ed25519VerificationKey2020 transformKey and DIDDoc versionId queries",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s&versionId=%s",
+				DidWithEd25519VerificationKey2018Key,
+				string(types.Ed25519VerificationKey2020),
+				"44f49254-8106-40ee-99ad-e50ac9517346",
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedStatusCode: http.StatusOK,
+			ExpectedJSONPath:   "../../../testdata/query/transform_key/diddoc_transform_key_and_version_id.json",
+		},
+	),
+
+	Entry(
+		"can get DIDDoc (Ed25519VerificationKey2018) with supported Ed25519VerificationKey2020 transformKey and DIDDoc versionTime queries",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s&versionTime=%s",
+				DidWithEd25519VerificationKey2018Key,
+				string(types.Ed25519VerificationKey2020),
+				"2023-02-21T14:28:48.406713879Z",
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedStatusCode: http.StatusOK,
+			ExpectedJSONPath:   "../../../testdata/query/transform_key/diddoc_transform_key_version_time.json",
+		},
+	),
 )
