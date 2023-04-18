@@ -52,6 +52,7 @@ var ResourceSupportedQueries = SupportedQueriesT{
 	ResourceType,
 	ResourceVersion,
 	ResourceVersionTime,
+	ResourceChecksum,
 }
 
 var AllSupportedQueries = DidSupportedQueries.Plus(ResourceSupportedQueries)

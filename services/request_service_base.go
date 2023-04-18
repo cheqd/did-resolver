@@ -60,6 +60,17 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 	did = strings.Split(did, "#")[0]
 	dd.Did = did
 
+	// Get queries (We need to check that queries are allowed only for /:did path)
+	queryRaw, flag := PrepareQueries(c)
+	queries, err := url.ParseQuery(queryRaw)
+	if err != nil {
+		return err
+	}
+	if flag != nil {
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+	dd.Queries = queries
+
 	return nil
 }
 

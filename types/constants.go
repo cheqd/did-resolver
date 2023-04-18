@@ -49,4 +49,5 @@ const (
 	ResourceMetadata     string = "resourceMetadata"
 	ResourceCollectionId string = "resourceCollectionId"
 	ResourceVersion      string = "resourceVersion"
+	ResourceChecksum     string = "checksum"
 )

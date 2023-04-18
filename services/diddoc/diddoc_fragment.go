@@ -29,7 +29,7 @@ func (dd *FragmentDIDDocRequestService) SpecificPrepare(c services.ResolverConte
 }
 
 func (dd *FragmentDIDDocRequestService) Query(c services.ResolverContext) error {
-	result, err := c.DidDocService.DereferenceSecondary(dd.Did, dd.Version, dd.Fragment, dd.GetContentType())
+	result, err := c.DidDocService.DereferenceSecondary(dd.GetDid(), dd.Version, dd.Fragment, dd.GetContentType())
 	if err != nil {
 		err.IsDereferencing = dd.IsDereferencing
 		return err

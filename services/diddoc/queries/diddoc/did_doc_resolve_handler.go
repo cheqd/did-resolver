@@ -32,7 +32,7 @@ func (dd *DidDocResolveHandler) Handle(c services.ResolverContext, service servi
 	// If versionId or versionTime was not called, we will return the latest version
 	versionId := allVersions[0].VersionId
 	filteredResources := allVersions[0].Resources
-	
+
 	// Filter in descending order
 	sort.Sort(filteredResources)
 

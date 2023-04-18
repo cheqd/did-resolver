@@ -122,6 +122,16 @@ func (e DereferencedResourceList) FilterByVersion(version string) DereferencedRe
 	return filteredResources
 }
 
+func (e DereferencedResourceList) FilterByChecksum(checksum string) DereferencedResourceList {
+	filteredResources := DereferencedResourceList{}
+	for _, r := range e {
+		if r.Checksum == checksum {
+			filteredResources = append(filteredResources, r)
+		}
+	}
+	return filteredResources
+}
+
 func (e DereferencedResourceList) FindBeforeTime(stime string) (string, error) {
 	search_time, err := utils.ParseFromStringTimeToGoTime(stime)
 	if err != nil {
@@ -154,7 +164,7 @@ func (e DereferencedResourceList) FindAllBeforeTime(stime string) (DereferencedR
 		return l, nil
 	}
 	for _, v := range versions {
-		if v.Created.Before(search_time) || v.Created.Equal(search_time.Add(time.Second)) {
+		if v.Created.Before(search_time) || v.Created.Equal(search_time) {
 			l = append(l, v)
 		}
 	}
