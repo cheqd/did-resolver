@@ -34,6 +34,10 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 		return types.NewRepresentationNotSupportedError("Queries from list: "+strings.Join(diff, ","), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
+	if dd.AreQueryValuesEmpty(c) {
+		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
 	versionId := dd.GetQueryParam(types.VersionId)
 	versionTime := dd.GetQueryParam(types.VersionTime)
 	transformKey := dd.GetQueryParam(types.TransformKey)
@@ -95,7 +99,27 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 
 	// relativeRef should be only with service parameter also
 	if relativeRef != "" && service == "" {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
+	// service query is permitted only for diddoc queries
+	if service != "" && dd.AreResourceQueriesPlaced(c) {
+		return types.NewRepresentationNotSupportedError(service, dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
+	// metadata query is permitted only for diddoc queries
+	if metadata != "" && dd.AreResourceQueriesPlaced(c) {
+		return types.NewRepresentationNotSupportedError(service, dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
+	// value if metadata can be only true or false
+	if metadata != "" && metadata != "true" && metadata != "false" {
+		return types.NewRepresentationNotSupportedError(metadata, dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
+	// value if resourceMetadata can be only true or false
+	if resourceMetadata != "" && resourceMetadata != "true" && resourceMetadata == "false" {
+		return types.NewRepresentationNotSupportedError(resourceMetadata, dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	// Validate time format
@@ -124,22 +148,33 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 		return types.NewInvalidDidUrlError(resourceId, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
+	// If there is only 1 query parameter and it's resourceVersionTime,
+	// then we need to return RepresentationNotSupported error
+	if len(dd.Queries) == 1 && resourceVersionTime != "" {
+		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
 	return nil
 }
 
 func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext) error {
-	queryRaw, flag := services.PrepareQueries(c)
-	queries, err := url.ParseQuery(queryRaw)
-	if err != nil {
-		return err
-	}
-	if flag != nil {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
-	}
-	dd.Queries = queries
-
 	// Register query handlers
 	return dd.RegisterQueryHandlers(c)
+}
+
+func (dd QueryDIDDocRequestService) AreResourceQueriesPlaced(c services.ResolverContext) bool {
+	return len(types.ResourceSupportedQueries.IntersectWithUrlValues(dd.Queries)) > 0
+}
+
+func (dd QueryDIDDocRequestService) AreQueryValuesEmpty(c services.ResolverContext) bool {
+	for _, v := range dd.Queries {
+		// Queries is the map with list of string as value.
+		// If there is only one value and it's empty string, then we need to return RepresentationNotSupported error
+		if len(v) == 1 && v[0] == "" {
+			return true
+		}
+	}
+	return false
 }
 
 func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverContext) error {
@@ -155,7 +190,7 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 		return err
 	}
 
-	if len(types.ResourceSupportedQueries.IntersectWithUrlValues(dd.Queries)) > 0 {
+	if dd.AreResourceQueriesPlaced(c) {
 		lastHandler, err := dd.RegisterResourceQueryHandlers(lastHandler, c)
 		if err != nil {
 			return err
@@ -239,6 +274,7 @@ func (dd *QueryDIDDocRequestService) RegisterResourceQueryHandlers(startHandler 
 	resourceVersionHandler := resourceQueries.ResourceVersionHandler{}
 	resourceVersionTimeHandler := resourceQueries.ResourceVersionTimeHandler{}
 	resourceValidationHandler := resourceQueries.ResourceValidationHandler{}
+	resourceChecksumHandler := resourceQueries.ResourceChecksumHandler{}
 
 	err := startHandler.SetNext(c, &resourceQueryHandler)
 	if err != nil {
@@ -276,7 +312,12 @@ func (dd *QueryDIDDocRequestService) RegisterResourceQueryHandlers(startHandler 
 		return nil, err
 	}
 
-	err = resourceVersionHandler.SetNext(c, &resourceVersionTimeHandler)
+	err = resourceVersionHandler.SetNext(c, &resourceChecksumHandler)
+	if err != nil {
+		return nil, err
+	}
+
+	err = resourceChecksumHandler.SetNext(c, &resourceVersionTimeHandler)
 	if err != nil {
 		return nil, err
 	}

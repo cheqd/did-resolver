@@ -20,17 +20,13 @@ func (d *ResourceMetadataHandler) Handle(c services.ResolverContext, service ser
 		return nil, err
 	}
 
-	// After all filters and validation only one resource should be left
-	resource := resourceCollection.Resources[0]
-
 	if resourceMetadata == "true" {
-		dereferencingResult, err := c.ResourceService.DereferenceResourceMetadata(service.GetDid(), resource.ResourceId, service.GetContentType())
-		if err != nil {
-			return nil, err
-		}
+		dereferencingResult := types.NewResourceDereferencingFromContent(service.GetDid(), service.GetContentType(), resourceCollection)
 		return d.Continue(c, service, dereferencingResult)
 	}
-	// var dereferenceResult types.ResolutionResultI
+	// If it's not a metadata query let's just get the latest Resource.
+	// They are sorted in descending order by default
+	resource := resourceCollection.Resources[0]
 	dereferenceResult, _err := c.ResourceService.DereferenceResourceData(service.GetDid(), resource.ResourceId, service.GetContentType())
 	// _err = _err.(*types.IdentityError)
 	if _err != nil {

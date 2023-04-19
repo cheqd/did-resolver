@@ -122,6 +122,16 @@ func (e DereferencedResourceList) FilterByVersion(version string) DereferencedRe
 	return filteredResources
 }
 
+func (e DereferencedResourceList) FilterByChecksum(checksum string) DereferencedResourceList {
+	filteredResources := DereferencedResourceList{}
+	for _, r := range e {
+		if r.Checksum == checksum {
+			filteredResources = append(filteredResources, r)
+		}
+	}
+	return filteredResources
+}
+
 func (e DereferencedResourceList) FindBeforeTime(stime string) (string, error) {
 	search_time, err := utils.ParseFromStringTimeToGoTime(stime)
 	if err != nil {
@@ -154,11 +164,37 @@ func (e DereferencedResourceList) FindAllBeforeTime(stime string) (DereferencedR
 		return l, nil
 	}
 	for _, v := range versions {
-		if v.Created.Before(search_time) || v.Created.Equal(search_time.Add(time.Second)) {
+		if v.Created.Before(search_time) || v.Created.Equal(search_time) {
 			l = append(l, v)
 		}
 	}
 	return l, nil
+}
+
+func (e DereferencedResourceList) AreResourceNamesTheSame() bool {
+	if len(e) == 0 {
+		return true
+	}
+	firstName := e[0].Name
+	for _, r := range e {
+		if r.Name != firstName {
+			return false
+		}
+	}
+	return true
+}
+
+func (e DereferencedResourceList) AreResourceTypesTheSame() bool {
+	if len(e) == 0 {
+		return true
+	}
+	firstType := e[0].ResourceType
+	for _, r := range e {
+		if r.ResourceType != firstType {
+			return false
+		}
+	}
+	return true
 }
 
 func (dr DereferencedResourceList) Len() int {

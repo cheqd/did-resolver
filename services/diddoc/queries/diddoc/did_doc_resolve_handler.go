@@ -1,6 +1,8 @@
 package diddoc
 
 import (
+	"sort"
+
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/services/diddoc/queries"
 	"github.com/cheqd/did-resolver/types"
@@ -30,6 +32,9 @@ func (dd *DidDocResolveHandler) Handle(c services.ResolverContext, service servi
 	// If versionId or versionTime was not called, we will return the latest version
 	versionId := allVersions[0].VersionId
 	filteredResources := allVersions[0].Resources
+
+	// Filter in descending order
+	sort.Sort(filteredResources)
 
 	result, _err := c.DidDocService.Resolve(service.GetDid(), versionId, service.GetContentType())
 	if _err != nil {
