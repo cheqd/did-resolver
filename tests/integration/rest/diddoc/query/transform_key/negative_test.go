@@ -200,10 +200,9 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKey query parameter", 
 		"cannot get DIDDoc with combination of transformKey and resourceVersionTime query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s&resourceVersionTime=%s",
+				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s&resourceVersionTime=2006-01-02",
 				didWithEd25519VerificationKey2018Key,
 				types.Ed25519VerificationKey2020,
-				testconstants.NotEmptyTime.String(),
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
 			ExpectedResult: utils.DereferencingResult{
