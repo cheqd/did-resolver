@@ -23,7 +23,6 @@ var _ = DescribeTable("Positive: Get Service param", func(testCase utils.Positiv
 	client := resty.New()
 	client.SetRedirectPolicy(resty.NoRedirectPolicy())
 
-	fmt.Println(testCase.DidURL)
 	resp, err := client.R().
 		SetHeader("Accept", testCase.ResolutionType).
 		Get(testCase.DidURL)
