@@ -15,14 +15,3 @@ func (d *ResourceHelperHandler) CastToContent(service services.RequestServiceI, 
 	}
 	return rc, nil
 }
-
-// func (d *ResourceHelperHandler) CastToResult(resourceCollectionFiltered types.DereferencedResourceList) *types.ResourceDereferencing {
-// 	d.rd.ContentStream = &types.ResolutionDidDocMetadata{
-// 		Created:     d.rc.Created,
-// 		Updated:     d.rc.Updated,
-// 		Deactivated: d.rc.Deactivated,
-// 		VersionId:   d.rc.VersionId,
-// 		Resources:   resourceCollectionFiltered,
-// 	}
-// 	return d.rd
-// }

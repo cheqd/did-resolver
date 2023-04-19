@@ -1,6 +1,7 @@
 // go:build integration
 
 package query
+// ToDo uncomment it while working on integration tests
 
 // import (
 // 	"encoding/json"
@@ -60,21 +61,6 @@ package query
 // 				"http://localhost:8080/1.0/identifiers/%s?resourceName=%s",
 // 				testconstants.UUIDStyleTestnetDid,
 // 				strings.ReplaceAll(testconstants.ExistentResourceName, " ", "%20"),
-// 			),
-// 			ResolutionType:       testconstants.DefaultResolutionType,
-// 			EncodingType:         testconstants.DefaultEncodingType,
-// 			ExpectedEncodingType: "gzip",
-// 			ExpectedJSONPath:     "../../testdata/resource_data/resource.json",
-// 			ExpectedStatusCode:   http.StatusOK,
-// 		},
-// 	),
-// 	Entry(
-// 		"can get resource with resourceVersionTime",
-// 		utils.PositiveTestCase{
-// 			DidURL: fmt.Sprintf(
-// 				"http://localhost:8080/1.0/identifiers/%s?resourceVersionTime=%s",
-// 				testconstants.UUIDStyleTestnetDid,
-// 				testconstants.ExistentResourceVersionTimeAfter,
 // 			),
 // 			ResolutionType:       testconstants.DefaultResolutionType,
 // 			EncodingType:         testconstants.DefaultEncodingType,
@@ -193,24 +179,24 @@ package query
 // 	),
 // 	// ToDo uncomment this test after allowing versionId and versionTime in the same request
 
-// 	// Entry(
-// 	// 	"can get resource with combination versionId, versionTime, resourceId, resourceVersionTime, resourceName and resourceType (there is only one resource with such name)",
-// 	// 	utils.PositiveTestCase{
-// 	// 		DidURL: fmt.Sprintf(
-// 	// 			"http://localhost:8080/1.0/identifiers/%s?resourceName=%s&resourceType=%s&resourceId=%s&resourceVersionTime=%s&versionTime=%s&versionId=%s",
-// 	// 			testconstants.UUIDStyleTestnetDid,
-// 	// 			strings.ReplaceAll(testconstants.ExistentResourceName, " ", "%20"),
-// 	// 			testconstants.ExistentResourceType,
-// 	// 			testconstants.UUIDStyleTestnetDidResourceId,
-// 	// 			testconstants.ExistentResourceVersionTimeAfter,
-// 	// 			"2023-01-26T11:58:10.39Z",
-// 	// 			testconstants.UUIDStyleTestnetVersionId,
-// 	// 		),
-// 	// 		ResolutionType:       testconstants.DefaultResolutionType,
-// 	// 		EncodingType:         testconstants.DefaultEncodingType,
-// 	// 		ExpectedEncodingType: "gzip",
-// 	// 		ExpectedJSONPath:     "../../testdata/resource_data/resource.json",
-// 	// 		ExpectedStatusCode:   http.StatusOK,
-// 	// 	},
-// 	// ),
+// 	Entry(
+// 		"can get resource with combination versionId, versionTime, resourceId, resourceVersionTime, resourceName and resourceType (there is only one resource with such name)",
+// 		utils.PositiveTestCase{
+// 			DidURL: fmt.Sprintf(
+// 				"http://localhost:8080/1.0/identifiers/%s?resourceName=%s&resourceType=%s&resourceId=%s&resourceVersionTime=%s&versionTime=%s&versionId=%s",
+// 				testconstants.UUIDStyleTestnetDid,
+// 				strings.ReplaceAll(testconstants.ExistentResourceName, " ", "%20"),
+// 				testconstants.ExistentResourceType,
+// 				testconstants.UUIDStyleTestnetDidResourceId,
+// 				testconstants.ExistentResourceVersionTimeAfter,
+// 				"2023-01-26T11:58:10.39Z",
+// 				testconstants.UUIDStyleTestnetVersionId,
+// 			),
+// 			ResolutionType:       testconstants.DefaultResolutionType,
+// 			EncodingType:         testconstants.DefaultEncodingType,
+// 			ExpectedEncodingType: "gzip",
+// 			ExpectedJSONPath:     "../../testdata/resource_data/resource.json",
+// 			ExpectedStatusCode:   http.StatusOK,
+// 		},
+// 	),
 // )

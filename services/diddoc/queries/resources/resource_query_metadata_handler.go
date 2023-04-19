@@ -28,7 +28,6 @@ func (d *ResourceMetadataHandler) Handle(c services.ResolverContext, service ser
 	// They are sorted in descending order by default
 	resource := resourceCollection.Resources[0]
 	dereferenceResult, _err := c.ResourceService.DereferenceResourceData(service.GetDid(), resource.ResourceId, service.GetContentType())
-	// _err = _err.(*types.IdentityError)
 	if _err != nil {
 		return nil, _err
 	}
