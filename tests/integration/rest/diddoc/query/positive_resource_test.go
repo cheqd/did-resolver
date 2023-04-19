@@ -1,6 +1,7 @@
 // go:build integration
 
 package query
+
 // ToDo uncomment it while working on integration tests
 
 // import (
