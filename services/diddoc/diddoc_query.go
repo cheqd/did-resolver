@@ -36,15 +36,57 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 
 	versionId := dd.GetQueryParam(types.VersionId)
 	versionTime := dd.GetQueryParam(types.VersionTime)
+	transformKey := dd.GetQueryParam(types.TransformKey)
 	service := dd.GetQueryParam(types.ServiceQ)
 	relativeRef := dd.GetQueryParam(types.RelativeRef)
+	resourceCollectionId := dd.GetQueryParam(types.ResourceCollectionId)
 	resourceId := dd.GetQueryParam(types.ResourceId)
+	resourceName := dd.GetQueryParam(types.ResourceName)
 	resourceVersionTime := dd.GetQueryParam(types.ResourceVersionTime)
+	resourceVersion := dd.GetQueryParam(types.ResourceVersion)
+	resourceMetadata := dd.GetQueryParam(types.ResourceMetadata)
+	metadata := dd.GetQueryParam(types.Metadata)
 
 	// // Validation of query parameters
 	// if versionId != "" && versionTime != "" {
 	// 	return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
 	// }
+
+	if transformKey != "" && service != "" {
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
+	if transformKey != "" && relativeRef != "" {
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
+	if transformKey != "" && resourceCollectionId != "" {
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
+	if transformKey != "" && resourceId != "" {
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
+	if transformKey != "" && resourceName != "" {
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
+	if transformKey != "" && resourceVersion != "" {
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
+	if transformKey != "" && resourceVersionTime != "" {
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
+	if transformKey != "" && metadata != "" {
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
+	if transformKey != "" && resourceMetadata != "" {
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+	}
 
 	// relativeRef should be only with service parameter also
 	if relativeRef != "" && service == "" {
