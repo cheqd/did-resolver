@@ -203,7 +203,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKey query parameter", 
 				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s&resourceVersionTime=%s",
 				didWithEd25519VerificationKey2018Key,
 				types.Ed25519VerificationKey2020,
-				testconstants.NotEmptyTime,
+				testconstants.NotEmptyTime.String(),
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
 			ExpectedResult: utils.DereferencingResult{

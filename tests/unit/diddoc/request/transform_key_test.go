@@ -238,7 +238,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 				"/1.0/identifiers/%s?transformKey=%s&resourceVersionTime=%s",
 				testconstants.ValidDid,
 				types.Ed25519VerificationKey2018,
-				testconstants.NotEmptyTime,
+				testconstants.NotEmptyTime.String(),
 			),
 			resolutionType:     types.DIDJSONLD,
 			expectedResolution: &types.DidResolution{},
