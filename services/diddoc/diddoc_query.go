@@ -98,7 +98,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 		return types.NewInvalidDidUrlError(resourceId, dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
-	// If there is only 1 query parameter and it's resourceVersionTime, 
+	// If there is only 1 query parameter and it's resourceVersionTime,
 	// then we need to return RepresentationNotSupported error
 	if len(dd.Queries) == 1 && resourceVersionTime != "" {
 		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
