@@ -42,6 +42,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	resourceCollectionId := dd.GetQueryParam(types.ResourceCollectionId)
 	resourceId := dd.GetQueryParam(types.ResourceId)
 	resourceName := dd.GetQueryParam(types.ResourceName)
+	resourceType := dd.GetQueryParam(types.ResourceType)
 	resourceVersionTime := dd.GetQueryParam(types.ResourceVersionTime)
 	resourceVersion := dd.GetQueryParam(types.ResourceVersion)
 	resourceMetadata := dd.GetQueryParam(types.ResourceMetadata)
@@ -69,6 +70,10 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	}
 
 	if transformKey != "" && resourceName != "" {
+		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
+	if transformKey != "" && resourceType != "" {
 		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
