@@ -45,8 +45,8 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	relativeRef := dd.GetQueryParam(types.RelativeRef)
 	resourceId := dd.GetQueryParam(types.ResourceId)
 	resourceVersionTime := dd.GetQueryParam(types.ResourceVersionTime)
-	resourceMetadata := dd.GetQueryParam(types.ResourceMetadata)
 	metadata := dd.GetQueryParam(types.Metadata)
+	resourceMetadata := dd.GetQueryParam(types.ResourceMetadata)
 
 	// // Validation of query parameters
 	// if versionId != "" && versionTime != "" {

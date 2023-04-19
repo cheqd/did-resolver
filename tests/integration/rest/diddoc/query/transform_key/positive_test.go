@@ -164,7 +164,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKey query parameter", 
 	),
 
 	Entry(
-		"can get DIDDoc (JSONWebKey2020) with an existent old 16 characters INDY style DID and supported Ed25519VerificationKey2018 transformKey",
+		"can get DIDDoc (JSONWebKey2020) with an existent old 16 characters INDY style DID and supported Ed25519VerificationKey2018 transformKey query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s",
@@ -178,7 +178,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKey query parameter", 
 	),
 
 	Entry(
-		"can get DIDDoc (JSONWebKey2020) with an existent old 16 characters INDY style DID and supported Ed25519VerificationKey2020 transformKey",
+		"can get DIDDoc (JSONWebKey2020) with an existent old 16 characters INDY style DID and supported Ed25519VerificationKey2020 transformKey query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s",
@@ -192,7 +192,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKey query parameter", 
 	),
 
 	Entry(
-		"can get DIDDoc (JSONWebKey2020) with an existent old 16 characters INDY style DID and supported JSONWebKey2020 transformKey",
+		"can get DIDDoc (JSONWebKey2020) with an existent old 16 characters INDY style DID and supported JSONWebKey2020 transformKey query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s",
@@ -206,7 +206,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKey query parameter", 
 	),
 
 	Entry(
-		"can get DIDDoc (Ed25519VerificationKey2020) with an existent old 32 characters INDY style DID and supported Ed25519VerificationKey2018 transformKey",
+		"can get DIDDoc (Ed25519VerificationKey2020) with an existent old 32 characters INDY style DID and supported Ed25519VerificationKey2018 transformKey query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s",
@@ -220,7 +220,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKey query parameter", 
 	),
 
 	Entry(
-		"can get DIDDoc (Ed25519VerificationKey2020) with an existent old 32 characters INDY style DID and supported Ed25519VerificationKey2020 transformKey",
+		"can get DIDDoc (Ed25519VerificationKey2020) with an existent old 32 characters INDY style DID and supported Ed25519VerificationKey2020 transformKey query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s",
@@ -234,7 +234,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKey query parameter", 
 	),
 
 	Entry(
-		"can get DIDDoc (Ed25519VerificationKey2020) with an existent old 32 characters INDY style DID and supported JSONWebKey2020 transformKey",
+		"can get DIDDoc (Ed25519VerificationKey2020) with an existent old 32 characters INDY style DID and supported JSONWebKey2020 transformKey query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s",

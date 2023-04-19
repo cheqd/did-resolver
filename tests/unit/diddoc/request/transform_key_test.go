@@ -235,9 +235,10 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 		"cannot get DIDDoc with combination of transformKey and resourceVersionTime query parameters",
 		queriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?transformKey=%s&resourceVersionTime=someVersionTime",
+				"/1.0/identifiers/%s?transformKey=%s&resourceVersionTime=%s",
 				testconstants.ValidDid,
 				types.Ed25519VerificationKey2018,
+				testconstants.NotEmptyTime,
 			),
 			resolutionType:     types.DIDJSONLD,
 			expectedResolution: &types.DidResolution{},
