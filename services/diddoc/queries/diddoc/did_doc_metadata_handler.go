@@ -33,7 +33,7 @@ func (dd *DidDocMetadataHandler) Handle(c services.ResolverContext, service serv
 	// Cause allVersions are sorted in reverse order the latest version is the first element
 	versionId := allVersions[0].VersionId
 	filteredResources := allVersions[0].Resources
-	
+
 	// Filter in descending order
 	sort.Sort(filteredResources)
 	result, _err := c.DidDocService.GetDIDDocVersionsMetadata(service.GetDid(), versionId, service.GetContentType())

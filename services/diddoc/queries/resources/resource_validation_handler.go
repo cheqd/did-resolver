@@ -14,7 +14,7 @@ type ResourceValidationHandler struct {
 func (d *ResourceValidationHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
 	resourceName := service.GetQueryParam(types.ResourceName)
 	resourceType := service.GetQueryParam(types.ResourceType)
-	
+
 	// Cast to just list of resources
 	resourceCollection, err := d.CastToContent(service, response)
 	if err != nil {

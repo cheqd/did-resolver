@@ -16,7 +16,6 @@ func NewResourceDereferencingFromContent(did string, contentType ContentType, co
 	}
 
 	return &ResourceDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}
-	
 }
 
 // Interface implementation
