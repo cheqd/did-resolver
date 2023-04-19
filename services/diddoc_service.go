@@ -119,7 +119,7 @@ func (dds DIDDocService) GetAllDidDocVersionsMetadata(did string, contentType ty
 		context = types.ResolutionSchemaJSONLD
 	}
 
-	contentStream := types.NewDereferencedDidVersionsList(versions, resources)
+	contentStream := types.NewDereferencedDidVersionsList(did, versions, resources)
 	for i, version := range contentStream.Versions {
 		filtered := contentStream.Versions.GetResourcesBeforeNextVersion(version.VersionId)
 		contentStream.Versions[i].Resources = filtered
