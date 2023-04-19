@@ -164,6 +164,90 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKey query parameter", 
 	),
 
 	Entry(
+		"can get DIDDoc (JSONWebKey2020) with an existent old 16 characters INDY style DID and supported Ed25519VerificationKey2018 transformKey",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s",
+				testconstants.OldIndy16CharStyleTestnetDid,
+				string(types.Ed25519VerificationKey2018),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedStatusCode: http.StatusOK,
+			ExpectedJSONPath:   "../../../testdata/query/transform_key/diddoc_old_16_indy_jwk_2020_to_ed25519_2018.json",
+		},
+	),
+
+	Entry(
+		"can get DIDDoc (JSONWebKey2020) with an existent old 16 characters INDY style DID and supported Ed25519VerificationKey2020 transformKey",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s",
+				testconstants.OldIndy16CharStyleTestnetDid,
+				string(types.Ed25519VerificationKey2020),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedStatusCode: http.StatusOK,
+			ExpectedJSONPath:   "../../../testdata/query/transform_key/diddoc_old_16_indy_jwk_2020_to_ed25519_2020.json",
+		},
+	),
+
+	Entry(
+		"can get DIDDoc (JSONWebKey2020) with an existent old 16 characters INDY style DID and supported JSONWebKey2020 transformKey",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s",
+				testconstants.OldIndy16CharStyleTestnetDid,
+				string(types.JsonWebKey2020),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedStatusCode: http.StatusOK,
+			ExpectedJSONPath:   "../../../testdata/query/transform_key/diddoc_old_16_indy_jwk_2020_to_jwk_2020.json",
+		},
+	),
+
+	Entry(
+		"can get DIDDoc (Ed25519VerificationKey2020) with an existent old 32 characters INDY style DID and supported Ed25519VerificationKey2018 transformKey",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s",
+				testconstants.OldIndy32CharStyleTestnetDid,
+				string(types.Ed25519VerificationKey2018),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedStatusCode: http.StatusOK,
+			ExpectedJSONPath:   "../../../testdata/query/transform_key/diddoc_old_32_indy_ed255519_2020_to_ed25519_2018.json",
+		},
+	),
+
+	Entry(
+		"can get DIDDoc (Ed25519VerificationKey2020) with an existent old 32 characters INDY style DID and supported Ed25519VerificationKey2020 transformKey",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s",
+				testconstants.OldIndy32CharStyleTestnetDid,
+				string(types.Ed25519VerificationKey2020),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedStatusCode: http.StatusOK,
+			ExpectedJSONPath:   "../../../testdata/query/transform_key/diddoc_old_32_indy_ed255519_2020_to_ed25519_2020.json",
+		},
+	),
+
+	Entry(
+		"can get DIDDoc (Ed25519VerificationKey2020) with an existent old 32 characters INDY style DID and supported JSONWebKey2020 transformKey",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s",
+				testconstants.OldIndy32CharStyleTestnetDid,
+				string(types.JsonWebKey2020),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedStatusCode: http.StatusOK,
+			ExpectedJSONPath:   "../../../testdata/query/transform_key/diddoc_old_32_indy_ed255519_2020_to_jwk_2020.json",
+		},
+	),
+
+	Entry(
 		"can get DIDDoc (Ed25519VerificationKey2018) with supported Ed25519VerificationKey2020 transformKey and DIDDoc versionId queries",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
