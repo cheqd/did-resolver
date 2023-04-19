@@ -43,12 +43,8 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	transformKey := dd.GetQueryParam(types.TransformKey)
 	service := dd.GetQueryParam(types.ServiceQ)
 	relativeRef := dd.GetQueryParam(types.RelativeRef)
-	resourceCollectionId := dd.GetQueryParam(types.ResourceCollectionId)
 	resourceId := dd.GetQueryParam(types.ResourceId)
-	resourceName := dd.GetQueryParam(types.ResourceName)
-	resourceType := dd.GetQueryParam(types.ResourceType)
 	resourceVersionTime := dd.GetQueryParam(types.ResourceVersionTime)
-	resourceVersion := dd.GetQueryParam(types.ResourceVersion)
 	resourceMetadata := dd.GetQueryParam(types.ResourceMetadata)
 	metadata := dd.GetQueryParam(types.Metadata)
 
@@ -57,43 +53,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	// 	return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
 	// }
 
-	if transformKey != "" && service != "" {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
-	}
-
-	if transformKey != "" && relativeRef != "" {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
-	}
-
-	if transformKey != "" && resourceCollectionId != "" {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
-	}
-
-	if transformKey != "" && resourceId != "" {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
-	}
-
-	if transformKey != "" && resourceName != "" {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
-	}
-
-	if transformKey != "" && resourceType != "" {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
-	}
-
-	if transformKey != "" && resourceVersion != "" {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
-	}
-
-	if transformKey != "" && resourceVersionTime != "" {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
-	}
-
-	if transformKey != "" && metadata != "" {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
-	}
-
-	if transformKey != "" && resourceMetadata != "" {
+	if transformKey != "" && !types.IsSupportedWithCombinationTransformKeyQuery(dd.Queries) {
 		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
