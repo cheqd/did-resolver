@@ -1,6 +1,6 @@
 //go:build integration
 
-package diddoc
+package diddoc_test
 
 import (
 	"encoding/json"
