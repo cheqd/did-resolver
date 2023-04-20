@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/cheqd/did-resolver/services"
+	"github.com/cheqd/did-resolver/types"
 )
 
 type FragmentDIDDocRequestService struct {
@@ -16,6 +17,10 @@ func (dd *FragmentDIDDocRequestService) Setup(c services.ResolverContext) error 
 }
 
 func (dd *FragmentDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
+	// We not allow query here
+	if len(dd.Queries) != 0 {
+		return types.NewInvalidDidUrlError(dd.GetDid(), dd.RequestedContentType, nil, dd.IsDereferencing)
+	}
 	return nil
 }
 

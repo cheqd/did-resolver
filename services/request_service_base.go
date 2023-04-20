@@ -47,7 +47,7 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 	// Get Accept header
 	dd.RequestedContentType = GetContentType(c.Request().Header.Get(echo.HeaderAccept))
 	if !dd.GetContentType().IsSupported() {
-		return types.NewRepresentationNotSupportedError(dd.Did, types.JSON, nil, dd.IsDereferencing)
+		return types.NewRepresentationNotSupportedError(dd.GetDid(), types.JSON, nil, dd.IsDereferencing)
 	}
 
 	// Get DID from request
@@ -67,7 +67,7 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 		return err
 	}
 	if flag != nil {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 	dd.Queries = queries
 
@@ -75,23 +75,23 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 }
 
 func (dd BaseRequestService) BasicValidation(c ResolverContext) error {
-	didMethod, _, _, _ := utils.TrySplitDID(dd.Did)
+	didMethod, _, _, _ := utils.TrySplitDID(dd.GetDid())
 	if didMethod != types.DID_METHOD {
-		return types.NewMethodNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewMethodNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
-	err := utils.ValidateDID(dd.Did, "", c.LedgerService.GetNamespaces())
+	err := utils.ValidateDID(dd.GetDid(), "", c.LedgerService.GetNamespaces())
 	if err != nil {
-		return types.NewInvalidDidError(dd.Did, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewInvalidDidError(dd.GetDid(), dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
 	return nil
 }
 
 func (dd *BaseRequestService) IsRedirectNeeded(c ResolverContext) bool {
-	if !utils.IsValidDID(dd.Did, "", c.LedgerService.GetNamespaces()) {
-		err := utils.ValidateDID(dd.Did, "", c.LedgerService.GetNamespaces())
-		_, _, identifier, _ := utils.TrySplitDID(dd.Did)
+	if !utils.IsValidDID(dd.GetDid(), "", c.LedgerService.GetNamespaces()) {
+		err := utils.ValidateDID(dd.GetDid(), "", c.LedgerService.GetNamespaces())
+		_, _, identifier, _ := utils.TrySplitDID(dd.GetDid())
 		if err.Error() == types.NewInvalidIdentifierError().Error() && utils.IsMigrationNeeded(identifier) {
 			return true
 		}
@@ -100,7 +100,7 @@ func (dd *BaseRequestService) IsRedirectNeeded(c ResolverContext) bool {
 }
 
 func (dd BaseRequestService) Redirect(c ResolverContext) error {
-	migratedDid := migrations.MigrateDID(dd.Did)
+	migratedDid := migrations.MigrateDID(dd.GetDid())
 	queryRaw, _ := PrepareQueries(c)
 
 	path := types.RESOLVER_PATH + migratedDid + utils.GetQuery(queryRaw) + utils.GetFragment(dd.Fragment)
@@ -108,7 +108,7 @@ func (dd BaseRequestService) Redirect(c ResolverContext) error {
 }
 
 func (dd *BaseRequestService) Query(c ResolverContext) error {
-	result, err := c.DidDocService.Resolve(dd.Did, dd.Version, dd.GetContentType())
+	result, err := c.DidDocService.Resolve(dd.GetDid(), dd.Version, dd.GetContentType())
 	if err != nil {
 		err.IsDereferencing = false
 		return err
