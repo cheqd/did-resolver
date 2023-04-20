@@ -30,11 +30,11 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 
 	diff := types.AllSupportedQueries.DiffWithUrlValues(dd.Queries)
 	if len(diff) > 0 {
-		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	if dd.AreQueryValuesEmpty(c) {
-		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	versionId := dd.GetQueryParam(types.VersionId)
@@ -75,7 +75,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	if versionTime != "" {
 		_, err := utils.ParseFromStringTimeToGoTime(versionTime)
 		if err != nil {
-			return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), err, dd.IsDereferencing)
+			return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), err, dd.IsDereferencing)
 		}
 	}
 
@@ -83,7 +83,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	if resourceVersionTime != "" {
 		_, err := utils.ParseFromStringTimeToGoTime(resourceVersionTime)
 		if err != nil {
-			return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), err, dd.IsDereferencing)
+			return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), err, dd.IsDereferencing)
 		}
 	}
 
