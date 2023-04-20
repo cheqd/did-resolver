@@ -112,7 +112,7 @@ func (e DereferencedResourceList) FilterByResourceName(resourceName string) Dere
 	return filteredResources
 }
 
-func (e DereferencedResourceList) FilterByVersion(version string) DereferencedResourceList {
+func (e DereferencedResourceList) FilterByResourceVersion(version string) DereferencedResourceList {
 	filteredResources := DereferencedResourceList{}
 	for _, r := range e {
 		if r.Version == version {
