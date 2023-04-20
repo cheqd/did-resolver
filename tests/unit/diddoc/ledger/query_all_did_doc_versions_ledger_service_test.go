@@ -18,7 +18,7 @@ type queryDIDDocVersionsTestCase struct {
 
 var _ = DescribeTable("Test QueryAllDidDocVersionsMetadata method", func(testCase queryDIDDocVersionsTestCase) {
 	didDocMetadata, err := utils.MockLedger.QueryAllDidDocVersionsMetadata(testCase.did)
-	didDocVersions := types.NewDereferencedDidVersionsList(didDocMetadata)
+	didDocVersions := types.NewDereferencedDidVersionsList(testCase.did, didDocMetadata, nil)
 	if err != nil {
 		Expect(testCase.expectedError.Code).To(Equal(err.Code))
 		Expect(testCase.expectedError.Message).To(Equal(err.Message))
@@ -35,6 +35,7 @@ var _ = DescribeTable("Test QueryAllDidDocVersionsMetadata method", func(testCas
 			expectedDidDocVersions: &types.DereferencedDidVersionsList{
 				Versions: []types.ResolutionDidDocMetadata{
 					{
+						Created:   &testconstants.ValidCreated,
 						VersionId: testconstants.ValidMetadata.VersionId,
 					},
 				},

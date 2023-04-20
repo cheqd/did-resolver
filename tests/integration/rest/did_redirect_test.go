@@ -198,4 +198,28 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 			ExpectedStatusCode: http.StatusMovedPermanently,
 		},
 	),
+	Entry(
+		"can redirect when it try to get resource by query params. 16 symbols DID",
+		PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?resourceId=%s",
+				testconstants.OldIndy16CharStyleTestnetDid,
+				testconstants.ValidIdentifier,
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedStatusCode: http.StatusMovedPermanently,
+		},
+	),
+	Entry(
+		"can redirect when it try to get resource by query params. 32 symbols DID",
+		PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?resourceId=%s",
+				testconstants.OldIndy32CharStyleTestnetDid,
+				testconstants.ValidIdentifier,
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedStatusCode: http.StatusMovedPermanently,
+		},
+	),
 )

@@ -5,6 +5,8 @@ package unit
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
+	"time"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
@@ -34,7 +36,7 @@ func SetupEmptyContext(request *http.Request, resolutionType types.ContentType, 
 
 	rec := httptest.NewRecorder()
 	context := e.NewContext(request, rec)
-	e.Router().Find("GET", request.RequestURI, context)
+	e.Router().Find("GET", strings.Split(request.RequestURI, "?")[0], context)
 	rc := services.ResolverContext{
 		Context:         context,
 		LedgerService:   ledgerService,
@@ -106,4 +108,13 @@ func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resourceTyp
 
 func (ls MockLedgerService) GetNamespaces() []string {
 	return []string{"testnet", "mainnet"}
+}
+
+func MustParseDate(sdate string) time.Time {
+	date, err := time.Parse(time.RFC3339, sdate)
+	if err != nil {
+		panic(err)
+	}
+
+	return date
 }

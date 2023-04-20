@@ -16,6 +16,7 @@
                 "resourceId": "9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
                 "resourceName": "Demo Resource",
                 "resourceType": "String",
+                "resourceVersion" : "",
                 "mediaType": "application/json",
                 "created": "2023-01-25T12:08:39.633307395Z",
                 "checksum": "e1dbc03b50bdb995961dc8843df6539b79d03bf49787ed6462189ee97d27eaf3",

@@ -624,6 +624,10 @@ const docTemplate = `{
                 "resourceURI": {
                     "type": "string",
                     "example": "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47/resources/398cee0a-efac-4643-9f4c-74c48c72a14b"
+                },
+                "resourceVersion": {
+                    "type": "string",
+                    "example": "1"
                 }
             }
         },

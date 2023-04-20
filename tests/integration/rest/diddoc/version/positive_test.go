@@ -41,7 +41,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s",
 				testconstants.IndyStyleMainnetDid,
-				testconstants.IndyStyleMainnetDidIdentifier,
+				testconstants.IndyStyleMainnetVersionId,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
 			EncodingType:         testconstants.DefaultEncodingType,
@@ -57,7 +57,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s",
 				testconstants.IndyStyleTestnetDid,
-				testconstants.IndyStyleTestnetDidIdentifier,
+				testconstants.IndyStyleTestnetVersionId,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
 			EncodingType:         testconstants.DefaultEncodingType,
@@ -73,7 +73,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s",
 				testconstants.UUIDStyleMainnetDid,
-				testconstants.UUIDStyleMainnetDidIdentifier,
+				testconstants.UUIDStyleMainnetVersionId,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
 			EncodingType:         testconstants.DefaultEncodingType,
@@ -89,7 +89,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s",
 				testconstants.UUIDStyleTestnetDid,
-				testconstants.UUIDStyleTestnetDidIdentifier,
+				testconstants.UUIDStyleTestnetVersionId,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
 			EncodingType:         testconstants.DefaultEncodingType,
@@ -137,7 +137,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s",
 				testconstants.UUIDStyleTestnetDid,
-				testconstants.UUIDStyleTestnetDidIdentifier,
+				testconstants.UUIDStyleTestnetVersionId,
 			),
 			ResolutionType:       string(types.DIDJSON),
 			EncodingType:         testconstants.DefaultEncodingType,
@@ -153,7 +153,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s",
 				testconstants.UUIDStyleTestnetDid,
-				testconstants.UUIDStyleTestnetDidIdentifier,
+				testconstants.UUIDStyleTestnetVersionId,
 			),
 			ResolutionType:       string(types.DIDJSONLD),
 			EncodingType:         testconstants.DefaultEncodingType,
@@ -169,7 +169,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s",
 				testconstants.UUIDStyleTestnetDid,
-				testconstants.UUIDStyleTestnetDidIdentifier,
+				testconstants.UUIDStyleTestnetVersionId,
 			),
 			ResolutionType:       string(types.JSONLD),
 			EncodingType:         testconstants.DefaultEncodingType,
@@ -185,7 +185,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s",
 				testconstants.UUIDStyleTestnetDid,
-				testconstants.UUIDStyleTestnetDidIdentifier,
+				testconstants.UUIDStyleTestnetVersionId,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
 			EncodingType:         "gzip",
@@ -201,7 +201,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s/version/%s",
 				testconstants.UUIDStyleTestnetDid,
-				testconstants.UUIDStyleTestnetDidIdentifier,
+				testconstants.UUIDStyleTestnetVersionId,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
 			EncodingType:       testconstants.NotSupportedEncodingType,

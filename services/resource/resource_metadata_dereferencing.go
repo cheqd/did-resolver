@@ -25,7 +25,7 @@ func (dr *ResourceMetadataDereferencingService) SpecificPrepare(c services.Resol
 }
 
 func (dr ResourceMetadataDereferencingService) Redirect(c services.ResolverContext) error {
-	migratedDid := migrations.MigrateDID(dr.Did)
+	migratedDid := migrations.MigrateDID(dr.GetDid())
 
 	path := types.RESOLVER_PATH + migratedDid + types.RESOURCE_PATH + dr.ResourceId + "/metadata"
 	return c.Redirect(http.StatusMovedPermanently, path)
@@ -35,15 +35,19 @@ func (dr *ResourceMetadataDereferencingService) SpecificValidation(c services.Re
 	if !utils.IsValidUUID(dr.ResourceId) {
 		return types.NewInvalidDidUrlError(dr.ResourceId, dr.RequestedContentType, nil, dr.IsDereferencing)
 	}
+
+	// We not allow query here
+	if len(dr.Queries) != 0 {
+		return types.NewInvalidDidUrlError(dr.GetDid(), dr.RequestedContentType, nil, dr.IsDereferencing)
+	}
 	return nil
 }
 
 func (dr *ResourceMetadataDereferencingService) Query(c services.ResolverContext) error {
-	result, err := c.ResourceService.DereferenceResourceMetadata(dr.Did, dr.ResourceId, dr.RequestedContentType)
+	result, err := c.ResourceService.DereferenceResourceMetadata(dr.GetDid(), dr.ResourceId, dr.GetContentType())
 	if err != nil {
 		err.IsDereferencing = dr.IsDereferencing
 		return err
 	}
-	dr.Result = result
-	return nil
+	return dr.SetResponse(result)
 }

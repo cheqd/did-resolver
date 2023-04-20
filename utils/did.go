@@ -4,12 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-
-	"github.com/cheqd/did-resolver/types"
 )
 
 func MustSplitDID(did string) (method string, namespace string, id string) {
-	method, namespace, id, err := types.TrySplitDID(did)
+	method, namespace, id, err := TrySplitDID(did)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -28,7 +26,7 @@ func JoinDID(method, namespace, id string) string {
 
 // ValidateDID checks method and allowed namespaces only when the corresponding parameters are specified.
 func ValidateDID(did string, method string, allowedNamespaces []string) error {
-	sMethod, sNamespace, sUniqueID, err := types.TrySplitDID(did)
+	sMethod, sNamespace, sUniqueID, err := TrySplitDID(did)
 	if err != nil {
 		return err
 	}
@@ -39,7 +37,7 @@ func ValidateDID(did string, method string, allowedNamespaces []string) error {
 	}
 
 	// check namespaces
-	if !types.DidNamespaceRegexp.MatchString(sNamespace) {
+	if !DidNamespaceRegexp.MatchString(sNamespace) {
 		return errors.New("invalid did namespace")
 	}
 

@@ -36,7 +36,7 @@ func (rds ResourceService) DereferenceResourceMetadata(did string, resourceId st
 		context = types.ResolutionSchemaJSONLD
 	}
 
-	contentStream := types.NewDereferencedResourceList(did, []*resourceTypes.Metadata{resource.Metadata})
+	contentStream := types.NewDereferencedResourceListStruct(did, []*resourceTypes.Metadata{resource.Metadata})
 
 	return &types.ResourceDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
