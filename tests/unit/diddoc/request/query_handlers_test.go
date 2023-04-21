@@ -151,7 +151,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 			didURL:             fmt.Sprintf("/1.0/identifiers/%s?unsupportedQuery=%s", testconstants.ValidDid, "blabla"),
 			resolutionType:     types.DIDJSONLD,
 			expectedResolution: &types.DidResolution{},
-			expectedError:      types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:      types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 )

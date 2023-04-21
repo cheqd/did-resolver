@@ -24,7 +24,7 @@ func (d *ResourceNameHandler) Handle(c services.ResolverContext, service service
 		return nil, err
 	}
 
-	// Filter the list of metadatas by the resourceCollectionId
+	// Filter the list of metadata by the resourceCollectionId
 	resourceCollectionFiltered := resourceCollection.Resources.FilterByResourceName(resourceName)
 	if len(resourceCollectionFiltered) == 0 {
 		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)

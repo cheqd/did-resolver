@@ -3,7 +3,6 @@ package diddoc
 import (
 	"net/http"
 	"net/url"
-	"strings"
 
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/services/diddoc/queries"
@@ -24,18 +23,18 @@ func (dd *QueryDIDDocRequestService) Setup(c services.ResolverContext) error {
 }
 
 func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
-	_, err := url.QueryUnescape(dd.Did)
+	_, err := url.QueryUnescape(dd.GetDid())
 	if err != nil {
-		return types.NewInvalidDidUrlError(dd.Did, dd.RequestedContentType, err, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(dd.GetDid(), dd.RequestedContentType, err, dd.IsDereferencing)
 	}
 
 	diff := types.AllSupportedQueries.DiffWithUrlValues(dd.Queries)
 	if len(diff) > 0 {
-		return types.NewRepresentationNotSupportedError("Queries from list: "+strings.Join(diff, ","), dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	if dd.AreQueryValuesEmpty(c) {
-		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	versionId := dd.GetQueryParam(types.VersionId)
@@ -48,11 +47,6 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	metadata := dd.GetQueryParam(types.Metadata)
 	resourceMetadata := dd.GetQueryParam(types.ResourceMetadata)
 
-	// // Validation of query parameters
-	// if versionId != "" && versionTime != "" {
-	// 	return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
-	// }
-
 	if transformKey != "" && !types.IsSupportedWithCombinationTransformKeyQuery(dd.Queries) {
 		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
 	}
@@ -64,29 +58,29 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 
 	// service query is permitted only for diddoc queries
 	if service != "" && dd.AreResourceQueriesPlaced(c) {
-		return types.NewRepresentationNotSupportedError(service, dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
-	// metadata query is permitted only for diddoc queries
-	if metadata != "" && dd.AreResourceQueriesPlaced(c) {
-		return types.NewRepresentationNotSupportedError(service, dd.GetContentType(), nil, dd.IsDereferencing)
+	// metadata query is permitted only for diddoc queries and for resource queries if resourceMetadata is placed
+	if metadata != "" && (dd.AreResourceQueriesPlaced(c) && resourceMetadata == "") {
+		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	// value if metadata can be only true or false
 	if metadata != "" && metadata != "true" && metadata != "false" {
-		return types.NewRepresentationNotSupportedError(metadata, dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	// value if resourceMetadata can be only true or false
-	if resourceMetadata != "" && resourceMetadata != "true" && resourceMetadata == "false" {
-		return types.NewRepresentationNotSupportedError(resourceMetadata, dd.GetContentType(), nil, dd.IsDereferencing)
+	if resourceMetadata != "" && resourceMetadata != "true" && resourceMetadata != "false" {
+		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	// Validate time format
 	if versionTime != "" {
 		_, err := utils.ParseFromStringTimeToGoTime(versionTime)
 		if err != nil {
-			return types.NewRepresentationNotSupportedError(versionTime, dd.GetContentType(), err, dd.IsDereferencing)
+			return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), err, dd.IsDereferencing)
 		}
 	}
 
@@ -94,18 +88,18 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	if resourceVersionTime != "" {
 		_, err := utils.ParseFromStringTimeToGoTime(resourceVersionTime)
 		if err != nil {
-			return types.NewRepresentationNotSupportedError(resourceVersionTime, dd.GetContentType(), err, dd.IsDereferencing)
+			return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), err, dd.IsDereferencing)
 		}
 	}
 
 	// Validate that versionId is UUID
 	if versionId != "" && !utils.IsValidUUID(versionId) {
-		return types.NewInvalidDidUrlError(versionId, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(dd.GetDid(), dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
 	// Validate that resourceId is UUID
 	if resourceId != "" && !utils.IsValidUUID(resourceId) {
-		return types.NewInvalidDidUrlError(resourceId, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(dd.GetDid(), dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
 	// If there is only 1 query parameter and it's resourceVersionTime,
@@ -176,7 +170,7 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHandlers(startHandler qu
 	// or
 	// - versionIdHandler
 	// After that we can find for service field if it's set.
-	// didQueryHandler -> versionIdHandler -> versionTimeHandler -> transformKeyHandler -> serviceHandler -> stopHandler
+	// VersionIdHandler -> VersionTimeHandler -> DidDocResolveHandler -> TransformKeyHandler -> DidDocMetadataHandler -> ServiceHandler -> RelativeRefHandler
 	relativeRefHandler := diddocQueries.RelativeRefHandler{}
 	serviceHandler := diddocQueries.ServiceHandler{}
 	versionIdHandler := diddocQueries.VersionIdHandler{}
@@ -249,9 +243,9 @@ func (dd *QueryDIDDocRequestService) RegisterResourceQueryHandlers(startHandler 
 
 	// Resource handlers
 	// Chain would be:
-	// resourceIdHandler -> resourceCollectionIdHandler ->
+	// resourceQueryHandler -> resourceIdHandler -> resourceCollectionIdHandler ->
 	// -> resourceNameHandler -> resourceTypeHandler -> resourceVersionHandler ->
-	// -> resourceVersionTimeHandler -> resourceValidationHandler -> resourceMetadataHandler -> stopHandler
+	// -> resourceVersionTimeHandler -> resourceChecksumHandler -> resourceValidationHandler -> resourceMetadataHandler -> stopHandler
 	err = resourceIdHandler.SetNext(c, &resourceCollectionIdHandler)
 	if err != nil {
 		return nil, err
@@ -301,7 +295,7 @@ func (dd *QueryDIDDocRequestService) Query(c services.ResolverContext) error {
 		return err
 	}
 	if result == nil {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 	return dd.SetResponse(result)
 }
