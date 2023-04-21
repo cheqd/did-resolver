@@ -37,16 +37,15 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKey query parameter", 
 		"cannot get DIDDoc with not existent DID and not supported transformKey query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s",
+				"http://localhost:8080/1.0/identifiers/%s?transformKey=EDDSA",
 				testconstants.NotExistentTestnetDid,
-				testconstants.NotSupportedTransformKeyType,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "notFound",
+					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.NotExistentTestnetDid,
 						MethodSpecificId: testconstants.NotExistentIdentifier,
@@ -56,7 +55,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKey query parameter", 
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: types.NotFoundHttpCode,
+			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode,
 		},
 	),
 
@@ -64,9 +63,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKey query parameter", 
 		"cannot get DIDDoc with not supported transformKey query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s",
+				"http://localhost:8080/1.0/identifiers/%s?transformKey=EDDSA",
 				didWithEd25519VerificationKey2018Key,
-				testconstants.NotSupportedTransformKeyType,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
 			ExpectedResult: utils.DereferencingResult{

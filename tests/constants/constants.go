@@ -10,10 +10,9 @@ import (
 )
 
 var (
-	DefaultResolutionType        = "*/*"
-	DefaultEncodingType          = "gzip, deflate, br"
-	NotSupportedEncodingType     = "deflate, br"
-	NotSupportedTransformKeyType = "EDDSA"
+	DefaultResolutionType    = "*/*"
+	DefaultEncodingType      = "gzip, deflate, br"
+	NotSupportedEncodingType = "deflate, br"
 )
 
 var (

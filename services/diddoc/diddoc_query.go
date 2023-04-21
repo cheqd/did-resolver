@@ -39,7 +39,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 
 	versionId := dd.GetQueryParam(types.VersionId)
 	versionTime := dd.GetQueryParam(types.VersionTime)
-	transformKey := dd.GetQueryParam(types.TransformKey)
+	transformKey := types.TransformKeyType(dd.GetQueryParam(types.TransformKey))
 	service := dd.GetQueryParam(types.ServiceQ)
 	relativeRef := dd.GetQueryParam(types.RelativeRef)
 	resourceId := dd.GetQueryParam(types.ResourceId)
@@ -47,7 +47,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	metadata := dd.GetQueryParam(types.Metadata)
 	resourceMetadata := dd.GetQueryParam(types.ResourceMetadata)
 
-	if transformKey != "" && !types.IsSupportedWithCombinationTransformKeyQuery(dd.Queries) {
+	if string(transformKey) != "" && (!transformKey.IsSupported() || !types.IsSupportedWithCombinationTransformKeyQuery(dd.Queries)) {
 		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 

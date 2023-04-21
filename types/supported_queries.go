@@ -58,23 +58,20 @@ var ResourceSupportedQueries = SupportedQueriesT{
 
 var AllSupportedQueries = DidSupportedQueries.Plus(ResourceSupportedQueries)
 
-var NotSupportedQueriesWithTransformKey = []string{
+var SupportedQueriesWithTransformKey = []string{
+	VersionId,
+	VersionTime,
 	ServiceQ,
 	RelativeRef,
-	Metadata,
-	ResourceId,
-	ResourceCollectionId,
-	ResourceName,
-	ResourceMetadata,
-	ResourceType,
-	ResourceVersion,
-	ResourceVersionTime,
-	ResourceChecksum,
 }
 
 func IsSupportedWithCombinationTransformKeyQuery(values url.Values) bool {
 	for query := range values {
-		if utils.Contains(NotSupportedQueriesWithTransformKey, query) {
+		if query == TransformKey {
+			continue
+		}
+
+		if !utils.Contains(SupportedQueriesWithTransformKey, query) {
 			return false
 		}
 	}
