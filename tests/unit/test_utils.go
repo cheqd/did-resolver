@@ -55,26 +55,37 @@ type RedirectDIDTestCase struct {
 	ExpectedError          error
 }
 
-var MockLedger = NewMockLedgerService(&testconstants.ValidDIDDoc, &testconstants.ValidMetadata, &testconstants.ValidResource)
+var MockLedger = NewMockLedgerService(
+	&testconstants.ValidDIDDoc,
+	[]*didTypes.Metadata{&testconstants.ValidMetadata},
+	[]resourceTypes.ResourceWithMetadata(testconstants.ValidResource),
+)
 
 type MockLedgerService struct {
-	Did      *didTypes.DidDoc
-	Metadata *didTypes.Metadata
-	Resource *resourceTypes.ResourceWithMetadata
+	Did       *didTypes.DidDoc
+	Metadata  []*didTypes.Metadata
+	Resources []resourceTypes.ResourceWithMetadata
 }
 
-func NewMockLedgerService(did *didTypes.DidDoc, metadata *didTypes.Metadata, resource *resourceTypes.ResourceWithMetadata) MockLedgerService {
+func NewMockLedgerService(did *didTypes.DidDoc, metadata []*didTypes.Metadata, resources []resourceTypes.ResourceWithMetadata) MockLedgerService {
 	return MockLedgerService{
-		Did:      did,
-		Metadata: metadata,
-		Resource: resource,
+		Did:       did,
+		Metadata:  metadata,
+		Resources: resources,
 	}
 }
 
 // TODO: add more unit tests for testing QueryDIDDoc method.
 func (ls MockLedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
 	if ls.Did.Id == did {
-		return &didTypes.DidDocWithMetadata{DidDoc: ls.Did, Metadata: ls.Metadata}, nil
+		if version == "" {
+			return &didTypes.DidDocWithMetadata{DidDoc: ls.Did, Metadata: ls.Metadata[len(ls.Metadata) -1]}, nil
+		}
+		for _, metadata := range ls.Metadata {
+			if metadata.VersionId == version {
+				return &didTypes.DidDocWithMetadata{DidDoc: ls.Did, Metadata: metadata}, nil
+			}
+		}
 	}
 
 	return nil, types.NewNotFoundError(did, types.JSON, nil, true)
@@ -83,27 +94,41 @@ func (ls MockLedgerService) QueryDIDDoc(did string, version string) (*didTypes.D
 // TODO: add unit tests for testing QueryAllDidDocVersionsMetadata method.
 func (ls MockLedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError) {
 	if ls.Did.Id == did {
-		return []*didTypes.Metadata{ls.Metadata}, nil
+		return ls.Metadata, nil
 	}
 
 	return nil, types.NewNotFoundError(did, types.JSON, nil, true)
 }
 
 func (ls MockLedgerService) QueryResource(did string, resourceId string) (*resourceTypes.ResourceWithMetadata, *types.IdentityError) {
-	if ls.Did.Id != did || ls.Resource.Metadata == nil || ls.Resource.Metadata.Id != resourceId {
+	if ls.Did.Id != did {
 		return nil, types.NewNotFoundError(did, types.JSON, nil, true)
 	}
 
-	return ls.Resource, nil
+	for _, resource := range ls.Resources {
+		if resource.Metadata == nil {
+			return nil, types.NewNotFoundError(did, types.JSON, nil, true)
+		}
+		if resource.Metadata.Id == resourceId {
+			return &resource, nil
+		}
+	}
+
+	return &resourceTypes.ResourceWithMetadata{}, types.NewNotFoundError(did, types.JSON, nil, true)
 }
 
 // TODO: add unit tests for testing QueryCollectionResources method.
 func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resourceTypes.Metadata, *types.IdentityError) {
-	if ls.Did.Id != did || ls.Resource.Metadata == nil {
+	if ls.Did.Id != did {
 		return []*resourceTypes.Metadata{}, types.NewNotFoundError(did, types.JSON, nil, true)
 	}
 
-	return []*resourceTypes.Metadata{ls.Resource.Metadata}, nil
+	var metadata_list = make([]*resourceTypes.Metadata, len(ls.Resources))
+	for i, resource := range ls.Resources {
+		metadata_list[i] = resource.Metadata
+	}
+
+	return metadata_list, nil
 }
 
 func (ls MockLedgerService) GetNamespaces() []string {

@@ -217,3 +217,7 @@ type DereferencedResourceData []byte
 func (e *DereferencedResourceData) AddContext(newProtocol string) {}
 func (e *DereferencedResourceData) RemoveContext()                {}
 func (e *DereferencedResourceData) GetBytes() []byte              { return []byte(*e) }
+
+func NewDereferencedResourceData(data []byte) *DereferencedResourceData {
+	return (*DereferencedResourceData)(&data)
+}

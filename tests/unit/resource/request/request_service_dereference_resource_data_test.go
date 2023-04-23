@@ -28,7 +28,7 @@ var _ = DescribeTable("Test ResourceDataEchoHandler function", func(testCase res
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, utils.MockLedger)
 
-	expectedContentType := types.ContentType(testconstants.ValidResource.Metadata.MediaType)
+	expectedContentType := types.ContentType(testconstants.ValidResource[0].Metadata.MediaType)
 
 	err := resourceServices.ResourceDataEchoHandler(context)
 	if testCase.expectedError != nil {

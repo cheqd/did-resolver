@@ -69,7 +69,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 				Did: &testconstants.ValidDIDDocResolution,
 				Metadata: types.NewResolutionDidDocMetadata(
 					testconstants.ExistentDid, &testconstants.ValidMetadata,
-					[]*resourceTypes.Metadata{testconstants.ValidResource.Metadata},
+					[]*resourceTypes.Metadata{testconstants.ValidResource[0].Metadata},
 				),
 			},
 			expectedError: nil,

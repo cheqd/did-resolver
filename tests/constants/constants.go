@@ -140,7 +140,7 @@ var (
 	}
 	NotEmptyTime     = NotEmptyTimestamp.AsTime()
 	ValidCreated, _  = time.Parse(time.RFC3339, "2021-08-23T09:00:00Z")
-	CreatedAfter, _  = time.Parse(time.RFC3339, "2021-08-23T09:00:01Z")
+	CreatedAfter, _  = time.Parse(time.RFC3339, "2021-08-23T09:10:00Z")
 	CreatedBefore, _ = time.Parse(time.RFC3339, "2021-08-23T08:00:00Z")
 	ValidUpdated, _  = time.Parse(time.RFC3339, "2021-08-23T09:30:00Z")
 	UpdatedAfter, _  = time.Parse(time.RFC3339, "2021-08-23T09:30:01Z")
@@ -155,8 +155,8 @@ var (
 	ValidService                  = generateService()
 	ValidDIDDocResolution         = types.NewDidDoc(&ValidDIDDoc)
 	ValidFragmentMetadata         = types.NewResolutionDidDocMetadata(ExistentDid, &ValidMetadata, []*resourceTypes.Metadata{})
-	ValidResourceDereferencing    = types.DereferencedResourceData(ValidResource.Resource.Data)
-	ValidDereferencedResourceList = types.NewDereferencedResourceListStruct(ExistentDid, []*resourceTypes.Metadata{ValidResource.Metadata})
+	ValidResourceDereferencing    = types.DereferencedResourceData(ValidResource[0].Resource.Data)
+	ValidDereferencedResourceList = types.NewDereferencedResourceListStruct(ExistentDid, []*resourceTypes.Metadata{ValidResource[0].Metadata})
 	ValidDid                      = ValidDIDDoc.Id
 )
 

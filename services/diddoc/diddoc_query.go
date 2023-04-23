@@ -18,7 +18,6 @@ type QueryDIDDocRequestService struct {
 }
 
 func (dd *QueryDIDDocRequestService) Setup(c services.ResolverContext) error {
-	dd.IsDereferencing = true
 	return nil
 }
 
@@ -107,6 +106,12 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 }
 
 func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext) error {
+	if dd.AreResourceQueriesPlaced(c) {
+		dd.IsDereferencing = true
+	} else {
+		dd.IsDereferencing = false
+	}
+
 	// Register query handlers
 	return dd.RegisterQueryHandlers(c)
 }
