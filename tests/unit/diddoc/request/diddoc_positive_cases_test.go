@@ -168,4 +168,32 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 			expectedError: nil,
 		},
 	),
+	Entry(
+		"Positive. Metadata = false. Should return all the resources in metadata",
+		QueriesDIDDocTestCase{
+			didURL:         fmt.Sprintf("/1.0/identifiers/%s?metadata=false", testconstants.ValidDid),
+			resolutionType: types.DIDJSONLD,
+			expectedResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ValidDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				Did: &testconstants.ValidDIDDocResolution,
+				Metadata: types.NewResolutionDidDocMetadata(
+					testconstants.ValidDid, &DidDocMetadata2,
+					[]*resourceTypes.Metadata{
+						ResourceType2.Metadata,
+						ResourceType12.Metadata,
+						ResourceType1.Metadata,
+						ResourceName2.Metadata, 
+						ResourceName12.Metadata, 
+						ResourceName1.Metadata},
+				),
+			},
+			expectedError: nil,
+		},
+	),
 )

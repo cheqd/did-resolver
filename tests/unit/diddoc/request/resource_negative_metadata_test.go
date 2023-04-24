@@ -9,16 +9,17 @@ import (
 	"net/http/httptest"
 	"time"
 
-	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	// resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	didDocService "github.com/cheqd/did-resolver/services/diddoc"
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	utils "github.com/cheqd/did-resolver/tests/unit"
 	"github.com/cheqd/did-resolver/types"
+	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase ResourceMetadataTestCase) {
+var _ = DescribeTable("Test resource negative cases with Metadata field", func(testCase ResourceMetadataTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, MockLedger)
 
@@ -45,14 +46,174 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 	}
 },
 	Entry(
-		"Positive. VersionId + VersionTime + ResourceId",
+		"Negative. ResourceId not found",
 		ResourceMetadataTestCase{
 			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceId=%s&resourceMetadata=true",
+				"/1.0/identifiers/%s?resourceId=%s&resourceMetadata=true",
+				testconstants.ValidDid, 
+				uuid.New().String(),
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ExistentDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: &types.DereferencedResourceListStruct{},
+				Metadata: &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+	Entry(
+		"Negative. ResourceId wrong format",
+		ResourceMetadataTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?resourceId=%s&resourceMetadata=true",
+				testconstants.ValidDid, 
+				"SomeNotUUID",
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ExistentDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: &types.DereferencedResourceListStruct{},
+				Metadata: &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+	Entry(
+		"Negative. resourceVersionTime wrong format",
+		ResourceMetadataTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
+				testconstants.ValidDid, 
+				"SomeNotUUID",
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ExistentDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: &types.DereferencedResourceListStruct{},
+				Metadata: &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+	Entry(
+		"Negative. ResourceCollectionId not found",
+		ResourceMetadataTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?resourceCollectionId=%s&resourceMetadata=true",
 				testconstants.ValidDid,
-				VersionId1, 
-				DidDocUpdated.Format(time.RFC3339Nano),
+				uuid.New().String(),
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ExistentDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: &types.DereferencedResourceListStruct{},
+				Metadata: &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+	Entry(
+		"Negative. ResourceType is not found",
+		ResourceMetadataTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?resourceType=%s&resourceMetadata=true",
+				testconstants.ValidDid,
+				"NotExistentType",
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ExistentDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: &types.DereferencedResourceListStruct{},
+				Metadata: &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+	Entry(
+		"Negative. ResourceName is not found",
+		ResourceMetadataTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?resourceName=%s&resourceMetadata=true",
+				testconstants.ValidDid,
+				"NotExistentName",
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ExistentDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: &types.DereferencedResourceListStruct{},
+				Metadata: &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+	Entry(
+		"Negative. ResourceVersion is not found",
+		ResourceMetadataTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?resourceVersion=%s&resourceMetadata=true",
+				testconstants.ValidDid,
+				"NotExistentVersion",
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ExistentDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: &types.DereferencedResourceListStruct{},
+				Metadata: &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+	Entry(
+		"Negative. checksum wrong",
+		ResourceMetadataTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?resourceId=%s&checksum=%s&resourceMetadata=true",
+				testconstants.ValidDid,
 				ResourceIdName1,
+				"wrongChecksum",
 			),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
@@ -63,25 +224,19 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
+				ContentStream: &types.DereferencedResourceListStruct{},
 				Metadata: &types.ResolutionDidDocMetadata{},
 			},
-			expectedError: nil,
+			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
-		"Positive. VersionId + VersionTime + ResourceId + ResourceCollectionId",
+		"Negative. ResourceVersionTime before the first resource created",
 		ResourceMetadataTestCase{
 			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceId=%s&resourceCollectionId=%s&resourceMetadata=true",
+				"/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
 				testconstants.ValidDid,
-				VersionId1, 
-				DidDocUpdated.Format(time.RFC3339Nano),
-				ResourceIdName1,
-				ResourceName1.Metadata.CollectionId,
+				DidDocBeforeCreated.Format(time.RFC3339),
 			),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
@@ -92,24 +247,19 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
+				ContentStream: &types.DereferencedResourceListStruct{},
 				Metadata: &types.ResolutionDidDocMetadata{},
 			},
-			expectedError: nil,
+			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
-		"Positive. VersionId + VersionTime + ResourceCollectionId get all resources",
+		"Negative. There are several resources with the same type but different names",
 		ResourceMetadataTestCase{
 			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceCollectionId=%s&resourceMetadata=true",
+				"/1.0/identifiers/%s?resourceType=%s&resourceMetadata=true",
 				testconstants.ValidDid,
-				VersionId1, 
-				DidDocUpdated.Format(time.RFC3339Nano),
-				ResourceName1.Metadata.CollectionId,
+				ResourceType1.Metadata.ResourceType,
 			),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
@@ -120,30 +270,19 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{
-						ResourceName2.Metadata,
-						ResourceName12.Metadata,
-						ResourceName1.Metadata,
-					},
-				),
+				ContentStream: &types.DereferencedResourceListStruct{},
 				Metadata: &types.ResolutionDidDocMetadata{},
 			},
-			expectedError: nil,
+			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
-		"Positive. VersionId + VersionTime + ResourceId + ResourceCollectionId + ResourceName",
+		"Negative. There are several names with the same name but different types",
 		ResourceMetadataTestCase{
 			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceId=%s&resourceCollectionId=%s&resourceName=%s&resourceMetadata=true",
+				"/1.0/identifiers/%s?resourceName=%s&resourceMetadata=true",
 				testconstants.ValidDid,
-				VersionId1, 
-				DidDocUpdated.Format(time.RFC3339Nano),
-				ResourceIdName1,
-				ResourceName1.Metadata.CollectionId,
-				ResourceName1.Metadata.Name,
+				ResourceType2.Metadata.Name,
 			),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
@@ -154,174 +293,10 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
+				ContentStream: &types.DereferencedResourceListStruct{},
 				Metadata: &types.ResolutionDidDocMetadata{},
 			},
-			expectedError: nil,
-		},
-	),
-	Entry(
-		"Positive. VersionId + VersionTime + ResourceId + ResourceCollectionId + ResourceName + ResourceType",
-		ResourceMetadataTestCase{
-			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceId=%s&resourceCollectionId=%s&resourceName=%s&resourceType=%s&resourceMetadata=true",
-				testconstants.ValidDid,
-				VersionId1, 
-				DidDocUpdated.Format(time.RFC3339Nano),
-				ResourceIdName1,
-				ResourceName1.Metadata.CollectionId,
-				ResourceName1.Metadata.Name,
-				ResourceName1.Metadata.ResourceType,
-			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        testconstants.ExistentDid,
-						MethodSpecificId: testconstants.ValidIdentifier,
-						Method:           testconstants.ValidMethod,
-					},
-				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: &types.ResolutionDidDocMetadata{},
-			},
-			expectedError: nil,
-		},
-	),
-	Entry(
-		"Positive. VersionId + VersionTime + ResourceId + ResourceCollectionId + ResourceName + ResourceType + ResourceVersion",
-		ResourceMetadataTestCase{
-			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceId=%s&resourceCollectionId=%s&resourceName=%s&resourceType=%s&resourceVersion=%s&resourceMetadata=true",
-				testconstants.ValidDid,
-				VersionId1, 
-				DidDocUpdated.Format(time.RFC3339Nano),
-				ResourceIdName1,
-				ResourceName1.Metadata.CollectionId,
-				ResourceName1.Metadata.Name,
-				ResourceName1.Metadata.ResourceType,
-				ResourceName1.Metadata.Version,
-			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        testconstants.ExistentDid,
-						MethodSpecificId: testconstants.ValidIdentifier,
-						Method:           testconstants.ValidMethod,
-					},
-				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: &types.ResolutionDidDocMetadata{},
-			},
-			expectedError: nil,
-		},
-	),
-	Entry(
-		"Positive. VersionId + VersionTime + ResourceId + ResourceCollectionId + ResourceName + ResourceType + ResourceVersion + ResourceVersionTime",
-		ResourceMetadataTestCase{
-			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceId=%s&resourceCollectionId=%s&resourceName=%s&resourceType=%s&resourceVersion=%s&resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.ValidDid,
-				VersionId1, 
-				DidDocUpdated.Format(time.RFC3339Nano),
-				ResourceIdName1,
-				ResourceName1.Metadata.CollectionId,
-				ResourceName1.Metadata.Name,
-				ResourceName1.Metadata.ResourceType,
-				ResourceName1.Metadata.Version,
-				DidDocUpdated.Format(time.RFC3339),
-			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        testconstants.ExistentDid,
-						MethodSpecificId: testconstants.ValidIdentifier,
-						Method:           testconstants.ValidMethod,
-					},
-				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: &types.ResolutionDidDocMetadata{},
-			},
-			expectedError: nil,
-		},
-	),
-	Entry(
-		"Positive. VersionId + VersionTime + ResourceId + ResourceCollectionId + ResourceName + ResourceType + ResourceVersion + ResourceVersionTime + Checksum",
-		ResourceMetadataTestCase{
-			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceId=%s&resourceCollectionId=%s&resourceName=%s&resourceType=%s&resourceVersion=%s&resourceVersionTime=%s&checksum=%s&resourceMetadata=true",
-				testconstants.ValidDid,
-				VersionId1, 
-				DidDocUpdated.Format(time.RFC3339Nano),
-				ResourceIdName1,
-				ResourceName1.Metadata.CollectionId,
-				ResourceName1.Metadata.Name,
-				ResourceName1.Metadata.ResourceType,
-				ResourceName1.Metadata.Version,
-				DidDocUpdated.Format(time.RFC3339),
-				ResourceName1.Metadata.Checksum,
-			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        testconstants.ExistentDid,
-						MethodSpecificId: testconstants.ValidIdentifier,
-						Method:           testconstants.ValidMethod,
-					},
-				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: &types.ResolutionDidDocMetadata{},
-			},
-			expectedError: nil,
-		},
-	),
-	Entry(
-		"Positive. VersionId + VersionTime + ResourceVersionTime return resources something between",
-		ResourceMetadataTestCase{
-			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.ValidDid,
-				VersionId1, 
-				DidDocUpdated.Format(time.RFC3339Nano),
-				Resource2Created.Format(time.RFC3339),
-			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
-					DidProperties: types.DidProperties{
-						DidString:        testconstants.ExistentDid,
-						MethodSpecificId: testconstants.ValidIdentifier,
-						Method:           testconstants.ValidMethod,
-					},
-				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{
-						ResourceName2.Metadata,
-						ResourceName12.Metadata,
-						ResourceName1.Metadata},
-				),
-				Metadata: &types.ResolutionDidDocMetadata{},
-			},
-			expectedError: nil,
+			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 )
