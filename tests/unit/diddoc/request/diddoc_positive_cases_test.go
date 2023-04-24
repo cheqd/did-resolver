@@ -62,7 +62,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 				Did: &testconstants.ValidDIDDocResolution,
 				Metadata: types.NewResolutionDidDocMetadata(
 					testconstants.ValidDid, &DidDocMetadata1,
-					[]*resourceTypes.Metadata{ResourceName2.Metadata, ResourceName1.Metadata},
+					[]*resourceTypes.Metadata{ResourceName2.Metadata, ResourceName12.Metadata, ResourceName1.Metadata},
 				),
 			},
 			expectedError: nil,
@@ -86,8 +86,10 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 					testconstants.ValidDid, &DidDocMetadata2,
 					[]*resourceTypes.Metadata{
 						ResourceType2.Metadata,
+						ResourceType12.Metadata,
 						ResourceType1.Metadata,
 						ResourceName2.Metadata,
+						ResourceName12.Metadata,
 						ResourceName1.Metadata},
 				),
 			},
@@ -110,7 +112,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 				Did: &testconstants.ValidDIDDocResolution,
 				Metadata: types.NewResolutionDidDocMetadata(
 					testconstants.ValidDid, &DidDocMetadata1,
-					[]*resourceTypes.Metadata{ResourceName2.Metadata, ResourceName1.Metadata},
+					[]*resourceTypes.Metadata{ResourceName2.Metadata, ResourceName12.Metadata, ResourceName1.Metadata},
 				),
 			},
 			expectedError: nil,
@@ -134,8 +136,10 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 					testconstants.ValidDid, &DidDocMetadata2,
 					[]*resourceTypes.Metadata{
 						ResourceType2.Metadata,
+						ResourceType12.Metadata,
 						ResourceType1.Metadata,
 						ResourceName2.Metadata,
+						ResourceName12.Metadata,
 						ResourceName1.Metadata},
 				),
 			},
@@ -158,7 +162,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 				Did: &testconstants.ValidDIDDocResolution,
 				Metadata: types.NewResolutionDidDocMetadata(
 					testconstants.ValidDid, &DidDocMetadata1,
-					[]*resourceTypes.Metadata{ResourceName2.Metadata, ResourceName1.Metadata},
+					[]*resourceTypes.Metadata{ResourceName2.Metadata, ResourceName12.Metadata, ResourceName1.Metadata},
 				),
 			},
 			expectedError: nil,
