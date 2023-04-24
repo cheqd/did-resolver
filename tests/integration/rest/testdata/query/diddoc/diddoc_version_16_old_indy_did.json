@@ -1,0 +1,44 @@
+{
+    "@context": "https://w3id.org/did-resolution/v1",
+    "didResolutionMetadata": {
+        "contentType": "application/did+ld+json",
+        "retrieved": "2023-04-20T15:03:41Z",
+        "did": {
+            "didString": "did:cheqd:testnet:CpeMubv5yw63jXyrgRRsxR",
+            "methodSpecificId": "CpeMubv5yw63jXyrgRRsxR",
+            "method": "cheqd"
+        }
+    },
+    "didDocument": {
+        "@context": [
+            "https://www.w3.org/ns/did/v1",
+            "https://w3id.org/security/suites/jws-2020/v1"
+        ],
+        "id": "did:cheqd:testnet:CpeMubv5yw63jXyrgRRsxR",
+        "controller": [
+            "did:cheqd:testnet:CpeMubv5yw63jXyrgRRsxR"
+        ],
+        "verificationMethod": [
+            {
+                "id": "did:cheqd:testnet:CpeMubv5yw63jXyrgRRsxR#key-1",
+                "type": "JsonWebKey2020",
+                "controller": "did:cheqd:testnet:CpeMubv5yw63jXyrgRRsxR",
+                "publicKeyJwk": {
+                    "crv": "Ed25519",
+                    "kty": "OKP",
+                    "x": "-i4BlSGbjoUqmqRePrQhBvHbvqrrQjVIDL_lAoceRGw"
+                }
+            }
+        ],
+        "authentication": [
+            "did:cheqd:testnet:CpeMubv5yw63jXyrgRRsxR#key-1"
+        ],
+        "assertionMethod": [
+            "did:cheqd:testnet:CpeMubv5yw63jXyrgRRsxR#key-1"
+        ]
+    },
+    "didDocumentMetadata": {
+        "created": "2022-10-13T06:09:04Z",
+        "versionId": "674e6cb5-8d7c-5c50-b0ff-d91bcbcbd5d6"
+    }
+}

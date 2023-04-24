@@ -117,6 +117,7 @@ var (
 var (
 	NotExistentIdentifier = "ffffffff-329b-4614-a3f2-ffffffffffff"
 	NotExistentFragment   = "not_existent_fragment"
+	NotExistentService    = "not_existent_service"
 )
 
 var (
