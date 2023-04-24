@@ -102,7 +102,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
-			expectedError: types.NewRepresentationNotSupportedError(testconstants.InvalidVersionId, types.DIDJSONLD, nil, true),
+			expectedError: types.NewInvalidDidUrlError(testconstants.InvalidVersionId, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
