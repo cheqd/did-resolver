@@ -45,6 +45,12 @@ var DidSupportedQueries = SupportedQueriesT{
 	Metadata,
 }
 
+var DidResolutionQueries = SupportedQueriesT{
+	VersionId,
+	VersionTime,
+	TransformKey,
+}
+
 var ResourceSupportedQueries = SupportedQueriesT{
 	ResourceId,
 	ResourceCollectionId,

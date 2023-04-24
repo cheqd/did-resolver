@@ -21,6 +21,17 @@ func (dd *QueryDIDDocRequestService) Setup(c services.ResolverContext) error {
 	return nil
 }
 
+func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext) error {
+	if dd.AreDidResolutionQueries(c) {
+		dd.IsDereferencing = false
+	} else {
+		dd.IsDereferencing = true
+	}
+
+	// Register query handlers
+	return dd.RegisterQueryHandlers(c)
+}
+
 func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
 	_, err := url.QueryUnescape(dd.GetDid())
 	if err != nil {
@@ -47,7 +58,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	resourceMetadata := dd.GetQueryParam(types.ResourceMetadata)
 
 	if string(transformKey) != "" && (!transformKey.IsSupported() || !types.IsSupportedWithCombinationTransformKeyQuery(dd.Queries)) {
-		return types.NewRepresentationNotSupportedError(dd.Did, dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	// relativeRef should be only with service parameter also
@@ -110,19 +121,12 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	return nil
 }
 
-func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext) error {
-	if dd.AreResourceQueriesPlaced(c) {
-		dd.IsDereferencing = true
-	} else {
-		dd.IsDereferencing = false
-	}
-
-	// Register query handlers
-	return dd.RegisterQueryHandlers(c)
-}
-
 func (dd QueryDIDDocRequestService) AreResourceQueriesPlaced(c services.ResolverContext) bool {
 	return len(types.ResourceSupportedQueries.IntersectWithUrlValues(dd.Queries)) > 0
+}
+
+func (dd QueryDIDDocRequestService) AreDidResolutionQueries(c services.ResolverContext) bool {
+	return len(types.DidResolutionQueries.DiffWithUrlValues(dd.Queries)) == 0
 }
 
 func (dd QueryDIDDocRequestService) AreQueryValuesEmpty(c services.ResolverContext) bool {
