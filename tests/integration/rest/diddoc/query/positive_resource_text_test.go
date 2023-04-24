@@ -25,7 +25,6 @@ var _ = DescribeTable("Positive: Get resource", func(testCase utils.PositiveTest
 	Expect(err).To(BeNil())
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-
 	expectedDidDereferencing, err = utils.GetTextResource(testCase.ExpectedJSONPath)
 	Expect(err).To(BeNil())
 	Expect(expectedDidDereferencing).To(Equal(string(resp.Body())))
