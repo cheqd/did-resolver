@@ -35,6 +35,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
 },
 
+	// TODO: These are tests should return types.DIDResolution type.
 	Entry(
 		"cannot get DIDDoc with not existent versionId query parameter",
 		utils.NegativeTestCase{
@@ -113,6 +114,33 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: errors.NotFoundHttpCode,
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc with an existent versionId, but not supported transformKey value query parameters",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&transformKey=EDDSA",
+				SeveralVersionsDID,
+				SeveralVersionsDIDVersionId,
+			),
+			ResolutionType: string(types.DIDJSONLD),
+			ExpectedResult: utils.DereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "representationNotSupported",
+					DidProperties: types.DidProperties{
+						DidString:        SeveralVersionsDID,
+						MethodSpecificId: SeveralVersionsDIDIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
 		},
 	),
 
