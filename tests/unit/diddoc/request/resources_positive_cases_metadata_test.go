@@ -322,4 +322,60 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 			expectedError: nil,
 		},
 	),
+	Entry(
+		"Positive. Several resources with the same name",
+		ResourceMetadataTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?resourceName=%s&resourceMetadata=true",
+				testconstants.ValidDid,
+				ResourceName1.Metadata.Name,
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ExistentDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: types.NewDereferencedResourceListStruct(
+					testconstants.ValidDid,
+					[]*resourceTypes.Metadata{
+						ResourceName12.Metadata,
+						ResourceName1.Metadata},
+				),
+				Metadata: &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: nil,
+		},
+	),
+	Entry(
+		"Positive. Several resources with the same type",
+		ResourceMetadataTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?resourceType=%s&resourceMetadata=true",
+				testconstants.ValidDid,
+				ResourceType1.Metadata.ResourceType,
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ExistentDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: types.NewDereferencedResourceListStruct(
+					testconstants.ValidDid,
+					[]*resourceTypes.Metadata{
+						ResourceType12.Metadata,
+						ResourceType1.Metadata,},
+				),
+				Metadata: &types.ResolutionDidDocMetadata{},
+			},
+			expectedError: nil,
+		},
+	),
 )
