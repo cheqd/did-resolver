@@ -141,7 +141,7 @@ var _ = DescribeTable("Negative tests for mixed cases", func(testCase ResourceMe
 		},
 	),
 	Entry(
-		"Negative. NotExistent resourceType",
+		"Negative. NotExistent resourceId",
 		ResourceMetadataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?versionId=%s&resourceId=%s&resourceMetadata=true",

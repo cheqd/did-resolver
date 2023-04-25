@@ -25,17 +25,17 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKey query parameter", 
 		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
 
+
+	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 	expectedDidResolution, ok := testCase.ExpectedResult.(types.DidResolution)
 	if ok {
 		var receivedDidResolution types.DidResolution
 		Expect(json.Unmarshal(resp.Body(), &receivedDidResolution)).To(BeNil())
-		Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 		utils.AssertDidResolution(expectedDidResolution, receivedDidResolution)
 	} else {
 		expectedDidDereferencing := testCase.ExpectedResult.(utils.DereferencingResult)
 		var receivedDidDereferencing utils.DereferencingResult
 		Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
-		Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 		utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
 	}
 },

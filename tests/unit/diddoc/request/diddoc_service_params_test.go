@@ -141,4 +141,13 @@ var _ = DescribeTable("Test Query handlers with service and relativeRef params",
 			expectedError:      types.NewNotFoundError(testconstants.InvalidServiceId, types.DIDJSONLD, nil, true),
 		},
 	),
+	Entry(
+		"Negative. RelativeRef without Service",
+		QueriesDIDDocTestCase{
+			didURL:             fmt.Sprintf("/1.0/identifiers/%s?relativeRef=%s", testconstants.ValidDid, "blabla"),
+			resolutionType:     types.DIDJSONLD,
+			expectedResolution: nil,
+			expectedError:      types.NewRepresentationNotSupportedError(testconstants.InvalidServiceId, types.DIDJSONLD, nil, true),
+		},
+	),
 )

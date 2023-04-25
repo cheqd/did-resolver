@@ -123,12 +123,12 @@ func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resourceTyp
 		return []*resourceTypes.Metadata{}, types.NewNotFoundError(did, types.JSON, nil, true)
 	}
 
-	var metadata_list = make([]*resourceTypes.Metadata, len(ls.Resources))
+	var metadataList = make([]*resourceTypes.Metadata, len(ls.Resources))
 	for i, resource := range ls.Resources {
-		metadata_list[i] = resource.Metadata
+		metadataList[i] = resource.Metadata
 	}
 
-	return metadata_list, nil
+	return metadataList, nil
 }
 
 func (ls MockLedgerService) GetNamespaces() []string {
