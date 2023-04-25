@@ -17,7 +17,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = DescribeTable("Test Query handler with transformKey params", func(testCase queriesDIDDocTestCase) {
+var _ = DescribeTable("Test Query handler with transformKey params", func(testCase QueriesDIDDocTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, utils.MockLedger)
 	expectedDIDResolution := testCase.expectedResolution.(*types.DidResolution)
@@ -47,7 +47,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 
 	Entry(
 		"can get DIDDoc (JSONWebKey2020) with supported Ed25519VerificationKey2018 transformKey query parameter",
-		queriesDIDDocTestCase{
+		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?transformKey=%s",
 				testconstants.ValidDid,
@@ -76,7 +76,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 				},
 				Metadata: types.NewResolutionDidDocMetadata(
 					testconstants.ValidDid, &testconstants.ValidMetadata,
-					[]*resourceTypes.Metadata{testconstants.ValidResource.Metadata},
+					[]*resourceTypes.Metadata{testconstants.ValidResource[0].Metadata},
 				),
 			},
 		},
@@ -84,7 +84,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 
 	Entry(
 		"can get DIDDoc (JSONWebKey2020) with supported Ed25519VerificationKey2020 transformKey query parameter",
-		queriesDIDDocTestCase{
+		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?transformKey=%s",
 				testconstants.ValidDid,
@@ -113,7 +113,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 				},
 				Metadata: types.NewResolutionDidDocMetadata(
 					testconstants.ValidDid, &testconstants.ValidMetadata,
-					[]*resourceTypes.Metadata{testconstants.ValidResource.Metadata},
+					[]*resourceTypes.Metadata{testconstants.ValidResource[0].Metadata},
 				),
 			},
 		},
@@ -121,7 +121,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 
 	Entry(
 		"cannot get DIDDoc with not existent DID and supported transformKey query parameter",
-		queriesDIDDocTestCase{
+		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?transformKey=%s",
 				testconstants.NotExistentTestnetDid,
@@ -137,7 +137,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 
 	Entry(
 		"cannot get DIDDoc (JSONWebKey2020) with not supported transformKey query parameter",
-		queriesDIDDocTestCase{
+		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?transformKey=notSupportedTransformKey",
 				testconstants.ValidDid,
@@ -152,7 +152,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 
 	Entry(
 		"cannot get DIDDoc with combination of transformKey and metadata query parameters",
-		queriesDIDDocTestCase{
+		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?transformKey=%s&metadata=true",
 				testconstants.ValidDid,
@@ -168,7 +168,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 
 	Entry(
 		"cannot get DIDDoc with combination of transformKey and metadata query parameters",
-		queriesDIDDocTestCase{
+		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?transformKey=%s&metadata=true",
 				testconstants.ValidDid,
@@ -184,7 +184,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 
 	Entry(
 		"cannot get DIDDoc with combination of transformKey and resourceId query parameters",
-		queriesDIDDocTestCase{
+		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?transformKey=%s&resourceId=%s",
 				testconstants.ValidDid,
@@ -201,7 +201,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 
 	Entry(
 		"cannot get DIDDoc with combination of transformKey and resourceName query parameters",
-		queriesDIDDocTestCase{
+		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?transformKey=%s&resourceName=someName",
 				testconstants.ValidDid,
@@ -217,7 +217,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 
 	Entry(
 		"cannot get DIDDoc with combination of transformKey and resourceType query parameters",
-		queriesDIDDocTestCase{
+		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?transformKey=%s&resourceType=someType",
 				testconstants.ValidDid,
@@ -233,7 +233,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 
 	Entry(
 		"cannot get DIDDoc with combination of transformKey and resourceVersionTime query parameters",
-		queriesDIDDocTestCase{
+		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?transformKey=%s&resourceVersionTime=2006-01-02",
 				testconstants.ValidDid,
@@ -249,7 +249,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 
 	Entry(
 		"cannot get DIDDoc with combination of transformKey and resourceMetadata query parameters",
-		queriesDIDDocTestCase{
+		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?transformKey=%s&resourceMetadata=true",
 				testconstants.ValidDid,
@@ -265,7 +265,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 
 	Entry(
 		"cannot get DIDDoc with combination of transformKey and resourceCollectionId query parameters",
-		queriesDIDDocTestCase{
+		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?transformKey=%s&resourceCollectionId=%s",
 				testconstants.ValidDid,
@@ -282,7 +282,7 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 
 	Entry(
 		"cannot get DIDDoc with combination of transformKey and resourceVersion query parameters",
-		queriesDIDDocTestCase{
+		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?transformKey=%s&resourceVersion=someVersion",
 				testconstants.ValidDid,

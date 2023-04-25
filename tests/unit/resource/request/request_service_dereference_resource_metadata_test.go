@@ -77,7 +77,7 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 				},
 				ContentStream: types.NewDereferencedResourceListStruct(
 					testconstants.ExistentDid,
-					[]*resourceTypes.Metadata{testconstants.ValidResource.Metadata},
+					[]*resourceTypes.Metadata{testconstants.ValidResource[0].Metadata},
 				),
 				Metadata: &types.ResolutionDidDocMetadata{},
 			},

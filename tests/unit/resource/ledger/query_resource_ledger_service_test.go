@@ -34,7 +34,7 @@ var _ = DescribeTable("Test QueryResource method", func(testCase queryResourceTe
 		queryResourceTestCase{
 			collectionId:     testconstants.ExistentDid,
 			resourceId:       testconstants.ExistentResourceId,
-			expectedResource: &testconstants.ValidResource,
+			expectedResource: &testconstants.ValidResource[0],
 			expectedError:    nil,
 		},
 	),
