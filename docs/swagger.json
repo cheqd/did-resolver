@@ -138,9 +138,9 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Other parameters returns Resource Dereferencing",
+                        "description": "versionId, versionTime, transformKey returns Full DID Document",
                         "schema": {
-                            "$ref": "#/definitions/types.ResourceDereferencing"
+                            "$ref": "#/definitions/types.DidResolution"
                         }
                     },
                     "400": {
