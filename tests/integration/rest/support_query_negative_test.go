@@ -5,7 +5,6 @@ package rest
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	"github.com/cheqd/did-resolver/types"
@@ -44,7 +43,7 @@ var _ = DescribeTable("", func(testCase NegativeTestCase) {
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "invalidDidUrl",
+					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.UUIDStyleTestnetDid,
 						MethodSpecificId: "c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0",
@@ -54,7 +53,7 @@ var _ = DescribeTable("", func(testCase NegativeTestCase) {
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: http.StatusBadRequest,
+			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode,
 		},
 	),
 )

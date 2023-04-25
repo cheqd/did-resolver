@@ -25,7 +25,7 @@ type dereferenceResourceDataTestCase struct {
 var _ = DescribeTable("Test DereferenceResourceData method", func(testCase dereferenceResourceDataTestCase) {
 	resourceService := services.NewResourceService(testconstants.ValidMethod, utils.MockLedger)
 
-	expectedContentType := types.ContentType(testconstants.ValidResource.Metadata.MediaType)
+	expectedContentType := types.ContentType(testconstants.ValidResource[0].Metadata.MediaType)
 	dereferencingResult, err := resourceService.DereferenceResourceData(testCase.did, testCase.resourceId, testCase.dereferencingType)
 	if err != nil {
 		Expect(testCase.expectedError.Code).To(Equal(err.Code))
