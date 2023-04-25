@@ -49,12 +49,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Service Type",
-                        "name": "service",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "description": "#Fragment",
                         "name": "fragmentId",
                         "in": "query"
@@ -64,11 +58,89 @@ const docTemplate = `{
                         "description": "Version",
                         "name": "versionId",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Created of Updated time of DID Document",
+                        "name": "versionTime",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Can transform Verification Method into another type",
+                        "name": "transformKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Redirects to Service Endpoint",
+                        "name": "service",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Addition to Service Endpoint",
+                        "name": "relativeRef",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Show only metadata of DID Document",
+                        "name": "metadata",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by ResourceId",
+                        "name": "resourceId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by CollectionId",
+                        "name": "resourceCollectionId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by Resource Type",
+                        "name": "resourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by Resource Name",
+                        "name": "resourceName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by Resource Version",
+                        "name": "resourceVersion",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Get the nearest resource by creation time",
+                        "name": "resourceVersionTime",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Show only metadata of resources",
+                        "name": "resourceMetadata",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sanity check that Checksum of resource is the same as expected",
+                        "name": "checksum",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "versionId, versionTime, transformKey returns Full DID Document",
                         "schema": {
                             "$ref": "#/definitions/types.DidResolution"
                         }
