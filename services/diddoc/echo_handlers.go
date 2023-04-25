@@ -39,6 +39,7 @@ import (
 //	@Failure		500						{object}	types.IdentityError
 //	@Failure		501						{object}	types.IdentityError
 //	@Router			/{did} [get]
+//
 // We cannot add several responses here because of https://github.com/swaggo/swag/issues/815
 func DidDocEchoHandler(c echo.Context) error {
 	// ToDo: Make fragment detection better
