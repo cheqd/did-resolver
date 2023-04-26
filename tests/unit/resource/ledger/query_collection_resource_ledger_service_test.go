@@ -33,7 +33,7 @@ var _ = DescribeTable("Test QueryCollectionResources method", func(testCase quer
 		queryCollectionResourcesTestCase{
 			did: testconstants.ExistentDid,
 			expectedCollection: []*resourceTypes.Metadata{
-				testconstants.ValidResource.Metadata,
+				testconstants.ValidResource[0].Metadata,
 			},
 			expectedError: nil,
 		},

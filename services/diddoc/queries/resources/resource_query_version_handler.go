@@ -24,7 +24,7 @@ func (d *ResourceVersionHandler) Handle(c services.ResolverContext, service serv
 	}
 
 	// Filter the list of metadata by the resourceCollectionId
-	resourceCollectionFiltered := resourceCollection.Resources.FilterByVersion(resourceVersion)
+	resourceCollectionFiltered := resourceCollection.Resources.FilterByResourceVersion(resourceVersion)
 	if len(resourceCollectionFiltered) == 0 {
 		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 	}

@@ -37,20 +37,22 @@ func generateDIDDoc() didTypes.DidDoc {
 	}
 }
 
-func generateResource() resourceTypes.ResourceWithMetadata {
+func generateResource() []resourceTypes.ResourceWithMetadata {
 	data := []byte("{\"attr\":[\"name\",\"age\"]}")
 	checksum := sha256.New().Sum(data)
-	return resourceTypes.ResourceWithMetadata{
-		Resource: &resourceTypes.Resource{
-			Data: data,
-		},
-		Metadata: &resourceTypes.Metadata{
-			CollectionId: ValidIdentifier,
-			Id:           ExistentResourceId,
-			Name:         "Existing Resource Name",
-			ResourceType: "string",
-			MediaType:    "application/json",
-			Checksum:     fmt.Sprintf("%x", checksum),
+	return []resourceTypes.ResourceWithMetadata{
+		{
+			Resource: &resourceTypes.Resource{
+				Data: data,
+			},
+			Metadata: &resourceTypes.Metadata{
+				CollectionId: ValidIdentifier,
+				Id:           ExistentResourceId,
+				Name:         "Existing Resource Name",
+				ResourceType: "string",
+				MediaType:    "application/json",
+				Checksum:     fmt.Sprintf("%x", checksum),
+			},
 		},
 	}
 }

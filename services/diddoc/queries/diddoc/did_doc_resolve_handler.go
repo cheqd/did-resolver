@@ -16,7 +16,7 @@ type DidDocResolveHandler struct {
 func (dd *DidDocResolveHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
 	metadata := c.QueryParams().Get(types.Metadata)
 	// If metadata is set we don't need to resolve the DidDoc
-	if metadata != "" {
+	if metadata != "" && metadata == "true" {
 		return dd.Continue(c, service, response)
 	}
 
