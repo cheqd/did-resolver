@@ -89,33 +89,32 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 		},
 	),
 
-	// It should return DidResolution type response
-	// Entry(
-	// 	"cannot get DIDDoc with an existent versionId, but not existent versionTime query parameters",
-	// 	utils.NegativeTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=2023-03-06T09:59:21Z",
-	// 			SeveralVersionsDID,
-	// 			SeveralVersionsDIDVersionId,
-	// 		),
-	// 		ResolutionType: string(types.DIDJSONLD),
-	// 		ExpectedResult: types.DidResolution{
-	// 			Context: "",
-	// 			ResolutionMetadata: types.ResolutionMetadata{
-	// 				ContentType:     types.DIDJSONLD,
-	// 				ResolutionError: "notFound",
-	// 				DidProperties: types.DidProperties{
-	// 					DidString:        SeveralVersionsDID,
-	// 					MethodSpecificId: SeveralVersionsDIDIdentifier,
-	// 					Method:           testconstants.ValidMethod,
-	// 				},
-	// 			},
-	// 			Did:      nil,
-	// 			Metadata: types.ResolutionDidDocMetadata{},
-	// 		},
-	// 		ExpectedStatusCode: errors.NotFoundHttpCode,
-	// 	},
-	// ),
+	Entry(
+		"cannot get DIDDoc with an existent versionId, but not existent versionTime query parameters",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=2023-03-06T09:59:21Z",
+				SeveralVersionsDID,
+				SeveralVersionsDIDVersionId,
+			),
+			ResolutionType: string(types.DIDJSONLD),
+			ExpectedResult: types.DidResolution{
+				Context: "",
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "notFound",
+					DidProperties: types.DidProperties{
+						DidString:        SeveralVersionsDID,
+						MethodSpecificId: SeveralVersionsDIDIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: errors.NotFoundHttpCode,
+		},
+	),
 
 	Entry(
 		"cannot get DIDDoc with an existent versionId, but not supported transformKey value query parameters",
@@ -144,62 +143,60 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 		},
 	),
 
-	// It should return DidResolution type response
-	// Entry(
-	// 	"cannot get DIDDoc with an existent versionId, but not existent service query parameters",
-	// 	utils.NegativeTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s?versionId=%s&service=%s",
-	// 			SeveralVersionsDID,
-	// 			SeveralVersionsDIDVersionId,
-	// 			testconstants.NotExistentService,
-	// 		),
-	// 		ResolutionType: string(types.DIDJSONLD),
-	// 		ExpectedResult: types.DidResolution{
-	// 			Context: "",
-	// 			ResolutionMetadata: types.ResolutionMetadata{
-	// 				ContentType:     types.DIDJSONLD,
-	// 				ResolutionError: "notFound",
-	// 				DidProperties: types.DidProperties{
-	// 					DidString:        SeveralVersionsDID,
-	// 					MethodSpecificId: SeveralVersionsDIDIdentifier,
-	// 					Method:           testconstants.ValidMethod,
-	// 				},
-	// 			},
-	// 			Did:      nil,
-	// 			Metadata: types.ResolutionDidDocMetadata{},
-	// 		},
-	// 		ExpectedStatusCode: errors.NotFoundHttpCode,
-	// 	},
-	// ),
+	Entry(
+		"cannot get DIDDoc with an existent versionId, but not existent service query parameters",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&service=%s",
+				SeveralVersionsDID,
+				SeveralVersionsDIDVersionId,
+				testconstants.NotExistentService,
+			),
+			ResolutionType: string(types.DIDJSONLD),
+			ExpectedResult: types.DidResolution{
+				Context: "",
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "notFound",
+					DidProperties: types.DidProperties{
+						DidString:        SeveralVersionsDID,
+						MethodSpecificId: SeveralVersionsDIDIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: errors.NotFoundHttpCode,
+		},
+	),
 
-	// It should return DidResolution type response
-	// Entry(
-	// 	"cannot get DIDDoc with an existent versionId, but not existent versionTime and service query parameters",
-	// 	utils.NegativeTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=%s&service=%s",
-	// 			SeveralVersionsDID,
-	// 			SeveralVersionsDIDVersionId,
-	// 			"2023-03-06T09:59:21Z",
-	// 			testconstants.NotExistentService,
-	// 		),
-	// 		ResolutionType: string(types.DIDJSONLD),
-	// 		ExpectedResult: types.DidResolution{
-	// 			Context: "",
-	// 			ResolutionMetadata: types.ResolutionMetadata{
-	// 				ContentType:     types.DIDJSONLD,
-	// 				ResolutionError: "notFound",
-	// 				DidProperties: types.DidProperties{
-	// 					DidString:        SeveralVersionsDID,
-	// 					MethodSpecificId: SeveralVersionsDIDIdentifier,
-	// 					Method:           testconstants.ValidMethod,
-	// 				},
-	// 			},
-	// 			Did:      nil,
-	// 			Metadata: types.ResolutionDidDocMetadata{},
-	// 		},
-	// 		ExpectedStatusCode: errors.NotFoundHttpCode,
-	// 	},
-	// ),
+	Entry(
+		"cannot get DIDDoc with an existent versionId, but not existent versionTime and service query parameters",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=%s&service=%s",
+				SeveralVersionsDID,
+				SeveralVersionsDIDVersionId,
+				"2023-03-06T09:59:21Z",
+				testconstants.NotExistentService,
+			),
+			ResolutionType: string(types.DIDJSONLD),
+			ExpectedResult: types.DidResolution{
+				Context: "",
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "notFound",
+					DidProperties: types.DidProperties{
+						DidString:        SeveralVersionsDID,
+						MethodSpecificId: SeveralVersionsDIDIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: errors.NotFoundHttpCode,
+		},
+	),
 )
