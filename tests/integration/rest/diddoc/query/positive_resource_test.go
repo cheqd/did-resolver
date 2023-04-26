@@ -1,6 +1,6 @@
 // go:build integration
 
-package query
+package query_test
 
 // ToDo uncomment it while working on integration tests
 
