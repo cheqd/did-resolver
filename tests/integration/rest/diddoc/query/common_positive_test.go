@@ -161,7 +161,7 @@ var _ = DescribeTable("Positive: request with common query parameters (service)"
 				"http://localhost:8080/1.0/identifiers/%s?service=%s&versionId=%s",
 				SeveralVersionsDID,
 				ServiceId,
-				"0ce23d04-5b67-4ea6-a315-788588e53f4e",
+				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
 			),
 			ResolutionType:         testconstants.DefaultResolutionType,
 			ExpectedStatusCode:     http.StatusSeeOther,

@@ -11,5 +11,5 @@ import (
 
 func TestQuery(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Query Suite")
+	RunSpecs(t, "[Integration Test]: Combination of DIDDoc query parameters")
 }
