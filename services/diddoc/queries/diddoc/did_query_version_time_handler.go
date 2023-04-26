@@ -29,16 +29,16 @@ func (v *VersionTimeHandler) Handle(c services.ResolverContext, service services
 
 	versionId, _err := allVersions.FindActiveForTime(versionTime)
 	if _err != nil {
-		return nil, types.NewInternalError(did, contentType, _err, v.IsDereferencing)
+		return nil, types.NewInternalError(did, contentType, _err, service.GetDereferencing())
 	}
 
 	if versionId == "" {
-		return nil, types.NewNotFoundError(did, contentType, nil, v.IsDereferencing)
+		return nil, types.NewNotFoundError(did, contentType, nil, service.GetDereferencing())
 	}
 
 	versionsFiltered := allVersions.GetByVersionId(versionId)
 	if len(versionsFiltered) == 0 {
-		return nil, types.NewInternalError(did, contentType, nil, v.IsDereferencing)
+		return nil, types.NewInternalError(did, contentType, nil, service.GetDereferencing())
 	}
 
 	// Call the next handler
