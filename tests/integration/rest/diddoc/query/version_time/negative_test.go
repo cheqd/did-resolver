@@ -3,31 +3,34 @@
 package versionTime
 
 import (
+	"encoding/json"
 	"fmt"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	utils "github.com/cheqd/did-resolver/tests/integration/rest"
 	"github.com/cheqd/did-resolver/types"
 	errors "github.com/cheqd/did-resolver/types"
+	"github.com/go-resty/resty/v2"
 	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
 var SeveralVersionsDIDIdentifier = "b5d70adf-31ca-4662-aa10-d3a54cd8f06c"
 
 var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCase utils.NegativeTestCase) {
-	// client := resty.New()
+	client := resty.New()
 
-	// resp, err := client.R().
-	// 	SetHeader("Accept", testCase.ResolutionType).
-	// 	Get(testCase.DidURL)
-	// Expect(err).To(BeNil())
-	// Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
+	resp, err := client.R().
+		SetHeader("Accept", testCase.ResolutionType).
+		Get(testCase.DidURL)
+	Expect(err).To(BeNil())
+	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	// var receivedDidResolution types.DidResolution
-	// Expect(json.Unmarshal(resp.Body(), &receivedDidResolution)).To(BeNil())
+	var receivedDidResolution types.DidResolution
+	Expect(json.Unmarshal(resp.Body(), &receivedDidResolution)).To(BeNil())
 
-	// expectedDidResolution := testCase.ExpectedResult.(types.DidResolution)
-	// utils.AssertDidResolution(expectedDidResolution, receivedDidResolution)
+	expectedDidResolution := testCase.ExpectedResult.(types.DidResolution)
+	utils.AssertDidResolution(expectedDidResolution, receivedDidResolution)
 },
 
 	Entry(

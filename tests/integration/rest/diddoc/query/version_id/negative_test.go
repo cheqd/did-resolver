@@ -28,14 +28,13 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 	Expect(err).To(BeNil())
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	var receivedDidDereferencing utils.DereferencingResult
+	var receivedDidDereferencing types.DidResolution
 	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
 
-	expectedDidDereferencing := testCase.ExpectedResult.(utils.DereferencingResult)
-	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
+	expectedDidDereferencing := testCase.ExpectedResult.(types.DidResolution)
+	utils.AssertDidResolution(expectedDidDereferencing, receivedDidDereferencing)
 },
 
-	// TODO: These are tests should return types.DIDResolution type.
 	Entry(
 		"cannot get DIDDoc with not existent versionId query parameter",
 		utils.NegativeTestCase{
@@ -45,9 +44,9 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 				testconstants.NotExistentIdentifier,
 			),
 			ResolutionType: string(types.DIDJSONLD),
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
+				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
@@ -56,8 +55,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: errors.NotFoundHttpCode,
 		},
@@ -72,9 +71,9 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 				testconstants.InvalidIdentifier,
 			),
 			ResolutionType: string(types.DIDJSONLD),
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
+				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "invalidDidUrl",
 					DidProperties: types.DidProperties{
@@ -83,8 +82,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: errors.InvalidDidUrlHttpCode,
 		},
@@ -99,9 +98,9 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 				SeveralVersionsDIDVersionId,
 			),
 			ResolutionType: string(types.DIDJSONLD),
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
+				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
@@ -110,8 +109,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: errors.NotFoundHttpCode,
 		},
@@ -126,9 +125,9 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 				SeveralVersionsDIDVersionId,
 			),
 			ResolutionType: string(types.DIDJSONLD),
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
+				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
@@ -137,8 +136,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
 		},
@@ -154,9 +153,9 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 				testconstants.NotExistentService,
 			),
 			ResolutionType: string(types.DIDJSONLD),
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
+				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
@@ -165,8 +164,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: errors.NotFoundHttpCode,
 		},
@@ -183,9 +182,9 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 				testconstants.NotExistentService,
 			),
 			ResolutionType: string(types.DIDJSONLD),
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
+				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
@@ -194,8 +193,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: errors.NotFoundHttpCode,
 		},
