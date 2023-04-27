@@ -9,5 +9,5 @@ import (
 
 func TestResourceMetadata(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "[Integration Test]:  Resource metadata query parameter")
+	RunSpecs(t, "[Integration Test]: Resource metadata query parameter")
 }
