@@ -18,8 +18,7 @@ func (v *VersionTimeHandler) Handle(c services.ResolverContext, service services
 	if versionTime == "" {
 		return v.Continue(c, service, response)
 	}
-	// Get Params
-	did := service.GetDid()
+	// Get Param
 	contentType := service.GetContentType()
 
 	allVersions, err := v.CastToContent(service, response)
@@ -29,16 +28,16 @@ func (v *VersionTimeHandler) Handle(c services.ResolverContext, service services
 
 	versionId, _err := allVersions.FindActiveForTime(versionTime)
 	if _err != nil {
-		return nil, types.NewInternalError(did, contentType, _err, service.GetDereferencing())
+		return nil, types.NewInternalError(service.GetDid(), contentType, _err, service.GetDereferencing())
 	}
 
 	if versionId == "" {
-		return nil, types.NewNotFoundError(did, contentType, nil, service.GetDereferencing())
+		return nil, types.NewNotFoundError(service.GetDid(), contentType, nil, service.GetDereferencing())
 	}
 
 	versionsFiltered := allVersions.GetByVersionId(versionId)
 	if len(versionsFiltered) == 0 {
-		return nil, types.NewInternalError(did, contentType, nil, service.GetDereferencing())
+		return nil, types.NewInternalError(service.GetDid(), contentType, nil, service.GetDereferencing())
 	}
 
 	// Call the next handler
