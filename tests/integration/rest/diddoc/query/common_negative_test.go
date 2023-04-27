@@ -41,9 +41,9 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 				"/about",
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
+				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
@@ -52,8 +52,8 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode,
 		},
