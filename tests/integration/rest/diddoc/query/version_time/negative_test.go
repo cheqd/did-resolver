@@ -63,7 +63,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCa
 		"cannot get DIDDoc with an invalid versionTime query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionTime=2023-03-06",
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=2023-03-06Z",
 				SeveralVersionsDID,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
