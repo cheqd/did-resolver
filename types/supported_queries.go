@@ -50,6 +50,7 @@ var DidResolutionQueries = SupportedQueriesT{
 	VersionTime,
 	TransformKey,
 	ServiceQ,
+	RelativeRef,
 }
 
 var ResourceSupportedQueries = SupportedQueriesT{
