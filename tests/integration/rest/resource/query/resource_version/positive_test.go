@@ -15,7 +15,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var SeveralResourcesDID = "did:cheqd:testnet:0a5b94d0-a417-48ed-a6f5-4abc9e95888d"
+var severalResourcesDID = "did:cheqd:testnet:0a5b94d0-a417-48ed-a6f5-4abc9e95888d"
 
 var _ = DescribeTable("Positive: Get Resource with resourceVersion query", func(testCase utils.PositiveTestCase) {
 	client := resty.New()
@@ -40,7 +40,7 @@ var _ = DescribeTable("Positive: Get Resource with resourceVersion query", func(
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?resourceVersion=1.0",
-				SeveralResourcesDID,
+				severalResourcesDID,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
 			ExpectedJSONPath:   "../../../testdata/query/resource_version/resource.json",

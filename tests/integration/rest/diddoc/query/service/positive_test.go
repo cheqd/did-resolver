@@ -15,9 +15,8 @@ import (
 )
 
 var (
-	ServiceId              = "bar"
-	ExpectedLocationHeader = "https://bar.example.com"
-	SeveralVersionsDID     = "did:cheqd:testnet:b5d70adf-31ca-4662-aa10-d3a54cd8f06c"
+	serviceId              = "bar"
+	expectedLocationHeader = "https://bar.example.com"
 )
 
 var _ = DescribeTable("Positive: Get Service param", func(testCase utils.PositiveTestCase) {
@@ -37,12 +36,12 @@ var _ = DescribeTable("Positive: Get Service param", func(testCase utils.Positiv
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?service=%s",
-				SeveralVersionsDID,
-				ServiceId,
+				testconstants.SeveralVersionsDID,
+				serviceId,
 			),
 			ResolutionType:         testconstants.DefaultResolutionType,
 			ExpectedStatusCode:     http.StatusSeeOther,
-			ExpectedLocationHeader: ExpectedLocationHeader,
+			ExpectedLocationHeader: expectedLocationHeader,
 		},
 	),
 	Entry(
@@ -50,12 +49,12 @@ var _ = DescribeTable("Positive: Get Service param", func(testCase utils.Positiv
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?service=%s&relativeRef=foo",
-				SeveralVersionsDID,
-				ServiceId,
+				testconstants.SeveralVersionsDID,
+				serviceId,
 			),
 			ResolutionType:         testconstants.DefaultResolutionType,
 			ExpectedStatusCode:     http.StatusSeeOther,
-			ExpectedLocationHeader: ExpectedLocationHeader + "foo",
+			ExpectedLocationHeader: expectedLocationHeader + "foo",
 		},
 	),
 

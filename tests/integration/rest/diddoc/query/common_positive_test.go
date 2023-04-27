@@ -38,7 +38,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=%s",
-				SeveralVersionsDID,
+				testconstants.SeveralVersionsDID,
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
 				"2023-03-06T09:39:49Z",
 			),
@@ -53,7 +53,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&transformKey=%s",
-				SeveralVersionsDID,
+				testconstants.SeveralVersionsDID,
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
 				types.JsonWebKey2020,
 			),
@@ -68,7 +68,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=%s&transformKey=%s",
-				SeveralVersionsDID,
+				testconstants.SeveralVersionsDID,
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
 				"2023-03-06T09:39:49Z",
 				types.Ed25519VerificationKey2020,
@@ -103,7 +103,7 @@ var _ = DescribeTable("Positive: request with common query parameters (metadata)
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&metadata=true",
-				SeveralVersionsDID,
+				testconstants.SeveralVersionsDID,
 				"0ce23d04-5b67-4ea6-a315-788588e53f4e",
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
@@ -117,7 +117,7 @@ var _ = DescribeTable("Positive: request with common query parameters (metadata)
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s&metadata=true",
-				SeveralVersionsDID,
+				testconstants.SeveralVersionsDID,
 				"2023-03-06T09:39:49Z",
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
@@ -131,7 +131,7 @@ var _ = DescribeTable("Positive: request with common query parameters (metadata)
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=%s&metadata=true",
-				SeveralVersionsDID,
+				testconstants.SeveralVersionsDID,
 				"0ce23d04-5b67-4ea6-a315-788588e53f4e",
 				"2023-03-06T09:36:56Z",
 			),
@@ -140,6 +140,11 @@ var _ = DescribeTable("Positive: request with common query parameters (metadata)
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
+)
+
+var (
+	serviceId              = "bar"
+	expectedLocationHeader = "https://bar.example.com"
 )
 
 var _ = DescribeTable("Positive: request with common query parameters (service)", func(testCase utils.PositiveTestCase) {
@@ -159,13 +164,13 @@ var _ = DescribeTable("Positive: request with common query parameters (service)"
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?service=%s&versionId=%s",
-				SeveralVersionsDID,
-				ServiceId,
+				testconstants.SeveralVersionsDID,
+				serviceId,
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
 			),
 			ResolutionType:         testconstants.DefaultResolutionType,
 			ExpectedStatusCode:     http.StatusSeeOther,
-			ExpectedLocationHeader: ExpectedLocationHeader,
+			ExpectedLocationHeader: expectedLocationHeader,
 		},
 	),
 
@@ -174,13 +179,13 @@ var _ = DescribeTable("Positive: request with common query parameters (service)"
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?service=%s&versionTime=%s",
-				SeveralVersionsDID,
-				ServiceId,
+				testconstants.SeveralVersionsDID,
+				serviceId,
 				"2023-03-06T09:39:49Z",
 			),
 			ResolutionType:         testconstants.DefaultResolutionType,
 			ExpectedStatusCode:     http.StatusSeeOther,
-			ExpectedLocationHeader: ExpectedLocationHeader,
+			ExpectedLocationHeader: expectedLocationHeader,
 		},
 	),
 
@@ -189,15 +194,15 @@ var _ = DescribeTable("Positive: request with common query parameters (service)"
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?service=%s&relativeRef=%s&versionId=%s&versionTime=%s",
-				SeveralVersionsDID,
-				ServiceId,
+				testconstants.SeveralVersionsDID,
+				serviceId,
 				"/about",
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
 				"2023-03-06T09:59:23Z",
 			),
 			ResolutionType:         testconstants.DefaultResolutionType,
 			ExpectedStatusCode:     http.StatusSeeOther,
-			ExpectedLocationHeader: fmt.Sprintf("%s/about", ExpectedLocationHeader),
+			ExpectedLocationHeader: fmt.Sprintf("%s/about", expectedLocationHeader),
 		},
 	),
 )

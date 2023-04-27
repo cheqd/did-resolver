@@ -28,13 +28,17 @@ var (
 
 	OldIndy32CharStyleTestnetDid      = "did:cheqd:testnet:zEv9FXHwp8eFeHbeTXamwda8YoPfgU12"
 	MigratedIndy32CharStyleTestnetDid = "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu"
+
+	SeveralVersionsDID           = "did:cheqd:testnet:b5d70adf-31ca-4662-aa10-d3a54cd8f06c"
+	SeveralVersionsDIDIdentifier = "b5d70adf-31ca-4662-aa10-d3a54cd8f06c"
 )
 
 var (
-	IndyStyleMainnetVersionId = "4fa8e367-c70e-533e-babf-3732d9761061"
-	IndyStyleTestnetVersionId = "60bb3b62-e0f0-545b-a552-63aab5cd1aef"
-	UUIDStyleMainnetVersionId = "76e546ee-78cd-5372-b34e-8b47461626e1"
-	UUIDStyleTestnetVersionId = "e5615fc2-6f13-42b1-989c-49576a574cef"
+	IndyStyleMainnetVersionId   = "4fa8e367-c70e-533e-babf-3732d9761061"
+	IndyStyleTestnetVersionId   = "60bb3b62-e0f0-545b-a552-63aab5cd1aef"
+	UUIDStyleMainnetVersionId   = "76e546ee-78cd-5372-b34e-8b47461626e1"
+	UUIDStyleTestnetVersionId   = "e5615fc2-6f13-42b1-989c-49576a574cef"
+	SeveralVersionsDIDVersionId = "f790c9b9-4817-4b31-be43-b198e6e18071"
 )
 
 var (

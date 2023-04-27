@@ -16,9 +16,6 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var SeveralVersionsDIDIdentifier = "b5d70adf-31ca-4662-aa10-d3a54cd8f06c"
-var SeveralVersionsDIDVersionId = "f790c9b9-4817-4b31-be43-b198e6e18071"
-
 var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase utils.NegativeTestCase) {
 	client := resty.New()
 
@@ -40,7 +37,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?versionId=%s",
-				SeveralVersionsDID,
+				testconstants.SeveralVersionsDID,
 				testconstants.NotExistentIdentifier,
 			),
 			ResolutionType: string(types.DIDJSONLD),
@@ -50,8 +47,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
-						DidString:        SeveralVersionsDID,
-						MethodSpecificId: SeveralVersionsDIDIdentifier,
+						DidString:        testconstants.SeveralVersionsDID,
+						MethodSpecificId: testconstants.SeveralVersionsDIDIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
@@ -67,7 +64,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?versionId=%s",
-				SeveralVersionsDID,
+				testconstants.SeveralVersionsDID,
 				testconstants.InvalidIdentifier,
 			),
 			ResolutionType: string(types.DIDJSONLD),
@@ -77,8 +74,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "invalidDidUrl",
 					DidProperties: types.DidProperties{
-						DidString:        SeveralVersionsDID,
-						MethodSpecificId: SeveralVersionsDIDIdentifier,
+						DidString:        testconstants.SeveralVersionsDID,
+						MethodSpecificId: testconstants.SeveralVersionsDIDIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
@@ -94,8 +91,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=2023-03-06T09:59:21Z",
-				SeveralVersionsDID,
-				SeveralVersionsDIDVersionId,
+				testconstants.SeveralVersionsDID,
+				testconstants.SeveralVersionsDIDVersionId,
 			),
 			ResolutionType: string(types.DIDJSONLD),
 			ExpectedResult: types.DidResolution{
@@ -104,8 +101,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
-						DidString:        SeveralVersionsDID,
-						MethodSpecificId: SeveralVersionsDIDIdentifier,
+						DidString:        testconstants.SeveralVersionsDID,
+						MethodSpecificId: testconstants.SeveralVersionsDIDIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
@@ -121,8 +118,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&transformKey=EDDSA",
-				SeveralVersionsDID,
-				SeveralVersionsDIDVersionId,
+				testconstants.SeveralVersionsDID,
+				testconstants.SeveralVersionsDIDVersionId,
 			),
 			ResolutionType: string(types.DIDJSONLD),
 			ExpectedResult: types.DidResolution{
@@ -131,8 +128,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
-						DidString:        SeveralVersionsDID,
-						MethodSpecificId: SeveralVersionsDIDIdentifier,
+						DidString:        testconstants.SeveralVersionsDID,
+						MethodSpecificId: testconstants.SeveralVersionsDIDIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
@@ -148,8 +145,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&service=%s",
-				SeveralVersionsDID,
-				SeveralVersionsDIDVersionId,
+				testconstants.SeveralVersionsDID,
+				testconstants.SeveralVersionsDIDVersionId,
 				testconstants.NotExistentService,
 			),
 			ResolutionType: string(types.DIDJSONLD),
@@ -159,8 +156,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
-						DidString:        SeveralVersionsDID,
-						MethodSpecificId: SeveralVersionsDIDIdentifier,
+						DidString:        testconstants.SeveralVersionsDID,
+						MethodSpecificId: testconstants.SeveralVersionsDIDIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
@@ -176,8 +173,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=%s&service=%s",
-				SeveralVersionsDID,
-				SeveralVersionsDIDVersionId,
+				testconstants.SeveralVersionsDID,
+				testconstants.SeveralVersionsDIDVersionId,
 				"2023-03-06T09:59:21Z",
 				testconstants.NotExistentService,
 			),
@@ -188,8 +185,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
-						DidString:        SeveralVersionsDID,
-						MethodSpecificId: SeveralVersionsDIDIdentifier,
+						DidString:        testconstants.SeveralVersionsDID,
+						MethodSpecificId: testconstants.SeveralVersionsDIDIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},

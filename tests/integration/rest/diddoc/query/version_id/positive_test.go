@@ -16,8 +16,6 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var SeveralVersionsDID = "did:cheqd:testnet:b5d70adf-31ca-4662-aa10-d3a54cd8f06c"
-
 var _ = DescribeTable("Positive: Get DIDDoc with versionId query", func(testCase utils.PositiveTestCase) {
 	client := resty.New()
 
@@ -41,7 +39,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionId query", func(testCase
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?versionId=%s",
-				SeveralVersionsDID,
+				testconstants.SeveralVersionsDID,
 				"0ce23d04-5b67-4ea6-a315-788588e53f4e",
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
