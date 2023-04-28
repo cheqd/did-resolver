@@ -1,0 +1,25 @@
+{
+    "author": "did:cheqd:testnet:0a5b94d0-a417-48ed-a6f5-4abc9e95888d",
+    "entries": {
+        "https://resolver.cheqd.net/1.0/identifiers/did:cheqd:testnet:0a5b94d0-a417-48ed-a6f5-4abc9e95888d/resources/ef344b53-f2db-44bd-9df3-01259c178704": {
+            "did:cheqd:testnet:181cd85c-ad4e-490c-bdd9-f3349545fbbd": {
+                "name": "Natural History Museum",
+                "credentials": [
+                    "https://resolver.cheqd.net/1.0/identifiers/did:cheqd:testnet:0a5b94d0-a417-48ed-a6f5-4abc9e95888d/resources/ef344b53-f2db-44bd-9df3-01259c178704"
+                ]
+            },
+            "did:cheqd:testnet:37d23667-265a-4119-b844-ad2d745f5eb3": {
+                "name": "Science Museum",
+                "credentials": [
+                    "https://resolver.cheqd.net/1.0/identifiers/did:cheqd:testnet:0a5b94d0-a417-48ed-a6f5-4abc9e95888d/resources/ef344b53-f2db-44bd-9df3-01259c178704"
+                ]
+            },
+            "did:cheqd:testnet:cf61fcfa-fa7d-4670-905b-c6a7f1579c9d": {
+                "name": "Victoria and Albert Museum",
+                "credentials": [
+                    "https://resolver.cheqd.net/1.0/identifiers/did:cheqd:testnet:0a5b94d0-a417-48ed-a6f5-4abc9e95888d/resources/ef344b53-f2db-44bd-9df3-01259c178704"
+                ]
+            }
+        }
+    }
+}
