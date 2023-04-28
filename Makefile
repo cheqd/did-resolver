@@ -130,7 +130,10 @@ tidy:
 ###############################################################################
 
 unit-tests:
-	go test -v ./...
+	cd tests/unit &&  ginkgo -r --tags unit --race
+
+integration-tests:
+	cd tests/integration/rest && ginkgo -r --tags integration --race
 
 lint:
 	golangci-lint run  --config .github/linters/.golangci.yaml
@@ -155,7 +158,7 @@ clean:
 
 swagger:
 	@echo "Generating Swagger files..."
-	@go install github.com/swaggo/swag/cmd/swag@latest
+	@go install github.com/swaggo/swag/cmd/swag@v1.8.11
 	@swag fmt
 	@swag init -g ./main.go
 .PHONY: swagger

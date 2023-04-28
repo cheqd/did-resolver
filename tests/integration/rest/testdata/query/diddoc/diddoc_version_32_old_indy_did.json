@@ -1,0 +1,130 @@
+{
+    "@context": "https://w3id.org/did-resolution/v1",
+    "didResolutionMetadata": {
+        "contentType": "application/did+ld+json",
+        "retrieved": "2023-04-21T08:03:34Z",
+        "did": {
+            "didString": "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu",
+            "methodSpecificId": "3KpiDD6Hxs4i2G7FtpiGhu",
+            "method": "cheqd"
+        }
+    },
+    "didDocument": {
+        "@context": [
+            "https://www.w3.org/ns/did/v1",
+            "https://w3id.org/security/suites/ed25519-2020/v1"
+        ],
+        "id": "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu",
+        "controller": [
+            "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu"
+        ],
+        "verificationMethod": [
+            {
+                "id": "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu#key-1",
+                "type": "Ed25519VerificationKey2020",
+                "controller": "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu",
+                "publicKeyMultibase": "z6MktNQJ7YCFUBk7Q6VAD9jnUfgYcxwXstGdoALbME9QSTL3"
+            }
+        ],
+        "authentication": [
+            "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu#key-1"
+        ]
+    },
+    "didDocumentMetadata": {
+        "created": "2022-10-12T08:57:25Z",
+        "versionId": "1dc202d4-26ee-54a9-b091-8d2e1f609722",
+        "linkedResourceMetadata": [
+            {
+                "resourceURI": "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu/resources/7c20c558-9b0b-46c3-a095-79861828b35a",
+                "resourceCollectionId": "3KpiDD6Hxs4i2G7FtpiGhu",
+                "resourceId": "7c20c558-9b0b-46c3-a095-79861828b35a",
+                "resourceName": "RevRegEntry301071f2-314d-49e4-8e65-393586e5e05a",
+                "resourceType": "CL-RevRegEntry",
+                "mediaType": "application/json",
+                "resourceVersion": "",
+                "created": "2022-10-12T09:01:23Z",
+                "checksum": "60c1c5c408e9d8e74b95c272a7961c9c3042af64ffbd8cbdc43e54df06655bc4",
+                "previousVersionId": "9f5b2985-990d-4160-94ed-06706043af7e",
+                "nextVersionId": null
+            },
+            {
+                "resourceURI": "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu/resources/9f5b2985-990d-4160-94ed-06706043af7e",
+                "resourceCollectionId": "3KpiDD6Hxs4i2G7FtpiGhu",
+                "resourceId": "9f5b2985-990d-4160-94ed-06706043af7e",
+                "resourceName": "RevRegEntry301071f2-314d-49e4-8e65-393586e5e05a",
+                "resourceType": "CL-RevRegEntry",
+                "mediaType": "application/json",
+                "resourceVersion": "",
+                "created": "2022-10-12T09:00:14Z",
+                "checksum": "fb8a2127adf86e6d6f3f235832775099c437012565039b6658858b6e52dbe456",
+                "previousVersionId": "214b8b61-a861-416b-a7e4-45533af40ada",
+                "nextVersionId": "7c20c558-9b0b-46c3-a095-79861828b35a"
+            },
+            {
+                "resourceURI": "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu/resources/214b8b61-a861-416b-a7e4-45533af40ada",
+                "resourceCollectionId": "3KpiDD6Hxs4i2G7FtpiGhu",
+                "resourceId": "214b8b61-a861-416b-a7e4-45533af40ada",
+                "resourceName": "RevRegEntry301071f2-314d-49e4-8e65-393586e5e05a",
+                "resourceType": "CL-RevRegEntry",
+                "mediaType": "application/json",
+                "resourceVersion": "",
+                "created": "2022-10-12T09:00:02Z",
+                "checksum": "4bf7d5855a05955f84195f01ef7e8d91353a8895dc5d9022aebbcecc9f2c3dc6",
+                "previousVersionId": "616be02a-0838-42ee-b906-065fff3799ea",
+                "nextVersionId": "9f5b2985-990d-4160-94ed-06706043af7e"
+            },
+            {
+                "resourceURI": "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu/resources/a22b1d28-c408-43b8-9001-563b4a648317",
+                "resourceCollectionId": "3KpiDD6Hxs4i2G7FtpiGhu",
+                "resourceId": "a22b1d28-c408-43b8-9001-563b4a648317",
+                "resourceName": "Degree301071f2-314d-49e4-8e65-393586e5e05a",
+                "resourceType": "CL-CredDef",
+                "mediaType": "application/json",
+                "resourceVersion": "",
+                "created": "2022-10-12T08:58:22Z",
+                "checksum": "eac5b9093f7375450bba4a91c67dcc7fe69c36cad9fa16aa3720d3f91f5ced1b",
+                "previousVersionId": null,
+                "nextVersionId": null
+            },
+            {
+                "resourceURI": "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu/resources/616be02a-0838-42ee-b906-065fff3799ea",
+                "resourceCollectionId": "3KpiDD6Hxs4i2G7FtpiGhu",
+                "resourceId": "616be02a-0838-42ee-b906-065fff3799ea",
+                "resourceName": "RevRegEntry301071f2-314d-49e4-8e65-393586e5e05a",
+                "resourceType": "CL-RevRegEntry",
+                "mediaType": "application/json",
+                "resourceVersion": "",
+                "created": "2022-10-12T08:58:16Z",
+                "checksum": "94af95e5a9743aa9f059387b61dffc78aa7774960b4e43cc762ceed0f55d907f",
+                "previousVersionId": null,
+                "nextVersionId": "214b8b61-a861-416b-a7e4-45533af40ada"
+            },
+            {
+                "resourceURI": "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu/resources/83205e1a-f474-448d-bf4b-816fe2aabd84",
+                "resourceCollectionId": "3KpiDD6Hxs4i2G7FtpiGhu",
+                "resourceId": "83205e1a-f474-448d-bf4b-816fe2aabd84",
+                "resourceName": "RevRegDef301071f2-314d-49e4-8e65-393586e5e05a",
+                "resourceType": "CL-RevRegDef",
+                "mediaType": "application/json",
+                "resourceVersion": "",
+                "created": "2022-10-12T08:58:03Z",
+                "checksum": "4324bc513c13f1e841463d253c51e3aafb110f841e2e50f1b29df2466ca0e36f",
+                "previousVersionId": null,
+                "nextVersionId": null
+            },
+            {
+                "resourceURI": "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu/resources/f31c68e6-61b5-4926-a932-40a13b4c4507",
+                "resourceCollectionId": "3KpiDD6Hxs4i2G7FtpiGhu",
+                "resourceId": "f31c68e6-61b5-4926-a932-40a13b4c4507",
+                "resourceName": "FaberCollege301071f2-314d-49e4-8e65-393586e5e05a",
+                "resourceType": "CL-Schema",
+                "mediaType": "application/json",
+                "resourceVersion": "",
+                "created": "2022-10-12T08:57:31Z",
+                "checksum": "657e37a833f139fc8f58b115174b2297223a2d98316a78ce8d49d60467d8913d",
+                "previousVersionId": null,
+                "nextVersionId": null
+            }
+        ]
+    }
+}

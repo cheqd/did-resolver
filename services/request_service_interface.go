@@ -1,10 +1,20 @@
 package services
 
 import (
+	"github.com/cheqd/did-resolver/types"
 	echo "github.com/labstack/echo/v4"
 )
 
 type RequestServiceI interface {
+	// Getters
+	GetDid() string
+	GetContentType() types.ContentType
+	GetQueryParam(name string) string
+	GetDereferencing() bool
+
+	// Setters
+	SetResponse(r types.ResolutionResultI) error
+
 	// Checks
 	IsRedirectNeeded(c ResolverContext) bool
 

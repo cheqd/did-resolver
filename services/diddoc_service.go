@@ -1,13 +1,11 @@
 package services
 
 import (
-	"net/url"
 	"strings"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 
 	"github.com/cheqd/did-resolver/types"
-	"github.com/rs/zerolog/log"
 )
 
 type DIDDocService struct {
@@ -35,42 +33,6 @@ func (DIDDocService) GetDIDFragment(fragmentId string, didDoc types.DidDoc) type
 	}
 
 	return nil
-}
-
-func (dds DIDDocService) ProcessDIDRequest(did string, fragmentId string, queries url.Values, flag *string, contentType types.ContentType) (types.ResolutionResultI, *types.IdentityError) {
-	log.Trace().Msgf("ProcessDIDRequest %s, %s, %s", did, fragmentId, queries)
-	var result types.ResolutionResultI
-	var err *types.IdentityError
-	var isDereferencing bool
-
-	version := ""
-	if len(queries) > 0 {
-		version = queries.Get("versionId")
-		if version == "" {
-			return nil, types.NewRepresentationNotSupportedError(did, contentType, nil, true)
-		}
-	}
-
-	if flag != nil {
-		return nil, types.NewRepresentationNotSupportedError(did, contentType, nil, true)
-	}
-
-	if fragmentId != "" {
-		log.Trace().Msgf("Dereferencing %s, %s, %s", did, fragmentId, queries)
-		result, err = dds.DereferenceSecondary(did, version, fragmentId, contentType)
-		isDereferencing = true
-	} else {
-		log.Trace().Msgf("Resolving %s", did)
-		result, err = dds.Resolve(did, version, contentType)
-		isDereferencing = false
-	}
-
-	if err != nil {
-		err.IsDereferencing = isDereferencing
-		return nil, err
-	}
-
-	return result, nil
 }
 
 func (dds DIDDocService) Resolve(did string, version string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {
@@ -142,6 +104,12 @@ func (dds DIDDocService) GetAllDidDocVersionsMetadata(did string, contentType ty
 		return nil, err
 	}
 
+	resources, err := dds.ledgerService.QueryCollectionResources(did)
+	if err != nil {
+		err.ContentType = contentType
+		return nil, err
+	}
+
 	if len(versions) == 0 {
 		return nil, types.NewNotFoundError(did, contentType, err, false)
 	}
@@ -151,7 +119,11 @@ func (dds DIDDocService) GetAllDidDocVersionsMetadata(did string, contentType ty
 		context = types.ResolutionSchemaJSONLD
 	}
 
-	contentStream := types.NewDereferencedDidVersionsList(versions)
+	contentStream := types.NewDereferencedDidVersionsList(did, versions, resources)
+	for i, version := range contentStream.Versions {
+		filtered := contentStream.Versions.GetResourcesBeforeNextVersion(version.VersionId)
+		contentStream.Versions[i].Resources = filtered
+	}
 
 	return &types.DidDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }

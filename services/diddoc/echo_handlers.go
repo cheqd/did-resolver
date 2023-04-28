@@ -16,17 +16,31 @@ import (
 //	@Tags			DID Resolution
 //	@Accept			application/did+ld+json,application/ld+json,application/did+json
 //	@Produce		application/did+ld+json,application/ld+json,application/did+json
-//	@Param			did			path		string	true	"Full DID with unique identifier"
-//	@Param			service		query		string	false	"Service Type"
-//	@Param			fragmentId	query		string	false	"#Fragment"
-//	@Param			versionId	query		string	false	"Version"
-//	@Success		200			{object}	types.DidResolution
-//	@Failure		400			{object}	types.IdentityError
-//	@Failure		404			{object}	types.IdentityError
-//	@Failure		406			{object}	types.IdentityError
-//	@Failure		500			{object}	types.IdentityError
-//	@Failure		501			{object}	types.IdentityError
+//	@Param			did						path		string				true	"Full DID with unique identifier"
+//	@Param			fragmentId				query		string				false	"#Fragment"
+//	@Param			versionId				query		string				false	"Version"
+//	@Param			versionTime				query		string				false	"Created of Updated time of DID Document"
+//	@Param			transformKey			query		string				false	"Can transform Verification Method into another type"
+//	@Param			service					query		string				false	"Redirects to Service Endpoint"
+//	@Param			relativeRef				query		string				false	"Addition to Service Endpoint"
+//	@Param			metadata				query		string				false	"Show only metadata of DID Document"
+//	@Param			resourceId				query		string				false	"Filter by ResourceId"
+//	@Param			resourceCollectionId	query		string				false	"Filter by CollectionId"
+//	@Param			resourceType			query		string				false	"Filter by Resource Type"
+//	@Param			resourceName			query		string				false	"Filter by Resource Name"
+//	@Param			resourceVersion			query		string				false	"Filter by Resource Version"
+//	@Param			resourceVersionTime		query		string				false	"Get the nearest resource by creation time"
+//	@Param			resourceMetadata		query		string				false	"Show only metadata of resources"
+//	@Param			checksum				query		string				false	"Sanity check that Checksum of resource is the same as expected"
+//	@success		200						{object}	types.DidResolution	"versionId, versionTime, transformKey returns Full DID Document"
+//	@Failure		400						{object}	types.IdentityError
+//	@Failure		404						{object}	types.IdentityError
+//	@Failure		406						{object}	types.IdentityError
+//	@Failure		500						{object}	types.IdentityError
+//	@Failure		501						{object}	types.IdentityError
 //	@Router			/{did} [get]
+//
+// We cannot add several responses here because of https://github.com/swaggo/swag/issues/815
 func DidDocEchoHandler(c echo.Context) error {
 	// ToDo: Make fragment detection better
 	isFragment := len(strings.Split(c.Param("did"), "#")) > 1

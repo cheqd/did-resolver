@@ -18,6 +18,23 @@ func (cType ContentType) IsSupported() bool {
 	return supportedTypes[cType]
 }
 
+type TransformKeyType string
+
+const (
+	Ed25519VerificationKey2018 TransformKeyType = "Ed25519VerificationKey2018"
+	Ed25519VerificationKey2020 TransformKeyType = "Ed25519VerificationKey2020"
+	JsonWebKey2020             TransformKeyType = "JsonWebKey2020"
+)
+
+func (tKType TransformKeyType) IsSupported() bool {
+	supportedTypes := map[TransformKeyType]bool{
+		Ed25519VerificationKey2018: true,
+		Ed25519VerificationKey2020: true,
+		JsonWebKey2020:             true,
+	}
+	return supportedTypes[tKType]
+}
+
 const (
 	DIDSchemaJSONLD                  = "https://www.w3.org/ns/did/v1"
 	ResolutionSchemaJSONLD           = "https://w3id.org/did-resolution/v1"
@@ -34,4 +51,21 @@ const (
 	DID_METADATA      = "/metadata"
 	RESOURCE_PATH     = "/resources/"
 	SWAGGER_PATH      = "/swagger/*"
+)
+
+const (
+	VersionId            string = "versionId"
+	VersionTime          string = "versionTime"
+	TransformKey         string = "transformKey"
+	Metadata             string = "metadata"
+	ServiceQ             string = "service"
+	RelativeRef          string = "relativeRef"
+	ResourceId           string = "resourceId"
+	ResourceName         string = "resourceName"
+	ResourceType         string = "resourceType"
+	ResourceVersionTime  string = "resourceVersionTime"
+	ResourceMetadata     string = "resourceMetadata"
+	ResourceCollectionId string = "resourceCollectionId"
+	ResourceVersion      string = "resourceVersion"
+	ResourceChecksum     string = "checksum"
 )

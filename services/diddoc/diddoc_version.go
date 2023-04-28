@@ -14,7 +14,7 @@ type DIDDocVersionRequestService struct {
 }
 
 func (dd *DIDDocVersionRequestService) Setup(c services.ResolverContext) error {
-	dd.IsDereferencing = true
+	dd.IsDereferencing = false
 	return nil
 }
 
@@ -25,7 +25,7 @@ func (dd *DIDDocVersionRequestService) SpecificPrepare(c services.ResolverContex
 }
 
 func (dd DIDDocVersionRequestService) Redirect(c services.ResolverContext) error {
-	migratedDid := migrations.MigrateDID(dd.Did)
+	migratedDid := migrations.MigrateDID(dd.GetDid())
 
 	path := types.RESOLVER_PATH + migratedDid + types.DID_VERSION_PATH + dd.Version
 	return c.Redirect(http.StatusMovedPermanently, path)
@@ -33,7 +33,11 @@ func (dd DIDDocVersionRequestService) Redirect(c services.ResolverContext) error
 
 func (dd *DIDDocVersionRequestService) SpecificValidation(c services.ResolverContext) error {
 	if !utils.IsValidUUID(dd.Version) {
-		return types.NewInvalidDIDUrlError(dd.Version, dd.RequestedContentType, nil, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(dd.Version, dd.RequestedContentType, nil, dd.IsDereferencing)
+	}
+	// We not allow query here
+	if len(dd.Queries) != 0 {
+		return types.NewInvalidDidUrlError(dd.GetDid(), dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 	return nil
 }

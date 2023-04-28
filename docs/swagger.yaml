@@ -51,6 +51,9 @@ definitions:
       resourceURI:
         example: did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47/resources/398cee0a-efac-4643-9f4c-74c48c72a14b
         type: string
+      resourceVersion:
+        example: "1"
+        type: string
     type: object
   types.DereferencingMetadata:
     properties:
@@ -271,10 +274,6 @@ paths:
         name: did
         required: true
         type: string
-      - description: Service Type
-        in: query
-        name: service
-        type: string
       - description: '#Fragment'
         in: query
         name: fragmentId
@@ -283,13 +282,65 @@ paths:
         in: query
         name: versionId
         type: string
+      - description: Created of Updated time of DID Document
+        in: query
+        name: versionTime
+        type: string
+      - description: Can transform Verification Method into another type
+        in: query
+        name: transformKey
+        type: string
+      - description: Redirects to Service Endpoint
+        in: query
+        name: service
+        type: string
+      - description: Addition to Service Endpoint
+        in: query
+        name: relativeRef
+        type: string
+      - description: Show only metadata of DID Document
+        in: query
+        name: metadata
+        type: string
+      - description: Filter by ResourceId
+        in: query
+        name: resourceId
+        type: string
+      - description: Filter by CollectionId
+        in: query
+        name: resourceCollectionId
+        type: string
+      - description: Filter by Resource Type
+        in: query
+        name: resourceType
+        type: string
+      - description: Filter by Resource Name
+        in: query
+        name: resourceName
+        type: string
+      - description: Filter by Resource Version
+        in: query
+        name: resourceVersion
+        type: string
+      - description: Get the nearest resource by creation time
+        in: query
+        name: resourceVersionTime
+        type: string
+      - description: Show only metadata of resources
+        in: query
+        name: resourceMetadata
+        type: string
+      - description: Sanity check that Checksum of resource is the same as expected
+        in: query
+        name: checksum
+        type: string
       produces:
       - application/did+ld+json
       - application/ld+json
       - application/did+json
       responses:
         "200":
-          description: OK
+          description: versionId, versionTime, transformKey returns Full DID Document
           schema:
             $ref: '#/definitions/types.DidResolution'
         "400":
