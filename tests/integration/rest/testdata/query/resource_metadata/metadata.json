@@ -2,7 +2,7 @@
     "@context": "https://w3id.org/did-resolution/v1",
     "dereferencingMetadata": {
         "contentType": "application/did+ld+json",
-        "retrieved": "2023-04-28T07:36:06Z",
+        "retrieved": "2023-04-28T07:26:06Z",
         "did": {
             "didString": "did:cheqd:testnet:c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0",
             "methodSpecificId": "c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0",

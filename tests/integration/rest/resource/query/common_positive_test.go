@@ -32,20 +32,20 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 	Expect(expectedResourceData).To(Equal(receivedResourceData))
 },
 
-	// Entry(
-	// 	"can get resource with and existent versionId and resourceCollectionId",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s?versionId=%s&resourceCollectionId=%s",
-	// 			testconstants.UUIDStyleTestnetDid,
-	// 			testconstants.UUIDStyleTestnetVersionId,
-	// 			testconstants.UUIDStyleTestnetId,
-	// 		),
-	// 		ResolutionType:     testconstants.DefaultResolutionType,
-	// 		ExpectedJSONPath:   "../../../testdata/query/resource_common/version_id_&_collection_id.json",
-	// 		ExpectedStatusCode: http.StatusOK,
-	// 	},
-	// ),
+	Entry(
+		"can get resource with and existent versionId and resourceCollectionId",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&resourceCollectionId=%s",
+				testconstants.UUIDStyleTestnetDid,
+				testconstants.UUIDStyleTestnetVersionId,
+				testconstants.UUIDStyleTestnetId,
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../testdata/query/resource_common/resource_combination_of_queries_1.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
 
 	Entry(
 		"can get resource with an existent versionId and resourceId",
@@ -57,25 +57,25 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
-			ExpectedJSONPath:   "../../testdata/query/resource_common/version_id_&_resource_id.json",
+			ExpectedJSONPath:   "../../testdata/query/resource_common/resource_combination_of_queries_1.json",
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
 
-	// Entry(
-	// 	"can get resource with and existent versionTime and resourceCollectionId",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s?versionTime=%s&resourceCollectionId=%s",
-	// 			testconstants.UUIDStyleTestnetDid,
-	// 			"2023-01-25T11:58:11Z",
-	// 			testconstants.UUIDStyleTestnetId,
-	// 		),
-	// 		ResolutionType:     testconstants.DefaultResolutionType,
-	// 		ExpectedJSONPath:   "../../../testdata/query/common/version_time_&_collection_id.json",
-	// 		ExpectedStatusCode: http.StatusOK,
-	// 	},
-	// ),
+	Entry(
+		"can get resource with and existent versionTime and resourceCollectionId",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s&resourceCollectionId=%s",
+				testconstants.UUIDStyleTestnetDid,
+				"2023-01-25T11:58:11Z",
+				testconstants.UUIDStyleTestnetId,
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../testdata/query/resource_common/resource_combination_of_queries_1.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
 
 	Entry(
 		"can get resource with an existent versionTime and resourceId",
@@ -87,7 +87,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
-			ExpectedJSONPath:   "../../testdata/query/resource_common/version_time_&_resource_id.json",
+			ExpectedJSONPath:   "../../testdata/query/resource_common/resource_combination_of_queries_1.json",
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
@@ -109,23 +109,6 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		},
 	),
 
-	// Entry(
-	// 	"can get resource with an existent versionId, versionTime, resourceCollectionId, resourceId, resourceMetadata",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceCollectionId=%s&resourceId=%s&resourceMetadata=true",
-	// 			testconstants.UUIDStyleTestnetDid,
-	// 			testconstants.UUIDStyleTestnetVersionId,
-	// 			"2023-01-25T11:58:11Z",
-	// 			testconstants.UUIDStyleTestnetId,
-	// 			testconstants.UUIDStyleTestnetDidResourceId,
-	// 		),
-	// 		ResolutionType:     testconstants.DefaultResolutionType,
-	// 		ExpectedJSONPath:   "../../testdata/query/resource_common/resource_combination_of_queries_2.json",
-	// 		ExpectedStatusCode: http.StatusOK,
-	// 	},
-	// ),
-
 	Entry(
 		"can get resource with an existent resourceId and resourceVersionTime",
 		utils.PositiveTestCase{
@@ -141,23 +124,6 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		},
 	),
 
-	// Entry(
-	// 	"can get resource with an existent resourceCollectionId, resourceId, resourceName, resourceType",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s?resourceCollectionId=%s&resourceId=%s&resourceName=%s&resourceType=%s",
-	// 			testconstants.UUIDStyleTestnetDid,
-	// 			testconstants.UUIDStyleTestnetId,
-	// 			testconstants.UUIDStyleTestnetDidResourceId,
-	// 			"Demo Resource",
-	// 			"String",
-	// 		),
-	// 		ResolutionType:     testconstants.DefaultResolutionType,
-	// 		ExpectedJSONPath:   "../../testdata/query/resource_common/resource_combination_of_queries_1.json",
-	// 		ExpectedStatusCode: http.StatusOK,
-	// 	},
-	// ),
-
 	Entry(
 		"can get resource with an existent resourceCollectionId, resourceId, resourceName, resourceType, resourceVersion",
 		utils.PositiveTestCase{
@@ -171,7 +137,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 				"1.0",
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
-			ExpectedJSONPath:   "../../testdata/query/resource_common/resource_combination_of_queries_3.json",
+			ExpectedJSONPath:   "../../testdata/query/resource_common/resource_combination_of_queries_2.json",
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
@@ -190,7 +156,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 				"2023-03-24T11:55:00Z",
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
-			ExpectedJSONPath:   "../../testdata/query/resource_common/resource_combination_of_queries_3.json",
+			ExpectedJSONPath:   "../../testdata/query/resource_common/resource_combination_of_queries_2.json",
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
