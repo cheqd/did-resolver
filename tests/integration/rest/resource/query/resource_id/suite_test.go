@@ -9,5 +9,5 @@ import (
 
 func TestResourceId(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "[Integration Test]:  ResourceId query parameter")
+	RunSpecs(t, "[Integration Test]: ResourceId query parameter")
 }
