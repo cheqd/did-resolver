@@ -36,7 +36,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCa
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
 				testconstants.SeveralVersionsDID,
-				"2023-03-06T09:36:56.54204903Z",
+				"2023-03-06T09:36:54.56204903Z",
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
 			ExpectedResult: types.DidResolution{
