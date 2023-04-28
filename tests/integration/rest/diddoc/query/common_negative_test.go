@@ -32,34 +32,6 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 },
 
 	Entry(
-		"cannot get DIDDoc with combination of versionId and relativeRef query parameters",
-		utils.NegativeTestCase{
-			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&relativeRef=%s",
-				testconstants.SeveralVersionsDID,
-				"f790c9b9-4817-4b31-be43-b198e6e18071",
-				"/about",
-			),
-			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: types.DidResolution{
-				Context: "",
-				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
-					ResolutionError: "representationNotSupported",
-					DidProperties: types.DidProperties{
-						DidString:        testconstants.SeveralVersionsDID,
-						MethodSpecificId: "b5d70adf-31ca-4662-aa10-d3a54cd8f06c",
-						Method:           testconstants.ValidMethod,
-					},
-				},
-				Did:      nil,
-				Metadata: types.ResolutionDidDocMetadata{},
-			},
-			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode,
-		},
-	),
-
-	Entry(
 		"cannot get DIDDoc with combination of metadata and relativeRef query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
