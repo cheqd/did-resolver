@@ -20,19 +20,17 @@ var _ = DescribeTable("Positive: Get Collection of Resources with collectionId q
 
 	resp, err := client.R().
 		SetHeader("Accept", testCase.ResolutionType).
-		SetHeader("Accept-Encoding", testCase.EncodingType).
 		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
 
-	var receivedDidDereferencing utils.DereferencingResult
-	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
+	var receivedResourceData any
+	Expect(json.Unmarshal(resp.Body(), &receivedResourceData)).To(BeNil())
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	var expectedDidDereferencing utils.DereferencingResult
-	Expect(utils.ConvertJsonFileToType(testCase.ExpectedJSONPath, &expectedDidDereferencing)).To(BeNil())
+	var expectedResourceData any
+	Expect(utils.ConvertJsonFileToType(testCase.ExpectedJSONPath, &expectedResourceData)).To(BeNil())
 
-	Expect(testCase.ExpectedEncodingType).To(Equal(resp.Header().Get("Content-Encoding")))
-	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
+	Expect(expectedResourceData).To(Equal(receivedResourceData))
 },
 
 	Entry(
