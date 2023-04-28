@@ -35,9 +35,8 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 		"cannot get DIDDoc with combination of metadata and relativeRef query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?metadata=true&relativeRef=%s",
+				"http://localhost:8080/1.0/identifiers/%s?metadata=true&relativeRef=\u002Fabout",
 				testconstants.SeveralVersionsDID,
-				"/about",
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
 			ExpectedResult: utils.DereferencingResult{

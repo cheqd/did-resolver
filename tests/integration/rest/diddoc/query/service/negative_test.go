@@ -61,7 +61,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with service query", func(testCase u
 		"cannot redirect to serviceEndpoint with relativeRef query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?relativeRef=/info",
+				"http://localhost:8080/1.0/identifiers/%s?relativeRef=\u002Finfo",
 				testconstants.SeveralVersionsDID,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -87,7 +87,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with service query", func(testCase u
 		"cannot redirect to serviceEndpoint with an existent service, but an invalid relativeRef URI parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?relativeRef=/info",
+				"http://localhost:8080/1.0/identifiers/%s?relativeRef=\u002Finfo",
 				testconstants.SeveralVersionsDID,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,

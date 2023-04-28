@@ -196,7 +196,7 @@ var _ = DescribeTable("Positive: request with common query parameters (service)"
 				"http://localhost:8080/1.0/identifiers/%s?service=%s&relativeRef=%s&versionId=%s&versionTime=%s",
 				testconstants.SeveralVersionsDID,
 				serviceId,
-				"/about",
+				"\u002Fabout",
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
 				"2023-03-06T09:59:23Z",
 			),
