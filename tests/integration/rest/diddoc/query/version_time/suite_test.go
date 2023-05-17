@@ -1,6 +1,6 @@
 //go:build integration
 
-package query_test
+package versionTime
 
 import (
 	"testing"
@@ -9,7 +9,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestQuery(t *testing.T) {
+func TestMetadata(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Query Suite")
+	RunSpecs(t, "[Integration Test]: VersionTime query parameter")
 }

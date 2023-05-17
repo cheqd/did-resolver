@@ -1,6 +1,6 @@
 //go:build integration
 
-package metadata
+package metadata_test
 
 import (
 	"encoding/json"

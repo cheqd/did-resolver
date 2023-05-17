@@ -1,0 +1,18 @@
+{
+    "@context": "https://w3id.org/did-resolution/v1",
+    "dereferencingMetadata": {
+        "contentType": "application/did+ld+json",
+        "retrieved": "2023-04-25T10:04:17Z",
+        "did": {
+            "didString": "did:cheqd:testnet:b5d70adf-31ca-4662-aa10-d3a54cd8f06c",
+            "methodSpecificId": "b5d70adf-31ca-4662-aa10-d3a54cd8f06c",
+            "method": "cheqd"
+        }
+    },
+    "contentStream": {
+        "created": "2023-03-06T09:36:55.56204903Z",
+        "deactivated": true,
+        "versionId": "0ce23d04-5b67-4ea6-a315-788588e53f4e"
+    },
+    "contentMetadata": {}
+}

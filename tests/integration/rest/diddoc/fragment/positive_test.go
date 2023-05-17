@@ -1,6 +1,6 @@
 //go:build integration
 
-package fragment
+package fragment_test
 
 import (
 	"encoding/json"

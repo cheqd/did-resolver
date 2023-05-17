@@ -1,6 +1,6 @@
 //go:build integration
 
-package collection
+package collection_test
 
 import (
 	"encoding/json"

@@ -1,0 +1,64 @@
+{
+    "@context": "https://w3id.org/did-resolution/v1",
+    "didResolutionMetadata": {
+        "contentType": "application/did+ld+json",
+        "retrieved": "2023-04-25T09:30:18Z",
+        "did": {
+            "didString": "did:cheqd:testnet:b5d70adf-31ca-4662-aa10-d3a54cd8f06c",
+            "methodSpecificId": "b5d70adf-31ca-4662-aa10-d3a54cd8f06c",
+            "method": "cheqd"
+        }
+    },
+    "didDocument": {
+        "@context": [
+            "https://www.w3.org/ns/did/v1",
+            "https://w3id.org/security/suites/ed25519-2018/v1"
+        ],
+        "id": "did:cheqd:testnet:b5d70adf-31ca-4662-aa10-d3a54cd8f06c",
+        "verificationMethod": [
+            {
+                "id": "did:cheqd:testnet:b5d70adf-31ca-4662-aa10-d3a54cd8f06c#key-1",
+                "type": "JsonWebKey2020",
+                "controller": "did:cheqd:testnet:b5d70adf-31ca-4662-aa10-d3a54cd8f06c",
+                "publicKeyJwk": {
+                    "crv": "Ed25519",
+                    "kty": "OKP",
+                    "x": "oL8hiQFXJqrR7ZBRrw7KcvBtGwk12U9TOPrqsJjaIsM"
+                }
+            }
+        ],
+        "authentication": [
+            "did:cheqd:testnet:b5d70adf-31ca-4662-aa10-d3a54cd8f06c#key-1"
+        ],
+        "service": [
+            {
+                "id": "did:cheqd:testnet:b5d70adf-31ca-4662-aa10-d3a54cd8f06c#bar",
+                "type": "LinkedDomains",
+                "serviceEndpoint": [
+                    "https://bar.example.com"
+                ]
+            }
+        ]
+    },
+    "didDocumentMetadata": {
+        "created": "2023-03-06T09:36:55.56204903Z",
+        "updated": "2023-03-06T09:39:48.496306968Z",
+        "deactivated": true,
+        "versionId": "ce298b6f-594b-426e-b431-370d6bc5d3ad",
+        "linkedResourceMetadata": [
+            {
+                "resourceURI": "did:cheqd:testnet:b5d70adf-31ca-4662-aa10-d3a54cd8f06c/resources/5e16a3f9-7c6e-4b6b-8e28-20f56780ee25",
+                "resourceCollectionId": "b5d70adf-31ca-4662-aa10-d3a54cd8f06c",
+                "resourceId": "5e16a3f9-7c6e-4b6b-8e28-20f56780ee25",
+                "resourceName": "TestResource",
+                "resourceType": "TestType",
+                "mediaType": "text/plain; charset=utf-8",
+                "resourceVersion": "1.0",
+                "created": "2023-03-06T09:53:44.467029472Z",
+                "checksum": "64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c",
+                "previousVersionId": null,
+                "nextVersionId": null
+            }
+        ]
+    }
+}
