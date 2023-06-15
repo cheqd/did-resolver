@@ -14,7 +14,6 @@ jobs:
 
   call-build:
     name: "Build"
-    needs: call-lint
     uses: ./.github/workflows/build.yml
     secrets: inherit
 
@@ -26,7 +25,7 @@ jobs:
 
   call-deploy:
     name: "Deploy"
-    needs: call-build
+    needs: [ call-lint, call-build ]
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
 
