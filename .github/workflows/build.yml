@@ -55,6 +55,7 @@ jobs:
         with:
           images: |
             ${{ env.IMAGE_NAME }}
+            ghcr.io/${{ env.IMAGE_NAME }}
             registry.digitalocean.com/${{ env.IMAGE_NAME }}
           tags: |
             type=ref,event=branch
