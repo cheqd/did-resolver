@@ -46,21 +46,18 @@ var _ = DescribeTable("Positive: Get DIDDoc with metadata query", func(testCase 
 		},
 	),
 
-	// TODO: query metadata=false return incorrect response.
-	// I think when we request :did?metadata=false - it should return DIDDoc in DIDResolution.
-
-	// Entry(
-	// 	"can get DIDDoc metadata with metadata=false query parameter",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s?metadata=false",
-	// 			testconstants.IndyStyleMainnetDid,
-	// 		),
-	// 		ResolutionType:     testconstants.DefaultResolutionType,
-	// 		ExpectedJSONPath:   "../../../testdata/query/metadata/diddoc_did.json",
-	// 		ExpectedStatusCode: http.StatusOK,
-	// 	},
-	// ),
+	Entry(
+		"can get DIDDoc metadata with metadata=false query parameter",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?metadata=false",
+				testconstants.IndyStyleMainnetDid,
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/metadata/diddoc_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
 
 	Entry(
 		"can get DIDDoc metadata with an old 16 characters INDY style DID and metadata query parameter",

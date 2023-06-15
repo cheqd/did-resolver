@@ -37,8 +37,8 @@
         ]
     },
     "didDocumentMetadata": {
-        "created": "2023-03-06T09:36:55.56204903Z",
-        "updated": "2023-03-06T09:59:22.04507182Z",
+        "created": "2023-03-06T09:36:55Z",
+        "updated": "2023-03-06T09:59:22Z",
         "deactivated": true,
         "versionId": "f790c9b9-4817-4b31-be43-b198e6e18071",
         "linkedResourceMetadata": [
@@ -49,7 +49,7 @@
                 "resourceName": "TestResource",
                 "resourceType": "TestType",
                 "mediaType": "text/plain; charset=utf-8",
-                "created": "2023-03-06T09:53:44.467029472Z",
+                "created": "2023-03-06T09:53:44Z",
                 "checksum": "64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c",
                 "previousVersionId": null,
                 "nextVersionId": null,

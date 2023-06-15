@@ -1,6 +1,7 @@
 name: "Release"
 on:
   workflow_call:
+  workflow_dispatch:
 defaults:
   run:
     shell: bash
@@ -10,17 +11,18 @@ permissions:
 
 
 jobs:
-  
-  release-binary:
-    name: "Release Binary"
+
+  release-guard:
+    name: "Check release condition"
     runs-on: ubuntu-latest
     outputs:
-      VERSION: ${{ steps.set-version.outputs.VERSION }}
+      RELEASE_VERSION: ${{ steps.set-version.outputs.RELEASE_VERSION }}
+      EXECUTE_RELEASE: ${{ steps.execute-release.outputs.EXECUTE_RELEASE }}
     
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Required to fetch version
           persist-credentials: false
 
       # Node.js setup is needed to run Semantic Release
@@ -28,13 +30,8 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
 
-      - uses: actions/setup-go@v4
-        with:
-          go-version-file: ./go.mod
-          cache: true
-
+      # Required for short-lived token provided to Semantic Release
       - name: "Obtain Github App token"
         id: app-token
         uses: getsentry/action-github-app-token@v2.0.0
@@ -50,10 +47,45 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
 
+      # If there is tag inserting starting with 'v', prevent release-binary & release-docker from running
+      - name: Check whether to execute release
+        id: execute-release
+        run: |
+          tag=$(git describe --tags --exact-match)
+          if [[ $tag =~ ^v ]]; then
+            echo "EXECUTE_RELEASE=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "EXECUTE_RELEASE=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Set release version number
+      - name: Set release version number
+        id: set-version
+        if: steps.execute-release.outputs.EXECUTE_RELEASE == 'true'
+        run: |
+          RELEASE_VERSION=$( git describe --tags "${{ github.sha }}")
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> "$GITHUB_OUTPUT"  
+  
+  release-binary:
+    name: "Release Binary"
+    needs: release-guard
+    runs-on: ubuntu-latest
+    # Only run if release-guard outputs EXECUTE_RELEASE=true
+    if: needs.release-guard.outputs.EXECUTE_RELEASE == 'true'
+    
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: ./go.mod
+          cache: true
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v4
-        # Only run GoReleaser if the commit is tagged with a version
-        if: startsWith((git tag --contains ${{ github.sha }}), 'v')
         with:
           distribution: goreleaser
           version: latest
@@ -61,15 +93,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set version number
-        id: set-version
-        run: |
-          VERSION=$( git describe --tags ${{ github.sha }})
-          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
-
   release-docker:
     name: "Release Docker image"
-    needs: release-binary
+    needs: release-guard
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'main' }}
     env:
@@ -115,7 +141,7 @@ jobs:
           flavor: |
             latest=auto
           tags: |
-            type=semver,pattern={{version}},value=${{ needs.release-binary.outputs.VERSION }}
+            type=semver,pattern={{version}},value=${{ needs.release-guard.outputs.RELEASE_VERSION }}
             type=raw,value=production-latest
             type=sha,format=long
           labels: |

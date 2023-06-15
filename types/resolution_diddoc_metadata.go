@@ -50,7 +50,7 @@ func toTime(value *timestamppb.Timestamp) (result *time.Time) {
 	if value == nil || value.AsTime().IsZero() {
 		result = nil
 	} else {
-		value := value.AsTime()
+		value, _ := time.Parse(time.RFC3339, value.AsTime().Format(time.RFC3339))
 		result = &value
 	}
 
