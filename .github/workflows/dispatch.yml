@@ -23,10 +23,10 @@ jobs:
     uses: ./.github/workflows/test.yml
     secrets: inherit
 
-  call-deploy:
-    name: "Deploy"
+  call-staging:
+    name: "Staging"
     needs: [ call-lint, call-build ]
-    uses: ./.github/workflows/deploy.yml
+    uses: ./.github/workflows/staging.yml
     secrets: inherit
 
   call-release:
