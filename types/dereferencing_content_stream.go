@@ -30,7 +30,7 @@ func NewDereferencedResource(did string, resource *resourceTypes.Metadata) *Dere
 	if resource.NextVersionId != "" {
 		nextVersionId = &resource.NextVersionId
 	}
-	created := resource.Created.AsTime()
+	created := toTime(resource.Created)
 	return &DereferencedResource{
 		ResourceURI:       did + RESOURCE_PATH + resource.Id,
 		CollectionId:      resource.CollectionId,
@@ -39,7 +39,7 @@ func NewDereferencedResource(did string, resource *resourceTypes.Metadata) *Dere
 		ResourceType:      resource.ResourceType,
 		MediaType:         resource.MediaType,
 		Version:           resource.Version,
-		Created:           &created,
+		Created:           created,
 		Checksum:          resource.Checksum,
 		PreviousVersionId: previousVersionId,
 		NextVersionId:     nextVersionId,
