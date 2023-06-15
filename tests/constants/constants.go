@@ -101,6 +101,7 @@ var (
 		Name:         "Existing Resource Name",
 		ResourceType: "CL-Schema",
 		MediaType:    "application/json",
+		Created:      EmptyTimestamp,
 		Checksum:     generateChecksum(ValidResourceData),
 	}
 
