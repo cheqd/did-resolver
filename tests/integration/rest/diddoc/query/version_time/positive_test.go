@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	utils "github.com/cheqd/did-resolver/tests/integration/rest"
@@ -95,7 +96,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
 				testconstants.SeveralVersionsDID,
-				"2023-03-06 09:39:50Z",
+				"2023-03-06"+url.PathEscape(testconstants.HashTag)+"09:39:50Z",
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
 			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
@@ -112,7 +113,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 				"2023-03-07",
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
-			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_date_did.json",
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
