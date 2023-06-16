@@ -6,20 +6,20 @@ import (
 	"github.com/cheqd/did-resolver/types"
 )
 
-type TransformKeyHandler struct {
+type TransformKeysHandler struct {
 	queries.BaseQueryHandler
 }
 
-func (t *TransformKeyHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
+func (t *TransformKeysHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
 	// Get Params
-	transformKey := types.TransformKeyType(service.GetQueryParam(types.TransformKey))
+	transformKeys := types.TransformKeysType(service.GetQueryParam(types.TransformKeys))
 
-	// If transformKey is empty, call the next handler. We don't need to handle it here
-	if transformKey == "" {
+	// If transformKeys is empty, call the next handler. We don't need to handle it here
+	if transformKeys == "" {
 		return t.Continue(c, service, response)
 	}
 
-	if !transformKey.IsSupported() {
+	if !transformKeys.IsSupported() {
 		return nil, types.NewRepresentationNotSupportedError(service.GetDid(), types.DIDJSONLD, nil, t.IsDereferencing)
 	}
 
@@ -30,7 +30,7 @@ func (t *TransformKeyHandler) Handle(c services.ResolverContext, service service
 	}
 
 	for i, vMethod := range didResolution.Did.VerificationMethod {
-		result, err := transformVerificationMethodKey(vMethod, transformKey)
+		result, err := transformVerificationMethodKey(vMethod, transformKeys)
 		if err != nil {
 			return nil, err
 		}

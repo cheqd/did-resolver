@@ -7,7 +7,7 @@ import (
 	"github.com/cheqd/did-resolver/utils"
 )
 
-func transformKeyEd25519VerificationKey2018ToEd25519VerificationKey2020(
+func transformKeysEd25519VerificationKey2018ToEd25519VerificationKey2020(
 	verificationMethod types.VerificationMethod,
 ) (types.VerificationMethod, error) {
 	publicKeyMultibase, err := utils.Ed25519VerificationKey2018ToEd25519VerificationKey2020(verificationMethod.PublicKeyBase58)
@@ -22,7 +22,7 @@ func transformKeyEd25519VerificationKey2018ToEd25519VerificationKey2020(
 	return verificationMethod, nil
 }
 
-func transformKeyEd25519VerificationKey2018ToJSONWebKey2020(
+func transformKeysEd25519VerificationKey2018ToJSONWebKey2020(
 	verificationMethod types.VerificationMethod,
 ) (types.VerificationMethod, error) {
 	publicKeyJwk, err := utils.Ed25519VerificationKey2018ToJSONWebKey2020(verificationMethod.PublicKeyBase58)
@@ -37,7 +37,7 @@ func transformKeyEd25519VerificationKey2018ToJSONWebKey2020(
 	return verificationMethod, nil
 }
 
-func transformKeyEd25519VerificationKey2020ToEd25519VerificationKey2018(
+func transformKeysEd25519VerificationKey2020ToEd25519VerificationKey2018(
 	verificationMethod types.VerificationMethod,
 ) (types.VerificationMethod, error) {
 	publicKeyBase58, err := utils.Ed25519VerificationKey2020ToEd25519VerificationKey2018(verificationMethod.PublicKeyMultibase)
@@ -52,7 +52,7 @@ func transformKeyEd25519VerificationKey2020ToEd25519VerificationKey2018(
 	return verificationMethod, nil
 }
 
-func transformKeyEd25519VerificationKey2020ToJSONWebKey2020(
+func transformKeysEd25519VerificationKey2020ToJSONWebKey2020(
 	verificationMethod types.VerificationMethod,
 ) (types.VerificationMethod, error) {
 	publicKeyJwk, err := utils.Ed25519VerificationKey2020ToJSONWebKey2020(verificationMethod.PublicKeyMultibase)
@@ -67,7 +67,7 @@ func transformKeyEd25519VerificationKey2020ToJSONWebKey2020(
 	return verificationMethod, nil
 }
 
-func transformKeyJSONWebKey2020ToEd25519VerificationKey2018(
+func transformKeysJSONWebKey2020ToEd25519VerificationKey2018(
 	verificationMethod types.VerificationMethod,
 ) (types.VerificationMethod, error) {
 	publicKeyBase58, err := utils.JSONWebKey2020ToEd25519VerificationKey2018(verificationMethod.PublicKeyJwk)
@@ -82,7 +82,7 @@ func transformKeyJSONWebKey2020ToEd25519VerificationKey2018(
 	return verificationMethod, nil
 }
 
-func transformKeyJSONWebKey2020ToEd25519VerificationKey2020(
+func transformKeysJSONWebKey2020ToEd25519VerificationKey2020(
 	verificationMethod types.VerificationMethod,
 ) (types.VerificationMethod, error) {
 	publicKeyMultibase, err := utils.JSONWebKey2020ToEd25519VerificationKey2020(verificationMethod.PublicKeyJwk)
@@ -98,37 +98,37 @@ func transformKeyJSONWebKey2020ToEd25519VerificationKey2020(
 }
 
 func transformVerificationMethodKey(
-	verificationMethod types.VerificationMethod, transformKeyType types.TransformKeyType,
+	verificationMethod types.VerificationMethod, transformKeysType types.TransformKeysType,
 ) (types.VerificationMethod, error) {
-	verificationMethodType := types.TransformKeyType(verificationMethod.Type)
-	if verificationMethodType == transformKeyType {
+	verificationMethodType := types.TransformKeysType(verificationMethod.Type)
+	if verificationMethodType == transformKeysType {
 		return verificationMethod, nil
 	}
 
 	switch verificationMethodType {
 	case types.Ed25519VerificationKey2018:
-		switch transformKeyType {
+		switch transformKeysType {
 		case types.Ed25519VerificationKey2020:
-			return transformKeyEd25519VerificationKey2018ToEd25519VerificationKey2020(verificationMethod)
+			return transformKeysEd25519VerificationKey2018ToEd25519VerificationKey2020(verificationMethod)
 		case types.JsonWebKey2020:
-			return transformKeyEd25519VerificationKey2018ToJSONWebKey2020(verificationMethod)
+			return transformKeysEd25519VerificationKey2018ToJSONWebKey2020(verificationMethod)
 		}
 
 	case types.Ed25519VerificationKey2020:
-		switch transformKeyType {
+		switch transformKeysType {
 		case types.Ed25519VerificationKey2018:
-			return transformKeyEd25519VerificationKey2020ToEd25519VerificationKey2018(verificationMethod)
+			return transformKeysEd25519VerificationKey2020ToEd25519VerificationKey2018(verificationMethod)
 		case types.JsonWebKey2020:
-			return transformKeyEd25519VerificationKey2020ToJSONWebKey2020(verificationMethod)
+			return transformKeysEd25519VerificationKey2020ToJSONWebKey2020(verificationMethod)
 		}
 
 	case types.JsonWebKey2020:
-		switch transformKeyType {
+		switch transformKeysType {
 		case types.Ed25519VerificationKey2018:
-			return transformKeyJSONWebKey2020ToEd25519VerificationKey2018(verificationMethod)
+			return transformKeysJSONWebKey2020ToEd25519VerificationKey2018(verificationMethod)
 
 		case types.Ed25519VerificationKey2020:
-			return transformKeyJSONWebKey2020ToEd25519VerificationKey2020(verificationMethod)
+			return transformKeysJSONWebKey2020ToEd25519VerificationKey2020(verificationMethod)
 		}
 	}
 

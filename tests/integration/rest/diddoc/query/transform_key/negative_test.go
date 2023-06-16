@@ -1,6 +1,6 @@
 //go:build integration
 
-package transformKey
+package transformKeys
 
 import (
 	"encoding/json"
@@ -17,14 +17,13 @@ import (
 
 var identifierDidWithEd25519VerificationKey2018Key = "d8ac0372-0d4b-413e-8ef5-8e8f07822b2c"
 
-var _ = DescribeTable("Negative: Get DIDDoc with transformKey query parameter", func(testCase utils.NegativeTestCase) {
+var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter", func(testCase utils.NegativeTestCase) {
 	client := resty.New()
 
 	resp, err := client.R().
 		SetHeader("Accept", testCase.ResolutionType).
 		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
-
 
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 	expectedDidResolution, ok := testCase.ExpectedResult.(types.DidResolution)
@@ -41,10 +40,10 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKey query parameter", 
 },
 
 	Entry(
-		"cannot get DIDDoc with not existent DID and not supported transformKey query parameter",
+		"cannot get DIDDoc with not existent DID and not supported transformKeys query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKey=EDDSA",
+				"http://localhost:8080/1.0/identifiers/%s?transformKeys=EDDSA",
 				testconstants.NotExistentTestnetDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -67,10 +66,10 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKey query parameter", 
 	),
 
 	Entry(
-		"cannot get DIDDoc with not supported transformKey query parameter",
+		"cannot get DIDDoc with not supported transformKeys query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKey=EDDSA",
+				"http://localhost:8080/1.0/identifiers/%s?transformKeys=EDDSA",
 				didWithEd25519VerificationKey2018Key,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -93,10 +92,10 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKey query parameter", 
 	),
 
 	Entry(
-		"cannot get DIDDoc with combination of transformKey and metadata query parameters",
+		"cannot get DIDDoc with combination of transformKeys and metadata query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s&metadata=true",
+				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&metadata=true",
 				didWithEd25519VerificationKey2018Key,
 				types.Ed25519VerificationKey2020,
 			),
@@ -120,146 +119,10 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKey query parameter", 
 	),
 
 	Entry(
-		"cannot get DIDDoc with combination of transformKey and resourceId query parameters",
+		"cannot get DIDDoc with combination of transformKeys and resourceId query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s&resourceId=%s",
-				didWithEd25519VerificationKey2018Key,
-				types.Ed25519VerificationKey2020,
-				testconstants.ValidIdentifier,
-			),
-			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: utils.DereferencingResult{
-				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
-					ResolutionError: "representationNotSupported",
-					DidProperties: types.DidProperties{
-						DidString:        didWithEd25519VerificationKey2018Key,
-						MethodSpecificId: identifierDidWithEd25519VerificationKey2018Key,
-						Method:           testconstants.ValidMethod,
-					},
-				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
-			},
-			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode,
-		},
-	),
-
-	Entry(
-		"cannot get DIDDoc with combination of transformKey and resourceName query parameters",
-		utils.NegativeTestCase{
-			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s&resourceName=someName",
-				didWithEd25519VerificationKey2018Key,
-				types.Ed25519VerificationKey2020,
-			),
-			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: utils.DereferencingResult{
-				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
-					ResolutionError: "representationNotSupported",
-					DidProperties: types.DidProperties{
-						DidString:        didWithEd25519VerificationKey2018Key,
-						MethodSpecificId: identifierDidWithEd25519VerificationKey2018Key,
-						Method:           testconstants.ValidMethod,
-					},
-				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
-			},
-			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode,
-		},
-	),
-
-	Entry(
-		"cannot get DIDDoc with combination of transformKey and resourceType query parameters",
-		utils.NegativeTestCase{
-			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s&resourceType=someType",
-				didWithEd25519VerificationKey2018Key,
-				types.Ed25519VerificationKey2020,
-			),
-			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: utils.DereferencingResult{
-				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
-					ResolutionError: "representationNotSupported",
-					DidProperties: types.DidProperties{
-						DidString:        didWithEd25519VerificationKey2018Key,
-						MethodSpecificId: identifierDidWithEd25519VerificationKey2018Key,
-						Method:           testconstants.ValidMethod,
-					},
-				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
-			},
-			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode,
-		},
-	),
-
-	Entry(
-		"cannot get DIDDoc with combination of transformKey and resourceVersionTime query parameters",
-		utils.NegativeTestCase{
-			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s&resourceVersionTime=2006-01-02",
-				didWithEd25519VerificationKey2018Key,
-				types.Ed25519VerificationKey2020,
-			),
-			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: utils.DereferencingResult{
-				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
-					ResolutionError: "representationNotSupported",
-					DidProperties: types.DidProperties{
-						DidString:        didWithEd25519VerificationKey2018Key,
-						MethodSpecificId: identifierDidWithEd25519VerificationKey2018Key,
-						Method:           testconstants.ValidMethod,
-					},
-				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
-			},
-			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode,
-		},
-	),
-
-	Entry(
-		"cannot get DIDDoc with combination of transformKey and resourceMetadata query parameters",
-		utils.NegativeTestCase{
-			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s&resourceMetadata=true",
-				didWithEd25519VerificationKey2018Key,
-				types.Ed25519VerificationKey2020,
-			),
-			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: utils.DereferencingResult{
-				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
-					ResolutionError: "representationNotSupported",
-					DidProperties: types.DidProperties{
-						DidString:        didWithEd25519VerificationKey2018Key,
-						MethodSpecificId: identifierDidWithEd25519VerificationKey2018Key,
-						Method:           testconstants.ValidMethod,
-					},
-				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
-			},
-			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode,
-		},
-	),
-
-	Entry(
-		"cannot get DIDDoc with combination of transformKey and resourceCollectionId query parameters",
-		utils.NegativeTestCase{
-			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s&resourceCollectionId=%s",
+				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&resourceId=%s",
 				didWithEd25519VerificationKey2018Key,
 				types.Ed25519VerificationKey2020,
 				testconstants.ValidIdentifier,
@@ -284,10 +147,146 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKey query parameter", 
 	),
 
 	Entry(
-		"cannot get DIDDoc with combination of transformKey and resourceVersion query parameters",
+		"cannot get DIDDoc with combination of transformKeys and resourceName query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKey=%s&resourceVersion=someVersion",
+				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&resourceName=someName",
+				didWithEd25519VerificationKey2018Key,
+				types.Ed25519VerificationKey2020,
+			),
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "representationNotSupported",
+					DidProperties: types.DidProperties{
+						DidString:        didWithEd25519VerificationKey2018Key,
+						MethodSpecificId: identifierDidWithEd25519VerificationKey2018Key,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode,
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc with combination of transformKeys and resourceType query parameters",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&resourceType=someType",
+				didWithEd25519VerificationKey2018Key,
+				types.Ed25519VerificationKey2020,
+			),
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "representationNotSupported",
+					DidProperties: types.DidProperties{
+						DidString:        didWithEd25519VerificationKey2018Key,
+						MethodSpecificId: identifierDidWithEd25519VerificationKey2018Key,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode,
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc with combination of transformKeys and resourceVersionTime query parameters",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&resourceVersionTime=2006-01-02",
+				didWithEd25519VerificationKey2018Key,
+				types.Ed25519VerificationKey2020,
+			),
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "representationNotSupported",
+					DidProperties: types.DidProperties{
+						DidString:        didWithEd25519VerificationKey2018Key,
+						MethodSpecificId: identifierDidWithEd25519VerificationKey2018Key,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode,
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc with combination of transformKeys and resourceMetadata query parameters",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&resourceMetadata=true",
+				didWithEd25519VerificationKey2018Key,
+				types.Ed25519VerificationKey2020,
+			),
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "representationNotSupported",
+					DidProperties: types.DidProperties{
+						DidString:        didWithEd25519VerificationKey2018Key,
+						MethodSpecificId: identifierDidWithEd25519VerificationKey2018Key,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode,
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc with combination of transformKeys and resourceCollectionId query parameters",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&resourceCollectionId=%s",
+				didWithEd25519VerificationKey2018Key,
+				types.Ed25519VerificationKey2020,
+				testconstants.ValidIdentifier,
+			),
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "representationNotSupported",
+					DidProperties: types.DidProperties{
+						DidString:        didWithEd25519VerificationKey2018Key,
+						MethodSpecificId: identifierDidWithEd25519VerificationKey2018Key,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode,
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc with combination of transformKeys and resourceVersion query parameters",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&resourceVersion=someVersion",
 				didWithEd25519VerificationKey2018Key,
 				types.Ed25519VerificationKey2020,
 			),
