@@ -34,20 +34,6 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 },
 
 	Entry(
-		"can get DIDDoc with versionTime query parameter",
-		utils.PositiveTestCase{
-			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SeveralVersionsDID,
-				"2023-03-06T09:39:49.496306968Z",
-			),
-			ResolutionType:     testconstants.DefaultResolutionType,
-			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
-			ExpectedStatusCode: http.StatusOK,
-		},
-	),
-
-	Entry(
 		"can get DIDDoc with an old 16 characters INDY style DID and versionTime query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
@@ -71,6 +57,62 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
 			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_32_old_indy_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (RFC3339 format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				"2023-03-06T09:39:50Z",
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (RFC3339Nano format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				"2023-03-06T09:39:49.496306968Z",
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (DateTime format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				"2023-03-06 09:39:50Z",
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (DateOnly format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				"2023-03-07",
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
