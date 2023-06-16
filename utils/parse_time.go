@@ -21,14 +21,6 @@ func ParseFromStringTimeToGoTime(timeString string) (time.Time, error) {
 
 func parseDateString(timeString string) (time.Time, error) {
 	formats := []string{
-		time.Layout,
-		time.ANSIC,
-		time.UnixDate,
-		time.RubyDate,
-		time.RFC822,
-		time.RFC850,
-		time.RFC1123,
-		time.RFC1123Z,
 		time.RFC3339,
 		time.RFC3339Nano,
 		time.DateTime,
