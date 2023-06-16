@@ -14,7 +14,6 @@ jobs:
 
   call-build:
     name: "Build"
-    needs: call-lint
     uses: ./.github/workflows/build.yml
     secrets: inherit
 
@@ -24,10 +23,10 @@ jobs:
     uses: ./.github/workflows/test.yml
     secrets: inherit
 
-  call-deploy:
-    name: "Deploy"
-    needs: call-build
-    uses: ./.github/workflows/deploy.yml
+  call-staging:
+    name: "Staging"
+    needs: [ call-lint, call-build ]
+    uses: ./.github/workflows/staging.yml
     secrets: inherit
 
   call-release:

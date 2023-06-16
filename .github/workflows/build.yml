@@ -55,6 +55,7 @@ jobs:
         with:
           images: |
             ${{ env.IMAGE_NAME }}
+            ghcr.io/${{ env.IMAGE_NAME }}
             registry.digitalocean.com/${{ env.IMAGE_NAME }}
           tags: |
             type=ref,event=branch
@@ -69,22 +70,12 @@ jobs:
           platforms: linux/amd64
           load: true
           tags: ${{ steps.meta.outputs.tags }}
+          outputs: type=docker,dest=did-resolver-staging.tar
           cache-from: type=gha
           cache-to: type=gha,mode=min
-
-      - name: Save Docker images
-        run: |
-          docker save ${{ env.IMAGE_NAME }} > /tmp/did-resolver-build.tar
-          docker save registry.digitalocean.com/${{ env.IMAGE_NAME }} > /tmp/did-resolver-staging.tar
-
-      - name: Upload build image as an artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: did-resolver-build
-          path: /tmp/did-resolver-build.tar
       
       - name: Upload staging image as an artifact
         uses: actions/upload-artifact@v3
         with:
           name: did-resolver-staging
-          path: /tmp/did-resolver-staging.tar
+          path: did-resolver-staging.tar

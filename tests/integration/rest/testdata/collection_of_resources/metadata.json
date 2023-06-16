@@ -10,7 +10,7 @@
         }
     },
     "contentStream": {
-        "created": "2023-01-25T11:58:10.390039347Z",
+        "created": "2023-01-25T11:58:10Z",
         "versionId": "e5615fc2-6f13-42b1-989c-49576a574cef",
         "linkedResourceMetadata": [
             {
@@ -21,7 +21,7 @@
                 "resourceType": "String",
                 "resourceVersion" : "",
                 "mediaType": "application/json",
-                "created": "2023-01-25T12:08:39.633307395Z",
+                "created": "2023-01-25T12:08:39Z",
                 "checksum": "e1dbc03b50bdb995961dc8843df6539b79d03bf49787ed6462189ee97d27eaf3",
                 "previousVersionId": null,
                 "nextVersionId": null
@@ -34,7 +34,7 @@
                 "resourceType": "String",
                 "resourceVersion" : "",
                 "mediaType": "text/plain; charset=utf-8",
-                "created": "2023-01-25T12:04:52.261619721Z",
+                "created": "2023-01-25T12:04:52Z",
                 "checksum": "cffd829b06797f85407be9353056db722ca3eca0c05ab0462a42d30f19cdef09",
                 "previousVersionId": null,
                 "nextVersionId": null

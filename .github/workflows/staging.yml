@@ -35,3 +35,29 @@ jobs:
 
       - name: Push staging image to DOCR
         run: docker image push --all-tags registry.digitalocean.com/${{ env.IMAGE_NAME }}
+
+  release-staging:
+    name: "Release Staging Docker image"
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'develop' }}
+    env: 
+      IMAGE_NAME: ${{ github.repository }}
+    
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Docker image
+        uses: actions/download-artifact@v3
+        with:
+          name: did-resolver-staging
+
+      - name: Load Docker image
+        run: docker image load --input did-resolver-staging.tar
+
+      - name: Push image to GitHub Container Registry
+        run: docker image push --all-tags ghcr.io/${{ env.IMAGE_NAME }}

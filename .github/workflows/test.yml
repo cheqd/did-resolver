@@ -39,10 +39,10 @@ jobs:
       - name: Download Docker image
         uses: actions/download-artifact@v3
         with:
-          name: did-resolver-build
+          name: did-resolver-staging
 
       - name: Load Docker image
-        run: docker image load --input did-resolver-build.tar
+        run: docker image load --input did-resolver-staging.tar
 
       - name: Set up Docker container for test
         run: docker compose -f tests/docker-compose-testing.yml up --detach --no-build
