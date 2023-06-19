@@ -11,7 +11,7 @@ func ParseFromStringTimeToGoTime(timeString string) (time.Time, error) {
 		return time.Time{}, nil
 	}
 
-	t, err := parseDateString(timeString)
+	t, err := parseTimeString(timeString)
 	if err == nil {
 		return t, nil
 	}
@@ -19,7 +19,7 @@ func ParseFromStringTimeToGoTime(timeString string) (time.Time, error) {
 	return time.Time{}, err
 }
 
-func parseDateString(timeString string) (time.Time, error) {
+func parseTimeString(timeString string) (time.Time, error) {
 	formats := []string{
 		time.Layout,
 		time.ANSIC,

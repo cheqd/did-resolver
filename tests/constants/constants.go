@@ -168,7 +168,4 @@ var (
 
 var DIDStructure = "did:%s:%s:%s"
 
-var (
-	HashTag = "\u0023"
-	Space   = "\u0020"
-)
+var HashTag = "\u0023"

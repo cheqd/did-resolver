@@ -85,7 +85,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 			DidURL: fmt.Sprintf(
 				"http://localhost:8080/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
 				testconstants.UUIDStyleTestnetDid,
-				"2023-01-25"+url.PathEscape(testconstants.Space)+"12:08:40",
+				url.QueryEscape("2023-01-25 12:08:40"),
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
 			ExpectedJSONPath:   "../../../testdata/query/resource_version_time/resource.json",
