@@ -32,8 +32,8 @@ func parseTimeString(timeString string) (time.Time, error) {
 		time.RFC1123Z,
 		time.RFC3339,
 		time.RFC3339Nano,
-		"2006-01-02 15:04:05",
-		"2006-01-02",
+		time.DateTime,
+		time.DateOnly,
 	}
 
 	// Try parsing the date using different formats
