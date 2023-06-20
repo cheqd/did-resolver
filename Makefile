@@ -130,10 +130,10 @@ tidy:
 ###############################################################################
 
 unit-tests:
-	cd tests/unit &&  ginkgo -r --tags unit --race
+	cd tests/unit &&  ginkgo -r --tags unit --race --keep-going
 
 integration-tests:
-	cd tests/integration/rest && ginkgo -r --tags integration --race
+	cd tests/integration/rest && ginkgo -r --tags integration --race --keep-going
 
 lint:
 	golangci-lint run  --config .github/linters/.golangci.yaml

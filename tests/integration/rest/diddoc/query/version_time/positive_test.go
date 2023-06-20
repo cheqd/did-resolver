@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	utils "github.com/cheqd/did-resolver/tests/integration/rest"
@@ -34,20 +35,6 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 },
 
 	Entry(
-		"can get DIDDoc with versionTime query parameter",
-		utils.PositiveTestCase{
-			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SeveralVersionsDID,
-				"2023-03-06T09:39:49.496306968Z",
-			),
-			ResolutionType:     testconstants.DefaultResolutionType,
-			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
-			ExpectedStatusCode: http.StatusOK,
-		},
-	),
-
-	Entry(
 		"can get DIDDoc with an old 16 characters INDY style DID and versionTime query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
@@ -71,6 +58,188 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
 			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_32_old_indy_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (Layout format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				url.QueryEscape("03/06 09:39:50AM '23 +0000"),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (ANSIC format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				url.QueryEscape("Mon Mar 06 09:39:50 2023"),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (UnixDate format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				url.QueryEscape("Mon Mar 06 09:39:50 UTC 2023"),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (RubyDate format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				url.QueryEscape("Mon Mar 06 09:39:50 +0000 2023"),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (RFC822 format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				url.QueryEscape("06 Mar 23 09:40 UTC"),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (RFC822Z format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				url.QueryEscape("06 Mar 23 09:40 +0000"),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (RFC850 format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				url.QueryEscape("Monday, 06-Mar-23 09:39:50 UTC"),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (RFC1123 format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				url.QueryEscape("Mon, 06 Mar 2023 09:39:50 UTC"),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (RFC1123Z format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				url.QueryEscape("Mon, 06 Mar 2023 09:39:50 +0000"),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (RFC3339 format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				"2023-03-06T09:39:50Z",
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (RFC3339Nano format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				"2023-03-06T09:39:49.496306968Z",
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (DateTime format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				url.QueryEscape("2023-03-06 09:39:50"),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc with versionTime query parameter (DateOnly format)",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				"2023-03-07",
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_date_did.json",
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
