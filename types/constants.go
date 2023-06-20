@@ -18,16 +18,16 @@ func (cType ContentType) IsSupported() bool {
 	return supportedTypes[cType]
 }
 
-type TransformKeyType string
+type TransformKeysType string
 
 const (
-	Ed25519VerificationKey2018 TransformKeyType = "Ed25519VerificationKey2018"
-	Ed25519VerificationKey2020 TransformKeyType = "Ed25519VerificationKey2020"
-	JsonWebKey2020             TransformKeyType = "JsonWebKey2020"
+	Ed25519VerificationKey2018 TransformKeysType = "Ed25519VerificationKey2018"
+	Ed25519VerificationKey2020 TransformKeysType = "Ed25519VerificationKey2020"
+	JsonWebKey2020             TransformKeysType = "JsonWebKey2020"
 )
 
-func (tKType TransformKeyType) IsSupported() bool {
-	supportedTypes := map[TransformKeyType]bool{
+func (tKType TransformKeysType) IsSupported() bool {
+	supportedTypes := map[TransformKeysType]bool{
 		Ed25519VerificationKey2018: true,
 		Ed25519VerificationKey2020: true,
 		JsonWebKey2020:             true,
@@ -56,7 +56,7 @@ const (
 const (
 	VersionId            string = "versionId"
 	VersionTime          string = "versionTime"
-	TransformKey         string = "transformKey"
+	TransformKeys        string = "transformKeys"
 	Metadata             string = "metadata"
 	ServiceQ             string = "service"
 	RelativeRef          string = "relativeRef"

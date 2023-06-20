@@ -49,10 +49,10 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 	),
 
 	Entry(
-		"can get DIDDoc with an existent versionId and transformKey query parameters",
+		"can get DIDDoc with an existent versionId and transformKeys query parameters",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&transformKey=%s",
+				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&transformKeys=%s",
 				testconstants.SeveralVersionsDID,
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
 				types.JsonWebKey2020,
@@ -64,10 +64,10 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 	),
 
 	Entry(
-		"can get DIDDoc with an existent versionId, versionTime, transformKey",
+		"can get DIDDoc with an existent versionId, versionTime, transformKeys",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=%s&transformKey=%s",
+				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=%s&transformKeys=%s",
 				testconstants.SeveralVersionsDID,
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
 				"2023-03-06T09:39:49Z",
