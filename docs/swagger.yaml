@@ -288,7 +288,7 @@ paths:
         type: string
       - description: Can transform Verification Method into another type
         in: query
-        name: transformKey
+        name: transformKeys
         type: string
       - description: Redirects to Service Endpoint
         in: query
@@ -340,7 +340,7 @@ paths:
       - application/did+json
       responses:
         "200":
-          description: versionId, versionTime, transformKey returns Full DID Document
+          description: versionId, versionTime, transformKeys returns Full DID Document
           schema:
             $ref: '#/definitions/types.DidResolution'
         "400":

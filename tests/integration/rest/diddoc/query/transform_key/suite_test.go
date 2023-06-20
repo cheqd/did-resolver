@@ -1,6 +1,6 @@
 //go:build integration
 
-package transformKey
+package transformKeys
 
 import (
 	"testing"
@@ -11,5 +11,5 @@ import (
 
 func TestTransformKey(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "[Integration Test]: Transform Key Query")
+	RunSpecs(t, "[Integration Test]: Transform Keys Query")
 }

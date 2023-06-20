@@ -5,6 +5,7 @@ package resource_version_time_test
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	utils "github.com/cheqd/did-resolver/tests/integration/rest"
@@ -36,16 +37,16 @@ var _ = DescribeTable("Negative: Get Collection of Resources with resourceVersio
 		"cannot get collection of resources with not existent resourceVersionTime query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceVersionTime=%s",
+				"http://localhost:8080/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
 				testconstants.UUIDStyleTestnetDid,
-				"2023-03-06T09:36:56.56204903Z",
+				"2023-01-25T12:04:51Z",
 			),
 			ResolutionType: string(types.DIDJSONLD),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "representationNotSupported",
+					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.UUIDStyleTestnetDid,
 						MethodSpecificId: testconstants.UUIDStyleTestnetId,
@@ -55,7 +56,34 @@ var _ = DescribeTable("Negative: Get Collection of Resources with resourceVersio
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode, // it should be notFound
+			ExpectedStatusCode: errors.NotFoundHttpCode, // it should be notFound
+		},
+	),
+
+	Entry(
+		"cannot get collection of resources with not supported format of resourceVersionTime query parameter",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
+				testconstants.UUIDStyleTestnetDid,
+				url.QueryEscape("06/03/2023 09:36:56"),
+			),
+			ResolutionType: string(types.DIDJSONLD),
+			ExpectedResult: utils.DereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "invalidDidUrl",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.UUIDStyleTestnetDid,
+						MethodSpecificId: testconstants.UUIDStyleTestnetId,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: errors.InvalidDidUrlHttpCode,
 		},
 	),
 
