@@ -49,7 +49,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 
 	versionId := dd.GetQueryParam(types.VersionId)
 	versionTime := dd.GetQueryParam(types.VersionTime)
-	transformKey := types.TransformKeyType(dd.GetQueryParam(types.TransformKey))
+	transformKeys := types.TransformKeysType(dd.GetQueryParam(types.TransformKeys))
 	service := dd.GetQueryParam(types.ServiceQ)
 	relativeRef := dd.GetQueryParam(types.RelativeRef)
 	resourceId := dd.GetQueryParam(types.ResourceId)
@@ -57,7 +57,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	metadata := dd.GetQueryParam(types.Metadata)
 	resourceMetadata := dd.GetQueryParam(types.ResourceMetadata)
 
-	if string(transformKey) != "" && (!transformKey.IsSupported() || !types.IsSupportedWithCombinationTransformKeyQuery(dd.Queries)) {
+	if string(transformKeys) != "" && (!transformKeys.IsSupported() || !types.IsSupportedWithCombinationTransformKeysQuery(dd.Queries)) {
 		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
@@ -179,13 +179,13 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHandlers(startHandler qu
 	// or
 	// - versionIdHandler
 	// After that we can find for service field if it's set.
-	// VersionIdHandler -> VersionTimeHandler -> DidDocResolveHandler -> TransformKeyHandler -> DidDocMetadataHandler -> ServiceHandler -> RelativeRefHandler
+	// VersionIdHandler -> VersionTimeHandler -> DidDocResolveHandler -> TransformKeysHandler -> DidDocMetadataHandler -> ServiceHandler -> RelativeRefHandler
 	relativeRefHandler := diddocQueries.RelativeRefHandler{}
 	serviceHandler := diddocQueries.ServiceHandler{}
 	versionIdHandler := diddocQueries.VersionIdHandler{}
 	versionTimeHandler := diddocQueries.VersionTimeHandler{}
 	didDocResolveHandler := diddocQueries.DidDocResolveHandler{}
-	transformKeyHandler := diddocQueries.TransformKeyHandler{}
+	transformKeysHandler := diddocQueries.TransformKeysHandler{}
 	didDocMetadataHandler := diddocQueries.DidDocMetadataHandler{}
 
 	err := startHandler.SetNext(c, &versionIdHandler)
@@ -203,12 +203,12 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHandlers(startHandler qu
 		return nil, err
 	}
 
-	err = didDocResolveHandler.SetNext(c, &transformKeyHandler)
+	err = didDocResolveHandler.SetNext(c, &transformKeysHandler)
 	if err != nil {
 		return nil, err
 	}
 
-	err = transformKeyHandler.SetNext(c, &didDocMetadataHandler)
+	err = transformKeysHandler.SetNext(c, &didDocMetadataHandler)
 	if err != nil {
 		return nil, err
 	}

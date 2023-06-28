@@ -114,10 +114,10 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionId query", func(testCase
 	),
 
 	Entry(
-		"cannot get DIDDoc with an existent versionId, but not supported transformKey value query parameters",
+		"cannot get DIDDoc with an existent versionId, but not supported transformKeys value query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&transformKey=EDDSA",
+				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&transformKeys=EDDSA",
 				testconstants.SeveralVersionsDID,
 				testconstants.SeveralVersionsDIDVersionId,
 			),
