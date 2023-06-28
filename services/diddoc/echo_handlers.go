@@ -20,7 +20,7 @@ import (
 //	@Param			fragmentId				query		string				false	"#Fragment"
 //	@Param			versionId				query		string				false	"Version"
 //	@Param			versionTime				query		string				false	"Created of Updated time of DID Document"
-//	@Param			transformKey			query		string				false	"Can transform Verification Method into another type"
+//	@Param			transformKeys			query		string				false	"Can transform Verification Method into another type"
 //	@Param			service					query		string				false	"Redirects to Service Endpoint"
 //	@Param			relativeRef				query		string				false	"Addition to Service Endpoint"
 //	@Param			metadata				query		string				false	"Show only metadata of DID Document"
@@ -32,7 +32,7 @@ import (
 //	@Param			resourceVersionTime		query		string				false	"Get the nearest resource by creation time"
 //	@Param			resourceMetadata		query		string				false	"Show only metadata of resources"
 //	@Param			checksum				query		string				false	"Sanity check that Checksum of resource is the same as expected"
-//	@success		200						{object}	types.DidResolution	"versionId, versionTime, transformKey returns Full DID Document"
+//	@success		200						{object}	types.DidResolution	"versionId, versionTime, transformKeys returns Full DID Document"
 //	@Failure		400						{object}	types.IdentityError
 //	@Failure		404						{object}	types.IdentityError
 //	@Failure		406						{object}	types.IdentityError

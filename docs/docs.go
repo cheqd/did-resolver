@@ -69,7 +69,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Can transform Verification Method into another type",
-                        "name": "transformKey",
+                        "name": "transformKeys",
                         "in": "query"
                     },
                     {
@@ -141,7 +141,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "versionId, versionTime, transformKey returns Full DID Document",
+                        "description": "versionId, versionTime, transformKeys returns Full DID Document",
                         "schema": {
                             "$ref": "#/definitions/types.DidResolution"
                         }

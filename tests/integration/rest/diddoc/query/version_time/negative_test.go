@@ -5,6 +5,7 @@ package versionTime
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	utils "github.com/cheqd/did-resolver/tests/integration/rest"
@@ -54,6 +55,33 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCa
 				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: types.NotFoundHttpCode,
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc with not supported format of versionTime query parameter (not supported format)",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SeveralVersionsDID,
+				url.QueryEscape("06/03/2023 09:36:54"),
+			),
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: types.DidResolution{
+				Context: "",
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.DIDJSONLD,
+					ResolutionError: "invalidDidUrl",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.SeveralVersionsDID,
+						MethodSpecificId: testconstants.SeveralVersionsDIDIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: types.InvalidDidUrlHttpCode,
 		},
 	),
 

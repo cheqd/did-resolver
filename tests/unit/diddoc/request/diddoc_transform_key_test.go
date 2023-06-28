@@ -17,7 +17,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = DescribeTable("Test Query handler with transformKey params", func(testCase QueriesDIDDocTestCase) {
+var _ = DescribeTable("Test Query handler with transformKeys params", func(testCase QueriesDIDDocTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, utils.MockLedger)
 	expectedDIDResolution := testCase.expectedResolution.(*types.DidResolution)
@@ -46,10 +46,10 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 },
 
 	Entry(
-		"can get DIDDoc (JSONWebKey2020) with supported Ed25519VerificationKey2018 transformKey query parameter",
+		"can get DIDDoc (JSONWebKey2020) with supported Ed25519VerificationKey2018 transformKeys query parameter",
 		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?transformKey=%s",
+				"/1.0/identifiers/%s?transformKeys=%s",
 				testconstants.ValidDid,
 				types.Ed25519VerificationKey2018,
 			),
@@ -83,10 +83,10 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 	),
 
 	Entry(
-		"can get DIDDoc (JSONWebKey2020) with supported Ed25519VerificationKey2020 transformKey query parameter",
+		"can get DIDDoc (JSONWebKey2020) with supported Ed25519VerificationKey2020 transformKeys query parameter",
 		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?transformKey=%s",
+				"/1.0/identifiers/%s?transformKeys=%s",
 				testconstants.ValidDid,
 				types.Ed25519VerificationKey2020,
 			),
@@ -120,10 +120,10 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 	),
 
 	Entry(
-		"cannot get DIDDoc with not existent DID and supported transformKey query parameter",
+		"cannot get DIDDoc with not existent DID and supported transformKeys query parameter",
 		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?transformKey=%s",
+				"/1.0/identifiers/%s?transformKeys=%s",
 				testconstants.NotExistentTestnetDid,
 				types.Ed25519VerificationKey2018,
 			),
@@ -136,10 +136,10 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 	),
 
 	Entry(
-		"cannot get DIDDoc (JSONWebKey2020) with not supported transformKey query parameter",
+		"cannot get DIDDoc (JSONWebKey2020) with not supported transformKeys query parameter",
 		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?transformKey=notSupportedTransformKey",
+				"/1.0/identifiers/%s?transformKeys=notSupportedTransformKeys",
 				testconstants.ValidDid,
 			),
 			resolutionType:     types.DIDJSONLD,
@@ -151,26 +151,10 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 	),
 
 	Entry(
-		"cannot get DIDDoc with combination of transformKey and metadata query parameters",
+		"cannot get DIDDoc with combination of transformKeys and metadata query parameters",
 		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?transformKey=%s&metadata=true",
-				testconstants.ValidDid,
-				types.Ed25519VerificationKey2018,
-			),
-			resolutionType:     types.DIDJSONLD,
-			expectedResolution: &types.DidResolution{},
-			expectedError: types.NewRepresentationNotSupportedError(
-				testconstants.ValidDid, types.DIDJSONLD, nil, false,
-			),
-		},
-	),
-
-	Entry(
-		"cannot get DIDDoc with combination of transformKey and metadata query parameters",
-		QueriesDIDDocTestCase{
-			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?transformKey=%s&metadata=true",
+				"/1.0/identifiers/%s?transformKeys=%s&metadata=true",
 				testconstants.ValidDid,
 				types.Ed25519VerificationKey2018,
 			),
@@ -183,27 +167,10 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 	),
 
 	Entry(
-		"cannot get DIDDoc with combination of transformKey and resourceId query parameters",
+		"cannot get DIDDoc with combination of transformKeys and metadata query parameters",
 		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?transformKey=%s&resourceId=%s",
-				testconstants.ValidDid,
-				types.Ed25519VerificationKey2018,
-				testconstants.ValidIdentifier,
-			),
-			resolutionType:     types.DIDJSONLD,
-			expectedResolution: &types.DidResolution{},
-			expectedError: types.NewRepresentationNotSupportedError(
-				testconstants.ValidDid, types.DIDJSONLD, nil, false,
-			),
-		},
-	),
-
-	Entry(
-		"cannot get DIDDoc with combination of transformKey and resourceName query parameters",
-		QueriesDIDDocTestCase{
-			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?transformKey=%s&resourceName=someName",
+				"/1.0/identifiers/%s?transformKeys=%s&metadata=true",
 				testconstants.ValidDid,
 				types.Ed25519VerificationKey2018,
 			),
@@ -216,58 +183,10 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 	),
 
 	Entry(
-		"cannot get DIDDoc with combination of transformKey and resourceType query parameters",
+		"cannot get DIDDoc with combination of transformKeys and resourceId query parameters",
 		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?transformKey=%s&resourceType=someType",
-				testconstants.ValidDid,
-				types.Ed25519VerificationKey2018,
-			),
-			resolutionType:     types.DIDJSONLD,
-			expectedResolution: &types.DidResolution{},
-			expectedError: types.NewRepresentationNotSupportedError(
-				testconstants.ValidDid, types.DIDJSONLD, nil, false,
-			),
-		},
-	),
-
-	Entry(
-		"cannot get DIDDoc with combination of transformKey and resourceVersionTime query parameters",
-		QueriesDIDDocTestCase{
-			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?transformKey=%s&resourceVersionTime=2006-01-02",
-				testconstants.ValidDid,
-				types.Ed25519VerificationKey2018,
-			),
-			resolutionType:     types.DIDJSONLD,
-			expectedResolution: &types.DidResolution{},
-			expectedError: types.NewRepresentationNotSupportedError(
-				testconstants.ValidDid, types.DIDJSONLD, nil, false,
-			),
-		},
-	),
-
-	Entry(
-		"cannot get DIDDoc with combination of transformKey and resourceMetadata query parameters",
-		QueriesDIDDocTestCase{
-			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?transformKey=%s&resourceMetadata=true",
-				testconstants.ValidDid,
-				types.Ed25519VerificationKey2018,
-			),
-			resolutionType:     types.DIDJSONLD,
-			expectedResolution: &types.DidResolution{},
-			expectedError: types.NewRepresentationNotSupportedError(
-				testconstants.ValidDid, types.DIDJSONLD, nil, false,
-			),
-		},
-	),
-
-	Entry(
-		"cannot get DIDDoc with combination of transformKey and resourceCollectionId query parameters",
-		QueriesDIDDocTestCase{
-			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?transformKey=%s&resourceCollectionId=%s",
+				"/1.0/identifiers/%s?transformKeys=%s&resourceId=%s",
 				testconstants.ValidDid,
 				types.Ed25519VerificationKey2018,
 				testconstants.ValidIdentifier,
@@ -281,10 +200,91 @@ var _ = DescribeTable("Test Query handler with transformKey params", func(testCa
 	),
 
 	Entry(
-		"cannot get DIDDoc with combination of transformKey and resourceVersion query parameters",
+		"cannot get DIDDoc with combination of transformKeys and resourceName query parameters",
 		QueriesDIDDocTestCase{
 			didURL: fmt.Sprintf(
-				"/1.0/identifiers/%s?transformKey=%s&resourceVersion=someVersion",
+				"/1.0/identifiers/%s?transformKeys=%s&resourceName=someName",
+				testconstants.ValidDid,
+				types.Ed25519VerificationKey2018,
+			),
+			resolutionType:     types.DIDJSONLD,
+			expectedResolution: &types.DidResolution{},
+			expectedError: types.NewRepresentationNotSupportedError(
+				testconstants.ValidDid, types.DIDJSONLD, nil, false,
+			),
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc with combination of transformKeys and resourceType query parameters",
+		QueriesDIDDocTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?transformKeys=%s&resourceType=someType",
+				testconstants.ValidDid,
+				types.Ed25519VerificationKey2018,
+			),
+			resolutionType:     types.DIDJSONLD,
+			expectedResolution: &types.DidResolution{},
+			expectedError: types.NewRepresentationNotSupportedError(
+				testconstants.ValidDid, types.DIDJSONLD, nil, false,
+			),
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc with combination of transformKeys and resourceVersionTime query parameters",
+		QueriesDIDDocTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?transformKeys=%s&resourceVersionTime=2006-01-02",
+				testconstants.ValidDid,
+				types.Ed25519VerificationKey2018,
+			),
+			resolutionType:     types.DIDJSONLD,
+			expectedResolution: &types.DidResolution{},
+			expectedError: types.NewRepresentationNotSupportedError(
+				testconstants.ValidDid, types.DIDJSONLD, nil, false,
+			),
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc with combination of transformKeys and resourceMetadata query parameters",
+		QueriesDIDDocTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?transformKeys=%s&resourceMetadata=true",
+				testconstants.ValidDid,
+				types.Ed25519VerificationKey2018,
+			),
+			resolutionType:     types.DIDJSONLD,
+			expectedResolution: &types.DidResolution{},
+			expectedError: types.NewRepresentationNotSupportedError(
+				testconstants.ValidDid, types.DIDJSONLD, nil, false,
+			),
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc with combination of transformKeys and resourceCollectionId query parameters",
+		QueriesDIDDocTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?transformKeys=%s&resourceCollectionId=%s",
+				testconstants.ValidDid,
+				types.Ed25519VerificationKey2018,
+				testconstants.ValidIdentifier,
+			),
+			resolutionType:     types.DIDJSONLD,
+			expectedResolution: &types.DidResolution{},
+			expectedError: types.NewRepresentationNotSupportedError(
+				testconstants.ValidDid, types.DIDJSONLD, nil, false,
+			),
+		},
+	),
+
+	Entry(
+		"cannot get DIDDoc with combination of transformKeys and resourceVersion query parameters",
+		QueriesDIDDocTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?transformKeys=%s&resourceVersion=someVersion",
 				testconstants.ValidDid,
 				types.Ed25519VerificationKey2018,
 			),
