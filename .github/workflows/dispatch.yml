@@ -19,7 +19,7 @@ jobs:
 
   call-test:
     name: "Test"
-    needs: call-build
+    needs: [ call-lint, call-build ]
     uses: ./.github/workflows/test.yml
     secrets: inherit
 
