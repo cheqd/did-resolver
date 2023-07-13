@@ -74,6 +74,6 @@ release:
   
   draft: false
   prerelease: auto
-  mode: append
+  mode: keep-existing
   header: |
     # Release Notes for {{.ProjectName}} v{{.Version}}
