@@ -27,7 +27,7 @@ jobs:
           args: build --clean --snapshot --single-target
 
       - name: Store artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cheqd-noded
           path: dist/did-resolver_linux_amd64_v1/did-resolver
@@ -75,7 +75,7 @@ jobs:
           cache-to: type=gha,mode=min
       
       - name: Upload staging image as an artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: did-resolver-staging
           path: did-resolver-staging.tar

@@ -67,7 +67,7 @@ jobs:
         run: docker compose -f tests/docker-compose-testing.yml logs --tail --follow
 
       - name: Upload integration tests result
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: report-integration.xml
           path: tests/integration/rest/report-integration.xml
