@@ -18,7 +18,7 @@ jobs:
     outputs:
       RELEASE_VERSION: ${{ steps.set-version.outputs.RELEASE_VERSION }}
       EXECUTE_RELEASE: ${{ steps.execute-release.outputs.EXECUTE_RELEASE }}
-    
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -51,11 +51,13 @@ jobs:
       - name: Check whether to execute release
         id: execute-release
         run: |
-          tag=$(git describe --tags --exact-match)
-          if [[ $tag =~ ^v ]]; then
+          tag=$(git describe --tags --exact-match) || exit 0
+          exists=$(git rev-parse "$tag" 2> /dev/null) || exit 0
+          if [[ ! -z "$exists" && $tag =~ ^v ]]; then
             echo "EXECUTE_RELEASE=true" >> "$GITHUB_OUTPUT"
           else
             echo "EXECUTE_RELEASE=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
 
       # Set release version number
@@ -64,15 +66,15 @@ jobs:
         if: steps.execute-release.outputs.EXECUTE_RELEASE == 'true'
         run: |
           RELEASE_VERSION=$( git describe --tags "${{ github.sha }}")
-          echo "RELEASE_VERSION=$RELEASE_VERSION" >> "$GITHUB_OUTPUT"  
-  
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> "$GITHUB_OUTPUT"
+
   release-binary:
     name: "Release Binary"
     needs: release-guard
     runs-on: ubuntu-latest
     # Only run if release-guard outputs EXECUTE_RELEASE=true
     if: needs.release-guard.outputs.EXECUTE_RELEASE == 'true'
-    
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -100,7 +102,7 @@ jobs:
     if: ${{ github.ref_name == 'main' }}
     env:
       IMAGE_NAME: ${{ github.repository }}
-    environment: 
+    environment:
       name: production
       url: https://resolver.cheqd.net
 
@@ -127,10 +129,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Login to DigitalOcean Container Registry
         run: doctl registry login --expiry-seconds 600
-      
+
       - name: Configure Docker image metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -166,6 +168,6 @@ jobs:
 
       - name: Push image to GitHub Container Registry
         run: docker image push --all-tags ghcr.io/${{ github.repository}}
-      
+
       - name: Push image to DigitalOcean Container Registry
         run: docker image push --all-tags registry.digitalocean.com/${{ github.repository }}
