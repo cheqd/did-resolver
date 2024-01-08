@@ -74,13 +74,15 @@ var (
 )
 
 var (
-	ValidMethod           = "cheqd"
-	ValidMainnetNamespace = "mainnet"
-	ValidTestnetNamespace = "testnet"
-	ValidIdentifier       = "fb53dd05-329b-4614-a3f2-c0a8c7554ee3"
-	ValidVersionId        = "32e0613e-bee4-4ea4-952c-bba3e857fa2a"
-	ValidServiceId        = "service-1"
-	ValidPubKeyJWK        = "{" +
+	ValidMethod            = "cheqd"
+	ValidMainnetNamespace  = "mainnet"
+	ValidTestnetNamespace  = "testnet"
+	ValidIdentifier        = "fb53dd05-329b-4614-a3f2-c0a8c7554ee3"
+	ValidVersionId         = "32e0613e-bee4-4ea4-952c-bba3e857fa2a"
+	ValidNextVersionId     = "3f3111af-dfe6-411f-adc9-02af59716ddb"
+	ValidPreviousVersionId = "139445af-4281-4453-b05a-ec9a8931c1f9"
+	ValidServiceId         = "service-1"
+	ValidPubKeyJWK         = "{" +
 		"\"crv\":\"Ed25519\"," +
 		"\"kid\":\"_Qq0UL2Fq651Q0Fjd6TvnYE-faHiOpRlPVQcY_-tA4A\"," +
 		"\"kty\":\"OKP\"," +

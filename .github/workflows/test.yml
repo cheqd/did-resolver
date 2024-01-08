@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-go@v4
         with:
           go-version-file: ./go.mod
@@ -22,7 +22,7 @@ jobs:
       - name: Install ginkgo
         run: |
           go install github.com/onsi/ginkgo/v2/ginkgo@latest
-      
+
       - name: Run Golang unit tests
         working-directory: ./tests/unit/
         run: ginkgo -r --tags unit --race --randomize-all --randomize-suites --keep-going --trace
@@ -55,12 +55,12 @@ jobs:
       - name: Install ginkgo
         working-directory: ./..
         run: go install github.com/onsi/ginkgo/v2/ginkgo@latest
-  
+
       - name: Run Ginkgo integration tests
         working-directory: ./tests/integration/rest
         run: |
           ginkgo -r --tags integration --race --randomize-suites --keep-going --trace --junit-report ./report-integration.xml
-      
+
       - name: Show logs
         if: failure()
         working-directory: ./docker/localnet

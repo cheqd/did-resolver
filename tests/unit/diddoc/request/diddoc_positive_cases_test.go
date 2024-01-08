@@ -11,7 +11,7 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	
+
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	didDocService "github.com/cheqd/did-resolver/services/diddoc"
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
@@ -42,7 +42,6 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 	Expect(expectedContentType).To(Equal(resolutionResult.ResolutionMetadata.ContentType))
 	Expect(expectedDIDResolution.ResolutionMetadata.DidProperties).To(Equal(resolutionResult.ResolutionMetadata.DidProperties))
 	Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
-
 },
 
 	// Positive cases
@@ -90,7 +89,8 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 						ResourceType1.Metadata,
 						ResourceName2.Metadata,
 						ResourceName12.Metadata,
-						ResourceName1.Metadata},
+						ResourceName1.Metadata,
+					},
 				),
 			},
 			expectedError: nil,
@@ -140,7 +140,8 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 						ResourceType1.Metadata,
 						ResourceName2.Metadata,
 						ResourceName12.Metadata,
-						ResourceName1.Metadata},
+						ResourceName1.Metadata,
+					},
 				),
 			},
 			expectedError: nil,
@@ -188,9 +189,10 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 						ResourceType2.Metadata,
 						ResourceType12.Metadata,
 						ResourceType1.Metadata,
-						ResourceName2.Metadata, 
-						ResourceName12.Metadata, 
-						ResourceName1.Metadata},
+						ResourceName2.Metadata,
+						ResourceName12.Metadata,
+						ResourceName1.Metadata,
+					},
 				),
 			},
 			expectedError: nil,

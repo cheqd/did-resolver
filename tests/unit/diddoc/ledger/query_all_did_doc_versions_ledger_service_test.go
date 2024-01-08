@@ -35,8 +35,10 @@ var _ = DescribeTable("Test QueryAllDidDocVersionsMetadata method", func(testCas
 			expectedDidDocVersions: &types.DereferencedDidVersionsList{
 				Versions: []types.ResolutionDidDocMetadata{
 					{
-						Created:   &testconstants.ValidCreated,
-						VersionId: testconstants.ValidMetadata.VersionId,
+						Created:           &testconstants.ValidCreated,
+						VersionId:         testconstants.ValidMetadata.VersionId,
+						NextVersionId:     "",
+						PreviousVersionId: "",
 					},
 				},
 			},

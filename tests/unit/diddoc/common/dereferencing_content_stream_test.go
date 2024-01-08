@@ -5,52 +5,52 @@ package common
 import (
 	"time"
 
+	utils "github.com/cheqd/did-resolver/tests/unit"
 	"github.com/cheqd/did-resolver/types"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	utils "github.com/cheqd/did-resolver/tests/unit"
 )
 
 var _ = Describe("DereferencingContentStream Find before time", func() {
 	var (
 		versionList types.DereferencedResourceList
-		t0 		 = utils.MustParseDate("2021-08-23T08:59:59Z")
-		t1 	     = utils.MustParseDate("2021-08-23T09:00:00Z")
-		t1_2     = utils.MustParseDate("2021-08-23T09:30:01Z")
-		t2       = utils.MustParseDate("2021-08-23T09:40:00Z")
-		t2_3     = utils.MustParseDate("2021-08-23T09:40:01Z")
-		t3		 = utils.MustParseDate("2021-08-23T09:50:00Z")
-		t3_  	 = utils.MustParseDate("2021-08-23T09:50:01Z")
+		t0          = utils.MustParseDate("2021-08-23T08:59:59Z")
+		t1          = utils.MustParseDate("2021-08-23T09:00:00Z")
+		t1_2        = utils.MustParseDate("2021-08-23T09:30:01Z")
+		t2          = utils.MustParseDate("2021-08-23T09:40:00Z")
+		t2_3        = utils.MustParseDate("2021-08-23T09:40:01Z")
+		t3          = utils.MustParseDate("2021-08-23T09:50:00Z")
+		t3_         = utils.MustParseDate("2021-08-23T09:50:01Z")
 	)
 
 	BeforeEach(func() {
 		versionList = types.DereferencedResourceList{
 			{
-				Created:    &t1,
-				ResourceId: "r1",
+				Created:      &t1,
+				ResourceId:   "r1",
 				CollectionId: "c1",
-				Name: "name1",
+				Name:         "name1",
 				ResourceType: "type1",
-				Version: "v1",
-				Checksum: "checksum1",
+				Version:      "v1",
+				Checksum:     "checksum1",
 			},
 			{
-				Created:    &t2,
-				ResourceId: "r2",
+				Created:      &t2,
+				ResourceId:   "r2",
 				CollectionId: "c2",
-				Name: "name2",
+				Name:         "name2",
 				ResourceType: "type2",
-				Version: "v2",
-				Checksum: "checksum2",
+				Version:      "v2",
+				Checksum:     "checksum2",
 			},
 			{
-				Created:    &t3,
-				ResourceId: "r3",
+				Created:      &t3,
+				ResourceId:   "r3",
 				CollectionId: "c3",
-				Name: "name2",
+				Name:         "name2",
 				ResourceType: "type2",
-				Version: "v2",
-				Checksum: "checksum3",
+				Version:      "v2",
+				Checksum:     "checksum3",
 			},
 		}
 	})
