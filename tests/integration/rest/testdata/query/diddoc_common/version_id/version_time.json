@@ -41,6 +41,8 @@
         "updated": "2023-03-06T09:39:48Z",
         "deactivated": true,
         "versionId": "ce298b6f-594b-426e-b431-370d6bc5d3ad",
+        "nextVersionId": "f790c9b9-4817-4b31-be43-b198e6e18071",
+        "previousVersionId": "0ce23d04-5b67-4ea6-a315-788588e53f4e",
         "linkedResourceMetadata": [
             {
                 "resourceURI": "did:cheqd:testnet:b5d70adf-31ca-4662-aa10-d3a54cd8f06c/resources/5e16a3f9-7c6e-4b6b-8e28-20f56780ee25",
