@@ -24,11 +24,13 @@ var _ = Describe("Test NewResolutionDIDDocMetadata function", func() {
 		}
 
 		expectedResult := types.ResolutionDidDocMetadata{
-			Created:     nil,
-			Updated:     nil,
-			Deactivated: false,
-			VersionId:   testconstants.ValidIdentifier,
-			Resources:   []types.DereferencedResource{testconstants.ValidMetadataResource},
+			Created:           nil,
+			Updated:           nil,
+			Deactivated:       false,
+			NextVersionId:     "",
+			PreviousVersionId: "",
+			VersionId:         testconstants.ValidIdentifier,
+			Resources:         []types.DereferencedResource{testconstants.ValidMetadataResource},
 		}
 
 		result := types.NewResolutionDidDocMetadata(testconstants.ExistentDid, metadata, resources)
@@ -37,17 +39,21 @@ var _ = Describe("Test NewResolutionDIDDocMetadata function", func() {
 
 	It("can create the structure without resource", func() {
 		metadata := &didTypes.Metadata{
-			Created:     testconstants.NotEmptyTimestamp,
-			Updated:     testconstants.NotEmptyTimestamp,
-			VersionId:   testconstants.ValidVersionId,
-			Deactivated: false,
+			Created:           testconstants.NotEmptyTimestamp,
+			Updated:           testconstants.NotEmptyTimestamp,
+			VersionId:         testconstants.ValidVersionId,
+			NextVersionId:     testconstants.ValidNextVersionId,
+			PreviousVersionId: testconstants.ValidPreviousVersionId,
+			Deactivated:       false,
 		}
 
 		expectedResult := types.ResolutionDidDocMetadata{
-			Created:     &testconstants.NotEmptyTime,
-			Updated:     &testconstants.NotEmptyTime,
-			VersionId:   testconstants.ValidVersionId,
-			Deactivated: false,
+			Created:           &testconstants.NotEmptyTime,
+			Updated:           &testconstants.NotEmptyTime,
+			VersionId:         testconstants.ValidVersionId,
+			NextVersionId:     testconstants.ValidNextVersionId,
+			PreviousVersionId: testconstants.ValidPreviousVersionId,
+			Deactivated:       false,
 		}
 
 		result := types.NewResolutionDidDocMetadata(testconstants.ExistentDid, metadata, []*resourceTypes.Metadata{})

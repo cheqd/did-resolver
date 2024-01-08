@@ -79,7 +79,7 @@ func NewMockLedgerService(did *didTypes.DidDoc, metadata []*didTypes.Metadata, r
 func (ls MockLedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
 	if ls.Did.Id == did {
 		if version == "" {
-			return &didTypes.DidDocWithMetadata{DidDoc: ls.Did, Metadata: ls.Metadata[len(ls.Metadata) -1]}, nil
+			return &didTypes.DidDocWithMetadata{DidDoc: ls.Did, Metadata: ls.Metadata[len(ls.Metadata)-1]}, nil
 		}
 		for _, metadata := range ls.Metadata {
 			if metadata.VersionId == version {
@@ -123,7 +123,7 @@ func (ls MockLedgerService) QueryCollectionResources(did string) ([]*resourceTyp
 		return []*resourceTypes.Metadata{}, types.NewNotFoundError(did, types.JSON, nil, true)
 	}
 
-	var metadataList = make([]*resourceTypes.Metadata, len(ls.Resources))
+	metadataList := make([]*resourceTypes.Metadata, len(ls.Resources))
 	for i, resource := range ls.Resources {
 		metadataList[i] = resource.Metadata
 	}

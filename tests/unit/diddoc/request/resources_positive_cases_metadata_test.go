@@ -62,7 +62,7 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 		ResourceMetadataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceId=%s&resourceMetadata=true",
-				testconstants.ValidDid, 
+				testconstants.ValidDid,
 				ResourceIdName1,
 			),
 			resolutionType: types.DIDJSONLD,
@@ -315,7 +315,8 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 					[]*resourceTypes.Metadata{
 						ResourceName2.Metadata,
 						ResourceName12.Metadata,
-						ResourceName1.Metadata},
+						ResourceName1.Metadata,
+					},
 				),
 				Metadata: &types.ResolutionDidDocMetadata{},
 			},
@@ -343,7 +344,8 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 					testconstants.ValidDid,
 					[]*resourceTypes.Metadata{
 						ResourceName12.Metadata,
-						ResourceName1.Metadata},
+						ResourceName1.Metadata,
+					},
 				),
 				Metadata: &types.ResolutionDidDocMetadata{},
 			},
@@ -371,7 +373,8 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 					testconstants.ValidDid,
 					[]*resourceTypes.Metadata{
 						ResourceType12.Metadata,
-						ResourceType1.Metadata,},
+						ResourceType1.Metadata,
+					},
 				),
 				Metadata: &types.ResolutionDidDocMetadata{},
 			},

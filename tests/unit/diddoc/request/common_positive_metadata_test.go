@@ -50,7 +50,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceId=%s&resourceMetadata=true",
 				testconstants.ValidDid,
-				VersionId1, 
+				VersionId1,
 				DidDocUpdated.Format(time.RFC3339Nano),
 				ResourceIdName1,
 			),
@@ -78,7 +78,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceId=%s&resourceCollectionId=%s&resourceMetadata=true",
 				testconstants.ValidDid,
-				VersionId1, 
+				VersionId1,
 				DidDocUpdated.Format(time.RFC3339Nano),
 				ResourceIdName1,
 				ResourceName1.Metadata.CollectionId,
@@ -107,7 +107,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceCollectionId=%s&resourceMetadata=true",
 				testconstants.ValidDid,
-				VersionId1, 
+				VersionId1,
 				DidDocUpdated.Format(time.RFC3339Nano),
 				ResourceName1.Metadata.CollectionId,
 			),
@@ -139,7 +139,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceId=%s&resourceCollectionId=%s&resourceName=%s&resourceMetadata=true",
 				testconstants.ValidDid,
-				VersionId1, 
+				VersionId1,
 				DidDocUpdated.Format(time.RFC3339Nano),
 				ResourceIdName1,
 				ResourceName1.Metadata.CollectionId,
@@ -169,7 +169,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceId=%s&resourceCollectionId=%s&resourceName=%s&resourceType=%s&resourceMetadata=true",
 				testconstants.ValidDid,
-				VersionId1, 
+				VersionId1,
 				DidDocUpdated.Format(time.RFC3339Nano),
 				ResourceIdName1,
 				ResourceName1.Metadata.CollectionId,
@@ -200,7 +200,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceId=%s&resourceCollectionId=%s&resourceName=%s&resourceType=%s&resourceVersion=%s&resourceMetadata=true",
 				testconstants.ValidDid,
-				VersionId1, 
+				VersionId1,
 				DidDocUpdated.Format(time.RFC3339Nano),
 				ResourceIdName1,
 				ResourceName1.Metadata.CollectionId,
@@ -232,7 +232,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceId=%s&resourceCollectionId=%s&resourceName=%s&resourceType=%s&resourceVersion=%s&resourceVersionTime=%s&resourceMetadata=true",
 				testconstants.ValidDid,
-				VersionId1, 
+				VersionId1,
 				DidDocUpdated.Format(time.RFC3339Nano),
 				ResourceIdName1,
 				ResourceName1.Metadata.CollectionId,
@@ -265,7 +265,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceId=%s&resourceCollectionId=%s&resourceName=%s&resourceType=%s&resourceVersion=%s&resourceVersionTime=%s&checksum=%s&resourceMetadata=true",
 				testconstants.ValidDid,
-				VersionId1, 
+				VersionId1,
 				DidDocUpdated.Format(time.RFC3339Nano),
 				ResourceIdName1,
 				ResourceName1.Metadata.CollectionId,
@@ -299,7 +299,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceVersionTime=%s&resourceMetadata=true",
 				testconstants.ValidDid,
-				VersionId1, 
+				VersionId1,
 				DidDocUpdated.Format(time.RFC3339Nano),
 				Resource2Created.Format(time.RFC3339),
 			),
@@ -317,7 +317,8 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 					[]*resourceTypes.Metadata{
 						ResourceName2.Metadata,
 						ResourceName12.Metadata,
-						ResourceName1.Metadata},
+						ResourceName1.Metadata,
+					},
 				),
 				Metadata: &types.ResolutionDidDocMetadata{},
 			},
