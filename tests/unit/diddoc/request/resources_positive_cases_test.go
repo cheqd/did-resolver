@@ -8,12 +8,12 @@ import (
 	"net/http/httptest"
 	"time"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
 	didDocService "github.com/cheqd/did-resolver/services/diddoc"
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	utils "github.com/cheqd/did-resolver/tests/unit"
 	"github.com/cheqd/did-resolver/types"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
 var _ = DescribeTable("Test Query handlers with resource params. Returns Resource", func(testCase ResourceTestCase) {

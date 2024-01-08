@@ -31,7 +31,7 @@ var _ = Describe("DidDocMetadataList", func() {
 				Deactivated: false,
 				Created:     &tcreated,
 				Updated:     nil,
-				Resources:   []types.DereferencedResource{
+				Resources: []types.DereferencedResource{
 					{
 						Created: &t1_2,
 					},
@@ -113,7 +113,6 @@ var _ = Describe("DidDocMetadataList", func() {
 
 	Context("GetResourcesBeforeNextVersion", func() {
 		It("should return empty list of resources for the first version", func() {
-			
 			Expect(versionList.GetResourcesBeforeNextVersion("1")).To(Equal(types.DereferencedResourceList{}))
 		})
 		It("should return resource created before next version", func() {

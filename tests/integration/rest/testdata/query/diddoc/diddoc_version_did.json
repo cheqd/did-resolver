@@ -30,6 +30,7 @@
     "didDocumentMetadata": {
         "created": "2023-03-06T09:36:55Z",
         "deactivated": true,
-        "versionId": "0ce23d04-5b67-4ea6-a315-788588e53f4e"
+        "versionId": "0ce23d04-5b67-4ea6-a315-788588e53f4e",
+        "nextVersionId": "ce298b6f-594b-426e-b431-370d6bc5d3ad"
     }
 }

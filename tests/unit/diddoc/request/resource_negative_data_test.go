@@ -36,12 +36,12 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 		ResourceTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceId=%s",
-				testconstants.ValidDid, 
+				testconstants.ValidDid,
 				uuid.New().String(),
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
@@ -49,12 +49,12 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 		ResourceTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceId=%s",
-				testconstants.ValidDid, 
+				testconstants.ValidDid,
 				"SomeNotUUID",
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError: types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
@@ -62,12 +62,12 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 		ResourceTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceVersionTime=%s",
-				testconstants.ValidDid, 
+				testconstants.ValidDid,
 				"SomeNotUUID",
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError: types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
@@ -78,9 +78,9 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 				testconstants.ValidDid,
 				uuid.New().String(),
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
@@ -91,9 +91,9 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 				testconstants.ValidDid,
 				"NotExistentType",
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
@@ -104,9 +104,9 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 				testconstants.ValidDid,
 				"NotExistentName",
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
@@ -117,9 +117,9 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 				testconstants.ValidDid,
 				"NotExistentVersion",
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
@@ -131,9 +131,9 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 				ResourceIdName1,
 				"wrongChecksum",
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
@@ -144,9 +144,9 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 				testconstants.ValidDid,
 				DidDocBeforeCreated.Format(time.RFC3339),
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError: types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
@@ -157,9 +157,9 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 				testconstants.ValidDid,
 				ResourceType1.Metadata.ResourceType,
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
@@ -170,9 +170,9 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 				testconstants.ValidDid,
 				ResourceType2.Metadata.Name,
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 )
