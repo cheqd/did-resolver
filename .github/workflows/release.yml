@@ -52,8 +52,7 @@ jobs:
         id: execute-release
         run: |
           tag=$(git describe --tags --exact-match) || exit 0
-          exists=$(git rev-parse "$tag" 2> /dev/null) || exit 0
-          if [[ ! -z "$exists" && $tag =~ ^v ]]; then
+          if [[ $tag =~ ^v ]]; then
             echo "EXECUTE_RELEASE=true" >> "$GITHUB_OUTPUT"
           else
             echo "EXECUTE_RELEASE=false" >> "$GITHUB_OUTPUT"
