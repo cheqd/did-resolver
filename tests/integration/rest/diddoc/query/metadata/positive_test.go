@@ -37,7 +37,8 @@ var _ = DescribeTable("Positive: Get DIDDoc with metadata query", func(testCase 
 		"can get DIDDoc metadata with metadata=true query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?metadata=true",
+				"http://%s/1.0/identifiers/%s?metadata=true",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
@@ -50,7 +51,8 @@ var _ = DescribeTable("Positive: Get DIDDoc with metadata query", func(testCase 
 		"can get DIDDoc metadata with metadata=false query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?metadata=false",
+				"http://%s/1.0/identifiers/%s?metadata=false",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
@@ -63,7 +65,8 @@ var _ = DescribeTable("Positive: Get DIDDoc with metadata query", func(testCase 
 		"can get DIDDoc metadata with an old 16 characters INDY style DID and metadata query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?metadata=true",
+				"http://%s/1.0/identifiers/%s?metadata=true",
+				testconstants.SUTHost,
 				testconstants.OldIndy16CharStyleTestnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
@@ -76,7 +79,8 @@ var _ = DescribeTable("Positive: Get DIDDoc with metadata query", func(testCase 
 		"can get DIDDoc metadata with an old 32 characters INDY style DID and metadata query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?metadata=true",
+				"http://%s/1.0/identifiers/%s?metadata=true",
+				testconstants.SUTHost,
 				testconstants.OldIndy32CharStyleTestnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,

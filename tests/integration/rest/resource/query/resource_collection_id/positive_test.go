@@ -37,7 +37,8 @@ var _ = DescribeTable("Positive: Get Collection of Resources with collectionId q
 		"can get collection of resources with an existent collectionId query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceCollectionId=%s",
+				"http://%s/1.0/identifiers/%s?resourceCollectionId=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetId,
 			),
@@ -54,7 +55,8 @@ var _ = DescribeTable("Positive: Get Collection of Resources with collectionId q
 		"can get collection of resources with an old 32 characters INDY style DID and an existent collectionId query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceCollectionId=%s",
+				"http://%s/1.0/identifiers/%s?resourceCollectionId=%s",
+				testconstants.SUTHost,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				"3KpiDD6Hxs4i2G7FtpiGhu",
 			),

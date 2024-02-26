@@ -37,7 +37,8 @@ var _ = DescribeTable("Positive: Get Resource Metadata with resourceMetadata que
 		"can get resource metadata with resourceMetadata=true query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceMetadata=true",
+				"http://%s/1.0/identifiers/%s?resourceMetadata=true",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
@@ -50,7 +51,8 @@ var _ = DescribeTable("Positive: Get Resource Metadata with resourceMetadata que
 	// 	"can get resource metadata with resourceMetadata=false query parameter",
 	// 	utils.PositiveTestCase{
 	// 		DidURL: fmt.Sprintf(
-	// 			"http://localhost:8080/1.0/identifiers/%s?resourceMetadata=false",
+	// 			"http://%s/1.0/identifiers/%s?resourceMetadata=false",
+	//			testconstants.SUTHost,
 	// 			testconstants.UUIDStyleTestnetDid,
 	// 		),
 	// 		ResolutionType:     testconstants.DefaultResolutionType,
@@ -63,7 +65,8 @@ var _ = DescribeTable("Positive: Get Resource Metadata with resourceMetadata que
 		"can get collection of resources with an old 32 characters INDY style DID and resourceMetadata query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceMetadata=true",
+				"http://%s/1.0/identifiers/%s?resourceMetadata=true",
+				testconstants.SUTHost,
 				testconstants.OldIndy32CharStyleTestnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,

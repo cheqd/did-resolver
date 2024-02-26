@@ -35,7 +35,8 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 		"cannot get collection of resources with not existent collectionId query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?collectionId=%s",
+				"http://%s/1.0/identifiers/%s?collectionId=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
@@ -62,7 +63,8 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 		"cannot get collection of resources with an invalid collectionId query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?collectionId=%s",
+				"http://%s/1.0/identifiers/%s?collectionId=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.InvalidIdentifier,
 			),

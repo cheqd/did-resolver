@@ -36,7 +36,8 @@ var _ = DescribeTable("Negative: Get Resource Metadata with resourceMetadata que
 		"cannot get resource metadata with not supported resourceMetadata query parameter value",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceMetadata=xyz",
+				"http://%s/1.0/identifiers/%s?resourceMetadata=xyz",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType: string(types.DIDJSONLD),

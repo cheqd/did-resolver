@@ -36,7 +36,8 @@ var _ = DescribeTable("Negative: Get Resource with resourceType query", func(tes
 		"cannot get resource with not existent resourceType query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceType=xyz",
+				"http://%s/1.0/identifiers/%s?resourceType=xyz",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType: string(types.DIDJSONLD),

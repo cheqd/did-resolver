@@ -35,7 +35,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCa
 		"cannot get DIDDoc with not existent versionTime query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				"http://%s/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				"2023-03-06T09:36:54.56204903Z",
 			),
@@ -62,7 +63,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCa
 		"cannot get DIDDoc with not supported format of versionTime query parameter (not supported format)",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s",
+				"http://%s/1.0/identifiers/%s?versionTime=%s",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				url.QueryEscape("06/03/2023 09:36:54"),
 			),
@@ -89,7 +91,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCa
 		"cannot get DIDDoc with an invalid versionTime query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionTime=2023-03-06Z",
+				"http://%s/1.0/identifiers/%s?versionTime=2023-03-06Z",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -115,7 +118,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCa
 		"cannot get DIDDoc with an existent versionTime, but not existent versionId query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s&versionId=%s",
+				"http://%s/1.0/identifiers/%s?versionTime=%s&versionId=%s",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				"2023-03-06T09:39:49.496306968Z",
 				testconstants.NotExistentIdentifier,
@@ -143,7 +147,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCa
 		"cannot get DIDDoc with an existent versionTime, but not existent service query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s&service=notexistent",
+				"http://%s/1.0/identifiers/%s?versionTime=%s&service=notexistent",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				"2023-03-06T09:39:49.496306968Z",
 			),
@@ -171,7 +176,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCa
 		"cannot get DIDDoc with an existent versionTime, but not existent versionId and service query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s&versionId=%s&service=notexistent",
+				"http://%s/1.0/identifiers/%s?versionTime=%s&versionId=%s&service=notexistent",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				"2023-03-06T09:39:49.496306968Z",
 				testconstants.NotExistentIdentifier,

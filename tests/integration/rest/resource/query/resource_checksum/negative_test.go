@@ -36,7 +36,8 @@ var _ = DescribeTable("Negative: Get Resource with checksum query", func(testCas
 		"cannot get resource with not existent checksum query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?checksum=%s",
+				"http://%s/1.0/identifiers/%s?checksum=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				"ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
 			),
@@ -63,7 +64,8 @@ var _ = DescribeTable("Negative: Get Resource with checksum query", func(testCas
 		"cannot get resource with an invalid checksum query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?checksum=%s",
+				"http://%s/1.0/identifiers/%s?checksum=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				"abcdefghijklmnopqrstuvwxy",
 			),

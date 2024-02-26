@@ -36,7 +36,8 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 		"cannot get DIDDoc fragment with an existent DID, but not supported ResolutionType",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%skey-1",
+				"http://%s/1.0/identifiers/%skey-1",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType: string(types.JSON),
@@ -58,7 +59,8 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 		"cannot get DIDDoc fragment with not existent DID and not supported ResolutionType",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%skey-1",
+				"http://%s/1.0/identifiers/%skey-1",
+				testconstants.SUTHost,
 				testconstants.NotExistentMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType: string(types.JSON),
@@ -80,7 +82,8 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 		"cannot get DIDDoc fragment with not existent DID",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%skey1",
+				"http://%s/1.0/identifiers/%skey1",
+				testconstants.SUTHost,
 				testconstants.NotExistentTestnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -106,7 +109,8 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 		"cannot get DIDDoc fragment with an invalid DID",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%skey1",
+				"http://%s/1.0/identifiers/%skey1",
+				testconstants.SUTHost,
 				testconstants.InvalidDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -132,7 +136,8 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 		"cannot get DIDDoc fragment with existent DID, but not existent #fragment",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s%s",
+				"http://%s/1.0/identifiers/%s%s",
+				testconstants.SUTHost,
 				testconstants.IndyStyleTestnetDid+url.PathEscape(testconstants.HashTag),
 				testconstants.NotExistentFragment,
 			),
@@ -159,7 +164,8 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 		"cannot get DIDDoc fragment with existent old 16 characters Indy style DID, but not existent #fragment",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s%s",
+				"http://%s/1.0/identifiers/%s%s",
+				testconstants.SUTHost,
 				testconstants.OldIndy16CharStyleTestnetDid+url.PathEscape(testconstants.HashTag),
 				testconstants.NotExistentFragment,
 			),
@@ -186,7 +192,8 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 		"cannot get DIDDoc fragment with existent old 32 characters Indy style DID, but not existent #fragment",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s%s",
+				"http://%s/1.0/identifiers/%s%s",
+				testconstants.SUTHost,
 				testconstants.OldIndy32CharStyleTestnetDid+url.PathEscape(testconstants.HashTag),
 				testconstants.NotExistentFragment,
 			),

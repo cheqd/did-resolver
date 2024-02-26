@@ -39,7 +39,8 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 		"can get collection of resources with existent DID",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/metadata",
+				"http://%s/1.0/identifiers/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -56,7 +57,8 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 		"can get collection of resources with existent old 32 characters Indy style DID",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/metadata",
+				"http://%s/1.0/identifiers/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.OldIndy32CharStyleTestnetDid,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -71,7 +73,8 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 		"can get collection of resources with an existent DID, and supported DIDJSON resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/metadata",
+				"http://%s/1.0/identifiers/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType:       string(types.DIDJSON),
@@ -86,7 +89,8 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 		"can get collection of resources with an existent DID, and supported DIDJSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/metadata",
+				"http://%s/1.0/identifiers/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType:       string(types.DIDJSONLD),
@@ -101,7 +105,8 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 		"can get collection of resources with an existent DID, and supported JSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/metadata",
+				"http://%s/1.0/identifiers/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType:       string(types.JSONLD),
@@ -116,7 +121,8 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 		"can get collection of resources with an existent DID, and supported gzip encoding type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/metadata",
+				"http://%s/1.0/identifiers/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -131,7 +137,8 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 		"can get collection of resources with an existent DID, and not supported encoding type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/metadata",
+				"http://%s/1.0/identifiers/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,

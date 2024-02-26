@@ -35,7 +35,8 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 		"cannot get resource metadata with an existent DID and resourceId, but not supported ResolutionType",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleMainnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -58,7 +59,8 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 		"cannot get resource metadata with not existent DID and not supported ResolutionType",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -81,7 +83,8 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 		"cannot get resource metadata with not existent DID",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -108,7 +111,8 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 		"cannot get resource metadata with an invalid DID",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.InvalidDid,
 				testconstants.ValidIdentifier,
 			),
@@ -135,7 +139,8 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 		"cannot get resource metadata with an existent DID and not existent resourceId",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
@@ -162,7 +167,8 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 		"cannot get resource metadata with an existent old 16 characters Indy style DID and not existent resourceId",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
@@ -189,7 +195,8 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 		"cannot get resource metadata with an existent old 32 characters Indy style DID and not existent resourceId",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
@@ -216,7 +223,8 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 		"cannot get resource metadata with an existent DID and an invalid resourceId",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid,
 				testconstants.InvalidIdentifier,
 			),

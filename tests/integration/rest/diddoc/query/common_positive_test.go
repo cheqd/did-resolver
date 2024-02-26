@@ -37,7 +37,8 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		"can get DIDDoc with an existent versionId and versionTime query parameters",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=%s",
+				"http://%s/1.0/identifiers/%s?versionId=%s&versionTime=%s",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
 				"2023-03-06T09:39:49Z",
@@ -52,7 +53,8 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		"can get DIDDoc with an existent versionId and transformKeys query parameters",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&transformKeys=%s",
+				"http://%s/1.0/identifiers/%s?versionId=%s&transformKeys=%s",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
 				types.JsonWebKey2020,
@@ -67,7 +69,8 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		"can get DIDDoc with an existent versionId, versionTime, transformKeys",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=%s&transformKeys=%s",
+				"http://%s/1.0/identifiers/%s?versionId=%s&versionTime=%s&transformKeys=%s",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
 				"2023-03-06T09:39:49Z",
@@ -102,7 +105,8 @@ var _ = DescribeTable("Positive: request with common query parameters (metadata)
 		"can get DIDDoc metadata with an existent versionId query parameters and supported value of metadata",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&metadata=true",
+				"http://%s/1.0/identifiers/%s?versionId=%s&metadata=true",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				"0ce23d04-5b67-4ea6-a315-788588e53f4e",
 			),
@@ -116,7 +120,8 @@ var _ = DescribeTable("Positive: request with common query parameters (metadata)
 		"can get DIDDoc metadata with an existent metadata and versionTime query parameters",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s&metadata=true",
+				"http://%s/1.0/identifiers/%s?versionTime=%s&metadata=true",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				"2023-03-06T09:39:49Z",
 			),
@@ -130,7 +135,8 @@ var _ = DescribeTable("Positive: request with common query parameters (metadata)
 		"can get DIDDoc metadata with an existent metadata, versionId, versionTime query parameters",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=%s&metadata=true",
+				"http://%s/1.0/identifiers/%s?versionId=%s&versionTime=%s&metadata=true",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				"0ce23d04-5b67-4ea6-a315-788588e53f4e",
 				"2023-03-06T09:36:56Z",
@@ -163,7 +169,8 @@ var _ = DescribeTable("Positive: request with common query parameters (service)"
 		"can redirect to serviceEndpoint with existent service and versionId query parameters",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?service=%s&versionId=%s",
+				"http://%s/1.0/identifiers/%s?service=%s&versionId=%s",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				serviceId,
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
@@ -178,7 +185,8 @@ var _ = DescribeTable("Positive: request with common query parameters (service)"
 		"can redirect to serviceEndpoint with existent service and versionTime query parameters",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?service=%s&versionTime=%s",
+				"http://%s/1.0/identifiers/%s?service=%s&versionTime=%s",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				serviceId,
 				"2023-03-06T09:39:49Z",
@@ -193,7 +201,8 @@ var _ = DescribeTable("Positive: request with common query parameters (service)"
 		"can redirect to serviceEndpoint with existent service, relativeRef, versionId, versionTime query parameters",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?service=%s&relativeRef=%s&versionId=%s&versionTime=%s",
+				"http://%s/1.0/identifiers/%s?service=%s&relativeRef=%s&versionId=%s&versionTime=%s",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				serviceId,
 				"\u002Fabout",
