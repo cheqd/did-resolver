@@ -35,7 +35,8 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		"cannot get resource data with an existent DID, but not supported ResolutionType",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
+				"http://%s/1.0/identifiers/%s/resources/%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleMainnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -58,7 +59,8 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		"cannot get resource data with not existent DID and not supported ResolutionType",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
+				"http://%s/1.0/identifiers/%s/resources/%s",
+				testconstants.SUTHost,
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -81,7 +83,8 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		"cannot get resource data with not existent DID and a valid resourceId",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
+				"http://%s/1.0/identifiers/%s/resources/%s",
+				testconstants.SUTHost,
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -108,7 +111,8 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		"cannot get resource data with an invalid DID and not existent resourceId",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
+				"http://%s/1.0/identifiers/%s/resources/%s",
+				testconstants.SUTHost,
 				testconstants.InvalidDid,
 				testconstants.ValidIdentifier,
 			),
@@ -135,7 +139,8 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		"cannot get resource data with not existent DID and resourceId",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
+				"http://%s/1.0/identifiers/%s/resources/%s",
+				testconstants.SUTHost,
 				testconstants.NotExistentTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
@@ -162,7 +167,8 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		"cannot get resource data with an existent DID and an invalid resourceId",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
+				"http://%s/1.0/identifiers/%s/resources/%s",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid,
 				testconstants.InvalidIdentifier,
 			),
@@ -185,7 +191,8 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		"cannot get resource data with an existent old 16 characters Indy style DID and an invalid resourceId",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
+				"http://%s/1.0/identifiers/%s/resources/%s",
+				testconstants.SUTHost,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				testconstants.InvalidIdentifier,
 			),
@@ -208,7 +215,8 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		"cannot get resource data with an existent old 32 characters Indy style DID and an invalid resourceId",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s",
+				"http://%s/1.0/identifiers/%s/resources/%s",
+				testconstants.SUTHost,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				testconstants.InvalidIdentifier,
 			),

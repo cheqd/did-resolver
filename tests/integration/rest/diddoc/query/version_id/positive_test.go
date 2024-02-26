@@ -38,7 +38,8 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionId query", func(testCase
 		"can get DIDDoc with versionId query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionId=%s",
+				"http://%s/1.0/identifiers/%s?versionId=%s",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				"0ce23d04-5b67-4ea6-a315-788588e53f4e",
 			),
@@ -52,7 +53,8 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionId query", func(testCase
 		"can get DIDDoc with an old 16 characters INDY style DID and versionId query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionId=%s",
+				"http://%s/1.0/identifiers/%s?versionId=%s",
+				testconstants.SUTHost,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				"674e6cb5-8d7c-5c50-b0ff-d91bcbcbd5d6",
 			),
@@ -66,7 +68,8 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionId query", func(testCase
 		"can get DIDDoc with an old 32 characters INDY style DID and versionId query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionId=%s",
+				"http://%s/1.0/identifiers/%s?versionId=%s",
+				testconstants.SUTHost,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				"1dc202d4-26ee-54a9-b091-8d2e1f609722",
 			),

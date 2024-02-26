@@ -35,7 +35,8 @@ var _ = DescribeTable("Positive: Get Service param", func(testCase utils.Positiv
 		"can redirect to serviceEndpoint with an existent service query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?service=%s",
+				"http://%s/1.0/identifiers/%s?service=%s",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				serviceId,
 			),
@@ -48,7 +49,8 @@ var _ = DescribeTable("Positive: Get Service param", func(testCase utils.Positiv
 		"can redirect to serviceEndpoint with an existent service and a valid relativeRef URI query parameters",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?service=%s&relativeRef=foo",
+				"http://%s/1.0/identifiers/%s?service=%s&relativeRef=foo",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				serviceId,
 			),

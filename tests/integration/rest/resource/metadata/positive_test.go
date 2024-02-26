@@ -39,7 +39,8 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 		"can get resource metadata with existent DID and resourceId",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
@@ -58,7 +59,8 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 		"can get resource metadata with existent old 32 characters Indy style DID and an existent resourceId",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				testconstants.OldIndy32CharStyleTestnetDidIdentifierResourceId,
 			),
@@ -74,7 +76,8 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 		"can get resource metadata with an existent DID, and supported DIDJSON resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
@@ -90,7 +93,8 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 		"can get resource metadata with an existent DID, and supported DIDJSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
@@ -106,7 +110,8 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 		"can get DIDDoc version with an existent DID, and supported JSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
@@ -122,7 +127,8 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 		"can get DIDDoc version with an existent DID, and supported gzip encoding type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
@@ -138,7 +144,8 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 		"can get DIDDoc version with an existent DID, and supported gzip encoding type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/resources/%s/metadata",
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),

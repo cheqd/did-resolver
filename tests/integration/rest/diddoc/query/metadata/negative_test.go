@@ -35,7 +35,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with metadata query", func(testCase 
 		"cannot get DIDDoc metadata with not supported metadata query parameter value",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?metadata=not_supported_value",
+				"http://%s/1.0/identifiers/%s?metadata=not_supported_value",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -61,7 +62,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with metadata query", func(testCase 
 		"cannot get DIDDoc metadata with supported metadata value, but not existent versionId query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?metadata=true&versionId=%s",
+				"http://%s/1.0/identifiers/%s?metadata=true&versionId=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
@@ -88,7 +90,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with metadata query", func(testCase 
 		"cannot get DIDDoc metadata with supported metadata value, but not existent versionTime query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?metadata=true&versionTime=%s",
+				"http://%s/1.0/identifiers/%s?metadata=true&versionTime=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				"2023-01-22T11:58:10.390039347Z",
 			),
@@ -115,7 +118,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with metadata query", func(testCase 
 		"cannot get DIDDoc metadata with supported metadata value, but not existent service query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?metadata=true&service=%s",
+				"http://%s/1.0/identifiers/%s?metadata=true&service=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.NotExistentService,
 			),
@@ -142,7 +146,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with metadata query", func(testCase 
 		"cannot get DIDDoc metadata with supported metadata value, but not existent versionId, versionTime, service query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?metadata=true&versionId=%s&versionTime=%s&service=%s",
+				"http://%s/1.0/identifiers/%s?metadata=true&versionId=%s&versionTime=%s&service=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.NotExistentIdentifier,
 				"2023-01-22T11:58:10.390039347Z",

@@ -36,7 +36,8 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		"can get resource with and existent versionId and resourceCollectionId",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&resourceCollectionId=%s",
+				"http://%s/1.0/identifiers/%s?versionId=%s&resourceCollectionId=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 				testconstants.UUIDStyleTestnetId,
@@ -51,7 +52,8 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		"can get resource with an existent versionId and resourceId",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&resourceId=%s",
+				"http://%s/1.0/identifiers/%s?versionId=%s&resourceId=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 				testconstants.UUIDStyleTestnetDidResourceId,
@@ -66,7 +68,8 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		"can get resource with and existent versionTime and resourceCollectionId",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s&resourceCollectionId=%s",
+				"http://%s/1.0/identifiers/%s?versionTime=%s&resourceCollectionId=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				"2023-01-25T11:58:11Z",
 				testconstants.UUIDStyleTestnetId,
@@ -81,7 +84,8 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		"can get resource with an existent versionTime and resourceId",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionTime=%s&resourceId=%s",
+				"http://%s/1.0/identifiers/%s?versionTime=%s&resourceId=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				"2023-01-25T11:58:11Z",
 				testconstants.UUIDStyleTestnetDidResourceId,
@@ -96,7 +100,8 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		"can get resource with an existent versionId, versionTime, resourceCollection, resourceId",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceCollectionId=%s&resourceId=%s",
+				"http://%s/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceCollectionId=%s&resourceId=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 				"2023-01-25T11:58:11Z",
@@ -113,7 +118,8 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		"can get resource with an existent resourceId and resourceVersionTime",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceId=%s&resourceVersionTime=%s",
+				"http://%s/1.0/identifiers/%s?resourceId=%s&resourceVersionTime=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 				"2023-01-25T12:08:40Z",
@@ -128,7 +134,8 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		"can get resource with an existent resourceCollectionId, resourceId, resourceName, resourceType, resourceVersion",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceCollectionId=%s&resourceId=%s&resourceName=%s&resourceType=%s&resourceVersion=%s",
+				"http://%s/1.0/identifiers/%s?resourceCollectionId=%s&resourceId=%s&resourceName=%s&resourceType=%s&resourceVersion=%s",
+				testconstants.SUTHost,
 				"did:cheqd:testnet:0a5b94d0-a417-48ed-a6f5-4abc9e95888d",
 				"0a5b94d0-a417-48ed-a6f5-4abc9e95888d",
 				"ef344b53-f2db-44bd-9df3-01259c178704",
@@ -146,7 +153,8 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		"can get resource with an existent resourceCollectionId, resourceId, resourceName, resourceType, resourceVersion, resourceVersionTime",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceCollectionId=%s&resourceId=%s&resourceName=%s&resourceType=%s&resourceVersion=%s&resourceVersionTime=%s",
+				"http://%s/1.0/identifiers/%s?resourceCollectionId=%s&resourceId=%s&resourceName=%s&resourceType=%s&resourceVersion=%s&resourceVersionTime=%s",
+				testconstants.SUTHost,
 				"did:cheqd:testnet:0a5b94d0-a417-48ed-a6f5-4abc9e95888d",
 				"0a5b94d0-a417-48ed-a6f5-4abc9e95888d",
 				"ef344b53-f2db-44bd-9df3-01259c178704",

@@ -34,7 +34,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with service query", func(testCase u
 		"cannot redirect to serviceEndpoint with not existent service query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?service=%s",
+				"http://%s/1.0/identifiers/%s?service=%s",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				testconstants.NotExistentService,
 			),
@@ -61,7 +62,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with service query", func(testCase u
 		"cannot redirect to serviceEndpoint with relativeRef query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?relativeRef=\u002Finfo",
+				"http://%s/1.0/identifiers/%s?relativeRef=\u002Finfo",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -87,7 +89,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with service query", func(testCase u
 		"cannot redirect to serviceEndpoint with an existent service, but an invalid relativeRef URI parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?relativeRef=\u002Finfo",
+				"http://%s/1.0/identifiers/%s?relativeRef=\u002Finfo",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -113,7 +116,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with service query", func(testCase u
 		"cannot redirect to serviceEndpoint with an existent service, but not existent versionId query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?service=%s&versionId=%s",
+				"http://%s/1.0/identifiers/%s?service=%s&versionId=%s",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				serviceId,
 				testconstants.NotExistentIdentifier,
@@ -141,7 +145,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with service query", func(testCase u
 		"cannot redirect to serviceEndpoint with an existent service, but not existent versionTime query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?service=%s&versionTime=%s",
+				"http://%s/1.0/identifiers/%s?service=%s&versionTime=%s",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				serviceId,
 				"2023-03-06T09:36:56.56204903Z",
@@ -170,7 +175,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with service query", func(testCase u
 		"cannot redirect to serviceEndpoint with an existent service, but not existent versionId and versionTime query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?service=%s&versionId=%s&versionTime=%s",
+				"http://%s/1.0/identifiers/%s?service=%s&versionId=%s&versionTime=%s",
+				testconstants.SUTHost,
 				testconstants.SeveralVersionsDID,
 				serviceId,
 				testconstants.NotExistentIdentifier,

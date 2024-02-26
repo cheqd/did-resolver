@@ -37,7 +37,8 @@ var _ = DescribeTable("Positive: Get Resource with resourceId query", func(testC
 		"can get resource with an existent resourceId query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceId=%s",
+				"http://%s/1.0/identifiers/%s?resourceId=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
@@ -54,7 +55,8 @@ var _ = DescribeTable("Positive: Get Resource with resourceId query", func(testC
 		"can get collection of resources with an old 32 characters INDY style DID and an existent resourceId query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceId=%s",
+				"http://%s/1.0/identifiers/%s?resourceId=%s",
+				testconstants.SUTHost,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				testconstants.OldIndy32CharStyleTestnetDidIdentifierResourceId,
 			),

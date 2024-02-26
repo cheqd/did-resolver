@@ -37,7 +37,8 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 		"cannot get DIDDoc with an existent DID, but not supported ResolutionType",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s",
+				"http://%s/1.0/identifiers/%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleMainnetDid,
 			),
 			ResolutionType: string(types.JSON),
@@ -59,7 +60,8 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 		"cannot get DIDDoc with not existent DID and not supported ResolutionType",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s",
+				"http://%s/1.0/identifiers/%s",
+				testconstants.SUTHost,
 				testconstants.NotExistentMainnetDid,
 			),
 			ResolutionType: string(types.JSON),
@@ -81,7 +83,8 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 		"cannot get DIDDoc with not existent mainnet DID",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s",
+				"http://%s/1.0/identifiers/%s",
+				testconstants.SUTHost,
 				testconstants.NotExistentMainnetDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -107,7 +110,8 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 		"cannot get DIDDoc with not existent testnet DID",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s",
+				"http://%s/1.0/identifiers/%s",
+				testconstants.SUTHost,
 				testconstants.NotExistentTestnetDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -133,7 +137,8 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 		"cannot get DIDDoc with mainnet DID that contains an invalid method",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s",
+				"http://%s/1.0/identifiers/%s",
+				testconstants.SUTHost,
 				testconstants.MainnetDidWithInvalidMethod,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -159,7 +164,8 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 		"cannot get DIDDoc with testnet DID that contains an invalid method",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s",
+				"http://%s/1.0/identifiers/%s",
+				testconstants.SUTHost,
 				testconstants.TestnetDidWithInvalidMethod,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -185,7 +191,8 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 		"cannot get DIDDoc with DID that contains an invalid namespace",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s",
+				"http://%s/1.0/identifiers/%s",
+				testconstants.SUTHost,
 				testconstants.DidWithInvalidNamespace,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -211,7 +218,8 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 		"It cannot get DIDDoc with an invalid DID",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s",
+				"http://%s/1.0/identifiers/%s",
+				testconstants.SUTHost,
 				testconstants.InvalidDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,

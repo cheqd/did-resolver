@@ -3,6 +3,7 @@ package testconstants
 import (
 	"crypto/sha256"
 	"fmt"
+	"os"
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
@@ -70,4 +71,13 @@ func generateChecksum(data []byte) string {
 	h.Write(data)
 
 	return fmt.Sprintf("%x", h.Sum(nil))
+}
+
+func getHostSUT() string {
+	host := os.Getenv("SUT_HOST_ADDRESS")
+	if host != "" {
+		return host
+	} else {
+		return "localhost:8080"
+	}
 }

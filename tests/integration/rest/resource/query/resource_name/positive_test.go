@@ -37,7 +37,8 @@ var _ = DescribeTable("Positive: Get Resource with resourceName query", func(tes
 		"can get resource with an existent resourceName query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceName=%s",
+				"http://%s/1.0/identifiers/%s?resourceName=%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				"ResourceName",
 			),
@@ -54,7 +55,8 @@ var _ = DescribeTable("Positive: Get Resource with resourceName query", func(tes
 		"can get resource with an old 32 characters INDY style DID and resourceName query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceName=%s",
+				"http://%s/1.0/identifiers/%s?resourceName=%s",
+				testconstants.SUTHost,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				"FaberCollege301071f2-314d-49e4-8e65-393586e5e05a",
 			),
