@@ -124,6 +124,65 @@ docker-compose -f docker-compose.yml pull
 docker-compose -f docker-compose.yml up
 ```
 
+## 🧪 Running unit and integration tests
+
+DID-Resolver has 2 kind of tests:
+
+- unit tests. It's mostly the tests for the internal logic of the resolver.
+- integration tests. It's the tests for the resolver's interaction with the ledger.
+
+### Prerequisites
+
+For both, unit and integration tests running, it's required to have a `ginkgo` testing framework installed. To install it, run the following command:
+
+```bash
+go install github.com/onsi/ginkgo/v2/ginkgo@latest
+```
+
+### Unit tests
+
+For running unit test just run the following command:
+
+```bash
+ginkgo -r --tags unit --race --randomize-all --randomize-suites --keep-going --trace
+```
+
+### Integration tests
+
+For running integration tests it's required to have an instance of DID-Resolver running. We have a `docker-compose` file for that.
+There 2 options for running the tests:
+
+- using `ghcr.io/cheqd/did-resolver:staging-latest` image from the Github Container Registry. It's a default case and does not requires changes in `docker-compose-testing.yml` file.
+- using a local image. 
+
+For building a local image, uncomment the `build` section in the `tests/docker-compose-testing.yml` file. This relies on the `Dockerfile` above but uses Docker Compose syntax to customise the build:
+
+```yaml
+build:
+  context: ../
+  dockerfile: docker/Dockerfile
+  target: resolver
+# image: ghcr.io/cheqd/did-resolver:${IMAGE_VERSION}
+```
+
+And after that, run the following command:
+
+```bash
+docker-compose -f tests/docker-compose-testing.yml build
+```
+
+For both cases, using a local image or a remote one, run the following command:
+
+```bash
+docker compose -f tests/docker-compose-testing.yml up --detach
+```
+
+And for actually running the tests, run the following command:
+
+```bash
+ginkgo -r --tags integration --race --randomize-suites --keep-going --trace
+```
+
 ## 📖 Documentation
 
 Further documentation on [cheqd DID Resolver](https://docs.cheqd.io/identity/advanced/did-resolver) is available on the [cheqd Identity Documentation site](https://docs.cheqd.io/identity/). This includes instructions on how to do custom builds using `Dockerfile` / Docker Compose.
