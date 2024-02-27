@@ -124,64 +124,78 @@ docker-compose -f docker-compose.yml pull
 docker-compose -f docker-compose.yml up
 ```
 
-## 🧪 Running unit and integration tests
+## 🧪 Running tests
 
-DID-Resolver has 2 kind of tests:
+This repository has two kinds of tests:
 
-- unit tests. It's mostly the tests for the internal logic of the resolver.
-- integration tests. It's the tests for the resolver's interaction with the ledger.
+1. **Unit tests**: Test coverage for internal functions and utilities
+2. **Integration tests**: Test coverage for a built version of this software with the ledger.
 
 ### Prerequisites
 
-For both, unit and integration tests running, it's required to have a `ginkgo` testing framework installed. To install it, run the following command:
+Tests are written in [Ginkgo](https://onsi.github.io/ginkgo/), a behaviour-driven test framework for Golang.
+
+To install Ginkgo, run the following command:
 
 ```bash
 go install github.com/onsi/ginkgo/v2/ginkgo@latest
 ```
 
-### Unit tests
+### Execute unit tests with Ginkgo
 
-For running unit test just run the following command:
+Unit tests can be executed without running a Docker container. To execute all unit tests, use the following command:
 
 ```bash
 ginkgo -r --tags unit --race --randomize-all --randomize-suites --keep-going --trace
 ```
 
-### Integration tests
+The `unit` tag is specified to only run unit tests.
 
-For running integration tests it's required to have an instance of DID-Resolver running. We have a `docker-compose` file for that.
-There 2 options for running the tests:
+### Execute integration tests with Ginkgo
 
-- using `ghcr.io/cheqd/did-resolver:staging-latest` image from the Github Container Registry. It's a default case and does not requires changes in `docker-compose-testing.yml` file.
-- using a local image. 
+To run integration tests, it's necessary to have a instance of this DID Resolver running. The easiest way to do this is to use the [Docker Compose file under the `tests` directory](./tests/docker-compose-testing.yml), with a few modifications.
 
-For building a local image, uncomment the `build` section in the `tests/docker-compose-testing.yml` file. This relies on the `Dockerfile` above but uses Docker Compose syntax to customise the build:
+#### If you **don't have** an already-built Docker image
+
+To build a local image for testing, uncomment the `build` section in the Docker Compose file. You can modify the `build` section according to your needs:
 
 ```yaml
 build:
   context: ../
   dockerfile: docker/Dockerfile
   target: resolver
-# image: ghcr.io/cheqd/did-resolver:${IMAGE_VERSION}
 ```
 
-And after that, run the following command:
+#### If you **do have** an already-built Docker image
 
-```bash
-docker-compose -f tests/docker-compose-testing.yml build
+Alternatively, if you want to run tests using an already-built image, just change the image name and tag in the `image` line in the Docker Compose file:
+
+```yaml
+# image: cheqd/did-resolver:staging-latest
+image: cheqd/did-resolver:local
 ```
 
-For both cases, using a local image or a remote one, run the following command:
+#### Run the test Docker container
+
+Use Docker Compose to bring the container up (for both scenarios above):
 
 ```bash
 docker compose -f tests/docker-compose-testing.yml up --detach
 ```
 
-And for actually running the tests, run the following command:
+#### Execute the integration tests
+
+You can execute the tests as long as you have Ginkgo CLI installed, which targets the tests towards the running Docker container:
 
 ```bash
 ginkgo -r --tags integration --race --randomize-suites --keep-going --trace
 ```
+
+### (Alternative) Executing tests with Github Actions
+
+All tests are run automatically by the [Github Actions `test` workflow](.github/workflows/test.yml) in this repository. Use that workflow for inspiration if you want to customise the test execution; or [Ginkgo documentation on how to customise test execution](https://onsi.github.io/ginkgo/#reporting-and-profiling-suites).
+
+You can also directly [execute the Github Actions locally using `nektos/act`](https://github.com/nektos/act).
 
 ## 📖 Documentation
 
