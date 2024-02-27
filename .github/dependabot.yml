@@ -11,6 +11,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-patch
 
   # Maintain dependencies for NPM
   - package-ecosystem: "npm"
@@ -18,6 +22,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-patch
 
   # Maintain dependencies for Docker
   - package-ecosystem: "docker"
@@ -25,6 +33,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-patch
 
   # Maintain dependencies for Golang
   - package-ecosystem: "gomod"

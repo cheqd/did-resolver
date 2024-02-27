@@ -124,6 +124,79 @@ docker-compose -f docker-compose.yml pull
 docker-compose -f docker-compose.yml up
 ```
 
+## 🧪 Running tests
+
+This repository has two kinds of tests:
+
+1. **Unit tests**: Test coverage for internal functions and utilities
+2. **Integration tests**: Test coverage for a built version of this software with the ledger.
+
+### Prerequisites
+
+Tests are written in [Ginkgo](https://onsi.github.io/ginkgo/), a behaviour-driven test framework for Golang.
+
+To install Ginkgo, run the following command:
+
+```bash
+go install github.com/onsi/ginkgo/v2/ginkgo@latest
+```
+
+### Execute unit tests with Ginkgo
+
+Unit tests can be executed without running a Docker container. To execute all unit tests, use the following command:
+
+```bash
+ginkgo -r --tags unit --race --randomize-all --randomize-suites --keep-going --trace
+```
+
+The `unit` tag is specified to only run unit tests.
+
+### Execute integration tests with Ginkgo
+
+To run integration tests, it's necessary to have a instance of this DID Resolver running. The easiest way to do this is to use the [Docker Compose file under the `tests` directory](./tests/docker-compose-testing.yml), with a few modifications.
+
+#### If you **don't have** an already-built Docker image
+
+To build a local image for testing, uncomment the `build` section in the Docker Compose file. You can modify the `build` section according to your needs:
+
+```yaml
+build:
+  context: ../
+  dockerfile: docker/Dockerfile
+  target: resolver
+```
+
+#### If you **do have** an already-built Docker image
+
+Alternatively, if you want to run tests using an already-built image, just change the image name and tag in the `image` line in the Docker Compose file:
+
+```yaml
+# image: cheqd/did-resolver:staging-latest
+image: cheqd/did-resolver:local
+```
+
+#### Run the test Docker container
+
+Use Docker Compose to bring the container up (for both scenarios above):
+
+```bash
+docker compose -f tests/docker-compose-testing.yml up --detach
+```
+
+#### Execute the integration tests
+
+You can execute the tests as long as you have Ginkgo CLI installed, which targets the tests towards the running Docker container:
+
+```bash
+ginkgo -r --tags integration --race --randomize-suites --keep-going --trace
+```
+
+### (Alternative) Executing tests with Github Actions
+
+All tests are run automatically by the [Github Actions `test` workflow](.github/workflows/test.yml) in this repository. Use that workflow for inspiration if you want to customise the test execution; or [Ginkgo documentation on how to customise test execution](https://onsi.github.io/ginkgo/#reporting-and-profiling-suites).
+
+You can also directly [execute the Github Actions locally using `nektos/act`](https://github.com/nektos/act).
+
 ## 📖 Documentation
 
 Further documentation on [cheqd DID Resolver](https://docs.cheqd.io/identity/advanced/did-resolver) is available on the [cheqd Identity Documentation site](https://docs.cheqd.io/identity/). This includes instructions on how to do custom builds using `Dockerfile` / Docker Compose.
