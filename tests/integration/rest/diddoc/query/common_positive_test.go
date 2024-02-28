@@ -38,7 +38,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionId=%s&versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
 				"2023-03-06T09:39:49Z",
@@ -54,7 +54,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionId=%s&transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
 				types.JsonWebKey2020,
@@ -70,7 +70,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionId=%s&versionTime=%s&transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
 				"2023-03-06T09:39:49Z",
@@ -106,7 +106,7 @@ var _ = DescribeTable("Positive: request with common query parameters (metadata)
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionId=%s&metadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				"0ce23d04-5b67-4ea6-a315-788588e53f4e",
 			),
@@ -121,7 +121,7 @@ var _ = DescribeTable("Positive: request with common query parameters (metadata)
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s&metadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				"2023-03-06T09:39:49Z",
 			),
@@ -136,7 +136,7 @@ var _ = DescribeTable("Positive: request with common query parameters (metadata)
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionId=%s&versionTime=%s&metadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				"0ce23d04-5b67-4ea6-a315-788588e53f4e",
 				"2023-03-06T09:36:56Z",
@@ -170,7 +170,7 @@ var _ = DescribeTable("Positive: request with common query parameters (service)"
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?service=%s&versionId=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				serviceId,
 				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
@@ -186,7 +186,7 @@ var _ = DescribeTable("Positive: request with common query parameters (service)"
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?service=%s&versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				serviceId,
 				"2023-03-06T09:39:49Z",
@@ -202,7 +202,7 @@ var _ = DescribeTable("Positive: request with common query parameters (service)"
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?service=%s&relativeRef=%s&versionId=%s&versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				serviceId,
 				"\u002Fabout",

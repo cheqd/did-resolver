@@ -38,7 +38,7 @@ var _ = DescribeTable("Positive: Get Resource with checksum query", func(testCas
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?checksum=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				"cffd829b06797f85407be9353056db722ca3eca0c05ab0462a42d30f19cdef09",
 			),
@@ -56,7 +56,7 @@ var _ = DescribeTable("Positive: Get Resource with checksum query", func(testCas
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?checksum=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				"657e37a833f139fc8f58b115174b2297223a2d98316a78ce8d49d60467d8913d",
 			),

@@ -36,7 +36,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleMainnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -60,7 +60,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -84,7 +84,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -112,7 +112,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.InvalidDid,
 				testconstants.ValidIdentifier,
 			),
@@ -140,7 +140,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.NotExistentTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
@@ -168,7 +168,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid,
 				testconstants.InvalidIdentifier,
 			),
@@ -192,7 +192,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				testconstants.InvalidIdentifier,
 			),
@@ -216,7 +216,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				testconstants.InvalidIdentifier,
 			),

@@ -38,7 +38,7 @@ var _ = DescribeTable("Positive: Get Resource with resourceId query", func(testC
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceId=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
@@ -56,7 +56,7 @@ var _ = DescribeTable("Positive: Get Resource with resourceId query", func(testC
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceId=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				testconstants.OldIndy32CharStyleTestnetDidIdentifierResourceId,
 			),

@@ -42,7 +42,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				"2022-10-12T08:57:31Z",
 			),
@@ -57,7 +57,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				url.QueryEscape("01/25 00:08:40PM '23 +0000"),
 			),
@@ -72,7 +72,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				url.QueryEscape("Wed Jan 25 12:08:40 2023"),
 			),
@@ -87,7 +87,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				url.QueryEscape("Wed Jan 25 12:08:40 UTC 2023"),
 			),
@@ -102,7 +102,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				url.QueryEscape("Wed Jan 25 12:08:40 +0000 2023"),
 			),
@@ -117,7 +117,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				url.QueryEscape("25 Jan 23 12:09 UTC"),
 			),
@@ -132,7 +132,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				url.QueryEscape("25 Jan 23 12:09 +0000"),
 			),
@@ -147,7 +147,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				url.QueryEscape("Wednesday, 25-Jan-23 12:08:40 UTC"),
 			),
@@ -162,7 +162,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				url.QueryEscape("Wed, 25 Jan 2023 12:08:40 UTC"),
 			),
@@ -177,7 +177,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				url.QueryEscape("Wed, 25 Jan 2023 12:08:40 +0000"),
 			),
@@ -192,7 +192,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				"2023-01-25T12:08:40Z",
 			),
@@ -207,7 +207,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				"2023-01-25T12:08:40.0Z",
 			),
@@ -222,7 +222,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				url.QueryEscape("2023-01-25 12:08:40"),
 			),
@@ -237,7 +237,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				"2023-01-26",
 			),

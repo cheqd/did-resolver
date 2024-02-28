@@ -38,7 +38,7 @@ var _ = DescribeTable("Negative: Get Collection of Resources with resourceVersio
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				"2023-01-25T12:04:51Z",
 			),
@@ -66,7 +66,7 @@ var _ = DescribeTable("Negative: Get Collection of Resources with resourceVersio
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				url.QueryEscape("06/03/2023 09:36:56"),
 			),
@@ -94,7 +94,7 @@ var _ = DescribeTable("Negative: Get Collection of Resources with resourceVersio
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersionTime=xyz",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType: string(types.DIDJSONLD),

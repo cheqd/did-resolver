@@ -38,7 +38,7 @@ var _ = DescribeTable("Positive: Get Resource Metadata with resourceMetadata que
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
@@ -52,7 +52,7 @@ var _ = DescribeTable("Positive: Get Resource Metadata with resourceMetadata que
 	// 	utils.PositiveTestCase{
 	// 		DidURL: fmt.Sprintf(
 	// 			"http://%s/1.0/identifiers/%s?resourceMetadata=false",
-	//			testconstants.SUTHost,
+	//			testconstants.TestHostAddress,
 	// 			testconstants.UUIDStyleTestnetDid,
 	// 		),
 	// 		ResolutionType:     testconstants.DefaultResolutionType,
@@ -66,7 +66,7 @@ var _ = DescribeTable("Positive: Get Resource Metadata with resourceMetadata que
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceMetadata=true",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,

@@ -40,7 +40,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
@@ -60,7 +60,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				testconstants.OldIndy32CharStyleTestnetDidIdentifierResourceId,
 			),
@@ -77,7 +77,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
@@ -94,7 +94,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
@@ -111,7 +111,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
@@ -128,7 +128,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
@@ -145,7 +145,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),

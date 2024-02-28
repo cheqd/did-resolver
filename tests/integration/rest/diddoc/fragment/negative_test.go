@@ -37,7 +37,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%skey-1",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType: string(types.JSON),
@@ -60,7 +60,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%skey-1",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.NotExistentMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType: string(types.JSON),
@@ -83,7 +83,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%skey1",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.NotExistentTestnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -110,7 +110,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%skey1",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.InvalidDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -137,7 +137,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleTestnetDid+url.PathEscape(testconstants.HashTag),
 				testconstants.NotExistentFragment,
 			),
@@ -165,7 +165,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid+url.PathEscape(testconstants.HashTag),
 				testconstants.NotExistentFragment,
 			),
@@ -193,7 +193,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid+url.PathEscape(testconstants.HashTag),
 				testconstants.NotExistentFragment,
 			),

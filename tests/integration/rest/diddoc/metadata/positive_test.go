@@ -40,7 +40,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid,
 				testconstants.IndyStyleMainnetVersionId,
 			),
@@ -57,7 +57,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleTestnetDid,
 				testconstants.IndyStyleTestnetVersionId,
 			),
@@ -74,7 +74,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleMainnetDid,
 				testconstants.UUIDStyleMainnetVersionId,
 			),
@@ -91,7 +91,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 			),
@@ -108,7 +108,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				"674e6cb5-8d7c-5c50-b0ff-d91bcbcbd5d6",
 			),
@@ -125,7 +125,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				"1dc202d4-26ee-54a9-b091-8d2e1f609722",
 			),
@@ -142,7 +142,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 			),
@@ -159,7 +159,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 			),
@@ -176,7 +176,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 			),
@@ -193,7 +193,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 			),
@@ -210,7 +210,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 			),

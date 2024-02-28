@@ -42,7 +42,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				didWithEd25519VerificationKey2018Key,
 				string(types.Ed25519VerificationKey2018),
 			),
@@ -57,7 +57,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				didWithEd25519VerificationKey2018Key,
 				string(types.Ed25519VerificationKey2020),
 			),
@@ -72,7 +72,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				didWithEd25519VerificationKey2018Key,
 				string(types.JsonWebKey2020),
 			),
@@ -87,7 +87,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				string(types.Ed25519VerificationKey2018),
 			),
@@ -102,7 +102,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				string(types.Ed25519VerificationKey2020),
 			),
@@ -117,7 +117,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				string(types.JsonWebKey2020),
 			),
@@ -132,7 +132,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				didWithJsonWebKey2020Key,
 				string(types.Ed25519VerificationKey2018),
 			),
@@ -147,7 +147,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				didWithJsonWebKey2020Key,
 				string(types.Ed25519VerificationKey2020),
 			),
@@ -162,7 +162,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				didWithJsonWebKey2020Key,
 				string(types.JsonWebKey2020),
 			),
@@ -177,7 +177,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				string(types.Ed25519VerificationKey2018),
 			),
@@ -192,7 +192,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				string(types.Ed25519VerificationKey2020),
 			),
@@ -207,7 +207,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				string(types.JsonWebKey2020),
 			),
@@ -222,7 +222,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				string(types.Ed25519VerificationKey2018),
 			),
@@ -237,7 +237,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				string(types.Ed25519VerificationKey2020),
 			),
@@ -252,7 +252,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				string(types.JsonWebKey2020),
 			),
@@ -267,7 +267,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s&versionId=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				didWithEd25519VerificationKey2018Key,
 				string(types.Ed25519VerificationKey2020),
 				"44f49254-8106-40ee-99ad-e50ac9517346",
@@ -283,7 +283,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with transformKeys query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?transformKeys=%s&versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				didWithEd25519VerificationKey2018Key,
 				string(types.Ed25519VerificationKey2020),
 				"2023-02-21T14:28:48.406713879Z",

@@ -73,8 +73,8 @@ func generateChecksum(data []byte) string {
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
-func getHostSUT() string {
-	host := os.Getenv("SUT_HOST_ADDRESS")
+func getTestHostAddress() string {
+	host := os.Getenv("TEST_HOST_ADDRESS")
 	if host != "" {
 		return host
 	} else {

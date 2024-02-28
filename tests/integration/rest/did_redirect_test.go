@@ -28,7 +28,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
@@ -41,7 +41,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
@@ -54,7 +54,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -68,7 +68,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -82,7 +82,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -96,7 +96,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -110,7 +110,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/versions",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
@@ -123,7 +123,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/versions",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
@@ -136,7 +136,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -150,7 +150,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -164,7 +164,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -178,7 +178,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -192,7 +192,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
@@ -205,7 +205,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
@@ -217,7 +217,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceId=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -230,7 +230,7 @@ var _ = DescribeTable("Test HTTP status code of redirect DID URL", func(testCase
 		PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceId=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				testconstants.ValidIdentifier,
 			),
