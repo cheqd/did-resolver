@@ -191,6 +191,20 @@ You can execute the tests as long as you have Ginkgo CLI installed, which target
 ginkgo -r --tags integration --race --randomize-suites --keep-going --trace
 ```
 
+**Note** If you are running integration tests not for local deployment you may change default host address by setting `TEST_HOST_ADDRESS` envirable to your custom host address.
+Like:
+
+```bash
+export TEST_HOST_ADDRESS="where.did.resolver.is.running:port"
+ginkgo -r --tags integration --race --randomize-suites --keep-going --trace
+```
+
+or 
+
+```bash
+TEST_HOST_ADDRESS="where.did.resolver.is.running:port" ginkgo -r --tags integration --race --randomize-suites --keep-going --trace
+```
+
 ### (Alternative) Executing tests with Github Actions
 
 All tests are run automatically by the [Github Actions `test` workflow](.github/workflows/test.yml) in this repository. Use that workflow for inspiration if you want to customise the test execution; or [Ginkgo documentation on how to customise test execution](https://onsi.github.io/ginkgo/#reporting-and-profiling-suites).

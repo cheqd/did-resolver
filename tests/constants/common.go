@@ -74,7 +74,7 @@ func generateChecksum(data []byte) string {
 }
 
 func getHostSUT() string {
-	host := os.Getenv("SUT_HOST_ADDRESS")
+	host := os.Getenv("TEST_HOST_ADDRESS")
 	if host != "" {
 		return host
 	} else {
