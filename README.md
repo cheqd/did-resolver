@@ -191,18 +191,16 @@ You can execute the tests as long as you have Ginkgo CLI installed, which target
 ginkgo -r --tags integration --race --randomize-suites --keep-going --trace
 ```
 
-**Note** If you are running integration tests not for local deployment you may change default host address by setting `TEST_HOST_ADDRESS` envirable to your custom one.
-Like:
+**Note**: By default, the tests target `localhost:8080` as the port where it expects the running DID Resolver instance for testing. If your running instance is at a different address, you can override this by setting a value for the `TEST_HOST_ADDRESS` environment variable *before* executing the Ginkgo test suite.
 
 ```bash
-export TEST_HOST_ADDRESS="where.did.resolver.is.running:port"
-ginkgo -r --tags integration --race --randomize-suites --keep-going --trace
+export TEST_HOST_ADDRESS="where.is.did.resolver.running:port"
 ```
 
-or 
+You can also do this inline without exporting the value:
 
 ```bash
-TEST_HOST_ADDRESS="where.did.resolver.is.running:port" ginkgo -r --tags integration --race --randomize-suites --keep-going --trace
+TEST_HOST_ADDRESS="where.is.did.resolver.running:port" ginkgo -r --tags integration --race --randomize-suites --keep-going --trace
 ```
 
 ### (Alternative) Executing tests with Github Actions
