@@ -41,7 +41,8 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		"can get verificationMethod section with an existent DID#fragment",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%skey1",
+				"http://%s/1.0/identifiers/%skey1",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -56,7 +57,8 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		"can get verificationMethod section with an existent old 16 characters Indy style DID#fragment",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%skey-1",
+				"http://%s/1.0/identifiers/%skey-1",
+				testconstants.SUTHost,
 				testconstants.OldIndy16CharStyleTestnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -71,7 +73,8 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		"can get verificationMethod section with an existent old 32 characters Indy style DID#fragment",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%skey-1",
+				"http://%s/1.0/identifiers/%skey-1",
+				testconstants.SUTHost,
 				testconstants.OldIndy32CharStyleTestnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -86,7 +89,8 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		"can get verificationMethod section with an existent DID#fragment and supported DIDJSON resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%skey1",
+				"http://%s/1.0/identifiers/%skey1",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       string(types.DIDJSON),
@@ -101,7 +105,8 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		"can get verificationMethod section with an existent DID#fragment and supported DIDJSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%skey1",
+				"http://%s/1.0/identifiers/%skey1",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       string(types.DIDJSONLD),
@@ -116,7 +121,8 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		"can get verificationMethod section with an existent DID#fragment and supported JSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%skey1",
+				"http://%s/1.0/identifiers/%skey1",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       string(types.JSONLD),
@@ -131,7 +137,8 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		"can get verificationMethod section with an existent DID#fragment and supported default encoding type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%skey1",
+				"http://%s/1.0/identifiers/%skey1",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -146,7 +153,8 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		"can get verificationMethod section with an existent DID#fragment and supported gzip encoding type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%skey1",
+				"http://%s/1.0/identifiers/%skey1",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -161,7 +169,8 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		"can get verificationMethod section with an existent DID#fragment and supported gzip encoding type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%skey1",
+				"http://%s/1.0/identifiers/%skey1",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -176,7 +185,8 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		"can get serviceEndpoint section with an existent DID#fragment",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%swebsite",
+				"http://%s/1.0/identifiers/%swebsite",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -191,7 +201,8 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		"can get serviceEndpoint section with an existent DID#fragment and supported DIDJSON resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%swebsite",
+				"http://%s/1.0/identifiers/%swebsite",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       string(types.DIDJSON),
@@ -206,7 +217,8 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		"can get serviceEndpoint section with an existent DID#fragment and supported DIDJSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%swebsite",
+				"http://%s/1.0/identifiers/%swebsite",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       string(types.DIDJSONLD),
@@ -221,7 +233,8 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		"can get serviceEndpoint section with an existent DID#fragment and supported JSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%swebsite",
+				"http://%s/1.0/identifiers/%swebsite",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       string(types.JSONLD),
@@ -236,7 +249,8 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		"can get serviceEndpoint section with an existent DID#fragment and supported gzip encoding type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%swebsite",
+				"http://%s/1.0/identifiers/%swebsite",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -251,7 +265,8 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		"can get serviceEndpoint section with an existent DID#fragment and supported gzip encoding type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%swebsite",
+				"http://%s/1.0/identifiers/%swebsite",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,

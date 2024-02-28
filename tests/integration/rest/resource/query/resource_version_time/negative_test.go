@@ -37,7 +37,8 @@ var _ = DescribeTable("Negative: Get Collection of Resources with resourceVersio
 		"cannot get collection of resources with not existent resourceVersionTime query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
+				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				"2023-01-25T12:04:51Z",
 			),
@@ -64,7 +65,8 @@ var _ = DescribeTable("Negative: Get Collection of Resources with resourceVersio
 		"cannot get collection of resources with not supported format of resourceVersionTime query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
+				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				url.QueryEscape("06/03/2023 09:36:56"),
 			),
@@ -91,7 +93,8 @@ var _ = DescribeTable("Negative: Get Collection of Resources with resourceVersio
 		"cannot get collection of resources with an invalid resourceVersionTime query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?resourceVersionTime=xyz",
+				"http://%s/1.0/identifiers/%s?resourceVersionTime=xyz",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType: string(types.DIDJSONLD),

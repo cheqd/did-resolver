@@ -43,7 +43,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 		"cannot get DIDDoc with not existent DID and not supported transformKeys query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKeys=EDDSA",
+				"http://%s/1.0/identifiers/%s?transformKeys=EDDSA",
+				testconstants.SUTHost,
 				testconstants.NotExistentTestnetDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -69,7 +70,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 		"cannot get DIDDoc with not supported transformKeys query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKeys=EDDSA",
+				"http://%s/1.0/identifiers/%s?transformKeys=EDDSA",
+				testconstants.SUTHost,
 				didWithEd25519VerificationKey2018Key,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -95,7 +97,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 		"cannot get DIDDoc with combination of transformKeys and metadata query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&metadata=true",
+				"http://%s/1.0/identifiers/%s?transformKeys=%s&metadata=true",
+				testconstants.SUTHost,
 				didWithEd25519VerificationKey2018Key,
 				types.Ed25519VerificationKey2020,
 			),
@@ -122,7 +125,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 		"cannot get DIDDoc with combination of transformKeys and resourceId query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&resourceId=%s",
+				"http://%s/1.0/identifiers/%s?transformKeys=%s&resourceId=%s",
+				testconstants.SUTHost,
 				didWithEd25519VerificationKey2018Key,
 				types.Ed25519VerificationKey2020,
 				testconstants.ValidIdentifier,
@@ -150,7 +154,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 		"cannot get DIDDoc with combination of transformKeys and resourceName query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&resourceName=someName",
+				"http://%s/1.0/identifiers/%s?transformKeys=%s&resourceName=someName",
+				testconstants.SUTHost,
 				didWithEd25519VerificationKey2018Key,
 				types.Ed25519VerificationKey2020,
 			),
@@ -177,7 +182,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 		"cannot get DIDDoc with combination of transformKeys and resourceType query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&resourceType=someType",
+				"http://%s/1.0/identifiers/%s?transformKeys=%s&resourceType=someType",
+				testconstants.SUTHost,
 				didWithEd25519VerificationKey2018Key,
 				types.Ed25519VerificationKey2020,
 			),
@@ -204,7 +210,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 		"cannot get DIDDoc with combination of transformKeys and resourceVersionTime query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&resourceVersionTime=2006-01-02",
+				"http://%s/1.0/identifiers/%s?transformKeys=%s&resourceVersionTime=2006-01-02",
+				testconstants.SUTHost,
 				didWithEd25519VerificationKey2018Key,
 				types.Ed25519VerificationKey2020,
 			),
@@ -231,7 +238,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 		"cannot get DIDDoc with combination of transformKeys and resourceMetadata query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&resourceMetadata=true",
+				"http://%s/1.0/identifiers/%s?transformKeys=%s&resourceMetadata=true",
+				testconstants.SUTHost,
 				didWithEd25519VerificationKey2018Key,
 				types.Ed25519VerificationKey2020,
 			),
@@ -258,7 +266,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 		"cannot get DIDDoc with combination of transformKeys and resourceCollectionId query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&resourceCollectionId=%s",
+				"http://%s/1.0/identifiers/%s?transformKeys=%s&resourceCollectionId=%s",
+				testconstants.SUTHost,
 				didWithEd25519VerificationKey2018Key,
 				types.Ed25519VerificationKey2020,
 				testconstants.ValidIdentifier,
@@ -286,7 +295,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 		"cannot get DIDDoc with combination of transformKeys and resourceVersion query parameters",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?transformKeys=%s&resourceVersion=someVersion",
+				"http://%s/1.0/identifiers/%s?transformKeys=%s&resourceVersion=someVersion",
+				testconstants.SUTHost,
 				didWithEd25519VerificationKey2018Key,
 				types.Ed25519VerificationKey2020,
 			),

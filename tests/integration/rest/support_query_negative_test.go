@@ -35,7 +35,8 @@ var _ = DescribeTable("", func(testCase NegativeTestCase) {
 		"cannot get resolution result with an invalid query",
 		NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s?invalid_parameter=invalid_value",
+				"http://%s/1.0/identifiers/%s?invalid_parameter=invalid_value",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,

@@ -171,3 +171,5 @@ var (
 var DIDStructure = "did:%s:%s:%s"
 
 var HashTag = "\u0023"
+
+var SUTHost = getHostSUT()

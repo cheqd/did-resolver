@@ -39,7 +39,8 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 		"can get DIDDoc version with an existent 22 bytes INDY style mainnet DID and versionId",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				"http://%s/1.0/identifiers/%s/version/%s",
+				testconstants.SUTHost,
 				testconstants.IndyStyleMainnetDid,
 				testconstants.IndyStyleMainnetVersionId,
 			),
@@ -55,7 +56,8 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 		"can get DIDDoc version with an existent 22 bytes INDY style testnet DID and versionId",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				"http://%s/1.0/identifiers/%s/version/%s",
+				testconstants.SUTHost,
 				testconstants.IndyStyleTestnetDid,
 				testconstants.IndyStyleTestnetVersionId,
 			),
@@ -71,7 +73,8 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 		"can get DIDDoc version with an existent UUID style mainnet DID and versionId",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				"http://%s/1.0/identifiers/%s/version/%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleMainnetDid,
 				testconstants.UUIDStyleMainnetVersionId,
 			),
@@ -87,7 +90,8 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 		"can get DIDDoc version with an existent UUID style testnet DID and versionId",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				"http://%s/1.0/identifiers/%s/version/%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 			),
@@ -103,7 +107,8 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 		"can get DIDDoc version with an existent old 16 characters Indy style DID",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				"http://%s/1.0/identifiers/%s/version/%s",
+				testconstants.SUTHost,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				"674e6cb5-8d7c-5c50-b0ff-d91bcbcbd5d6",
 			),
@@ -119,7 +124,8 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 		"can get DIDDoc version with an existent old 32 characters Indy style DID",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				"http://%s/1.0/identifiers/%s/version/%s",
+				testconstants.SUTHost,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				"1dc202d4-26ee-54a9-b091-8d2e1f609722",
 			),
@@ -135,7 +141,8 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 		"can get DIDDoc version with an existent DID and versionId, and supported DIDJSON resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				"http://%s/1.0/identifiers/%s/version/%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 			),
@@ -151,7 +158,8 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 		"can get DIDDoc version with an existent DID and versionId, and supported DIDJSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				"http://%s/1.0/identifiers/%s/version/%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 			),
@@ -167,7 +175,8 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 		"can get DIDDoc version with an existent DID and versionId, and supported JSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				"http://%s/1.0/identifiers/%s/version/%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 			),
@@ -183,7 +192,8 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 		"can get DIDDoc version with an existent DID and versionId, and supported gzip encoding type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				"http://%s/1.0/identifiers/%s/version/%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 			),
@@ -199,7 +209,8 @@ var _ = DescribeTable("Positive: Get DIDDoc version", func(testCase utils.Positi
 		"can get DIDDoc version with an existent DID and versionId, and not supported encoding type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://localhost:8080/1.0/identifiers/%s/version/%s",
+				"http://%s/1.0/identifiers/%s/version/%s",
+				testconstants.SUTHost,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 			),
