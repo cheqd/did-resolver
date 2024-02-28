@@ -191,7 +191,7 @@ You can execute the tests as long as you have Ginkgo CLI installed, which target
 ginkgo -r --tags integration --race --randomize-suites --keep-going --trace
 ```
 
-**Note** If you are running integration tests not for local deployment you may change default host address by setting `TEST_HOST_ADDRESS` envirable to your custom host address.
+**Note** If you are running integration tests not for local deployment you may change default host address by setting `TEST_HOST_ADDRESS` envirable to your custom one.
 Like:
 
 ```bash
