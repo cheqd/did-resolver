@@ -36,7 +36,7 @@ jobs:
           cache: true
       
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v4
         with:
           version: v1.52.2
           args: --config .github/linters/.golangci.yaml
