@@ -183,7 +183,6 @@ func (ls LedgerService) openGRPCConnection(endpoint types.Network) (conn *grpc.C
 	defer cancel()
 
 	conn, err = grpc.DialContext(ctx, endpoint.Endpoint, opts...)
-
 	if err != nil {
 		log.Error().Err(err).Msgf("openGRPCConnection: context failed")
 		return nil, err

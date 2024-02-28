@@ -36,7 +36,7 @@ var _ = DescribeTable("", func(testCase NegativeTestCase) {
 		NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?invalid_parameter=invalid_value",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,

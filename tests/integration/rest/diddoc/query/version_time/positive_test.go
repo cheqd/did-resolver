@@ -39,7 +39,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				"2022-10-13T06:09:04Z",
 			),
@@ -54,7 +54,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				"2022-10-12T08:57:25Z",
 			),
@@ -69,7 +69,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				url.QueryEscape("03/06 09:39:50AM '23 +0000"),
 			),
@@ -84,7 +84,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				url.QueryEscape("Mon Mar 06 09:39:50 2023"),
 			),
@@ -99,7 +99,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				url.QueryEscape("Mon Mar 06 09:39:50 UTC 2023"),
 			),
@@ -114,7 +114,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				url.QueryEscape("Mon Mar 06 09:39:50 +0000 2023"),
 			),
@@ -129,7 +129,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				url.QueryEscape("06 Mar 23 09:40 UTC"),
 			),
@@ -144,7 +144,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				url.QueryEscape("06 Mar 23 09:40 +0000"),
 			),
@@ -159,7 +159,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				url.QueryEscape("Monday, 06-Mar-23 09:39:50 UTC"),
 			),
@@ -174,7 +174,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				url.QueryEscape("Mon, 06 Mar 2023 09:39:50 UTC"),
 			),
@@ -189,7 +189,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				url.QueryEscape("Mon, 06 Mar 2023 09:39:50 +0000"),
 			),
@@ -204,7 +204,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				"2023-03-06T09:39:50Z",
 			),
@@ -219,7 +219,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				"2023-03-06T09:39:49.496306968Z",
 			),
@@ -234,7 +234,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				url.QueryEscape("2023-03-06 09:39:50"),
 			),
@@ -249,7 +249,7 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				"2023-03-07",
 			),

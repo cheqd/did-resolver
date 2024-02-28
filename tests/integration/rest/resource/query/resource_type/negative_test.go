@@ -37,7 +37,7 @@ var _ = DescribeTable("Negative: Get Resource with resourceType query", func(tes
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceType=xyz",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType: string(types.DIDJSONLD),

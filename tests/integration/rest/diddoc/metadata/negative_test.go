@@ -36,7 +36,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase uti
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleMainnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -60,7 +60,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase uti
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -84,7 +84,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase uti
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
@@ -112,7 +112,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase uti
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.InvalidDid,
 				testconstants.ValidIdentifier,
 			),
@@ -140,7 +140,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase uti
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid,
 				testconstants.NotExistentIdentifier,
 			),
@@ -168,7 +168,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase uti
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
@@ -196,7 +196,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase uti
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
@@ -224,7 +224,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version metadata", func(testCase uti
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleMainnetDid,
 				testconstants.InvalidIdentifier,
 			),

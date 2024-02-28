@@ -40,7 +40,7 @@ var _ = DescribeTable("Positive: Get Resource with resourceType query", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceType=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				SeveralResourcesDID,
 				"TrustEstablishment",
 			),
@@ -58,7 +58,7 @@ var _ = DescribeTable("Positive: Get Resource with resourceType query", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceType=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				"CL-Schema",
 			),

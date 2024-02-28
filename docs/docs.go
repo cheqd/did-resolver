@@ -889,13 +889,21 @@ const docTemplate = `{
                         "$ref": "#/definitions/types.DereferencedResource"
                     }
                 },
+                "nextVersionId": {
+                    "type": "string",
+                    "example": "3f3111af-dfe6-411f-adc9-02af59716ddb"
+                },
+                "previousVersionId": {
+                    "type": "string",
+                    "example": "139445af-4281-4453-b05a-ec9a8931c1f9"
+                },
                 "updated": {
                     "type": "string",
                     "example": "2021-09-10T12:00:00Z"
                 },
                 "versionId": {
                     "type": "string",
-                    "example": "4979BAF49599FEF0BAD5ED0849FDD708156761EBBC8EBE78D0907F8BECC9CB2E"
+                    "example": "284f297b-b6e3-4ffa-9172-bc3bb904e286"
                 }
             }
         },

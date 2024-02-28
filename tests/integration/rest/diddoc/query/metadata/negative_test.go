@@ -36,7 +36,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with metadata query", func(testCase 
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?metadata=not_supported_value",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -63,7 +63,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with metadata query", func(testCase 
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?metadata=true&versionId=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
@@ -91,7 +91,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with metadata query", func(testCase 
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?metadata=true&versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				"2023-01-22T11:58:10.390039347Z",
 			),
@@ -119,7 +119,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with metadata query", func(testCase 
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?metadata=true&service=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.NotExistentService,
 			),
@@ -147,7 +147,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with metadata query", func(testCase 
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?metadata=true&versionId=%s&versionTime=%s&service=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.NotExistentIdentifier,
 				"2023-01-22T11:58:10.390039347Z",

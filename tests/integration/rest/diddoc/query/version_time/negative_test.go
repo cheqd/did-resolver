@@ -36,7 +36,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCa
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				"2023-03-06T09:36:54.56204903Z",
 			),
@@ -64,7 +64,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCa
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				url.QueryEscape("06/03/2023 09:36:54"),
 			),
@@ -92,7 +92,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCa
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=2023-03-06Z",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -119,7 +119,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCa
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s&versionId=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				"2023-03-06T09:39:49.496306968Z",
 				testconstants.NotExistentIdentifier,
@@ -148,7 +148,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCa
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s&service=notexistent",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				"2023-03-06T09:39:49.496306968Z",
 			),
@@ -177,7 +177,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with versionTime query", func(testCa
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s&versionId=%s&service=notexistent",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				"2023-03-06T09:39:49.496306968Z",
 				testconstants.NotExistentIdentifier,

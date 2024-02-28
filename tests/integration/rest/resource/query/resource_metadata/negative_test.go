@@ -37,7 +37,7 @@ var _ = DescribeTable("Negative: Get Resource Metadata with resourceMetadata que
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceMetadata=xyz",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType: string(types.DIDJSONLD),

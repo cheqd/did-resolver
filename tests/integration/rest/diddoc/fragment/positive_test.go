@@ -42,7 +42,7 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%skey1",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -58,7 +58,7 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%skey-1",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy16CharStyleTestnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -74,7 +74,7 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%skey-1",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -90,7 +90,7 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%skey1",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       string(types.DIDJSON),
@@ -106,7 +106,7 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%skey1",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       string(types.DIDJSONLD),
@@ -122,7 +122,7 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%skey1",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       string(types.JSONLD),
@@ -138,7 +138,7 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%skey1",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -154,7 +154,7 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%skey1",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -170,7 +170,7 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%skey1",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -186,7 +186,7 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%swebsite",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -202,7 +202,7 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%swebsite",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       string(types.DIDJSON),
@@ -218,7 +218,7 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%swebsite",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       string(types.DIDJSONLD),
@@ -234,7 +234,7 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%swebsite",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       string(types.JSONLD),
@@ -250,7 +250,7 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%swebsite",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -266,7 +266,7 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%swebsite",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,

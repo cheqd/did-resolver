@@ -38,7 +38,7 @@ var _ = DescribeTable("Positive: Get Resource with resourceName query", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceName=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				"ResourceName",
 			),
@@ -56,7 +56,7 @@ var _ = DescribeTable("Positive: Get Resource with resourceName query", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceName=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				"FaberCollege301071f2-314d-49e4-8e65-393586e5e05a",
 			),

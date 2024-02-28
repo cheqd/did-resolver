@@ -40,7 +40,7 @@ var _ = DescribeTable("Positive: Get Resource with resourceVersion query", func(
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceVersion=1.0",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				severalResourcesDID,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,

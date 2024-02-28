@@ -37,7 +37,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionId=%s&resourceCollectionId=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 				testconstants.UUIDStyleTestnetId,
@@ -53,7 +53,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionId=%s&resourceId=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 				testconstants.UUIDStyleTestnetDidResourceId,
@@ -69,7 +69,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s&resourceCollectionId=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				"2023-01-25T11:58:11Z",
 				testconstants.UUIDStyleTestnetId,
@@ -85,7 +85,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionTime=%s&resourceId=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				"2023-01-25T11:58:11Z",
 				testconstants.UUIDStyleTestnetDidResourceId,
@@ -101,7 +101,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?versionId=%s&versionTime=%s&resourceCollectionId=%s&resourceId=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 				"2023-01-25T11:58:11Z",
@@ -119,7 +119,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceId=%s&resourceVersionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 				"2023-01-25T12:08:40Z",
@@ -135,7 +135,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceCollectionId=%s&resourceId=%s&resourceName=%s&resourceType=%s&resourceVersion=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				"did:cheqd:testnet:0a5b94d0-a417-48ed-a6f5-4abc9e95888d",
 				"0a5b94d0-a417-48ed-a6f5-4abc9e95888d",
 				"ef344b53-f2db-44bd-9df3-01259c178704",
@@ -154,7 +154,7 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceCollectionId=%s&resourceId=%s&resourceName=%s&resourceType=%s&resourceVersion=%s&resourceVersionTime=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				"did:cheqd:testnet:0a5b94d0-a417-48ed-a6f5-4abc9e95888d",
 				"0a5b94d0-a417-48ed-a6f5-4abc9e95888d",
 				"ef344b53-f2db-44bd-9df3-01259c178704",

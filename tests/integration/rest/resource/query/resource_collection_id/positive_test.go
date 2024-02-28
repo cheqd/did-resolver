@@ -38,7 +38,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with collectionId q
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceCollectionId=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetId,
 			),
@@ -56,7 +56,7 @@ var _ = DescribeTable("Positive: Get Collection of Resources with collectionId q
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceCollectionId=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				"3KpiDD6Hxs4i2G7FtpiGhu",
 			),

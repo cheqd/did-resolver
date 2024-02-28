@@ -36,7 +36,7 @@ var _ = DescribeTable("Positive: Get Service param", func(testCase utils.Positiv
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?service=%s",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				serviceId,
 			),
@@ -50,7 +50,7 @@ var _ = DescribeTable("Positive: Get Service param", func(testCase utils.Positiv
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?service=%s&relativeRef=foo",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 				serviceId,
 			),

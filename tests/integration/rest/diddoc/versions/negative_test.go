@@ -36,7 +36,7 @@ var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.Negat
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/versions",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleMainnetDid,
 			),
 			ResolutionType: string(types.JSON),
@@ -59,7 +59,7 @@ var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.Negat
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/versions",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.NotExistentMainnetDid,
 			),
 			ResolutionType: string(types.JSON),
@@ -82,7 +82,7 @@ var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.Negat
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/versions",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.NotExistentTestnetDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
@@ -109,7 +109,7 @@ var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.Negat
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/versions",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.InvalidDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,

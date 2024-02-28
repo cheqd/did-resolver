@@ -40,7 +40,7 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -58,7 +58,7 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -74,7 +74,7 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType:       string(types.DIDJSON),
@@ -90,7 +90,7 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType:       string(types.DIDJSONLD),
@@ -106,7 +106,7 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType:       string(types.JSONLD),
@@ -122,7 +122,7 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
@@ -138,7 +138,7 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/metadata",
-				testconstants.SUTHost,
+				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
