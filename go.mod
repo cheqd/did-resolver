@@ -1,6 +1,6 @@
 module github.com/cheqd/did-resolver
 
-go 1.20
+go 1.21
 
 require (
 	github.com/cheqd/cheqd-node/api/v2 v2.2.0-develop.1
