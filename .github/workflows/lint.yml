@@ -38,9 +38,9 @@ jobs:
           cache: false
 
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.52.2
+          version: v1.55.2
           args: --config .github/linters/.golangci.yaml
 
   super-lint:
