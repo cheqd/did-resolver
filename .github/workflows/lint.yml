@@ -33,12 +33,14 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: ./go.mod
-          cache: true
-      
+          # cache = false cause there is an open issue related to "File exists" error.
+          # https://github.com/golangci/golangci-lint-action/issues/807
+          cache: false
+
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v4
         with:
-          version: v1.52.2
+          version: v1.56.2
           args: --config .github/linters/.golangci.yaml
 
   super-lint:
