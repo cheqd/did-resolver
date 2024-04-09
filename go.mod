@@ -2,6 +2,8 @@ module github.com/cheqd/did-resolver
 
 go 1.21
 
+toolchain go1.21.0
+
 require (
 	github.com/cheqd/cheqd-node/api/v2 v2.2.0-develop.1
 	github.com/go-resty/resty/v2 v2.11.0
