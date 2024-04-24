@@ -13,7 +13,7 @@ require (
 	github.com/mr-tron/base58 v1.2.0
 	github.com/multiformats/go-multibase v0.2.0
 	github.com/onsi/ginkgo/v2 v2.17.1
-	github.com/onsi/gomega v1.32.0
+	github.com/onsi/gomega v1.33.0
 	github.com/rs/zerolog v1.32.0
 	github.com/spf13/viper v1.16.0
 	github.com/swaggo/echo-swagger v1.4.1
