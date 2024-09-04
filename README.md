@@ -8,7 +8,7 @@
 
 ## ℹ️ Overview
 
-DID methods are expected to provide [standards-compliant methods of DID and DID Document ("DIDDoc") production](https://w3c.github.io/did-core/#production-and-consumption). The **cheqd DID Resolver** is designed to implement the [W3C DID *Resolution* specification](https://w3c-ccg.github.io/did-resolution/) for [`did:cheqd`](https://docs.cheqd.io/identity/architecture/adr-list/adr-001-cheqd-did-method) method.
+DID methods are expected to provide [standards-compliant methods of DID and DID Document ("DIDDoc") production](https://w3c.github.io/did-core/#production-and-consumption). The **cheqd DID Resolver** is designed to implement the [W3C DID _Resolution_ specification](https://w3c.github.io/did-resolution/) for [`did:cheqd`](https://docs.cheqd.io/identity/architecture/adr-list/adr-001-cheqd-did-method) method.
 
 ### 📝 Architecture
 
@@ -60,7 +60,7 @@ enable = true
 address = "0.0.0.0:9090"
 ```
 
-**Note**: If you're pointing a DID Resolver to your own node instance, by default `cheqd-node` instance gRPC endpoints are *not* served up with a TLS certificate. This means the `useTls` property would need to be set to `false`, unless you're otherwise using a load balancer that provides TLS connections to the gRPC port.
+**Note**: If you're pointing a DID Resolver to your own node instance, by default `cheqd-node` instance gRPC endpoints are _not_ served up with a TLS certificate. This means the `useTls` property would need to be set to `false`, unless you're otherwise using a load balancer that provides TLS connections to the gRPC port.
 
 ## 🧑‍💻 Building your own Docker image
 
@@ -87,7 +87,7 @@ image: did-resolver:local
 
 Make sure you comment out the pre-existing `image` property that pulls in a container image from Github Container Registry, as shown above.
 
-You can also do *just* a build with:
+You can also do _just_ a build with:
 
 ```bash
 docker-compose -f docker/docker-compose.yml --env-file docker/docker-compose.env build --no-cache
@@ -191,7 +191,7 @@ You can execute the tests as long as you have Ginkgo CLI installed, which target
 ginkgo -r --tags integration --race --randomize-suites --keep-going --trace
 ```
 
-**Note**: By default, the tests target `localhost:8080` as the port where it expects the running DID Resolver instance for testing. If your running instance is at a different address, you can override this by setting a value for the `TEST_HOST_ADDRESS` environment variable *before* executing the Ginkgo test suite.
+**Note**: By default, the tests target `localhost:8080` as the port where it expects the running DID Resolver instance for testing. If your running instance is at a different address, you can override this by setting a value for the `TEST_HOST_ADDRESS` environment variable _before_ executing the Ginkgo test suite.
 
 ```bash
 export TEST_HOST_ADDRESS="where.is.did.resolver.running:port"

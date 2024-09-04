@@ -169,7 +169,7 @@ func (dds DIDDocService) DereferenceSecondary(did string, version string, fragme
 	return &result, nil
 }
 
-func (dds DIDDocService) resolveMetadata(did string, metadata *didTypes.Metadata, contentType types.ContentType) (*types.ResolutionDidDocMetadata, *types.IdentityError) {
+func (dds DIDDocService) resolveMetadata(did string, metadata *didTypes.Metadata, _ types.ContentType) (*types.ResolutionDidDocMetadata, *types.IdentityError) {
 	resources, err := dds.ledgerService.QueryCollectionResources(did)
 	if err != nil {
 		return nil, err
