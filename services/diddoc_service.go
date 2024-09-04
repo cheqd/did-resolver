@@ -53,6 +53,11 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 	result := types.DidResolution{Did: &didDoc, Metadata: *resolvedMetadata, ResolutionMetadata: didResolutionMetadata}
 	if didResolutionMetadata.ContentType == types.DIDJSONLD || didResolutionMetadata.ContentType == types.JSONLD {
 		didDoc.AddContext(types.DIDSchemaJSONLD)
+
+		if len(didDoc.Service) > 0 {
+			didDoc.AddContext(types.DIFDIDConfigurationJSONLD)
+		}
+
 		for _, method := range didDoc.VerificationMethod {
 			switch method.Type {
 			case "Ed25519VerificationKey2020":
