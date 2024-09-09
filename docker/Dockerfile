@@ -5,7 +5,7 @@
 FROM golang:1.21-alpine AS builder
 
 # Install minimum necessary dependencies
-ENV PACKAGES make git bash linux-headers findutils
+ENV PACKAGES="make git bash linux-headers findutils"
 RUN apk update && apk add --no-cache $PACKAGES
 
 # Set working directory for the build
