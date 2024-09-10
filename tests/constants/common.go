@@ -7,6 +7,7 @@ import (
 
 	didTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/did/v2"
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
+	"github.com/cheqd/did-resolver/types"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -22,7 +23,7 @@ func generateVerificationMethod() didTypes.VerificationMethod {
 func generateService() didTypes.Service {
 	return didTypes.Service{
 		Id:              ExistentDid + "#" + ValidServiceId,
-		ServiceType:     "DIDCommMessaging",
+		ServiceType:     types.LinkedDomains,
 		ServiceEndpoint: []string{"http://example.com"},
 	}
 }

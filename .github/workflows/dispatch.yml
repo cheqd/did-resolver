@@ -25,7 +25,7 @@ jobs:
 
   call-staging:
     name: "Staging"
-    needs: [ call-lint, call-build ]
+    needs: call-test
     uses: ./.github/workflows/staging.yml
     secrets: inherit
 
