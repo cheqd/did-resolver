@@ -54,8 +54,11 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 	if didResolutionMetadata.ContentType == types.DIDJSONLD || didResolutionMetadata.ContentType == types.JSONLD {
 		didDoc.AddContext(types.DIDSchemaJSONLD)
 
-		if len(didDoc.Service) > 0 {
-			didDoc.AddContext(types.DIFDIDConfigurationJSONLD)
+		for _, service := range didDoc.Service {
+			if service.Type == types.LinkedDomains {
+				didDoc.AddContext(types.DIFDIDConfigurationJSONLD)
+				break
+			}
 		}
 
 		for _, method := range didDoc.VerificationMethod {
