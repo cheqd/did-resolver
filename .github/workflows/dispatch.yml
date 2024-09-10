@@ -19,13 +19,12 @@ jobs:
 
   call-test:
     name: "Test"
-    needs: [ call-lint, call-build ]
     uses: ./.github/workflows/test.yml
     secrets: inherit
 
   call-staging:
     name: "Staging"
-    needs: [ call-lint, call-build ]
+    needs: call-test
     uses: ./.github/workflows/staging.yml
     secrets: inherit
 
