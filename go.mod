@@ -12,7 +12,7 @@ require (
 	github.com/lestrrat-go/jwx v1.2.29
 	github.com/mr-tron/base58 v1.2.0
 	github.com/multiformats/go-multibase v0.2.0
-	github.com/onsi/ginkgo/v2 v2.17.2
+	github.com/onsi/ginkgo/v2 v2.17.3
 	github.com/onsi/gomega v1.33.0
 	github.com/rs/zerolog v1.32.0
 	github.com/spf13/viper v1.16.0
