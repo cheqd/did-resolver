@@ -18,7 +18,7 @@ require (
 	github.com/spf13/viper v1.16.0
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.3
-	google.golang.org/grpc v1.65.0
+	google.golang.org/grpc v1.64.0
 	google.golang.org/protobuf v1.34.1
 )
 
