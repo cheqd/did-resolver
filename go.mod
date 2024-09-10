@@ -12,8 +12,8 @@ require (
 	github.com/lestrrat-go/jwx v1.2.29
 	github.com/mr-tron/base58 v1.2.0
 	github.com/multiformats/go-multibase v0.2.0
-	github.com/onsi/ginkgo/v2 v2.19.0
-	github.com/onsi/gomega v1.33.1
+	github.com/onsi/ginkgo/v2 v2.19.1
+	github.com/onsi/gomega v1.34.0
 	github.com/rs/zerolog v1.32.0
 	github.com/spf13/viper v1.16.0
 	github.com/swaggo/echo-swagger v1.4.1
@@ -30,7 +30,7 @@ require (
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.2.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
-	github.com/go-logr/logr v1.4.1 // indirect
+	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
 	github.com/go-openapi/jsonreference v0.20.2 // indirect
 	github.com/go-openapi/spec v0.20.8 // indirect
@@ -69,7 +69,7 @@ require (
 	golang.org/x/crypto v0.23.0 // indirect
 	golang.org/x/exp v0.0.0-20230711153332-06a737ee72cb // indirect
 	golang.org/x/net v0.25.0 // indirect
-	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/sys v0.21.0 // indirect
 	golang.org/x/text v0.15.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.21.0 // indirect
