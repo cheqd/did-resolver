@@ -56,7 +56,7 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 
 		for _, service := range didDoc.Service {
 			if service.Type == types.LinkedDomains {
-				didDoc.AddContext(types.DIFDIDConfigurationJSONLD)
+				didDoc.AddContext(types.LinkedDomainsJSONLD)
 				break
 			}
 		}

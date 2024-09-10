@@ -27,7 +27,7 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveDidDocTestCase
 		(testCase.expectedError == nil) {
 		testCase.expectedDIDResolution.Did.Context = []string{
 			types.DIDSchemaJSONLD,
-			types.DIFDIDConfigurationJSONLD,
+			types.LinkedDomainsJSONLD,
 			types.JsonWebKey2020JSONLD,
 		}
 	} else if testCase.expectedDIDResolution.Did != nil {

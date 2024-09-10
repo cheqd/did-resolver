@@ -37,7 +37,7 @@ func (tKType TransformKeysType) IsSupported() bool {
 
 const (
 	DIDSchemaJSONLD                  = "https://www.w3.org/ns/did/v1"
-	DIFDIDConfigurationJSONLD        = "https://identity.foundation/.well-known/did-configuration/v1"
+	LinkedDomainsJSONLD              = "https://identity.foundation/.well-known/did-configuration/v1"
 	ResolutionSchemaJSONLD           = "https://w3id.org/did-resolution/v1"
 	Ed25519VerificationKey2020JSONLD = "https://w3id.org/security/suites/ed25519-2020/v1"
 	Ed25519VerificationKey2018JSONLD = "https://w3id.org/security/suites/ed25519-2018/v1"

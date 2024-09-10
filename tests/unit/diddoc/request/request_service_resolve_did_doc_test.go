@@ -31,7 +31,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, utils.MockLedger)
 
 	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
-		testCase.expectedDIDResolution.Did.Context = []string{types.DIDSchemaJSONLD,  types.DIFDIDConfigurationJSONLD, types.JsonWebKey2020JSONLD }
+		testCase.expectedDIDResolution.Did.Context = []string{types.DIDSchemaJSONLD, types.LinkedDomainsJSONLD, types.JsonWebKey2020JSONLD}
 	} else if testCase.expectedDIDResolution.Did != nil {
 		testCase.expectedDIDResolution.Did.Context = nil
 	}
