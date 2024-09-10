@@ -36,15 +36,15 @@ func SetupLogger(config Config) {
 func ParseGRPCEndpoint(configEndpoint string, networkName string) (*Network, error) {
 	config := strings.Split(configEndpoint, ",")
 	if len(config) != 3 {
-		return nil, fmt.Errorf(fmt.Sprintf("Endpoint config for %s is invalid: %s", networkName, configEndpoint))
+		return nil, fmt.Errorf("endpoint config for %s is invalid: %s", networkName, configEndpoint)
 	}
 	useTls, err := strconv.ParseBool(config[1])
 	if err != nil {
-		return nil, fmt.Errorf(fmt.Sprintf("useTls value %s for %s endpoint is invalid", configEndpoint, networkName))
+		return nil, fmt.Errorf("useTls value %s for %s endpoint is invalid", configEndpoint, networkName)
 	}
 	timeout, err := time.ParseDuration(config[2])
 	if err != nil {
-		return nil, fmt.Errorf(fmt.Sprintf("Timeout value %s for %s endpoint is invalid", configEndpoint, networkName))
+		return nil, fmt.Errorf("timeout value %s for %s endpoint is invalid", configEndpoint, networkName)
 	}
 
 	return &Network{

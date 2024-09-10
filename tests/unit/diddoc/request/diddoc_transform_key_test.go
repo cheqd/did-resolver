@@ -23,7 +23,7 @@ var _ = DescribeTable("Test Query handler with transformKeys params", func(testC
 	expectedDIDResolution := testCase.expectedResolution.(*types.DidResolution)
 
 	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
-		expectedDIDResolution.Did.Context = []string{types.DIDSchemaJSONLD, types.JsonWebKey2020JSONLD}
+		expectedDIDResolution.Did.Context = []string{types.DIDSchemaJSONLD, types.LinkedDomainsJSONLD, types.JsonWebKey2020JSONLD}
 	} else if expectedDIDResolution.Did != nil {
 		expectedDIDResolution.Did.Context = nil
 	}

@@ -53,6 +53,14 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 	result := types.DidResolution{Did: &didDoc, Metadata: *resolvedMetadata, ResolutionMetadata: didResolutionMetadata}
 	if didResolutionMetadata.ContentType == types.DIDJSONLD || didResolutionMetadata.ContentType == types.JSONLD {
 		didDoc.AddContext(types.DIDSchemaJSONLD)
+
+		for _, service := range didDoc.Service {
+			if service.Type == types.LinkedDomains {
+				didDoc.AddContext(types.LinkedDomainsJSONLD)
+				break
+			}
+		}
+
 		for _, method := range didDoc.VerificationMethod {
 			switch method.Type {
 			case "Ed25519VerificationKey2020":
@@ -164,7 +172,7 @@ func (dds DIDDocService) DereferenceSecondary(did string, version string, fragme
 	return &result, nil
 }
 
-func (dds DIDDocService) resolveMetadata(did string, metadata *didTypes.Metadata, contentType types.ContentType) (*types.ResolutionDidDocMetadata, *types.IdentityError) {
+func (dds DIDDocService) resolveMetadata(did string, metadata *didTypes.Metadata, _ types.ContentType) (*types.ResolutionDidDocMetadata, *types.IdentityError) {
 	resources, err := dds.ledgerService.QueryCollectionResources(did)
 	if err != nil {
 		return nil, err
