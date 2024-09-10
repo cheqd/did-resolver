@@ -2,7 +2,7 @@ module github.com/cheqd/did-resolver
 
 go 1.21
 
-toolchain go1.21.0
+toolchain go1.21.13
 
 require (
 	github.com/cheqd/cheqd-node/api/v2 v2.2.0
@@ -18,7 +18,7 @@ require (
 	github.com/spf13/viper v1.16.0
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.3
-	google.golang.org/grpc v1.66.1
+	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.34.1
 )
 
