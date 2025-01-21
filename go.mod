@@ -134,6 +134,7 @@ require (
 
 // From Cosmos SDK upstream
 replace (
+	cosmossdk.io/api => cosmossdk.io/api v0.3.1
 	github.com/cosmos/gogoproto => github.com/cosmos/gogoproto v1.4.10
 	golang.org/x/exp => golang.org/x/exp v0.0.0-20230711153332-06a737ee72cb
 )
