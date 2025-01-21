@@ -133,4 +133,8 @@ require (
 )
 
 // From Cosmos SDK upstream
-replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+replace (
+	github.com/cosmos/gogoproto => github.com/cosmos/gogoproto v1.4.10
+	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+	golang.org/x/exp => golang.org/x/exp v0.0.0-20230711153332-06a737ee72cb
+)
