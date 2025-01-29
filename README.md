@@ -8,7 +8,7 @@
 
 ## ℹ️ Overview
 
-DID methods are expected to provide [standards-compliant methods of DID and DID Document ("DIDDoc") production](https://w3c.github.io/did-core/#production-and-consumption). The **cheqd DID Resolver** is designed to implement the [W3C DID _Resolution_ specification](https://w3c.github.io/did-resolution/) for [`did:cheqd`](https://docs.cheqd.io/identity/architecture/adr-list/adr-001-cheqd-did-method) method.
+DID methods are expected to provide [standards-compliant methods of DID and DID Document ("DIDDoc") production](https://w3c.github.io/did-resolution/#resolver-architectures). The **cheqd DID Resolver** is designed to implement the [W3C DID _Resolution_ specification](https://w3c.github.io/did-resolution/) for [`did:cheqd`](https://docs.cheqd.io/identity/architecture/adr-list/adr-001-cheqd-did-method) method.
 
 ### 📝 Architecture
 
