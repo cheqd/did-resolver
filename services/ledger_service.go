@@ -173,15 +173,10 @@ func (ls LedgerService) openGRPCConnection(endpoint types.Network) (conn *grpc.C
 	}
 
 	if endpoint.UseTls {
-		// creds = credentials.NewTLS(&tls.Config{})
 		opts = append(opts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})))
 	} else {
-		// creds = insecure.NewCredentials()
 		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	}
-
-	// ctx, cancel := context.WithTimeout(context.Background(), endpoint.Timeout)
-	// defer cancel()
 
 	conn, err = grpc.NewClient(endpoint.Endpoint, opts...)
 	if err != nil {
