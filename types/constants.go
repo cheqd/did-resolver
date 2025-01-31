@@ -3,10 +3,11 @@ package types
 type ContentType string
 
 const (
-	DIDJSON   ContentType = "application/did+json"
-	DIDJSONLD ContentType = "application/did+ld+json"
-	JSONLD    ContentType = "application/ld+json"
-	JSON      ContentType = "application/json"
+	DIDJSON    ContentType = "application/did+json"
+	DIDJSONLD  ContentType = "application/did+ld+json"
+	JSONLD     ContentType = "application/ld+json"
+	JSON       ContentType = "application/json"
+	W3IDDIDURL string      = "https://w3id.org/did-url-dereferencing"
 )
 
 func (cType ContentType) IsSupported() bool {

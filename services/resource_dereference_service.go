@@ -79,3 +79,23 @@ func (rds ResourceService) DereferenceResourceData(did string, resourceId string
 
 	return &types.ResourceDereferencing{ContentStream: &result, DereferencingMetadata: dereferenceMetadata}, nil
 }
+
+func (rds ResourceService) DereferenceResourceWithMetadata(did string, resourceId string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
+	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
+
+	resource, err := rds.ledgerService.QueryResource(did, strings.ToLower(resourceId))
+	if err != nil {
+		err.ContentType = contentType
+		return nil, err
+	}
+
+	var context string
+	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
+		context = types.ResolutionSchemaJSONLD
+	}
+
+	result := types.DereferencedResourceData(resource.Resource.Data)
+	metadata := types.NewDereferencedResource(did, resource.Metadata)
+
+	return &types.ResourceDereferencing{Context: context, ContentStream: &result, Metadata: metadata, DereferencingMetadata: dereferenceMetadata}, nil
+}

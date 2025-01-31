@@ -2,6 +2,7 @@ package resources
 
 import (
 	"github.com/cheqd/did-resolver/services"
+	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
 )
 
@@ -22,6 +23,13 @@ import (
 //	@Failure		501			{object}	types.IdentityError
 //	@Router			/{did}/resources/{resourceId} [get]
 func ResourceDataEchoHandler(c echo.Context) error {
+	// Get Accept header
+	requestedContentTypeParam := services.ExtractMediaTypeParams(c.Request().Header.Get(echo.HeaderAccept))
+
+	if requestedContentTypeParam["profile"] == types.W3IDDIDURL {
+		return services.EchoWrapHandler(&ResourceDataWithMetadataDereferencingService{})(c)
+	}
+
 	return services.EchoWrapHandler(&ResourceDataDereferencingService{})(c)
 }
 
