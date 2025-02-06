@@ -70,7 +70,7 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 					testconstants.ExistentDid,
 					[]*resourceTypes.Metadata{testconstants.ValidResource[0].Metadata},
 				),
-				Metadata: &types.ResolutionDidDocMetadata{},
+				Metadata: nil,
 			},
 			expectedError: nil,
 		},
