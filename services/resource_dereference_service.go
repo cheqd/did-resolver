@@ -80,7 +80,7 @@ func (rds ResourceService) DereferenceResourceData(did string, resourceId string
 	return &types.ResourceDereferencing{ContentStream: &result, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
-func (rds ResourceService) DereferenceResourceWithMetadata(did string, resourceId string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
+func (rds ResourceService) DereferenceResourceDataWithMetadata(did string, resourceId string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
 	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
 
 	resource, err := rds.ledgerService.QueryResource(did, strings.ToLower(resourceId))

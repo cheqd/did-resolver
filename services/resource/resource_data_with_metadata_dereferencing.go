@@ -44,7 +44,7 @@ func (dr *ResourceDataWithMetadataDereferencingService) SpecificValidation(c ser
 }
 
 func (dr *ResourceDataWithMetadataDereferencingService) Query(c services.ResolverContext) error {
-	result, err := c.ResourceService.DereferenceResourceWithMetadata(dr.GetDid(), dr.ResourceId, dr.GetContentType())
+	result, err := c.ResourceService.DereferenceResourceDataWithMetadata(dr.GetDid(), dr.ResourceId, dr.GetContentType())
 	if err != nil {
 		err.IsDereferencing = dr.IsDereferencing
 		return err
