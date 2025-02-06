@@ -42,9 +42,9 @@ func (dd *DidDocMetadataHandler) Handle(c services.ResolverContext, service serv
 		return nil, _err
 	}
 	// Fill the resources
-	content := result.ContentStream.(*types.ResolutionDidDocMetadata)
+	content := result.Metadata
 	content.Resources = filteredResources
-	result.ContentStream = content
+	result.Metadata = content
 
 	return dd.Continue(c, service, result)
 }

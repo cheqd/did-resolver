@@ -6,7 +6,6 @@ import (
 
 	"strings"
 
-	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/types"
 )
 
@@ -36,9 +35,9 @@ func (rds ResourceService) DereferenceResourceMetadata(did string, resourceId st
 		context = types.ResolutionSchemaJSONLD
 	}
 
-	contentStream := types.NewDereferencedResourceListStruct(did, []*resourceTypes.Metadata{resource.Metadata})
+	metadata := types.NewDereferencedResource(did, resource.Metadata)
 
-	return &types.ResourceDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
+	return &types.ResourceDereferencing{Context: context, Metadata: metadata, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
 func (rds ResourceService) DereferenceCollectionResources(did string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
