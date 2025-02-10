@@ -7,6 +7,7 @@ const (
 	DIDJSONLD  ContentType = "application/did+ld+json"
 	JSONLD     ContentType = "application/ld+json"
 	JSON       ContentType = "application/json"
+	TEXT       ContentType = "text/plain"
 	W3IDDIDURL string      = "https://w3id.org/did-url-dereferencing"
 )
 
