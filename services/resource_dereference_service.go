@@ -94,8 +94,13 @@ func (rds ResourceService) DereferenceResourceDataWithMetadata(did string, resou
 		context = types.ResolutionSchemaJSONLD
 	}
 
-	result := types.DereferencedResourceData(resource.Resource.Data)
+	dereferenceMetadata.ContentType = types.ContentType(resource.Metadata.MediaType)
+	result := types.NewDereferencedResourceData(resource.Resource.Data)
 	metadata := types.NewDereferencedResource(did, resource.Metadata)
+	if dereferenceMetadata.ContentType == types.JSON || dereferenceMetadata.ContentType == types.TEXT {
+		res, _ := types.NewResourceData(resource.Resource.Data)
+		return &types.ResourceDereferencing{Context: context, ContentStream: res, Metadata: metadata, DereferencingMetadata: dereferenceMetadata}, nil
+	}
 
-	return &types.ResourceDereferencing{Context: context, ContentStream: &result, Metadata: metadata, DereferencingMetadata: dereferenceMetadata}, nil
+	return &types.ResourceDereferencing{Context: context, ContentStream: result, Metadata: metadata, DereferencingMetadata: dereferenceMetadata}, nil
 }
