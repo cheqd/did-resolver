@@ -2,6 +2,7 @@ package services
 
 import (
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/cheqd/did-resolver/types"
@@ -40,26 +41,47 @@ func GetDidParam(c echo.Context) (string, error) {
 	return url.QueryUnescape(c.Param("did"))
 }
 
-func ExtractMediaTypeParams(mediaType string) map[string]string {
-	// Initialize an empty map to hold the parameters
-	params := make(map[string]string)
+func GetHighestPriorityHeaderAndParams(acceptHeader string) (string, map[string]string) {
+	bestHeader := ""
+	bestParams := make(map[string]string)
+	highestQ := -1.0
+	position := 0
 
-	// Split by ';' to separate media type from parameters
-	parts := strings.Split(mediaType, ";")
-	if len(parts) <= 1 {
-		return params // No parameters present
-	}
+	// Split by ',' to separate multiple headers
+	headers := strings.Split(acceptHeader, ",")
+	for index, entry := range headers {
+		entry = strings.TrimSpace(entry)
+		parts := strings.Split(entry, ";")
 
-	// Iterate over the parts (skipping the first one, which is the media type)
-	for _, param := range parts[1:] {
-		param = strings.TrimSpace(param) // Trim spaces around the parameter
-		// Split parameter by '=' to get the key and value
-		keyValue := strings.Split(param, "=")
-		if len(keyValue) == 2 {
-			// Store the key and value in the map
-			params[keyValue[0]] = strings.Trim(keyValue[1], "\"") // Remove quotes from value
+		params := make(map[string]string)
+		q := 1.0
+
+		// Parse parameters
+		for _, param := range parts[1:] {
+			param = strings.TrimSpace(param)
+			keyValue := strings.SplitN(param, "=", 2)
+			if len(keyValue) == 2 {
+				key, value := keyValue[0], strings.Trim(keyValue[1], "\"")
+				params[key] = value
+			}
+		}
+
+		// Extract q value if present
+		if qStr, exists := params["q"]; exists {
+			if parsedQ, err := strconv.ParseFloat(qStr, 64); err == nil {
+				q = parsedQ
+			}
+		}
+
+		// Determine the highest priority header
+		if q > highestQ || (q == highestQ && position > index) {
+			highestQ = q
+			position = index
+			bestHeader = parts[0] // Only header
+			delete(params, "q")   // Remove q from params
+			bestParams = params   // Update best parameters
 		}
 	}
 
-	return params
+	return bestHeader, bestParams
 }

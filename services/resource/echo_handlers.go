@@ -24,9 +24,9 @@ import (
 //	@Router			/{did}/resources/{resourceId} [get]
 func ResourceDataEchoHandler(c echo.Context) error {
 	// Get Accept header
-	requestedContentTypeParam := services.ExtractMediaTypeParams(c.Request().Header.Get(echo.HeaderAccept))
+	header, params := services.GetHighestPriorityHeaderAndParams(c.Request().Header.Get(echo.HeaderAccept))
 
-	if requestedContentTypeParam["profile"] == types.W3IDDIDURL {
+	if header == string(types.JSONLD) && params["profile"] == types.W3IDDIDURL {
 		return services.EchoWrapHandler(&ResourceDataWithMetadataDereferencingService{})(c)
 	}
 

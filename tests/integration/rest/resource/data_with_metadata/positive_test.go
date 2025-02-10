@@ -51,4 +51,38 @@ var _ = DescribeTable("Positive: Get resource data with metadata", func(testCase
 			ExpectedStatusCode:   http.StatusOK,
 		},
 	),
+
+	Entry(
+		"can get resource with metadata with an existent DID, with multiple headers without q values",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s/resources/%s",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+				testconstants.UUIDStyleTestnetDidResourceId,
+			),
+			ResolutionType:       string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL) + ",*/*",
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/resource_data_with_metadata/resource.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get resource with metadata with an existent DID, with multiple header and q values",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s/resources/%s",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+				testconstants.UUIDStyleTestnetDidResourceId,
+			),
+			ResolutionType:       string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL) + ";q=1.0,application/ld+json, application/json, text/plain;q=0.9, image/png;q=0.7",
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/resource_data_with_metadata/resource.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
 )
