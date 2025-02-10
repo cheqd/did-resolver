@@ -155,4 +155,38 @@ var _ = DescribeTable("Positive: Get resource data", func(testCase utils.Positiv
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
+
+	Entry(
+		"can get resource with an existent DID, with multiple headers without q values",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s/resources/%s",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+				testconstants.UUIDStyleTestnetDidResourceId,
+			),
+			ResolutionType:       "*/*," + string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL),
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/resource_data/resource.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get resource with an existent DID, with multiple header and q values",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s/resources/%s",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+				testconstants.UUIDStyleTestnetDidResourceId,
+			),
+			ResolutionType:       string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL) + ";q=0.5.0,application/ld+json, application/json, text/plain;q=0.9, image/png;q=0.7",
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/resource_data/resource.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
 )
