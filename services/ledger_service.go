@@ -170,7 +170,6 @@ func (ls *LedgerService) RegisterLedger(method string, endpoint types.Network) e
 func (ls LedgerService) openGRPCConnection(endpoint types.Network) (conn *grpc.ClientConn, err error) {
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithBlock(),
 	}
 
 	if endpoint.UseTls {
@@ -179,10 +178,7 @@ func (ls LedgerService) openGRPCConnection(endpoint types.Network) (conn *grpc.C
 		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), endpoint.Timeout)
-	defer cancel()
-
-	conn, err = grpc.DialContext(ctx, endpoint.Endpoint, opts...)
+	conn, err = grpc.NewClient(endpoint.Endpoint, opts...)
 	if err != nil {
 		log.Error().Err(err).Msgf("openGRPCConnection: context failed")
 		return nil, err
