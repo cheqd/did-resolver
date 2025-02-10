@@ -6,7 +6,7 @@ import (
 )
 
 type ResourceData struct {
-	Content map[string]interface{} `json:"content"`
+	Content map[string]interface{}
 }
 
 func NewResourceData(data []byte) (*ResourceData, error) {
@@ -16,7 +16,6 @@ func NewResourceData(data []byte) (*ResourceData, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Info().Msgf("Unmarshalled JSON %s", parsedData)
 	return &ResourceData{Content: parsedData}, nil
 }
 
@@ -30,5 +29,10 @@ func (e *ResourceData) GetBytes() []byte {
 	}
 	return bytes
 }
+
+func (e *ResourceData) MarshalJSON() ([]byte, error) {
+	return json.Marshal(e.Content)
+}
+
 func (e *ResourceData) GetContentType() string { return "" }
 func (e *ResourceData) IsRedirect() bool       { return false }
