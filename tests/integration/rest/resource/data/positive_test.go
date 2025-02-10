@@ -182,7 +182,7 @@ var _ = DescribeTable("Positive: Get resource data", func(testCase utils.Positiv
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
-			ResolutionType:       string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL) + ";q=0.5.0,application/ld+json, application/json, text/plain;q=0.9, image/png;q=0.7",
+			ResolutionType:       string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL) + ";q=0.5,application/json,text/plain;q=0.9,image/png;q=0.7",
 			EncodingType:         testconstants.DefaultEncodingType,
 			ExpectedEncodingType: "gzip",
 			ExpectedJSONPath:     "../../testdata/resource_data/resource.json",

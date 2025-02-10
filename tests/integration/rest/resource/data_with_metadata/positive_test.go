@@ -78,7 +78,7 @@ var _ = DescribeTable("Positive: Get resource data with metadata", func(testCase
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
-			ResolutionType:       string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL) + ";q=1.0,application/ld+json, application/json, text/plain;q=0.9, image/png;q=0.7",
+			ResolutionType:       string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL) + ";q=1.0,application/json;q=0.9,image/png;q=0.7",
 			EncodingType:         testconstants.DefaultEncodingType,
 			ExpectedEncodingType: "gzip",
 			ExpectedJSONPath:     "../../testdata/resource_data_with_metadata/resource.json",
