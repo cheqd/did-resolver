@@ -9,22 +9,18 @@
             "method": "cheqd"
         }
     },
-    "contentStream": {
-        "linkedResourceMetadata": [
-            {
-                "resourceURI": "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu/resources/214b8b61-a861-416b-a7e4-45533af40ada",
-                "resourceCollectionId": "3KpiDD6Hxs4i2G7FtpiGhu",
-                "resourceId": "214b8b61-a861-416b-a7e4-45533af40ada",
-                "resourceName": "RevRegEntry301071f2-314d-49e4-8e65-393586e5e05a",
-                "resourceType": "CL-RevRegEntry",
-                "resourceVersion" : "",
-                "mediaType": "application/json",
-                "created": "2022-10-12T09:00:02Z",
-                "checksum": "4bf7d5855a05955f84195f01ef7e8d91353a8895dc5d9022aebbcecc9f2c3dc6",
-                "previousVersionId": "616be02a-0838-42ee-b906-065fff3799ea",
-                "nextVersionId": "9f5b2985-990d-4160-94ed-06706043af7e"
-            }
-        ]
-    },
-    "contentMetadata": {}
+    "contentStream": null,
+    "contentMetadata": {
+        "resourceURI": "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu/resources/214b8b61-a861-416b-a7e4-45533af40ada",
+        "resourceCollectionId": "3KpiDD6Hxs4i2G7FtpiGhu",
+        "resourceId": "214b8b61-a861-416b-a7e4-45533af40ada",
+        "resourceName": "RevRegEntry301071f2-314d-49e4-8e65-393586e5e05a",
+        "resourceType": "CL-RevRegEntry",
+        "resourceVersion" : "",
+        "mediaType": "application/json",
+        "created": "2022-10-12T09:00:02Z",
+        "checksum": "4bf7d5855a05955f84195f01ef7e8d91353a8895dc5d9022aebbcecc9f2c3dc6",
+        "previousVersionId": "616be02a-0838-42ee-b906-065fff3799ea",
+        "nextVersionId": "9f5b2985-990d-4160-94ed-06706043af7e"
+    }
 }

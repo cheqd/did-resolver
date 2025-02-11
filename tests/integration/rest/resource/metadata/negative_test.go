@@ -23,12 +23,12 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
 
-	var receivedDidDereferencing utils.DereferencingResult
-	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
+	var receivedResourceDereferencing utils.ResourceDereferencingResult
+	Expect(json.Unmarshal(resp.Body(), &receivedResourceDereferencing)).To(BeNil())
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	expectedDidDereferencing := testCase.ExpectedResult.(utils.DereferencingResult)
-	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
+	expectedResourceDereferencing := testCase.ExpectedResult.(utils.ResourceDereferencingResult)
+	utils.AssertResourceMetadata(expectedResourceDereferencing, receivedResourceDereferencing)
 },
 
 	Entry(
@@ -41,7 +41,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 				testconstants.ValidIdentifier,
 			),
 			ResolutionType: string(types.JSON),
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.JSON,
@@ -49,7 +49,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 					DidProperties:   types.DidProperties{},
 				},
 				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Metadata:      &types.DereferencedResource{},
 			},
 			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
 		},
@@ -65,7 +65,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 				testconstants.ValidIdentifier,
 			),
 			ResolutionType: string(types.JSON),
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.JSON,
@@ -73,7 +73,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 					DidProperties:   types.DidProperties{},
 				},
 				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Metadata:      &types.DereferencedResource{},
 			},
 			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
 		},
@@ -89,7 +89,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 				testconstants.ValidIdentifier,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -101,7 +101,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 					},
 				},
 				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Metadata:      &types.DereferencedResource{},
 			},
 			ExpectedStatusCode: errors.NotFoundHttpCode,
 		},
@@ -117,7 +117,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 				testconstants.ValidIdentifier,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -129,7 +129,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 					},
 				},
 				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Metadata:      &types.DereferencedResource{},
 			},
 			ExpectedStatusCode: errors.MethodNotSupportedHttpCode,
 		},
@@ -145,7 +145,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 				testconstants.NotExistentIdentifier,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -157,7 +157,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 					},
 				},
 				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Metadata:      &types.DereferencedResource{},
 			},
 			ExpectedStatusCode: errors.NotFoundHttpCode,
 		},
@@ -173,7 +173,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 				testconstants.NotExistentIdentifier,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -185,7 +185,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 					},
 				},
 				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Metadata:      &types.DereferencedResource{},
 			},
 			ExpectedStatusCode: errors.NotFoundHttpCode,
 		},
@@ -201,7 +201,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 				testconstants.NotExistentIdentifier,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -213,7 +213,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 					},
 				},
 				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Metadata:      &types.DereferencedResource{},
 			},
 			ExpectedStatusCode: errors.NotFoundHttpCode,
 		},
@@ -229,7 +229,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 				testconstants.InvalidIdentifier,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
@@ -237,7 +237,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 					DidProperties:   types.DidProperties{},
 				},
 				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Metadata:      &types.DereferencedResource{},
 			},
 			ExpectedStatusCode: errors.InvalidDidUrlHttpCode,
 		},
