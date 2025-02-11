@@ -8,22 +8,18 @@
             "method": "cheqd"
         }
     },
-    "contentStream": {
-        "linkedResourceMetadata": [
-            {
-                "resourceURI": "did:cheqd:testnet:c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0/resources/9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
-                "resourceCollectionId": "c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0",
-                "resourceId": "9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
-                "resourceName": "Demo Resource",
-                "resourceType": "String",
-                "resourceVersion" : "",
-                "mediaType": "application/json",
-                "created": "2023-01-25T12:08:39Z",
-                "checksum": "e1dbc03b50bdb995961dc8843df6539b79d03bf49787ed6462189ee97d27eaf3",
-                "previousVersionId": null,
-                "nextVersionId": null
-            }
-        ]
-    },
-    "contentMetadata": {}
+    "contentStream": null,
+    "contentMetadata": {
+        "resourceURI": "did:cheqd:testnet:c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0/resources/9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
+        "resourceCollectionId": "c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0",
+        "resourceId": "9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
+        "resourceName": "Demo Resource",
+        "resourceType": "String",
+        "resourceVersion" : "",
+        "mediaType": "application/json",
+        "created": "2023-01-25T12:08:39Z",
+        "checksum": "e1dbc03b50bdb995961dc8843df6539b79d03bf49787ed6462189ee97d27eaf3",
+        "previousVersionId": null,
+        "nextVersionId": null
+    }
 }

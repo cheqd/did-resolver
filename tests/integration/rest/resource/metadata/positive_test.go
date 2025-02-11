@@ -24,15 +24,15 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
 
-	var receivedDidDereferencing utils.DereferencingResult
-	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
+	var receivedResourceDereferencing utils.ResourceDereferencingResult
+	Expect(json.Unmarshal(resp.Body(), &receivedResourceDereferencing)).To(BeNil())
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	var expectedDidDereferencing utils.DereferencingResult
-	Expect(utils.ConvertJsonFileToType(testCase.ExpectedJSONPath, &expectedDidDereferencing)).To(BeNil())
+	var expectedResourceDereferencing utils.ResourceDereferencingResult
+	Expect(utils.ConvertJsonFileToType(testCase.ExpectedJSONPath, &expectedResourceDereferencing)).To(BeNil())
 
 	Expect(testCase.ExpectedEncodingType).To(Equal(resp.Header().Get("Content-Encoding")))
-	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
+	utils.AssertResourceDataWithMetadata(expectedResourceDereferencing, receivedResourceDereferencing)
 },
 
 	Entry(
