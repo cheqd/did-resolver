@@ -1,9 +1,11 @@
 module github.com/cheqd/did-resolver
 
-go 1.23.4
+go 1.23
+
+toolchain go1.23.6
 
 require (
-	github.com/cheqd/cheqd-node/api/v2 v2.3.3
+	github.com/cheqd/cheqd-node/api/v2 v2.3.4-develop.1
 	github.com/go-resty/resty/v2 v2.13.1
 	github.com/google/uuid v1.6.0
 	github.com/labstack/echo/v4 v4.12.0
