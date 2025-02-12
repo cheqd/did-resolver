@@ -18,6 +18,19 @@ func NewResourceDereferencingFromContent(did string, contentType ContentType, co
 	return &ResourceDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}
 }
 
+func NewResourceDereferencingFromDidDocMetadata(did string, contentType ContentType, didDocMetadata *ResolutionDidDocMetadata) *ResourceDereferencing {
+	dereferenceMetadata := NewDereferencingMetadata(did, contentType, "")
+
+	var context string
+	if contentType == DIDJSONLD || contentType == JSONLD {
+		context = ResolutionSchemaJSONLD
+	}
+
+	resources := didDocMetadata.Resources
+	metadata := resources[0]
+	return &ResourceDereferencing{Context: context, Metadata: &metadata, DereferencingMetadata: dereferenceMetadata}
+}
+
 // Interface implementation
 
 func (d ResourceDereferencing) GetContentType() string {

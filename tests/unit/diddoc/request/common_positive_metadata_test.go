@@ -63,11 +63,11 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
+				ContentStream: nil,
+				Metadata: types.NewDereferencedResource(
 					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					ResourceName1.Metadata,
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},
@@ -92,11 +92,11 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
+				ContentStream: nil,
+				Metadata: types.NewDereferencedResource(
 					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					ResourceName1.Metadata,
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},
@@ -154,11 +154,11 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
+				ContentStream: nil,
+				Metadata: types.NewDereferencedResource(
 					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					ResourceName1.Metadata,
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},
@@ -185,11 +185,11 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
+				ContentStream: nil,
+				Metadata: types.NewDereferencedResource(
 					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					ResourceName1.Metadata,
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},
@@ -217,11 +217,11 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
+				ContentStream: nil,
+				Metadata: types.NewDereferencedResource(
 					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					ResourceName1.Metadata,
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},
@@ -250,11 +250,11 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
+				ContentStream: nil,
+				Metadata: types.NewDereferencedResource(
 					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					ResourceName1.Metadata,
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},
@@ -284,11 +284,11 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
+				ContentStream: nil,
+				Metadata: types.NewDereferencedResource(
 					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					ResourceName1.Metadata,
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},

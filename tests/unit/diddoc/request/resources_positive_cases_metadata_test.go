@@ -21,7 +21,7 @@ import (
 type DereferencingResult struct {
 	DereferencingMetadata *types.DereferencingMetadata          `json:"dereferencingMetadata"`
 	ContentStream         *types.DereferencedResourceListStruct `json:"contentStream"`
-	Metadata              *types.ResolutionDidDocMetadata       `json:"contentMetadata"`
+	Metadata              *types.DereferencedResource           `json:"contentMetadata"`
 }
 
 type ResourceMetadataTestCase struct {
@@ -74,11 +74,11 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
+				ContentStream: nil,
+				Metadata: types.NewDereferencedResource(
 					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					ResourceName1.Metadata,
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},
@@ -101,11 +101,11 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
+				ContentStream: nil,
+				Metadata: types.NewDereferencedResource(
 					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					ResourceName1.Metadata,
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},
@@ -162,11 +162,11 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
+				ContentStream: nil,
+				Metadata: types.NewDereferencedResource(
 					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					ResourceName1.Metadata,
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},
@@ -191,11 +191,11 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
+				ContentStream: nil,
+				Metadata: types.NewDereferencedResource(
 					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					ResourceName1.Metadata,
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},
@@ -221,11 +221,11 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
+				ContentStream: nil,
+				Metadata: types.NewDereferencedResource(
 					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					ResourceName1.Metadata,
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},
@@ -252,11 +252,11 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
+				ContentStream: nil,
+				Metadata: types.NewDereferencedResource(
 					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					ResourceName1.Metadata,
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},
@@ -284,11 +284,11 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
+				ContentStream: nil,
+				Metadata: types.NewDereferencedResource(
 					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					ResourceName1.Metadata,
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},
@@ -347,7 +347,6 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 						ResourceName1.Metadata,
 					},
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},
@@ -376,7 +375,6 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 						ResourceType1.Metadata,
 					},
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},

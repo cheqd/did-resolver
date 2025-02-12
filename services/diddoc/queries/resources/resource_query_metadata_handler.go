@@ -13,6 +13,7 @@ type ResourceMetadataHandler struct {
 
 func (d *ResourceMetadataHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
 	resourceMetadata := service.GetQueryParam(types.ResourceMetadata)
+	resourceId := service.GetQueryParam(types.ResourceId)
 
 	// Cast to just list of resources
 	resourceCollection, err := d.CastToContent(service, response)
@@ -20,10 +21,14 @@ func (d *ResourceMetadataHandler) Handle(c services.ResolverContext, service ser
 		return nil, err
 	}
 
-	if resourceMetadata == "true" {
+	if resourceMetadata == "true" && resourceId != "" {
+		dereferencingResult := types.NewResourceDereferencingFromDidDocMetadata(service.GetDid(), service.GetContentType(), resourceCollection)
+		return d.Continue(c, service, dereferencingResult)
+	} else if resourceMetadata == "true" {
 		dereferencingResult := types.NewResourceDereferencingFromContent(service.GetDid(), service.GetContentType(), resourceCollection)
 		return d.Continue(c, service, dereferencingResult)
 	}
+
 	// If it's not a metadata query let's just get the latest Resource.
 	// They are sorted in descending order by default
 	resource := resourceCollection.Resources[0]
