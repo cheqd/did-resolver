@@ -45,7 +45,7 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 	// Here we raise errors even they were caught while getting the data from context
 
 	// Get Accept header
-	dd.RequestedContentType = GetContentType(c.Request().Header.Get(echo.HeaderAccept))
+	dd.RequestedContentType, _ = GetPriorityContentType(c.Request().Header.Get(echo.HeaderAccept))
 	if !dd.GetContentType().IsSupported() {
 		return types.NewRepresentationNotSupportedError(dd.GetDid(), types.JSON, nil, dd.IsDereferencing)
 	}

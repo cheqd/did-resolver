@@ -41,10 +41,5 @@ func (dd *DidDocMetadataHandler) Handle(c services.ResolverContext, service serv
 		_err.IsDereferencing = dd.IsDereferencing
 		return nil, _err
 	}
-	// Fill the resources
-	content := result.ContentStream.(*types.ResolutionDidDocMetadata)
-	content.Resources = filteredResources
-	result.ContentStream = content
-
 	return dd.Continue(c, service, result)
 }

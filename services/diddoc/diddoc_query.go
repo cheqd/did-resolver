@@ -10,6 +10,7 @@ import (
 	resourceQueries "github.com/cheqd/did-resolver/services/diddoc/queries/resources"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
+	"github.com/rs/zerolog/log"
 )
 
 type QueryDIDDocRequestService struct {
@@ -35,6 +36,7 @@ func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext)
 func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
 	_, err := url.QueryUnescape(dd.GetDid())
 	if err != nil {
+		log.Debug().Msg(err.Error())
 		return types.NewInvalidDidUrlError(dd.GetDid(), dd.RequestedContentType, err, dd.IsDereferencing)
 	}
 
@@ -90,6 +92,7 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	if versionTime != "" {
 		_, err := utils.ParseFromStringTimeToGoTime(versionTime)
 		if err != nil {
+			log.Debug().Msg(err.Error())
 			return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), err, dd.IsDereferencing)
 		}
 	}
@@ -98,17 +101,20 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	if resourceVersionTime != "" {
 		_, err := utils.ParseFromStringTimeToGoTime(resourceVersionTime)
 		if err != nil {
+			log.Debug().Msg(err.Error())
 			return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), err, dd.IsDereferencing)
 		}
 	}
 
 	// Validate that versionId is UUID
 	if versionId != "" && !utils.IsValidUUID(versionId) {
+		log.Debug().Msg("HERE 555")
 		return types.NewInvalidDidUrlError(dd.GetDid(), dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
 	// Validate that resourceId is UUID
 	if resourceId != "" && !utils.IsValidUUID(resourceId) {
+		log.Debug().Msg("HERE 666")
 		return types.NewInvalidDidUrlError(dd.GetDid(), dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 

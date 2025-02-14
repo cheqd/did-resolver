@@ -102,14 +102,14 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 	),
 
 	Entry(
-		"can get verificationMethod section with an existent DID#fragment and supported DIDJSONLD resolution type",
+		"can get verificationMethod section with an existent DID#fragment and supported JSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%skey1",
 				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
-			ResolutionType:       string(types.DIDJSONLD),
+			ResolutionType:       string(types.JSONLD),
 			EncodingType:         testconstants.DefaultEncodingType,
 			ExpectedEncodingType: "gzip",
 			ExpectedJSONPath:     "../../testdata/diddoc_fragment/verification_method_did_fragment.json",
@@ -214,14 +214,14 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 	),
 
 	Entry(
-		"can get serviceEndpoint section with an existent DID#fragment and supported DIDJSONLD resolution type",
+		"can get serviceEndpoint section with an existent DID#fragment and supported JSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%swebsite",
 				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
-			ResolutionType:       string(types.DIDJSONLD),
+			ResolutionType:       string(types.JSONLD),
 			EncodingType:         testconstants.DefaultEncodingType,
 			ExpectedEncodingType: "gzip",
 			ExpectedJSONPath:     "../../testdata/diddoc_fragment/service_endpoint_did_fragment.json",

@@ -43,7 +43,7 @@ var _ = DescribeTable("", func(testCase NegativeTestCase) {
 			ExpectedResult: DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.UUIDStyleTestnetDid,

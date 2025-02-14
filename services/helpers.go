@@ -1,28 +1,37 @@
 package services
 
 import (
+	"fmt"
 	"net/url"
 	"strings"
 
 	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
+	"github.com/timewasted/go-accept-headers"
 )
 
-func GetContentType(accept string) types.ContentType {
-	// It returns supported ContentType or "" otherwise
-	typeList := strings.Split(accept, ",")
-	for _, cType := range typeList {
-		result := types.ContentType(strings.Split(cType, ";")[0])
-		if result == "*/*" || result == types.JSONLD {
-			return types.DIDJSONLD
+func GetPriorityContentType(acceptHeader string) (types.ContentType, string) {
+	// Parse the Accept header using the go-accept-headers package
+	acceptedTypes := accept.Parse(acceptHeader)
+	if len(acceptedTypes) == 0 {
+		// default content type
+		return types.JSONLD, ""
+	}
+	for _, at := range acceptedTypes {
+		mediaType := types.ContentType(at.Type + "/" + at.Subtype)
+
+		if mediaType.IsSupported() {
+			profile := at.Extensions["profile"]
+			profile = strings.Trim(profile, "\"") // Remove surrounding quotes if present
+			fmt.Printf("Selected Media Type: %s, Profile: %s, Q-Value: %f\n", mediaType, profile, at.Q)
+			return mediaType, profile
 		}
-		// Make this place more clearly
-		if result.IsSupported() {
-			return result
+		// If the Header contains any media type, return the default content type
+		if mediaType == "*/*" {
+			return types.JSONLD, types.W3IDDIDRES
 		}
 	}
-
-	return ""
+	return types.ContentType(acceptedTypes[0].Type + "/" + acceptedTypes[0].Subtype), ""
 }
 
 func PrepareQueries(c echo.Context) (rawQuery string, flag *string) {

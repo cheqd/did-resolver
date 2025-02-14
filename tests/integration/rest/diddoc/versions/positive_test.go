@@ -100,14 +100,14 @@ var _ = DescribeTable("Positive: Get DIDDoc versions", func(testCase utils.Posit
 	),
 
 	Entry(
-		"can get DIDDoc version with an existent DID, and supported DIDJSONLD resolution type",
+		"can get DIDDoc version with an existent DID, and supported JSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/versions",
 				testconstants.TestHostAddress,
 				testconstants.IndyStyleTestnetDid,
 			),
-			ResolutionType:       string(types.DIDJSONLD),
+			ResolutionType:       string(types.JSONLD),
 			EncodingType:         testconstants.DefaultEncodingType,
 			ExpectedEncodingType: "gzip",
 			ExpectedJSONPath:     "../../testdata/diddoc_versions/diddoc_versions.json",

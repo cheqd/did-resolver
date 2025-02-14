@@ -7,7 +7,7 @@ import (
 )
 
 type ResolutionMetadata struct {
-	ContentType     ContentType   `json:"contentType,omitempty" example:"application/did+ld+json"`
+	ContentType     ContentType   `json:"contentType,omitempty" example:"application/ld+json"`
 	ResolutionError string        `json:"error,omitempty"`
 	Retrieved       string        `json:"retrieved,omitempty" example:"2021-09-01T12:00:00Z"`
 	DidProperties   DidProperties `json:"did,omitempty"`
@@ -22,7 +22,7 @@ type DidProperties struct {
 type DidResolution struct {
 	Context            string                   `json:"@context,omitempty"`
 	ResolutionMetadata ResolutionMetadata       `json:"didResolutionMetadata"`
-	Did                *DidDoc                  `json:"didDocument"`
+	Did                *DidDoc                  `json:"didDocument,omitempty"`
 	Metadata           ResolutionDidDocMetadata `json:"didDocumentMetadata"`
 }
 

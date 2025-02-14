@@ -52,8 +52,5 @@
             }
         ]
     },
-    "didDocumentMetadata": {
-        "created": "2022-04-05T11:49:19Z",
-        "versionId": "4fa8e367-c70e-533e-babf-3732d9761061"
-    }
+    "didDocumentMetadata": {}
 }

@@ -1,7 +1,7 @@
 {
     "@context": "https://w3id.org/did-resolution/v1",
-    "dereferencingMetadata": {
-        "contentType": "application/did+ld+json",
+    "didResolutionMetadata": {
+        "contentType": "application/ld+json",
         "retrieved": "2023-04-24T10:59:35Z",
         "did": {
             "didString": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN",
@@ -9,9 +9,8 @@
             "method": "cheqd"
         }
     },
-    "contentStream": {
+    "didDocumentMetadata": {
         "created": "2022-04-05T11:49:19Z",
         "versionId": "4fa8e367-c70e-533e-babf-3732d9761061"
-    },
-    "contentMetadata": {}
+    }
 }

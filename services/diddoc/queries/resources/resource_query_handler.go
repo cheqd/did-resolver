@@ -17,12 +17,9 @@ func (d *ResourceQueryHandler) Handle(c services.ResolverContext, service servic
 		if err != nil {
 			return nil, err
 		}
-		content, ok := resolutionResult.ContentStream.(*types.ResolutionDidDocMetadata)
-		if !ok {
-			return nil, types.NewInternalError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
-		}
+		content := types.ResolutionDidDocMetadata(resolutionResult.Metadata)
 		// Call the next handler
-		return d.Continue(c, service, types.DidDocMetadataList{*content})
+		return d.Continue(c, service, types.DidDocMetadataList{content})
 	}
 	// Otherwise just use the result from previous handlers
 	// But here we need to cast ContentStream to ResolutionDidDocMetadata

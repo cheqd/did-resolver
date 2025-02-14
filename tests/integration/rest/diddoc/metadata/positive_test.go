@@ -155,7 +155,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 	),
 
 	Entry(
-		"can get DIDDoc version metadata with an existent DID and versionId, and supported DIDJSONLD resolution type",
+		"can get DIDDoc version metadata with an existent DID and versionId, and supported JSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
@@ -163,7 +163,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 			),
-			ResolutionType:       string(types.DIDJSONLD),
+			ResolutionType:       string(types.JSONLD),
 			EncodingType:         testconstants.DefaultEncodingType,
 			ExpectedEncodingType: "gzip",
 			ExpectedJSONPath:     "../../testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",

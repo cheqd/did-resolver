@@ -3,7 +3,7 @@ package types
 type ResourceDereferencing struct {
 	Context               string                     `json:"@context,omitempty" example:"https://w3id.org/did-resolution/v1"`
 	DereferencingMetadata DereferencingMetadata      `json:"dereferencingMetadata"`
-	ContentStream         ContentStreamI             `json:"contentStream"`
+	ContentStream         ContentStreamI             `json:"contentStream,omitempty"`
 	Metadata              ResolutionResourceMetadata `json:"contentMetadata"`
 }
 

@@ -3,10 +3,12 @@ package types
 type ContentType string
 
 const (
-	DIDJSON   ContentType = "application/did+json"
-	DIDJSONLD ContentType = "application/did+ld+json"
-	JSONLD    ContentType = "application/ld+json"
-	JSON      ContentType = "application/json"
+	DIDJSON    ContentType = "application/did+json"
+	DIDJSONLD  ContentType = "application/did+ld+json"
+	JSONLD     ContentType = "application/ld+json"
+	JSON       ContentType = "application/json"
+	DIDRES     ContentType = "application/did"
+	W3IDDIDRES string      = "https://w3id.org/did-resolution"
 )
 
 func (cType ContentType) IsSupported() bool {
@@ -14,6 +16,7 @@ func (cType ContentType) IsSupported() bool {
 		DIDJSON:   true,
 		DIDJSONLD: true,
 		JSONLD:    true,
+		DIDRES:    true,
 	}
 	return supportedTypes[cType]
 }

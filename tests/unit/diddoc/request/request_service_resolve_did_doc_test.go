@@ -22,15 +22,17 @@ import (
 type resolveDIDDocTestCase struct {
 	didURL                string
 	resolutionType        types.ContentType
+	acceptHeader          string
 	expectedDIDResolution *types.DidResolution
 	expectedError         error
 }
 
 var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDIDDocTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
+	request.Header.Set("Accept", testCase.acceptHeader) // Set Accept header dynamically
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, utils.MockLedger)
 
-	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
+	if (testCase.resolutionType == "" || testCase.resolutionType == types.JSONLD) && testCase.expectedError == nil {
 		testCase.expectedDIDResolution.Did.Context = []string{types.DIDSchemaJSONLD, types.LinkedDomainsJSONLD, types.JsonWebKey2020JSONLD}
 	} else if testCase.expectedDIDResolution.Did != nil {
 		testCase.expectedDIDResolution.Did.Context = nil
@@ -57,7 +59,8 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 		"can get DIDDoc with an existent DID",
 		resolveDIDDocTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s", testconstants.ExistentDid),
-			resolutionType: types.DIDJSONLD,
+			resolutionType: types.JSONLD,
+			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
@@ -244,6 +247,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 		resolveDIDDocTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s", testconstants.ExistentDid),
 			resolutionType: types.JSON,
+			acceptHeader:   string(types.JSON),
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
