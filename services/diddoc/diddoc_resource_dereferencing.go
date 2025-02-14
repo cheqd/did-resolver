@@ -51,7 +51,6 @@ func (dr *DIDDocResourceDereferencingService) Query(c services.ResolverContext) 
 	}
 	log.Debug().Msg("HERE 3")
 	result, err := c.ResourceService.DereferenceCollectionResources(dr.GetDid(), dr.GetContentType())
-
 	if err != nil {
 		err.IsDereferencing = dr.IsDereferencing
 		return err
