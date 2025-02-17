@@ -86,30 +86,14 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 	),
 
 	Entry(
-		"can get collection of resources with an existent DID, and supported DIDJSONLD resolution type",
+		"can get collection of resources with an existent DID, and supported JSONLD resolution type with profile",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/metadata",
 				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
-			ResolutionType:       string(types.DIDJSONLD),
-			EncodingType:         testconstants.DefaultEncodingType,
-			ExpectedEncodingType: "gzip",
-			ExpectedJSONPath:     "../../testdata/collection_of_resources/metadata.json",
-			ExpectedStatusCode:   http.StatusOK,
-		},
-	),
-
-	Entry(
-		"can get collection of resources with an existent DID, and supported JSONLD resolution type",
-		utils.PositiveTestCase{
-			DidURL: fmt.Sprintf(
-				"http://%s/1.0/identifiers/%s/metadata",
-				testconstants.TestHostAddress,
-				testconstants.UUIDStyleTestnetDid,
-			),
-			ResolutionType:       string(types.JSONLD),
+			ResolutionType:       string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
 			EncodingType:         testconstants.DefaultEncodingType,
 			ExpectedEncodingType: "gzip",
 			ExpectedJSONPath:     "../../testdata/collection_of_resources/metadata.json",

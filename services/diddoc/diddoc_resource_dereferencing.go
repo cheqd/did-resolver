@@ -6,7 +6,6 @@ import (
 	"github.com/cheqd/did-resolver/migrations"
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
-	"github.com/rs/zerolog/log"
 )
 
 type DIDDocResourceDereferencingService struct {
@@ -40,16 +39,13 @@ func (dr *DIDDocResourceDereferencingService) SpecificValidation(c services.Reso
 
 func (dr *DIDDocResourceDereferencingService) Query(c services.ResolverContext) error {
 	if dr.Profile == types.W3IDDIDRES {
-		log.Debug().Msg("HERE 1")
 		resolution, err := c.ResourceService.ResolveCollectionResources(dr.GetDid(), dr.GetContentType())
 		if err != nil {
-			log.Debug().Msgf("HERE 2 %t", dr.IsDereferencing)
-			err.IsDereferencing = dr.IsDereferencing
+			err.IsDereferencing = false
 			return err
 		}
 		return dr.SetResponse(resolution)
 	}
-	log.Debug().Msg("HERE 3")
 	result, err := c.ResourceService.DereferenceCollectionResources(dr.GetDid(), dr.GetContentType())
 	if err != nil {
 		err.IsDereferencing = dr.IsDereferencing

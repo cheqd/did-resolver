@@ -4,7 +4,6 @@ import (
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/services/diddoc/queries"
 	"github.com/cheqd/did-resolver/types"
-	"github.com/rs/zerolog/log"
 )
 
 type ServiceHandler struct {
@@ -19,7 +18,6 @@ func (s *ServiceHandler) Handle(c services.ResolverContext, service services.Req
 	if serviceValue == "" {
 		return s.Continue(c, service, response)
 	}
-	log.Debug().Msgf("ServiceHandler: Handle %t", service.GetDereferencing())
 	// We expect here only DidResolution
 	didResolution, ok := response.(*types.DidResolution)
 	if !ok {

@@ -108,13 +108,11 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 
 	// Validate that versionId is UUID
 	if versionId != "" && !utils.IsValidUUID(versionId) {
-		log.Debug().Msg("HERE 555")
 		return types.NewInvalidDidUrlError(dd.GetDid(), dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
 	// Validate that resourceId is UUID
 	if resourceId != "" && !utils.IsValidUUID(resourceId) {
-		log.Debug().Msg("HERE 666")
 		return types.NewInvalidDidUrlError(dd.GetDid(), dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 

@@ -77,7 +77,7 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 func (dd BaseRequestService) BasicValidation(c ResolverContext) error {
 	didMethod, _, _, _ := utils.TrySplitDID(dd.GetDid())
 	if didMethod != types.DID_METHOD {
-		return types.NewMethodNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewMethodNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, false)
 	}
 
 	err := utils.ValidateDID(dd.GetDid(), "", c.LedgerService.GetNamespaces())

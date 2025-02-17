@@ -66,7 +66,6 @@ func DidDocEchoHandler(c echo.Context) error {
 		return services.EchoWrapHandler(&FragmentDIDDocRequestService{})(c)
 	// following two conditions need to be checked
 	case isSingleQuery && requestedContentType == types.JSONLD && profile == types.W3IDDIDRES && metadataQuery:
-		log.Debug().Msg("HERE XXX")
 		return services.EchoWrapHandler(&DIDDocResourceDereferencingService{Profile: profile})(c)
 	case isSingleQuery && requestedContentType == types.JSONLD && profile == types.W3IDDIDRES && resourceQuery:
 		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: resourceQuery})(c)
@@ -80,7 +79,6 @@ func DidDocEchoHandler(c echo.Context) error {
 		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: false})(c)
 	default:
 		// ToDo: make it more clearly
-		log.Debug().Msg("HERE YYYY")
 		return types.NewInternalError(c.Param("did"), types.JSON, errors.New("Unknown internal error while getting the type of query"), true)
 	}
 }
