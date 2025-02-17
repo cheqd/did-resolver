@@ -1,29 +1,63 @@
 package services
 
 import (
+	"fmt"
 	"net/url"
-	"strconv"
 	"strings"
 
 	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
+	"github.com/timewasted/go-accept-headers"
 )
 
-func GetContentType(accept string) types.ContentType {
-	// It returns supported ContentType or "" otherwise
-	typeList := strings.Split(accept, ",")
-	for _, cType := range typeList {
-		result := types.ContentType(strings.Split(cType, ";")[0])
-		if result == "*/*" || result == types.JSONLD {
-			return types.DIDJSONLD
-		}
-		// Make this place more clearly
-		if result.IsSupported() {
-			return result
-		}
+func GetContentType(acceptHeader string) types.ContentType {
+	// Parse the Accept header using the go-accept-headers package
+	acceptedTypes := accept.Parse(acceptHeader)
+	params := make(map[string]string)
+	if len(acceptedTypes) == 0 {
+		// default content type
+		return types.JSONLD
 	}
 
+	for _, at := range acceptedTypes {
+		mediaType := types.ContentType(at.Type + "/" + at.Subtype)
+
+		if mediaType.IsSupported() {
+			fmt.Printf("Selected Media Type: %s, Profile: %s, Q-Value: %f\n", mediaType, at.Extensions["profile"], at.Q)
+			return mediaType
+		}
+		// If the Header contains any media type, return the default content type
+		if mediaType == "*/*" {
+			params["profile"] = types.W3IDDIDRES
+			return types.JSONLD
+		}
+	}
 	return ""
+}
+
+func GetContentParams(acceptHeader string) map[string]string {
+	// Parse the Accept header using the go-accept-headers package
+	acceptedTypes := accept.Parse(acceptHeader)
+	params := make(map[string]string)
+	if len(acceptedTypes) == 0 {
+		// default content type
+		return params
+	}
+
+	for _, at := range acceptedTypes {
+		mediaType := types.ContentType(at.Type + "/" + at.Subtype)
+
+		if mediaType.IsSupported() {
+			fmt.Printf("Selected Media Type: %s, Profile: %s, Q-Value: %f\n", mediaType, at.Extensions["profile"], at.Q)
+			return at.Extensions
+		}
+		// If the Header contains any media type, return the default content type
+		if mediaType == "*/*" {
+			params["profile"] = types.W3IDDIDRES
+			return params
+		}
+	}
+	return params
 }
 
 func PrepareQueries(c echo.Context) (rawQuery string, flag *string) {
@@ -39,49 +73,4 @@ func PrepareQueries(c echo.Context) (rawQuery string, flag *string) {
 
 func GetDidParam(c echo.Context) (string, error) {
 	return url.QueryUnescape(c.Param("did"))
-}
-
-func GetHighestPriorityHeaderAndParams(acceptHeader string) (string, map[string]string) {
-	bestHeader := ""
-	bestParams := make(map[string]string)
-	highestQ := -1.0
-	position := 0
-
-	// Split by ',' to separate multiple headers
-	headers := strings.Split(acceptHeader, ",")
-	for index, entry := range headers {
-		entry = strings.TrimSpace(entry)
-		parts := strings.Split(entry, ";")
-
-		params := make(map[string]string)
-		q := 1.0
-
-		// Parse parameters
-		for _, param := range parts[1:] {
-			param = strings.TrimSpace(param)
-			keyValue := strings.SplitN(param, "=", 2)
-			if len(keyValue) == 2 {
-				key, value := keyValue[0], strings.Trim(keyValue[1], "\"")
-				params[key] = value
-			}
-		}
-
-		// Extract q value if present
-		if qStr, exists := params["q"]; exists {
-			if parsedQ, err := strconv.ParseFloat(qStr, 64); err == nil {
-				q = parsedQ
-			}
-		}
-
-		// Determine the highest priority header
-		if q > highestQ || (q == highestQ && position > index) {
-			highestQ = q
-			position = index
-			bestHeader = parts[0] // Only header
-			delete(params, "q")   // Remove q from params
-			bestParams = params   // Update best parameters
-		}
-	}
-
-	return bestHeader, bestParams
 }
