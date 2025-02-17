@@ -32,54 +32,6 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 },
 
 	Entry(
-		"cannot get resource data with an existent DID, but not supported ResolutionType",
-		utils.NegativeTestCase{
-			DidURL: fmt.Sprintf(
-				"http://%s/1.0/identifiers/%s/resources/%s",
-				testconstants.TestHostAddress,
-				testconstants.UUIDStyleMainnetDid,
-				testconstants.ValidIdentifier,
-			),
-			ResolutionType: string(types.JSON),
-			ExpectedResult: utils.DereferencingResult{
-				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.JSON,
-					ResolutionError: "representationNotSupported",
-					DidProperties:   types.DidProperties{},
-				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
-			},
-			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
-		},
-	),
-
-	Entry(
-		"cannot get resource data with not existent DID and not supported ResolutionType",
-		utils.NegativeTestCase{
-			DidURL: fmt.Sprintf(
-				"http://%s/1.0/identifiers/%s/resources/%s",
-				testconstants.TestHostAddress,
-				testconstants.NotExistentMainnetDid,
-				testconstants.ValidIdentifier,
-			),
-			ResolutionType: string(types.JSON),
-			ExpectedResult: utils.DereferencingResult{
-				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.JSON,
-					ResolutionError: "representationNotSupported",
-					DidProperties:   types.DidProperties{},
-				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
-			},
-			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
-		},
-	),
-
-	Entry(
 		"cannot get resource data with not existent DID and a valid resourceId",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
@@ -88,7 +40,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
-			ResolutionType: testconstants.DefaultResolutionType,
+			ResolutionType: string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
@@ -116,7 +68,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				testconstants.InvalidDid,
 				testconstants.ValidIdentifier,
 			),
-			ResolutionType: testconstants.DefaultResolutionType,
+			ResolutionType: string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
@@ -144,7 +96,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				testconstants.NotExistentTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
-			ResolutionType: testconstants.DefaultResolutionType,
+			ResolutionType: string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
@@ -172,7 +124,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				testconstants.IndyStyleMainnetDid,
 				testconstants.InvalidIdentifier,
 			),
-			ResolutionType: testconstants.DefaultResolutionType,
+			ResolutionType: string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
@@ -196,7 +148,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				testconstants.OldIndy16CharStyleTestnetDid,
 				testconstants.InvalidIdentifier,
 			),
-			ResolutionType: testconstants.DefaultResolutionType,
+			ResolutionType: string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
@@ -220,7 +172,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				testconstants.OldIndy32CharStyleTestnetDid,
 				testconstants.InvalidIdentifier,
 			),
-			ResolutionType: testconstants.DefaultResolutionType,
+			ResolutionType: string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{

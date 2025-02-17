@@ -1,6 +1,7 @@
 package types
 
 import (
+	"errors"
 	"time"
 
 	"github.com/cheqd/did-resolver/utils"
@@ -41,6 +42,9 @@ func (r DidResolution) IsRedirect() bool {
 }
 
 func (r DidResolution) GetServiceByName(serviceName string) (string, error) {
+	if r.Did == nil {
+		return "", errors.New("did document is nil")
+	}
 	return r.Did.GetServiceByName(serviceName)
 }
 

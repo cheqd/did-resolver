@@ -6,7 +6,6 @@ import (
 
 	"strings"
 
-	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
 	"github.com/cheqd/did-resolver/types"
 )
 
@@ -36,9 +35,8 @@ func (rds ResourceService) DereferenceResourceMetadata(did string, resourceId st
 		context = types.ResolutionSchemaJSONLD
 	}
 
-	contentStream := types.NewDereferencedResourceListStruct(did, []*resourceTypes.Metadata{resource.Metadata})
-
-	return &types.ResourceDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
+	metadata := types.NewDereferencedResource(did, resource.Metadata)
+	return &types.ResourceDereferencing{Context: context, Metadata: metadata, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
 func (rds ResourceService) DereferenceCollectionResources(did string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
@@ -102,4 +100,30 @@ func (rds ResourceService) DereferenceResourceData(did string, resourceId string
 	dereferenceMetadata.ContentType = types.ContentType(resource.Metadata.MediaType)
 
 	return &types.ResourceDereferencing{ContentStream: &result, DereferencingMetadata: dereferenceMetadata}, nil
+}
+
+func (rds ResourceService) DereferenceResourceDataWithMetadata(did string, resourceId string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
+	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
+
+	resource, err := rds.ledgerService.QueryResource(did, strings.ToLower(resourceId))
+	if err != nil {
+		err.ContentType = contentType
+		return nil, err
+	}
+
+	var context string
+	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
+		context = types.ResolutionSchemaJSONLD
+	}
+
+	var result types.ContentStreamI
+	result = types.NewDereferencedResourceData(resource.Resource.Data)
+	metadata := types.NewDereferencedResource(did, resource.Metadata)
+	if dereferenceMetadata.ContentType == types.JSON || dereferenceMetadata.ContentType == types.TEXT {
+		if res, err := types.NewResourceData(resource.Resource.Data); err == nil {
+			result = res
+		}
+	}
+
+	return &types.ResourceDereferencing{Context: context, ContentStream: result, Metadata: metadata, DereferencingMetadata: dereferenceMetadata}, nil
 }

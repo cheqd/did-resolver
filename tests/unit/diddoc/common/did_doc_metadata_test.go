@@ -17,6 +17,7 @@ var _ = Describe("Test NewResolutionDIDDocMetadata function", func() {
 		metadata := &didTypes.Metadata{
 			VersionId:   testconstants.ValidIdentifier,
 			Deactivated: false,
+			Created:     nil,
 		}
 
 		resources := []*resourceTypes.Metadata{

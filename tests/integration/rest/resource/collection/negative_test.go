@@ -22,6 +22,7 @@ var _ = DescribeTable("Negative: Get collection of resources", func(testCase uti
 		SetHeader("Accept", testCase.ResolutionType).
 		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
+
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
 	var receivedDidResolution types.DidResolution

@@ -14,7 +14,7 @@ type DIDDocResourceDereferencingService struct {
 }
 
 func (dr *DIDDocResourceDereferencingService) Setup(c services.ResolverContext) error {
-	dr.IsDereferencing = true
+	dr.IsDereferencing = false
 	return nil
 }
 
@@ -38,19 +38,10 @@ func (dr *DIDDocResourceDereferencingService) SpecificValidation(c services.Reso
 }
 
 func (dr *DIDDocResourceDereferencingService) Query(c services.ResolverContext) error {
-	if dr.Profile == types.W3IDDIDRES {
-		resolution, err := c.ResourceService.ResolveCollectionResources(dr.GetDid(), dr.GetContentType())
-		if err != nil {
-			err.IsDereferencing = false
-			return err
-		}
-		return dr.SetResponse(resolution)
-	}
-	result, err := c.ResourceService.DereferenceCollectionResources(dr.GetDid(), dr.GetContentType())
+	resolution, err := c.ResourceService.ResolveCollectionResources(dr.GetDid(), dr.GetContentType())
 	if err != nil {
-		err.IsDereferencing = dr.IsDereferencing
+		err.IsDereferencing = false
 		return err
 	}
-
-	return dr.SetResponse(result)
+	return dr.SetResponse(resolution)
 }
