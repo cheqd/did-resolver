@@ -10,54 +10,28 @@ import (
 	"github.com/timewasted/go-accept-headers"
 )
 
-func GetContentType(acceptHeader string) types.ContentType {
+func GetPriorityContentType(acceptHeader string) (types.ContentType, string) {
 	// Parse the Accept header using the go-accept-headers package
 	acceptedTypes := accept.Parse(acceptHeader)
-	params := make(map[string]string)
 	if len(acceptedTypes) == 0 {
 		// default content type
-		return types.JSONLD
+		return types.JSONLD, ""
 	}
-
 	for _, at := range acceptedTypes {
 		mediaType := types.ContentType(at.Type + "/" + at.Subtype)
 
 		if mediaType.IsSupported() {
-			fmt.Printf("Selected Media Type: %s, Profile: %s, Q-Value: %f\n", mediaType, at.Extensions["profile"], at.Q)
-			return mediaType
+			profile := at.Extensions["profile"]
+			profile = strings.Trim(profile, "\"") // Remove surrounding quotes if present
+			fmt.Printf("Selected Media Type: %s, Profile: %s, Q-Value: %f\n", mediaType, profile, at.Q)
+			return mediaType, profile
 		}
 		// If the Header contains any media type, return the default content type
 		if mediaType == "*/*" {
-			params["profile"] = types.W3IDDIDRES
-			return types.JSONLD
+			return types.JSONLD, types.W3IDDIDRES
 		}
 	}
-	return ""
-}
-
-func GetContentParams(acceptHeader string) map[string]string {
-	// Parse the Accept header using the go-accept-headers package
-	acceptedTypes := accept.Parse(acceptHeader)
-	params := make(map[string]string)
-	if len(acceptedTypes) == 0 {
-		// default content type
-		return params
-	}
-
-	for _, at := range acceptedTypes {
-		mediaType := types.ContentType(at.Type + "/" + at.Subtype)
-
-		if mediaType.IsSupported() {
-			fmt.Printf("Selected Media Type: %s, Profile: %s, Q-Value: %f\n", mediaType, at.Extensions["profile"], at.Q)
-			return at.Extensions
-		}
-		// If the Header contains any media type, return the default content type
-		if mediaType == "*/*" {
-			params["profile"] = types.W3IDDIDRES
-			return params
-		}
-	}
-	return params
+	return types.ContentType(acceptedTypes[0].Type + "/" + acceptedTypes[0].Subtype), ""
 }
 
 func PrepareQueries(c echo.Context) (rawQuery string, flag *string) {

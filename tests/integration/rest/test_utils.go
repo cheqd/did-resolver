@@ -3,6 +3,7 @@
 package rest
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"os"
 
@@ -65,6 +66,11 @@ func AssertResourceDataWithMetadata(expected ResourceDereferencingResult, receiv
 	Expect(expected.DereferencingMetadata.ResolutionError).To(Equal(received.DereferencingMetadata.ResolutionError))
 	Expect(expected.DereferencingMetadata.DidProperties).To(Equal(received.DereferencingMetadata.DidProperties))
 	Expect(expected.ContentStream).To(Equal(received.ContentStream))
+	if expected.Metadata.MediaType != string(types.JSON) && expected.Metadata.MediaType != string(types.TEXT) {
+		Expect(isBase64Encoded(received.ContentStream)).To(BeTrue())
+	} else {
+		Expect(isBase64Encoded(received.ContentStream)).To(BeFalse())
+	}
 	Expect(expected.Metadata.ResourceType).To(Equal(received.Metadata.ResourceType))
 	Expect(expected.Metadata.ResourceId).To(Equal(received.Metadata.ResourceId))
 	Expect(expected.Metadata.Version).To(Equal(received.Metadata.Version))
@@ -103,4 +109,14 @@ func GetTextResource(path string) (string, error) {
 	}
 
 	return string(content), nil
+}
+
+func isBase64Encoded(s any) bool {
+	str, ok := s.(string)
+	if !ok {
+		return false
+	}
+
+	_, err := base64.StdEncoding.DecodeString(str)
+	return err == nil
 }

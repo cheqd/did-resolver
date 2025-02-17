@@ -92,7 +92,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.NotExistentMainnetDid,
@@ -120,7 +120,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.InvalidDid,
@@ -148,7 +148,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.UUIDStyleTestnetDid,
@@ -176,7 +176,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.MigratedIndy16CharStyleTestnetDid,
@@ -204,7 +204,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.MigratedIndy32CharStyleTestnetDid,
@@ -232,7 +232,7 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "invalidDidUrl",
 					DidProperties:   types.DidProperties{},
 				},

@@ -96,7 +96,7 @@ var _ = DescribeTable("Positive: get collection of resources", func(testCase uti
 			ResolutionType:       string(types.DIDJSONLD),
 			EncodingType:         testconstants.DefaultEncodingType,
 			ExpectedEncodingType: "gzip",
-			ExpectedJSONPath:     "../../testdata/collection_of_resources/metadata.json",
+			ExpectedJSONPath:     "../../testdata/collection_of_resources/metadata_did_ld.json",
 			ExpectedStatusCode:   http.StatusOK,
 		},
 	),

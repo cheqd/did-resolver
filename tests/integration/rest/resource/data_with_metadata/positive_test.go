@@ -78,10 +78,27 @@ var _ = DescribeTable("Positive: Get resource data with metadata", func(testCase
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetDidResourceId,
 			),
-			ResolutionType:       string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL) + ";q=1.0,application/json;q=0.9,image/png;q=0.7",
+			ResolutionType:       "application/json;q=0.9," + string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL) + ";q=1.0,image/png;q=0.7",
 			EncodingType:         testconstants.DefaultEncodingType,
 			ExpectedEncodingType: "gzip",
 			ExpectedJSONPath:     "../../testdata/resource_data_with_metadata/resource.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get resource with metadata with base64 content data for image",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s/resources/%s",
+				testconstants.TestHostAddress,
+				testconstants.UUIDTestnetDidIdForImage,
+				testconstants.UUIDTestnetDidResourceIdForImage,
+			),
+			ResolutionType:       string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL),
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/resource_data_with_metadata/resource_image.json",
 			ExpectedStatusCode:   http.StatusOK,
 		},
 	),

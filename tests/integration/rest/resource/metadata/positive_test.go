@@ -101,7 +101,7 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 			ResolutionType:       string(types.DIDJSONLD),
 			EncodingType:         testconstants.DefaultEncodingType,
 			ExpectedEncodingType: "gzip",
-			ExpectedJSONPath:     "../../testdata/resource_metadata/metadata.json",
+			ExpectedJSONPath:     "../../testdata/resource_metadata/metadata_did_ld.json",
 			ExpectedStatusCode:   http.StatusOK,
 		},
 	),

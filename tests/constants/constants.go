@@ -19,9 +19,10 @@ var (
 	IndyStyleMainnetDid = "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN"
 	IndyStyleTestnetDid = "did:cheqd:testnet:73wnEyHhkhXiH1Nq7w5Kgq"
 
-	UUIDStyleTestnetId  = "c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0"
-	UUIDStyleMainnetDid = "did:cheqd:mainnet:c82f2b02-bdab-4dd7-b833-3e143745d612"
-	UUIDStyleTestnetDid = "did:cheqd:testnet:" + UUIDStyleTestnetId
+	UUIDStyleTestnetId       = "c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0"
+	UUIDStyleMainnetDid      = "did:cheqd:mainnet:c82f2b02-bdab-4dd7-b833-3e143745d612"
+	UUIDStyleTestnetDid      = "did:cheqd:testnet:" + UUIDStyleTestnetId
+	UUIDTestnetDidIdForImage = "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47"
 
 	OldIndy16CharStyleTestnetDid      = "did:cheqd:testnet:zHqbcXb3irKRCMst"
 	MigratedIndy16CharStyleTestnetDid = "did:cheqd:testnet:CpeMubv5yw63jXyrgRRsxR"
@@ -43,6 +44,7 @@ var (
 
 var (
 	UUIDStyleTestnetDidResourceId                    = "9ba3922e-d5f5-4f53-b265-fc0d4e988c77"
+	UUIDTestnetDidResourceIdForImage                 = "398cee0a-efac-4643-9f4c-74c48c72a14b"
 	OldIndy32CharStyleTestnetDidIdentifierResourceId = "214b8b61-a861-416b-a7e4-45533af40ada"
 	ExistentResourceName                             = "Demo Resource"
 	ExistentResourceType                             = "String"
