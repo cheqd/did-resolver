@@ -165,17 +165,17 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase utils.PositiveTestCa
 	),
 
 	Entry(
-		"can get DIDDoc with an existent DID and supported JSONLD resolution type",
+		"can get DIDDoc with an existent DID and supported DIDJSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s",
 				testconstants.TestHostAddress,
 				testconstants.IndyStyleMainnetDid,
 			),
-			ResolutionType:       string(types.JSONLD) + ";profile=" + string(types.W3IDDIDRES),
+			ResolutionType:       string(types.DIDJSONLD),
 			EncodingType:         testconstants.DefaultEncodingType,
 			ExpectedEncodingType: "gzip",
-			ExpectedJSONPath:     "../../testdata/diddoc/diddoc_indy_mainnet_did.json",
+			ExpectedJSONPath:     "../../testdata/diddoc/diddoc_indy_mainnet_did_ld.json",
 			ExpectedStatusCode:   http.StatusOK,
 		},
 	),

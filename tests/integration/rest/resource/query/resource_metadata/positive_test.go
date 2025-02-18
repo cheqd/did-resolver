@@ -47,19 +47,19 @@ var _ = DescribeTable("Positive: Get Resource Metadata with resourceMetadata que
 		},
 	),
 
-	// Entry(
-	// 	"can get resource metadata with resourceMetadata=false query parameter",
-	// 	utils.PositiveTestCase{
-	// 		DidURL: fmt.Sprintf(
-	// 			"http://%s/1.0/identifiers/%s?resourceMetadata=false",
-	//			testconstants.TestHostAddress,
-	// 			testconstants.UUIDStyleTestnetDid,
-	// 		),
-	// 		ResolutionType:     testconstants.DefaultResolutionType,
-	// 		ExpectedJSONPath:   "../../../testdata/query/resource_metadata/metadata.json",
-	// 		ExpectedStatusCode: http.StatusOK,
-	// 	},
-	// ),
+	Entry(
+		"can get resource metadata with resourceMetadata=false query parameter",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?resourceMetadata=false",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/resource_metadata/metadata.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
 
 	Entry(
 		"can get collection of resources with an old 32 characters INDY style DID and resourceMetadata query parameter",
