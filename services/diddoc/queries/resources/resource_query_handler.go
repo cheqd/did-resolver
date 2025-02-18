@@ -44,5 +44,5 @@ func (d *ResourceQueryHandler) Handle(c services.ResolverContext, service servic
 		return d.Continue(c, service, content)
 	}
 	// Call the next handler
-	return d.Continue(c, service, &casted_did_resolution.Metadata)
+	return d.Continue(c, service, casted_did_resolution.Metadata)
 }

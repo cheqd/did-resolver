@@ -60,7 +60,7 @@ func (rds ResourceService) DereferenceCollectionResources(did string, contentTyp
 
 	contentStream := types.NewResolutionDidDocMetadata(did, didDoc.Metadata, resources)
 
-	return &types.ResourceDereferencing{Context: context, ContentStream: &contentStream, DereferencingMetadata: dereferenceMetadata}, nil
+	return &types.ResourceDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
 func (rds ResourceService) ResolveCollectionResources(did string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {

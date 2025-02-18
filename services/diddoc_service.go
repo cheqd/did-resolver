@@ -50,7 +50,7 @@ func (dds DIDDocService) Resolve(did string, version string, contentType types.C
 		return nil, mErr
 	}
 	didDoc := types.NewDidDoc(protoDidDocWithMetadata.DidDoc)
-	result := types.DidResolution{Did: &didDoc, Metadata: *resolvedMetadata, ResolutionMetadata: didResolutionMetadata}
+	result := types.DidResolution{Did: &didDoc, Metadata: resolvedMetadata, ResolutionMetadata: didResolutionMetadata}
 	if didResolutionMetadata.ContentType == types.DIDJSONLD || didResolutionMetadata.ContentType == types.JSONLD {
 		didDoc.AddContext(types.DIDSchemaJSONLD)
 
@@ -146,7 +146,8 @@ func (dds DIDDocService) DereferenceSecondary(did string, version string, fragme
 	var contentStream types.ContentStreamI
 	if fragmentId != "" {
 		contentStream = dds.GetDIDFragment(fragmentId, *didResolution.Did)
-		metadata = types.TransformToFragmentMetadata(metadata)
+		fragmentMetadata := types.TransformToFragmentMetadata(*metadata)
+		metadata = &fragmentMetadata
 	} else {
 		contentStream = didResolution.Did
 	}
@@ -157,7 +158,7 @@ func (dds DIDDocService) DereferenceSecondary(did string, version string, fragme
 
 	result := types.DidDereferencing{
 		ContentStream:         contentStream,
-		Metadata:              metadata,
+		Metadata:              *metadata,
 		DereferencingMetadata: types.DereferencingMetadata(didResolution.ResolutionMetadata),
 	}
 
@@ -179,5 +180,5 @@ func (dds DIDDocService) resolveMetadata(did string, metadata *didTypes.Metadata
 
 	resolvedMetadata := types.NewResolutionDidDocMetadata(did, metadata, resources)
 
-	return &resolvedMetadata, nil
+	return resolvedMetadata, nil
 }

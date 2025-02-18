@@ -16,7 +16,7 @@ type DidDocResolveHandler struct {
 func (dd *DidDocResolveHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
 	metadata := c.QueryParams().Get(types.Metadata)
 	// If metadata is set we don't need to resolve the DidDoc
-	if metadata != "" && metadata == "true" {
+	if metadata == "true" {
 		return dd.Continue(c, service, response)
 	}
 
@@ -42,8 +42,11 @@ func (dd *DidDocResolveHandler) Handle(c services.ResolverContext, service servi
 		return nil, _err
 	}
 
-	result.Metadata.Resources = filteredResources
-
+	if metadata == "false" {
+		result.Metadata = nil
+	} else {
+		result.Metadata.Resources = filteredResources
+	}
 	// Call the next handler
 	return dd.Continue(c, service, result)
 }

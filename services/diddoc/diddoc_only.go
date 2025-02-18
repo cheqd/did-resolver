@@ -28,7 +28,7 @@ func (dd *OnlyDIDDocRequestService) SpecificPrepare(c services.ResolverContext) 
 func (dd OnlyDIDDocRequestService) Respond(c services.ResolverContext) error {
 	_result := dd.Result.(*types.DidResolution)
 	if !dd.ResourceQuery {
-		_result.Metadata = types.ResolutionDidDocMetadata{}
+		_result.Metadata = &types.ResolutionDidDocMetadata{}
 	}
 	return c.JSONPretty(http.StatusOK, _result, "  ")
 }

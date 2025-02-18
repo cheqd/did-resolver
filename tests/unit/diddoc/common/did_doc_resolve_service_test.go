@@ -89,7 +89,7 @@ var _ = DescribeTable("Test Resolve method", func(testCase resolveDidDocTestCase
 					},
 				},
 				Did:      nil,
-				Metadata: types.ResolutionDidDocMetadata{},
+				Metadata: &types.ResolutionDidDocMetadata{},
 			},
 			expectedError: types.NewNotFoundError(testconstants.NotExistentTestnetDid, types.DIDJSONLD, nil, false),
 		},

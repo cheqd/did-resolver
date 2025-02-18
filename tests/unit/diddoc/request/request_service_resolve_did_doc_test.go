@@ -93,7 +93,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 					},
 				},
 				Did:      nil,
-				Metadata: types.ResolutionDidDocMetadata{},
+				Metadata: &types.ResolutionDidDocMetadata{},
 			},
 			expectedError: types.NewNotFoundError(testconstants.NotExistentTestnetDid, types.DIDJSONLD, nil, false),
 		},
@@ -126,7 +126,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 					},
 				},
 				Did:      nil,
-				Metadata: types.ResolutionDidDocMetadata{},
+				Metadata: &types.ResolutionDidDocMetadata{},
 			},
 			expectedError: types.NewMethodNotSupportedError(
 				fmt.Sprintf(
@@ -167,7 +167,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 					},
 				},
 				Did:      nil,
-				Metadata: types.ResolutionDidDocMetadata{},
+				Metadata: &types.ResolutionDidDocMetadata{},
 			},
 			expectedError: types.NewInvalidDidError(
 				fmt.Sprintf(
@@ -208,7 +208,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 					},
 				},
 				Did:      nil,
-				Metadata: types.ResolutionDidDocMetadata{},
+				Metadata: &types.ResolutionDidDocMetadata{},
 			},
 			expectedError: types.NewInvalidDidError(
 				fmt.Sprintf(
@@ -236,7 +236,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 					},
 				},
 				Did:      nil,
-				Metadata: types.ResolutionDidDocMetadata{},
+				Metadata: &types.ResolutionDidDocMetadata{},
 			},
 			expectedError: types.NewMethodNotSupportedError(testconstants.InvalidDid, types.DIDJSONLD, nil, false),
 		},
@@ -257,7 +257,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 					},
 				},
 				Did:      nil,
-				Metadata: types.ResolutionDidDocMetadata{},
+				Metadata: &types.ResolutionDidDocMetadata{},
 			},
 			expectedError: types.NewRepresentationNotSupportedError(testconstants.ExistentDid, types.JSON, nil, false),
 		},

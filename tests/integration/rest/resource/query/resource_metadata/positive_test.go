@@ -74,4 +74,19 @@ var _ = DescribeTable("Positive: Get Resource Metadata with resourceMetadata que
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
+
+	Entry(
+		"can get filtered list of resources in didDocumentMetadata when acceptHeader is W3IDDIDRES",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?resourceName=%s&resourceMetadata=true",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+				testconstants.ExistentResourceName,
+			),
+			ResolutionType:     string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			ExpectedJSONPath:   "../../../testdata/query/resource_metadata/metadata_did_res.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
 )

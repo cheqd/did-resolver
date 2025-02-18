@@ -14,7 +14,7 @@ type DereferencedDidVersionsList struct {
 func NewDereferencedDidVersionsList(did string, versions []*didTypes.Metadata, resources []*resourceTypes.Metadata) *DereferencedDidVersionsList {
 	didVersionList := DidDocMetadataList{}
 	for _, version := range versions {
-		didVersionList = append(didVersionList, NewResolutionDidDocMetadata(did, version, resources))
+		didVersionList = append(didVersionList, *NewResolutionDidDocMetadata(did, version, resources))
 	}
 
 	// Sort by updated date or created in reverse order
