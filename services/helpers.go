@@ -1,12 +1,12 @@
 package services
 
 import (
-	"fmt"
 	"net/url"
 	"strings"
 
 	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 	"github.com/timewasted/go-accept-headers"
 )
 
@@ -32,7 +32,7 @@ func GetPriorityContentType(acceptHeader string, resource bool) (types.ContentTy
 		if resource || mediaType.IsSupported() {
 			profile := at.Extensions["profile"]
 			profile = strings.Trim(profile, "\"") // Remove surrounding quotes if present
-			fmt.Printf("Selected Media Type: %s, Profile: %s, Q-Value: %f\n", mediaType, profile, at.Q)
+			log.Debug().Msgf("Selected Media Type: %s, Profile: %s, Q-Value: %f\n", mediaType, profile, at.Q)
 			return mediaType, profile
 		}
 	}
