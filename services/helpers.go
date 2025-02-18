@@ -19,21 +19,21 @@ func GetPriorityContentType(acceptHeader string, resource bool) (types.ContentTy
 	}
 	for _, at := range acceptedTypes {
 		mediaType := types.ContentType(at.Type + "/" + at.Subtype)
-		if !resource {
-			if mediaType.IsSupported() {
-				profile := at.Extensions["profile"]
-				profile = strings.Trim(profile, "\"") // Remove surrounding quotes if present
-				fmt.Printf("Selected Media Type: %s, Profile: %s, Q-Value: %f\n", mediaType, profile, at.Q)
-				return mediaType, profile
-			}
-		}
+
 		// If the Header contains any media type, return the default content type
 		if mediaType == "*/*" {
 			if resource { // If request is from Resource Handlers
-				return types.JSONLD, types.W3IDDIDURL
+				return types.JSONLD, ""
 			} else { // If request is from DIDDoc Handlers
 				return types.JSONLD, types.W3IDDIDRES
 			}
+		}
+
+		if resource || mediaType.IsSupported() {
+			profile := at.Extensions["profile"]
+			profile = strings.Trim(profile, "\"") // Remove surrounding quotes if present
+			fmt.Printf("Selected Media Type: %s, Profile: %s, Q-Value: %f\n", mediaType, profile, at.Q)
+			return mediaType, profile
 		}
 	}
 	return types.ContentType(acceptedTypes[0].Type + "/" + acceptedTypes[0].Subtype), ""
