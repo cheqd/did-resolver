@@ -45,7 +45,7 @@ import (
 func DidDocEchoHandler(c echo.Context) error {
 	// Get Accept header
 	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
-	requestedContentType, profile := services.GetPriorityContentType(acceptHeader)
+	requestedContentType, profile := services.GetPriorityContentType(acceptHeader, false)
 	didParam := c.Param("did")
 	queryParams := c.Request().URL.Query()
 
@@ -100,6 +100,12 @@ func DidDocEchoHandler(c echo.Context) error {
 //	@Failure		501			{object}	types.IdentityError
 //	@Router			/{did}/version/{versionId} [get]
 func DidDocVersionEchoHandler(c echo.Context) error {
+	// log.Debug().Msg("HERE 1")
+	// acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
+	// requestedContentType, _ := services.GetPriorityContentType(acceptHeader, false)
+	// if !requestedContentType.IsSupported() {
+	// 	return types.NewRepresentationNotSupportedError("", requestedContentType, nil, false)
+	// }
 	return services.EchoWrapHandler(&DIDDocVersionRequestService{})(c)
 }
 
@@ -120,6 +126,12 @@ func DidDocVersionEchoHandler(c echo.Context) error {
 //	@Failure		501			{object}	types.IdentityError
 //	@Router			/{did}/version/{versionId}/metadata [get]
 func DidDocVersionMetadataEchoHandler(c echo.Context) error {
+	// log.Debug().Msg("HERE 2")
+	// acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
+	// requestedContentType, _ := services.GetPriorityContentType(acceptHeader, false)
+	// if !requestedContentType.IsSupported() {
+	// 	return types.NewRepresentationNotSupportedError("", requestedContentType, nil, false)
+	// }
 	return services.EchoWrapHandler(&DIDDocVersionMetadataRequestService{})(c)
 }
 
@@ -139,6 +151,12 @@ func DidDocVersionMetadataEchoHandler(c echo.Context) error {
 //	@Failure		501	{object}	types.IdentityError
 //	@Router			/{did}/versions [get]
 func DidDocAllVersionMetadataEchoHandler(c echo.Context) error {
+	// log.Debug().Msg("HERE 3")
+	// acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
+	// requestedContentType, _ := services.GetPriorityContentType(acceptHeader, false)
+	// if !requestedContentType.IsSupported() {
+	// 	return types.NewRepresentationNotSupportedError("", requestedContentType, nil, false)
+	// }
 	return services.EchoWrapHandler(&DIDDocAllVersionMetadataRequestService{})(c)
 }
 
@@ -160,7 +178,7 @@ func DidDocAllVersionMetadataEchoHandler(c echo.Context) error {
 func DidDocResourceCollectionEchoHandler(c echo.Context) error {
 	// Get Accept header
 	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
-	requestedContentType, profile := services.GetPriorityContentType(acceptHeader)
+	requestedContentType, profile := services.GetPriorityContentType(acceptHeader, false)
 	didParam := c.Param("did")
 	if !requestedContentType.IsSupported() {
 		return types.NewRepresentationNotSupportedError(didParam, requestedContentType, nil, false)
