@@ -58,7 +58,7 @@ func DidDocEchoHandler(c echo.Context) error {
 	isFragment := strings.Contains(didParam, "#")
 	isQuery := len(queryParams) > 0
 	isSingleQuery := len(queryParams) == 1
-	resourceQuery := c.QueryParam(types.ResourceMetadata) == "true"
+	resourceQuery := c.QueryParam(types.ResourceMetadata) != ""
 	metadataQuery := c.QueryParam(types.Metadata) == "true"
 
 	switch {
@@ -68,7 +68,7 @@ func DidDocEchoHandler(c echo.Context) error {
 	case isSingleQuery && requestedContentType == types.JSONLD && profile == types.W3IDDIDRES && metadataQuery:
 		return services.EchoWrapHandler(&DIDDocResourceDereferencingService{Profile: profile})(c)
 	case isSingleQuery && requestedContentType == types.JSONLD && profile == types.W3IDDIDRES && resourceQuery:
-		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: resourceQuery})(c)
+		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: c.QueryParam(types.ResourceMetadata)})(c)
 	case isQuery:
 		return services.EchoWrapHandler(&QueryDIDDocRequestService{})(c)
 	case requestedContentType == types.JSONLD && profile == types.W3IDDIDRES:
@@ -76,7 +76,7 @@ func DidDocEchoHandler(c echo.Context) error {
 	case requestedContentType == types.DIDJSONLD,
 		requestedContentType == types.DIDJSON,
 		requestedContentType == types.DIDRES:
-		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: false})(c)
+		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: "false"})(c)
 	default:
 		// ToDo: make it more clearly
 		return types.NewInternalError(c.Param("did"), types.JSON, errors.New("Unknown internal error while getting the type of query"), true)
@@ -100,12 +100,6 @@ func DidDocEchoHandler(c echo.Context) error {
 //	@Failure		501			{object}	types.IdentityError
 //	@Router			/{did}/version/{versionId} [get]
 func DidDocVersionEchoHandler(c echo.Context) error {
-	// log.Debug().Msg("HERE 1")
-	// acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
-	// requestedContentType, _ := services.GetPriorityContentType(acceptHeader, false)
-	// if !requestedContentType.IsSupported() {
-	// 	return types.NewRepresentationNotSupportedError("", requestedContentType, nil, false)
-	// }
 	return services.EchoWrapHandler(&DIDDocVersionRequestService{})(c)
 }
 
@@ -126,12 +120,6 @@ func DidDocVersionEchoHandler(c echo.Context) error {
 //	@Failure		501			{object}	types.IdentityError
 //	@Router			/{did}/version/{versionId}/metadata [get]
 func DidDocVersionMetadataEchoHandler(c echo.Context) error {
-	// log.Debug().Msg("HERE 2")
-	// acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
-	// requestedContentType, _ := services.GetPriorityContentType(acceptHeader, false)
-	// if !requestedContentType.IsSupported() {
-	// 	return types.NewRepresentationNotSupportedError("", requestedContentType, nil, false)
-	// }
 	return services.EchoWrapHandler(&DIDDocVersionMetadataRequestService{})(c)
 }
 
@@ -151,12 +139,6 @@ func DidDocVersionMetadataEchoHandler(c echo.Context) error {
 //	@Failure		501	{object}	types.IdentityError
 //	@Router			/{did}/versions [get]
 func DidDocAllVersionMetadataEchoHandler(c echo.Context) error {
-	// log.Debug().Msg("HERE 3")
-	// acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
-	// requestedContentType, _ := services.GetPriorityContentType(acceptHeader, false)
-	// if !requestedContentType.IsSupported() {
-	// 	return types.NewRepresentationNotSupportedError("", requestedContentType, nil, false)
-	// }
 	return services.EchoWrapHandler(&DIDDocAllVersionMetadataRequestService{})(c)
 }
 
