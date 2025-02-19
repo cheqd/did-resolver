@@ -145,6 +145,7 @@ func DidDocAllVersionMetadataEchoHandler(c echo.Context) error {
 	return services.EchoWrapHandler(&DIDDocAllVersionMetadataRequestService{})(c)
 }
 
+
 // DidDocMetadataEchoHandler godoc
 //
 //	@Summary		Fetch metadata for all Resources
