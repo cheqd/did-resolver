@@ -67,7 +67,7 @@ func DidDocEchoHandler(c echo.Context) error {
 		return services.EchoWrapHandler(&FragmentDIDDocRequestService{})(c)
 	// If there is only one query parameter and that query is 'metadata'
 	case isSingleQuery && metadataQuery:
-		return services.EchoWrapHandler(&DIDDocResourceDereferencingService{Profile: profile})(c)
+		return services.EchoWrapHandler(&DIDDocMetadataService{Profile: profile})(c)
 	// If there is only one query parameter and that query is 'resourceMetadata'
 	case isSingleQuery && resourceQuery:
 		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: c.QueryParam(types.ResourceMetadata)})(c)
@@ -145,7 +145,7 @@ func DidDocAllVersionMetadataEchoHandler(c echo.Context) error {
 	return services.EchoWrapHandler(&DIDDocAllVersionMetadataRequestService{})(c)
 }
 
-// DidDocResourceCollectionEchoHandler godoc
+// DidDocMetadataEchoHandler godoc
 //
 //	@Summary		Fetch metadata for all Resources
 //	@Description	Get metadata for all Resources within a DID Resource Collection
@@ -160,7 +160,7 @@ func DidDocAllVersionMetadataEchoHandler(c echo.Context) error {
 //	@Failure		500	{object}	types.IdentityError
 //	@Failure		501	{object}	types.IdentityError
 //	@Router			/{did}/metadata [get]
-func DidDocResourceCollectionEchoHandler(c echo.Context) error {
+func DidDocMetadataEchoHandler(c echo.Context) error {
 	// Get Accept header
 	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
 	requestedContentType, profile := services.GetPriorityContentType(acceptHeader, false)
@@ -168,5 +168,5 @@ func DidDocResourceCollectionEchoHandler(c echo.Context) error {
 	if !requestedContentType.IsSupported() {
 		return types.NewRepresentationNotSupportedError(didParam, requestedContentType, nil, false)
 	}
-	return services.EchoWrapHandler(&DIDDocResourceDereferencingService{Profile: profile})(c)
+	return services.EchoWrapHandler(&DIDDocMetadataService{Profile: profile})(c)
 }

@@ -63,7 +63,7 @@ func (rds ResourceService) DereferenceCollectionResources(did string, contentTyp
 	return &types.ResourceDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
-func (rds ResourceService) ResolveCollectionResources(did string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {
+func (rds ResourceService) ResolveMetadataResources(did string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {
 	resolutionMetadata := types.NewResolutionMetadata(did, contentType, "")
 
 	didDoc, err := rds.ledgerService.QueryDIDDoc(did, "")

@@ -15,7 +15,7 @@ type ResourceMetadataHandler struct {
 func (d *ResourceMetadataHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
 	resourceMetadata := service.GetQueryParam(types.ResourceMetadata)
 	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
-	_, profile := services.GetPriorityContentType(acceptHeader)
+	_, profile := services.GetPriorityContentType(acceptHeader, d.IsDereferencing)
 	// Cast to just list of resources
 	resourceCollection, err := d.CastToContent(service, response)
 	if err != nil {

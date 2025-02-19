@@ -42,11 +42,11 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 
 	diff := types.AllSupportedQueries.DiffWithUrlValues(dd.Queries)
 	if len(diff) > 0 {
-		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	if dd.AreQueryValuesEmpty(c) {
-		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	versionId := dd.GetQueryParam(types.VersionId)
@@ -58,7 +58,6 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	resourceVersionTime := dd.GetQueryParam(types.ResourceVersionTime)
 	metadata := dd.GetQueryParam(types.Metadata)
 	resourceMetadata := dd.GetQueryParam(types.ResourceMetadata)
-
 	if string(transformKeys) != "" && (!transformKeys.IsSupported() || !types.IsSupportedWithCombinationTransformKeysQuery(dd.Queries)) {
 		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}

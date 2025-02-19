@@ -45,7 +45,7 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "representationNotSupported",
+					ResolutionError: "invalidDidUrl",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.UUIDStyleTestnetDid,
 						MethodSpecificId: testconstants.UUIDStyleTestnetId,
@@ -55,7 +55,7 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode, // it should be notFound
+			ExpectedStatusCode: types.InvalidDidUrlHttpCode,
 		},
 	),
 
@@ -73,7 +73,7 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
-					ResolutionError: "representationNotSupported",
+					ResolutionError: "invalidDidUrl",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.UUIDStyleTestnetDid,
 						MethodSpecificId: testconstants.UUIDStyleTestnetId,
@@ -83,7 +83,7 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode, // it should be invalidDidUrl
+			ExpectedStatusCode: types.InvalidDidUrlHttpCode, // it should be invalidDidUrl
 		},
 	),
 )

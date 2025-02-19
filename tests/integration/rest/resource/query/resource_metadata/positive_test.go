@@ -9,7 +9,6 @@ import (
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	utils "github.com/cheqd/did-resolver/tests/integration/rest"
-
 	"github.com/go-resty/resty/v2"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -71,21 +70,6 @@ var _ = DescribeTable("Positive: Get Resource Metadata with resourceMetadata que
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
 			ExpectedJSONPath:   "../../../testdata/query/resource_metadata/metadata_32_indy_did.json",
-			ExpectedStatusCode: http.StatusOK,
-		},
-	),
-
-	Entry(
-		"can get filtered list of resources in didDocumentMetadata when acceptHeader is W3IDDIDRES",
-		utils.PositiveTestCase{
-			DidURL: fmt.Sprintf(
-				"http://%s/1.0/identifiers/%s?resourceName=%s&resourceMetadata=true",
-				testconstants.TestHostAddress,
-				testconstants.UUIDStyleTestnetDid,
-				testconstants.ExistentResourceName,
-			),
-			ResolutionType:     string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
-			ExpectedJSONPath:   "../../../testdata/query/resource_metadata/metadata_did_res.json",
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),

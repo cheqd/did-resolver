@@ -24,12 +24,12 @@ var _ = DescribeTable("Negative: Get Resource Metadata with resourceMetadata que
 		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
 
-	var receivedDidDereferencing utils.DereferencingResult
-	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
+	var receivedDidResolution types.DidResolution
+	Expect(json.Unmarshal(resp.Body(), &receivedDidResolution)).To(BeNil())
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	expectedDidDereferencing := testCase.ExpectedResult.(utils.DereferencingResult)
-	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
+	expectedDidResolution := testCase.ExpectedResult.(types.DidResolution)
+	utils.AssertDidResolution(expectedDidResolution, receivedDidResolution)
 },
 
 	Entry(
@@ -41,15 +41,19 @@ var _ = DescribeTable("Negative: Get Resource Metadata with resourceMetadata que
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType: string(types.DIDJSONLD),
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.JSON,
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.DIDJSONLD,
 					ResolutionError: "internalError",
-					DidProperties:   types.DidProperties{},
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.UUIDStyleTestnetDid,
+						MethodSpecificId: testconstants.UUIDStyleTestnetId,
+						Method:           testconstants.ValidMethod,
+					},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: nil,
 			},
 			ExpectedStatusCode: errors.InternalErrorHttpCode,
 		},
