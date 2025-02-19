@@ -24,7 +24,7 @@ import (
 //	@Router			/{did}/resources/{resourceId} [get]
 func ResourceDataEchoHandler(c echo.Context) error {
 	// Get Accept header
-	contentType, profile := services.GetPriorityContentType(c.Request().Header.Get(echo.HeaderAccept))
+	contentType, profile := services.GetPriorityContentType(c.Request().Header.Get(echo.HeaderAccept), true)
 	if contentType == types.JSONLD && profile == types.W3IDDIDURL {
 		return services.EchoWrapHandler(&ResourceDataWithMetadataDereferencingService{})(c)
 	}

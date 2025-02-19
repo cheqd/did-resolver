@@ -54,6 +54,22 @@ var _ = DescribeTable("Positive: Get DID#fragment", func(testCase utils.Positive
 	),
 
 	Entry(
+		"can get verificationMethod section with an existent DID#fragment with Chrome Accept header",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%skey1",
+				testconstants.TestHostAddress,
+				testconstants.IndyStyleMainnetDid+url.PathEscape(testconstants.HashTag),
+			),
+			ResolutionType:       testconstants.ChromeResolutionType,
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/diddoc_fragment/verification_method_did_fragment.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
 		"can get verificationMethod section with an existent old 16 characters Indy style DID#fragment",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(

@@ -1,8 +1,8 @@
 {
   "@context": "https://w3id.org/did-resolution/v1",
   "didResolutionMetadata": {
-    "contentType": "application/ld+json",
-    "retrieved": "2023-03-24T12:50:08Z",
+    "contentType": "application/did+ld+json",
+    "retrieved": "2023-03-22T11:16:34Z",
     "did": {
       "didString": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN",
       "methodSpecificId": "Ps1ysXP2Ae6GBfxNhNQNKN",
@@ -50,8 +50,5 @@
       }
     ]
   },
-  "didDocumentMetadata": {
-    "created": "2022-04-05T11:49:19Z",
-    "versionId": "4fa8e367-c70e-533e-babf-3732d9761061"
-  }
+  "didDocumentMetadata": {}
 }

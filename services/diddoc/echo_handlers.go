@@ -45,7 +45,7 @@ import (
 func DidDocEchoHandler(c echo.Context) error {
 	// Get Accept header
 	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
-	requestedContentType, profile := services.GetPriorityContentType(acceptHeader)
+	requestedContentType, profile := services.GetPriorityContentType(acceptHeader, false)
 	didParam := c.Param("did")
 	queryParams := c.Request().URL.Query()
 
@@ -58,25 +58,28 @@ func DidDocEchoHandler(c echo.Context) error {
 	isFragment := strings.Contains(didParam, "#")
 	isQuery := len(queryParams) > 0
 	isSingleQuery := len(queryParams) == 1
-	resourceQuery := c.QueryParam(types.ResourceMetadata) == "true"
+	resourceQuery := c.QueryParam(types.ResourceMetadata) != ""
 	metadataQuery := c.QueryParam(types.Metadata) == "true"
 
 	switch {
+	// If Fragment is present, then we call FragmentDIDDocRequestService
 	case isFragment:
 		return services.EchoWrapHandler(&FragmentDIDDocRequestService{})(c)
-	// following two conditions need to be checked
-	case isSingleQuery && requestedContentType == types.JSONLD && profile == types.W3IDDIDRES && metadataQuery:
+	// If there is only one query parameter and that query is 'metadata'
+	case isSingleQuery && metadataQuery:
 		return services.EchoWrapHandler(&DIDDocResourceDereferencingService{Profile: profile})(c)
-	case isSingleQuery && requestedContentType == types.JSONLD && profile == types.W3IDDIDRES && resourceQuery:
-		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: resourceQuery})(c)
+	// If there is only one query parameter and that query is 'resourceMetadata'
+	case isSingleQuery && resourceQuery:
+		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: c.QueryParam(types.ResourceMetadata)})(c)
+	// This case is for all other queries
 	case isQuery:
 		return services.EchoWrapHandler(&QueryDIDDocRequestService{})(c)
-	case requestedContentType == types.JSONLD && profile == types.W3IDDIDRES:
+	// If there are no query parameters, and contentType matches JSON or JSONLD, then we call FullDIDDocRequestService
+	case requestedContentType == types.JSON || (requestedContentType == types.JSONLD && profile == types.W3IDDIDRES):
 		return services.EchoWrapHandler(&FullDIDDocRequestService{})(c)
-	case requestedContentType == types.DIDJSONLD,
-		requestedContentType == types.DIDJSON,
-		requestedContentType == types.DIDRES:
-		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: false})(c)
+	// For all other supported contentType, then we call OnlyDIDDocRequestService
+	case requestedContentType.IsSupported():
+		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: "default"})(c)
 	default:
 		// ToDo: make it more clearly
 		return types.NewInternalError(c.Param("did"), types.JSON, errors.New("Unknown internal error while getting the type of query"), true)
@@ -160,7 +163,7 @@ func DidDocAllVersionMetadataEchoHandler(c echo.Context) error {
 func DidDocResourceCollectionEchoHandler(c echo.Context) error {
 	// Get Accept header
 	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
-	requestedContentType, profile := services.GetPriorityContentType(acceptHeader)
+	requestedContentType, profile := services.GetPriorityContentType(acceptHeader, false)
 	didParam := c.Param("did")
 	if !requestedContentType.IsSupported() {
 		return types.NewRepresentationNotSupportedError(didParam, requestedContentType, nil, false)

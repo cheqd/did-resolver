@@ -1,16 +1,16 @@
 package services
 
 import (
-	"fmt"
 	"net/url"
 	"strings"
 
 	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 	"github.com/timewasted/go-accept-headers"
 )
 
-func GetPriorityContentType(acceptHeader string) (types.ContentType, string) {
+func GetPriorityContentType(acceptHeader string, resource bool) (types.ContentType, string) {
 	// Parse the Accept header using the go-accept-headers package
 	acceptedTypes := accept.Parse(acceptHeader)
 	if len(acceptedTypes) == 0 {
@@ -20,15 +20,20 @@ func GetPriorityContentType(acceptHeader string) (types.ContentType, string) {
 	for _, at := range acceptedTypes {
 		mediaType := types.ContentType(at.Type + "/" + at.Subtype)
 
-		if mediaType.IsSupported() {
-			profile := at.Extensions["profile"]
-			profile = strings.Trim(profile, "\"") // Remove surrounding quotes if present
-			fmt.Printf("Selected Media Type: %s, Profile: %s, Q-Value: %f\n", mediaType, profile, at.Q)
-			return mediaType, profile
-		}
 		// If the Header contains any media type, return the default content type
 		if mediaType == "*/*" {
-			return types.JSONLD, types.W3IDDIDRES
+			if resource { // If request is from Resource Handlers
+				return types.JSONLD, ""
+			} else { // If request is from DIDDoc Handlers
+				return types.JSONLD, types.W3IDDIDRES
+			}
+		}
+
+		if resource || mediaType.IsSupported() {
+			profile := at.Extensions["profile"]
+			profile = strings.Trim(profile, "\"") // Remove surrounding quotes if present
+			log.Debug().Msgf("Selected Media Type: %s, Profile: %s, Q-Value: %f\n", mediaType, profile, at.Q)
+			return mediaType, profile
 		}
 	}
 	return types.ContentType(acceptedTypes[0].Type + "/" + acceptedTypes[0].Subtype), ""

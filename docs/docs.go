@@ -634,13 +634,17 @@ const docTemplate = `{
                 "application/did+json",
                 "application/did+ld+json",
                 "application/ld+json",
-                "application/json"
+                "application/json",
+                "application/did",
+                "text/plain"
             ],
             "x-enum-varnames": [
                 "DIDJSON",
                 "DIDJSONLD",
                 "JSONLD",
-                "JSON"
+                "JSON",
+                "DIDRES",
+                "TEXT"
             ]
         },
         "types.DereferencedDidVersionsList": {
@@ -712,7 +716,7 @@ const docTemplate = `{
                             "$ref": "#/definitions/types.ContentType"
                         }
                     ],
-                    "example": "application/did+ld+json"
+                    "example": "application/ld+json"
                 },
                 "did": {
                     "$ref": "#/definitions/types.DidProperties"
@@ -916,7 +920,7 @@ const docTemplate = `{
                             "$ref": "#/definitions/types.ContentType"
                         }
                     ],
-                    "example": "application/did+ld+json"
+                    "example": "application/ld+json"
                 },
                 "did": {
                     "$ref": "#/definitions/types.DidProperties"
@@ -930,9 +934,6 @@ const docTemplate = `{
                 }
             }
         },
-        "types.ResolutionResourceMetadata": {
-            "type": "object"
-        },
         "types.ResourceDereferencing": {
             "type": "object",
             "properties": {
@@ -941,7 +942,7 @@ const docTemplate = `{
                     "example": "https://w3id.org/did-resolution/v1"
                 },
                 "contentMetadata": {
-                    "$ref": "#/definitions/types.ResolutionResourceMetadata"
+                    "$ref": "#/definitions/types.DereferencedResource"
                 },
                 "contentStream": {},
                 "dereferencingMetadata": {

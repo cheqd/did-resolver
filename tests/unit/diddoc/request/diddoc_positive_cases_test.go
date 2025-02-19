@@ -21,6 +21,7 @@ import (
 
 var _ = DescribeTable("Test Query handlers with versionId and versionTime params", func(testCase QueriesDIDDocTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
+	request.Header.Set("Accept", string(testCase.resolutionType))
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, MockLedger)
 	expectedDIDResolution := testCase.expectedResolution.(*types.DidResolution)
 

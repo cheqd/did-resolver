@@ -246,8 +246,8 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 		"cannot get DIDDoc with an invalid representation",
 		resolveDIDDocTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s", testconstants.ExistentDid),
-			resolutionType: types.JSON,
-			acceptHeader:   string(types.JSON),
+			resolutionType: types.TEXT,
+			acceptHeader:   string(types.TEXT),
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{

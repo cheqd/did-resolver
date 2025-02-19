@@ -23,9 +23,6 @@ func (d *ResourceQueryHandler) Handle(c services.ResolverContext, service servic
 		}
 		// Call the next handler
 		return d.Continue(c, service, types.DidDocMetadataList{*content})
-		// content := types.ResolutionDidDocMetadata(resolutionResult.Metadata)
-		// // Call the next handler
-		// return d.Continue(c, service, types.DidDocMetadataList{content})
 	}
 	// Otherwise just use the result from previous handlers
 	// But here we need to cast ContentStream to ResolutionDidDocMetadata

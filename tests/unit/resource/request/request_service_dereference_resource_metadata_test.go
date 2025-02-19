@@ -184,7 +184,7 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 				testconstants.ExistentDid,
 				testconstants.ExistentResourceId,
 			),
-			resolutionType: types.JSON,
+			resolutionType: types.TEXT,
 			expectedDereferencingResult: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
