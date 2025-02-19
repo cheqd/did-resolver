@@ -1,3 +1,3 @@
 package types
 
-type ResolutionResourceMetadata struct{}
+type ResolutionResourceMetadata interface{}

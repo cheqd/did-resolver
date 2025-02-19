@@ -1,5 +1,5 @@
 {
-    "dereferencingMetadata": {
+    "didResolutionMetadata": {
         "contentType": "application/did+json",
         "retrieved": "2023-04-05T16:48:19Z",
         "did": {
@@ -8,7 +8,7 @@
             "method": "cheqd"
         }
     },
-    "contentStream": {
+    "didDocumentMetadata": {
         "created": "2023-01-25T11:58:10Z",
         "versionId": "e5615fc2-6f13-42b1-989c-49576a574cef",
         "linkedResourceMetadata": [
@@ -39,6 +39,5 @@
                 "nextVersionId": null
             }
         ]
-    },
-    "contentMetadata": {}
+    }
 }

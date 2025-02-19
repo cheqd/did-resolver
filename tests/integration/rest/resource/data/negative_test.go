@@ -40,11 +40,11 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				testconstants.UUIDStyleMainnetDid,
 				testconstants.ValidIdentifier,
 			),
-			ResolutionType: string(types.JSON),
+			ResolutionType: string(types.TEXT),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.JSON,
+					ContentType:     types.TEXT,
 					ResolutionError: "representationNotSupported",
 					DidProperties:   types.DidProperties{},
 				},
@@ -64,11 +64,11 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
-			ResolutionType: string(types.JSON),
+			ResolutionType: string(types.TEXT),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.JSON,
+					ContentType:     types.TEXT,
 					ResolutionError: "representationNotSupported",
 					DidProperties:   types.DidProperties{},
 				},
@@ -92,7 +92,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.NotExistentMainnetDid,
@@ -120,7 +120,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.InvalidDid,
@@ -148,7 +148,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.NotExistentTestnetDid,
@@ -176,7 +176,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "invalidDidUrl",
 					DidProperties:   types.DidProperties{},
 				},
@@ -200,7 +200,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "invalidDidUrl",
 					DidProperties:   types.DidProperties{},
 				},
@@ -224,7 +224,7 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "invalidDidUrl",
 					DidProperties:   types.DidProperties{},
 				},

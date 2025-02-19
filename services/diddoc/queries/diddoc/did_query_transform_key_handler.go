@@ -20,7 +20,7 @@ func (t *TransformKeysHandler) Handle(c services.ResolverContext, service servic
 	}
 
 	if !transformKeys.IsSupported() {
-		return nil, types.NewRepresentationNotSupportedError(service.GetDid(), types.DIDJSONLD, nil, t.IsDereferencing)
+		return nil, types.NewRepresentationNotSupportedError(service.GetDid(), service.GetContentType(), nil, t.IsDereferencing)
 	}
 
 	// We expect here only DidResolution

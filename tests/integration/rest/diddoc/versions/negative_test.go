@@ -23,12 +23,12 @@ var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.Negat
 		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
 
-	var receivedDidDereferencing utils.DereferencingResult
-	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
+	var receivedDidResolution types.DidResolution
+	Expect(json.Unmarshal(resp.Body(), &receivedDidResolution)).To(BeNil())
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	expectedDidDereferencing := testCase.ExpectedResult.(utils.DereferencingResult)
-	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
+	expectedDidResolution := testCase.ExpectedResult.(types.DidResolution)
+	utils.AssertDidResolution(expectedDidResolution, receivedDidResolution)
 },
 
 	Entry(
@@ -39,16 +39,16 @@ var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.Negat
 				testconstants.TestHostAddress,
 				testconstants.UUIDStyleMainnetDid,
 			),
-			ResolutionType: string(types.JSON),
-			ExpectedResult: utils.DereferencingResult{
+			ResolutionType: string(types.TEXT),
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.JSON,
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.TEXT,
 					ResolutionError: "representationNotSupported",
 					DidProperties:   types.DidProperties{},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
 		},
@@ -62,16 +62,16 @@ var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.Negat
 				testconstants.TestHostAddress,
 				testconstants.NotExistentMainnetDid,
 			),
-			ResolutionType: string(types.JSON),
-			ExpectedResult: utils.DereferencingResult{
+			ResolutionType: string(types.TEXT),
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.JSON,
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.TEXT,
 					ResolutionError: "representationNotSupported",
 					DidProperties:   types.DidProperties{},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
 		},
@@ -86,10 +86,10 @@ var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.Negat
 				testconstants.NotExistentTestnetDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.NotExistentTestnetDid,
@@ -97,8 +97,8 @@ var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.Negat
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: errors.NotFoundHttpCode,
 		},
@@ -113,10 +113,10 @@ var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.Negat
 				testconstants.InvalidDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType:     types.JSONLD,
 					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.InvalidDid,
@@ -124,8 +124,8 @@ var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.Negat
 						Method:           testconstants.InvalidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: errors.MethodNotSupportedHttpCode,
 		},

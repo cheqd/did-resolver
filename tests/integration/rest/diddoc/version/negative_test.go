@@ -40,11 +40,11 @@ var _ = DescribeTable("Negative: Get DIDDoc version", func(testCase utils.Negati
 				testconstants.UUIDStyleMainnetDid,
 				testconstants.ValidIdentifier,
 			),
-			ResolutionType: string(types.JSON),
+			ResolutionType: string(types.TEXT),
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.JSON,
+					ContentType:     types.TEXT,
 					ResolutionError: "representationNotSupported",
 					DidProperties:   types.DidProperties{},
 				},
@@ -64,11 +64,11 @@ var _ = DescribeTable("Negative: Get DIDDoc version", func(testCase utils.Negati
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
-			ResolutionType: string(types.JSON),
+			ResolutionType: string(types.TEXT),
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.JSON,
+					ContentType:     types.TEXT,
 					ResolutionError: "representationNotSupported",
 					DidProperties:   types.DidProperties{},
 				},
@@ -92,7 +92,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version", func(testCase utils.Negati
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.NotExistentMainnetDid,
@@ -120,7 +120,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version", func(testCase utils.Negati
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.InvalidDid,
@@ -148,7 +148,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version", func(testCase utils.Negati
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.IndyStyleMainnetDid,
@@ -176,7 +176,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version", func(testCase utils.Negati
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.MigratedIndy16CharStyleTestnetDid,
@@ -204,7 +204,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version", func(testCase utils.Negati
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.MigratedIndy32CharStyleTestnetDid,
@@ -232,7 +232,7 @@ var _ = DescribeTable("Negative: Get DIDDoc version", func(testCase utils.Negati
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "invalidDidUrl",
 					DidProperties:   types.DidProperties{},
 				},

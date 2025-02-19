@@ -6,12 +6,16 @@ definitions:
     - application/did+ld+json
     - application/ld+json
     - application/json
+    - application/did
+    - text/plain
     type: string
     x-enum-varnames:
     - DIDJSON
     - DIDJSONLD
     - JSONLD
     - JSON
+    - DIDRES
+    - TEXT
   types.DereferencedDidVersionsList:
     properties:
       versions:
@@ -60,7 +64,7 @@ definitions:
       contentType:
         allOf:
         - $ref: '#/definitions/types.ContentType'
-        example: application/did+ld+json
+        example: application/ld+json
       did:
         $ref: '#/definitions/types.DidProperties'
       error:
@@ -196,7 +200,7 @@ definitions:
       contentType:
         allOf:
         - $ref: '#/definitions/types.ContentType'
-        example: application/did+ld+json
+        example: application/ld+json
       did:
         $ref: '#/definitions/types.DidProperties'
       error:
@@ -205,15 +209,13 @@ definitions:
         example: "2021-09-01T12:00:00Z"
         type: string
     type: object
-  types.ResolutionResourceMetadata:
-    type: object
   types.ResourceDereferencing:
     properties:
       '@context':
         example: https://w3id.org/did-resolution/v1
         type: string
       contentMetadata:
-        $ref: '#/definitions/types.ResolutionResourceMetadata'
+        $ref: '#/definitions/types.DereferencedResource'
       contentStream: {}
       dereferencingMetadata:
         $ref: '#/definitions/types.DereferencingMetadata'

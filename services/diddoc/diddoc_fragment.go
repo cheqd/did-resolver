@@ -13,6 +13,10 @@ type FragmentDIDDocRequestService struct {
 
 func (dd *FragmentDIDDocRequestService) Setup(c services.ResolverContext) error {
 	dd.IsDereferencing = true
+	split := strings.Split(c.Param("did"), "#")
+	if len(split) == 2 {
+		dd.Fragment = split[1]
+	}
 	return nil
 }
 
@@ -25,11 +29,6 @@ func (dd *FragmentDIDDocRequestService) SpecificValidation(c services.ResolverCo
 }
 
 func (dd *FragmentDIDDocRequestService) SpecificPrepare(c services.ResolverContext) error {
-	split := strings.Split(c.Param("did"), "#")
-
-	if len(split) == 2 {
-		dd.Fragment = split[1]
-	}
 	return nil
 }
 

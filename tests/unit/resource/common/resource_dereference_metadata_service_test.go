@@ -35,7 +35,6 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 		Expect(testCase.expectedError.Code).To(Equal(err.Code))
 		Expect(testCase.expectedError.Message).To(Equal(err.Message))
 	} else {
-		Expect(testCase.expectedResourceDereferencing.ContentStream).To(Equal(dereferencingResult.ContentStream))
 		Expect(testCase.expectedResourceDereferencing.Metadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
 		Expect(testCase.expectedResourceDereferencing.DereferencingMetadata.DidProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
@@ -57,8 +56,10 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: testconstants.ValidDereferencedResourceList,
-				Metadata:      types.ResolutionResourceMetadata{},
+				Metadata: types.NewDereferencedResource(
+					testconstants.ExistentDid,
+					testconstants.ValidResource[0].Metadata,
+				),
 			},
 			expectedError: nil,
 		},
@@ -78,8 +79,10 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: testconstants.ValidDereferencedResourceList,
-				Metadata:      types.ResolutionResourceMetadata{},
+				Metadata: types.NewDereferencedResource(
+					testconstants.ExistentDid,
+					testconstants.ValidResource[0].Metadata,
+				),
 			},
 			expectedError: nil,
 		},
@@ -99,7 +102,10 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				Metadata: types.ResolutionResourceMetadata{},
+				Metadata: types.NewDereferencedResource(
+					testconstants.ExistentDid,
+					testconstants.ValidResource[0].Metadata,
+				),
 			},
 			expectedError: types.NewNotFoundError(testconstants.NotExistentTestnetDid, types.DIDJSONLD, nil, true),
 		},
@@ -119,7 +125,8 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				Metadata: types.ResolutionResourceMetadata{},
+				ContentStream: nil,
+				Metadata:      nil,
 			},
 			expectedError: types.NewNotFoundError(testconstants.ExistentDid, types.DIDJSONLD, nil, true),
 		},
@@ -139,7 +146,8 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				Metadata: types.ResolutionResourceMetadata{},
+				ContentStream: nil,
+				Metadata:      nil,
 			},
 			expectedError: types.NewNotFoundError(testconstants.ExistentDid, types.DIDJSONLD, nil, true),
 		},

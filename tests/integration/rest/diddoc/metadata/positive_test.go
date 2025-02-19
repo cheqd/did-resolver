@@ -24,15 +24,15 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
 
-	var receivedDidDereferencing utils.DereferencingResult
-	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
+	var receivedDidResolution types.DidResolution
+	Expect(json.Unmarshal(resp.Body(), &receivedDidResolution)).To(BeNil())
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	var expectedDidDereferencing utils.DereferencingResult
-	Expect(utils.ConvertJsonFileToType(testCase.ExpectedJSONPath, &expectedDidDereferencing)).To(BeNil())
+	var expectedDidResolution types.DidResolution
+	Expect(utils.ConvertJsonFileToType(testCase.ExpectedJSONPath, &expectedDidResolution)).To(BeNil())
 
 	Expect(testCase.ExpectedEncodingType).To(Equal(resp.Header().Get("Content-Encoding")))
-	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
+	utils.AssertDidResolution(expectedDidResolution, receivedDidResolution)
 },
 
 	Entry(
@@ -104,6 +104,23 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 	),
 
 	Entry(
+		"can get DIDDoc version metadata with an existent UUID style testnet DID and versionId with Chrome Accept header",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s/version/%s/metadata",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+				testconstants.UUIDStyleTestnetVersionId,
+			),
+			ResolutionType:       testconstants.ChromeResolutionType,
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
 		"can get DIDDoc version metadata with an existent old 16 characters Indy style testnet DID and versionId",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
@@ -155,7 +172,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 	),
 
 	Entry(
-		"can get DIDDoc version metadata with an existent DID and versionId, and supported DIDJSONLD resolution type",
+		"can get DIDDoc version metadata with an existent DID and versionId, and supported JSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/version/%s/metadata",
@@ -163,7 +180,7 @@ var _ = DescribeTable("Positive: Get DIDDoc version metadata", func(testCase uti
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 			),
-			ResolutionType:       string(types.DIDJSONLD),
+			ResolutionType:       string(types.JSONLD),
 			EncodingType:         testconstants.DefaultEncodingType,
 			ExpectedEncodingType: "gzip",
 			ExpectedJSONPath:     "../../testdata/diddoc_version_metadata/diddoc_uuid_testnet_did.json",

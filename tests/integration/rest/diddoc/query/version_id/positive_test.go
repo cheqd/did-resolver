@@ -50,6 +50,21 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionId query", func(testCase
 	),
 
 	Entry(
+		"can get DIDDoc with versionId query parameter with Chrome Accept header",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?versionId=%s",
+				testconstants.TestHostAddress,
+				testconstants.SeveralVersionsDID,
+				"0ce23d04-5b67-4ea6-a315-788588e53f4e",
+			),
+			ResolutionType:     testconstants.ChromeResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/diddoc/diddoc_version_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
 		"can get DIDDoc with an old 16 characters INDY style DID and versionId query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(

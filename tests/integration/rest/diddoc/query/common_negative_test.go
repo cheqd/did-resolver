@@ -39,11 +39,11 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 				testconstants.TestHostAddress,
 				testconstants.SeveralVersionsDID,
 			),
-			ResolutionType: testconstants.DefaultResolutionType,
+			ResolutionType: string(types.DIDJSON),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.DIDJSON,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -71,7 +71,7 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -99,7 +99,7 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -127,7 +127,7 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -155,7 +155,7 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -183,7 +183,7 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -211,7 +211,7 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -239,7 +239,7 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -268,7 +268,7 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -297,7 +297,7 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -326,7 +326,7 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -355,7 +355,7 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -383,7 +383,7 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -412,7 +412,7 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -441,7 +441,7 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -470,7 +470,7 @@ var _ = DescribeTable("Negative: request with common query parameters", func(tes
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,

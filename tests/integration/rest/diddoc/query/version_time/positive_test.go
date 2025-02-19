@@ -50,6 +50,21 @@ var _ = DescribeTable("Positive: Get DIDDoc with versionTime query", func(testCa
 	),
 
 	Entry(
+		"can get DIDDoc with an old 16 characters INDY style DID and versionTime query parameter with Chrome Accept header",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?versionTime=%s",
+				testconstants.TestHostAddress,
+				testconstants.OldIndy16CharStyleTestnetDid,
+				"2022-10-13T06:09:04Z",
+			),
+			ResolutionType:     testconstants.ChromeResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/version_time/diddoc_version_time_16_old_indy_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
 		"can get DIDDoc with an old 32 characters INDY style DID and versionTime query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(

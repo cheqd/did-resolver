@@ -7,6 +7,7 @@ import (
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 )
 
 // DidDocEchoHandler godoc
@@ -42,18 +43,43 @@ import (
 //
 // We cannot add several responses here because of https://github.com/swaggo/swag/issues/815
 func DidDocEchoHandler(c echo.Context) error {
-	// ToDo: Make fragment detection better
-	isFragment := len(strings.Split(c.Param("did"), "#")) > 1
-	isQuery := len(c.Request().URL.Query()) > 0
-	isFullDidDoc := !isQuery && !isFragment
+	// Get Accept header
+	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
+	requestedContentType, profile := services.GetPriorityContentType(acceptHeader, false)
+	didParam := c.Param("did")
+	queryParams := c.Request().URL.Query()
+
+	if !requestedContentType.IsSupported() {
+		return types.NewRepresentationNotSupportedError(didParam, requestedContentType, nil, false)
+	}
+
+	log.Debug().Msgf("requestedContentType: %v, profile: %v", requestedContentType, profile)
+	// Detect fragment in DID and the presence of query parameters
+	isFragment := strings.Contains(didParam, "#")
+	isQuery := len(queryParams) > 0
+	isSingleQuery := len(queryParams) == 1
+	resourceQuery := c.QueryParam(types.ResourceMetadata) != ""
+	metadataQuery := c.QueryParam(types.Metadata) == "true"
 
 	switch {
-	case isFullDidDoc:
-		return services.EchoWrapHandler(&FullDIDDocRequestService{})(c)
+	// If Fragment is present, then we call FragmentDIDDocRequestService
 	case isFragment:
 		return services.EchoWrapHandler(&FragmentDIDDocRequestService{})(c)
+	// If there is only one query parameter and that query is 'metadata'
+	case isSingleQuery && metadataQuery:
+		return services.EchoWrapHandler(&DIDDocResourceDereferencingService{Profile: profile})(c)
+	// If there is only one query parameter and that query is 'resourceMetadata'
+	case isSingleQuery && resourceQuery:
+		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: c.QueryParam(types.ResourceMetadata)})(c)
+	// This case is for all other queries
 	case isQuery:
 		return services.EchoWrapHandler(&QueryDIDDocRequestService{})(c)
+	// If there are no query parameters, and contentType matches JSON or JSONLD, then we call FullDIDDocRequestService
+	case requestedContentType == types.JSON || (requestedContentType == types.JSONLD && profile == types.W3IDDIDRES):
+		return services.EchoWrapHandler(&FullDIDDocRequestService{})(c)
+	// For all other supported contentType, then we call OnlyDIDDocRequestService
+	case requestedContentType.IsSupported():
+		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: "default"})(c)
 	default:
 		// ToDo: make it more clearly
 		return types.NewInternalError(c.Param("did"), types.JSON, errors.New("Unknown internal error while getting the type of query"), true)
@@ -117,4 +143,30 @@ func DidDocVersionMetadataEchoHandler(c echo.Context) error {
 //	@Router			/{did}/versions [get]
 func DidDocAllVersionMetadataEchoHandler(c echo.Context) error {
 	return services.EchoWrapHandler(&DIDDocAllVersionMetadataRequestService{})(c)
+}
+
+// DidDocResourceCollectionEchoHandler godoc
+//
+//	@Summary		Fetch metadata for all Resources
+//	@Description	Get metadata for all Resources within a DID Resource Collection
+//	@Tags			Resource Resolution
+//	@Accept			application/did+ld+json,application/ld+json,application/did+json
+//	@Produce		application/did+ld+json,application/ld+json,application/did+json
+//	@Param			did	path		string	true	"Full DID with unique identifier"
+//	@Success		200	{object}	types.ResourceDereferencing{contentStream=types.ResolutionDidDocMetadata}
+//	@Failure		400	{object}	types.IdentityError
+//	@Failure		404	{object}	types.IdentityError
+//	@Failure		406	{object}	types.IdentityError
+//	@Failure		500	{object}	types.IdentityError
+//	@Failure		501	{object}	types.IdentityError
+//	@Router			/{did}/metadata [get]
+func DidDocResourceCollectionEchoHandler(c echo.Context) error {
+	// Get Accept header
+	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
+	requestedContentType, profile := services.GetPriorityContentType(acceptHeader, false)
+	didParam := c.Param("did")
+	if !requestedContentType.IsSupported() {
+		return types.NewRepresentationNotSupportedError(didParam, requestedContentType, nil, false)
+	}
+	return services.EchoWrapHandler(&DIDDocResourceDereferencingService{Profile: profile})(c)
 }

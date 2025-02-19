@@ -20,6 +20,7 @@ import (
 
 var _ = DescribeTable("Test Query handlers with versionId and versionTime params", func(testCase QueriesDIDDocTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
+	request.Header.Set("Accept", string(testCase.resolutionType))
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, MockLedger)
 	expectedDIDResolution := testCase.expectedResolution.(*types.DidResolution)
 
@@ -131,6 +132,33 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 			resolutionType:     types.DIDJSONLD,
 			expectedResolution: &types.DidResolution{},
 			expectedError:      types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+	Entry(
+		"Negative. Unsupported Accept Header",
+		QueriesDIDDocTestCase{
+			didURL:             fmt.Sprintf("/1.0/identifiers/%s", testconstants.ValidDid),
+			resolutionType:     types.TEXT,
+			expectedResolution: &types.DidResolution{},
+			expectedError:      types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.JSON, nil, false),
+		},
+	),
+	Entry(
+		"Negative. Invalid value for metadata query",
+		QueriesDIDDocTestCase{
+			didURL:             fmt.Sprintf("/1.0/identifiers/%s?metadata=xxxx", testconstants.ValidDid),
+			resolutionType:     types.JSONLD,
+			expectedResolution: &types.DidResolution{},
+			expectedError:      types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.JSONLD, nil, false),
+		},
+	),
+	Entry(
+		"Negative. Invalid value for resourceMetadata query",
+		QueriesDIDDocTestCase{
+			didURL:             fmt.Sprintf("/1.0/identifiers/%s?resourceMetadata=xxxx", testconstants.ValidDid),
+			resolutionType:     types.JSONLD,
+			expectedResolution: &types.DidResolution{},
+			expectedError:      types.NewInternalError(testconstants.ValidDid, types.JSONLD, nil, false),
 		},
 	),
 )

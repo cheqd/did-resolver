@@ -3,6 +3,7 @@
 package rest
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"os"
 
@@ -34,6 +35,13 @@ type DereferencingResult struct {
 	Metadata              types.ResolutionDidDocMetadata `json:"contentMetadata"`
 }
 
+type ResourceDereferencingResult struct {
+	Context               string                      `json:"@context,omitempty"`
+	DereferencingMetadata types.DereferencingMetadata `json:"dereferencingMetadata"`
+	ContentStream         *any                        `json:"contentStream"`
+	Metadata              *types.DereferencedResource `json:"contentMetadata,omitempty"`
+}
+
 func AssertDidDereferencing(expected DereferencingResult, received DereferencingResult) {
 	Expect(expected.Context).To(Equal(received.Context))
 	Expect(expected.DereferencingMetadata.ContentType).To(Equal(received.DereferencingMetadata.ContentType))
@@ -49,6 +57,29 @@ func AssertDidResolution(expected types.DidResolution, received types.DidResolut
 	Expect(expected.ResolutionMetadata.ResolutionError).To(Equal(received.ResolutionMetadata.ResolutionError))
 	Expect(expected.ResolutionMetadata.DidProperties).To(Equal(received.ResolutionMetadata.DidProperties))
 	Expect(expected.Did).To(Equal(received.Did))
+	Expect(expected.Metadata).To(Equal(received.Metadata))
+}
+
+func AssertResourceDataWithMetadata(expected ResourceDereferencingResult, received ResourceDereferencingResult) {
+	Expect(expected.Context).To(Equal(received.Context))
+	Expect(expected.DereferencingMetadata.ContentType).To(Equal(received.DereferencingMetadata.ContentType))
+	Expect(expected.DereferencingMetadata.ResolutionError).To(Equal(received.DereferencingMetadata.ResolutionError))
+	Expect(expected.DereferencingMetadata.DidProperties).To(Equal(received.DereferencingMetadata.DidProperties))
+	Expect(expected.ContentStream).To(Equal(received.ContentStream))
+	Expect(isBase64Encoded(received.ContentStream)).To(BeFalse())
+	Expect(expected.Metadata.ResourceType).To(Equal(received.Metadata.ResourceType))
+	Expect(expected.Metadata.ResourceId).To(Equal(received.Metadata.ResourceId))
+	Expect(expected.Metadata.Version).To(Equal(received.Metadata.Version))
+	Expect(expected.Metadata.Name).To(Equal(received.Metadata.Name))
+	Expect(expected.Metadata.CollectionId).To(Equal(received.Metadata.CollectionId))
+}
+
+func AssertResourceMetadata(expected ResourceDereferencingResult, received ResourceDereferencingResult) {
+	Expect(expected.Context).To(Equal(received.Context))
+	Expect(expected.DereferencingMetadata.ContentType).To(Equal(received.DereferencingMetadata.ContentType))
+	Expect(expected.DereferencingMetadata.ResolutionError).To(Equal(received.DereferencingMetadata.ResolutionError))
+	Expect(expected.DereferencingMetadata.DidProperties).To(Equal(received.DereferencingMetadata.DidProperties))
+	Expect(expected.ContentStream).To(Equal(received.ContentStream))
 	Expect(expected.Metadata).To(Equal(received.Metadata))
 }
 
@@ -74,4 +105,14 @@ func GetTextResource(path string) (string, error) {
 	}
 
 	return string(content), nil
+}
+
+func isBase64Encoded(s any) bool {
+	str, ok := s.(string)
+	if !ok {
+		return false
+	}
+
+	_, err := base64.StdEncoding.DecodeString(str)
+	return err == nil
 }
