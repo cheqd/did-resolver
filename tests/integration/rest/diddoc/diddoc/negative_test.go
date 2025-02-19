@@ -41,11 +41,11 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 				testconstants.TestHostAddress,
 				testconstants.UUIDStyleMainnetDid,
 			),
-			ResolutionType: string(types.JSON),
+			ResolutionType: string(types.TEXT),
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.JSON,
+					ContentType:     types.TEXT,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.UUIDStyleMainnetDid,
@@ -68,11 +68,11 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 				testconstants.TestHostAddress,
 				testconstants.NotExistentMainnetDid,
 			),
-			ResolutionType: string(types.JSON),
+			ResolutionType: string(types.TEXT),
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.JSON,
+					ContentType:     types.TEXT,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.NotExistentMainnetDid,

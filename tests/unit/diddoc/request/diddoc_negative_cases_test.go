@@ -138,7 +138,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 		"Negative. Unsupported Accept Header",
 		QueriesDIDDocTestCase{
 			didURL:             fmt.Sprintf("/1.0/identifiers/%s", testconstants.ValidDid),
-			resolutionType:     types.JSON,
+			resolutionType:     types.TEXT,
 			expectedResolution: &types.DidResolution{},
 			expectedError:      types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.JSON, nil, false),
 		},
@@ -158,7 +158,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 			didURL:             fmt.Sprintf("/1.0/identifiers/%s?resourceMetadata=xxxx", testconstants.ValidDid),
 			resolutionType:     types.JSONLD,
 			expectedResolution: &types.DidResolution{},
-			expectedError:      types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.JSONLD, nil, false),
+			expectedError:      types.NewInternalError(testconstants.ValidDid, types.JSONLD, nil, false),
 		},
 	),
 )

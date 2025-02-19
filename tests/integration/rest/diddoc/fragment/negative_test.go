@@ -40,7 +40,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 				testconstants.TestHostAddress,
 				testconstants.UUIDStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
-			ResolutionType: string(types.JSON),
+			ResolutionType: string(types.TEXT),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
@@ -63,7 +63,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 				testconstants.TestHostAddress,
 				testconstants.NotExistentMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
-			ResolutionType: string(types.JSON),
+			ResolutionType: string(types.TEXT),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{

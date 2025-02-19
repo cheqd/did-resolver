@@ -109,7 +109,7 @@ var _ = DescribeTable("Test DidDocResourceCollectionEchoHandler function", func(
 		"invalid representation",
 		resourceCollectionTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.ExistentDid),
-			resolutionType: types.JSON,
+			resolutionType: types.TEXT,
 			expectedResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{

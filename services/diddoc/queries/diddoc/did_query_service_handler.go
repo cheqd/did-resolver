@@ -30,7 +30,7 @@ func (s *ServiceHandler) Handle(c services.ResolverContext, service services.Req
 	}
 
 	if result == "" {
-		return nil, types.NewNotFoundError(service.GetDid(), types.DIDJSONLD, nil, service.GetDereferencing())
+		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, service.GetDereferencing())
 	}
 	// Call the next handler
 	return s.Continue(c, service, types.NewServiceResult(result))
