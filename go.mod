@@ -5,7 +5,7 @@ go 1.23
 toolchain go1.23.6
 
 require (
-	github.com/cheqd/cheqd-node/api/v2 v2.3.4-develop.1
+	github.com/cheqd/cheqd-node/api/v2 v2.3.4
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/google/uuid v1.6.0
 	github.com/labstack/echo/v4 v4.13.3
