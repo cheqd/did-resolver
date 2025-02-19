@@ -59,15 +59,11 @@ func DidDocEchoHandler(c echo.Context) error {
 	isQuery := len(queryParams) > 0
 	isSingleQuery := len(queryParams) == 1
 	resourceQuery := c.QueryParam(types.ResourceMetadata) != ""
-	metadataQuery := c.QueryParam(types.Metadata) == "true"
 
 	switch {
 	// If Fragment is present, then we call FragmentDIDDocRequestService
 	case isFragment:
 		return services.EchoWrapHandler(&FragmentDIDDocRequestService{})(c)
-	// If there is only one query parameter and that query is 'metadata'
-	case isSingleQuery && metadataQuery:
-		return services.EchoWrapHandler(&DIDDocMetadataService{Profile: profile})(c)
 	// If there is only one query parameter and that query is 'resourceMetadata'
 	case isSingleQuery && resourceQuery:
 		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: c.QueryParam(types.ResourceMetadata)})(c)
@@ -144,7 +140,6 @@ func DidDocVersionMetadataEchoHandler(c echo.Context) error {
 func DidDocAllVersionMetadataEchoHandler(c echo.Context) error {
 	return services.EchoWrapHandler(&DIDDocAllVersionMetadataRequestService{})(c)
 }
-
 
 // DidDocMetadataEchoHandler godoc
 //
