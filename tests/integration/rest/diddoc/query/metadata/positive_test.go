@@ -48,6 +48,20 @@ var _ = DescribeTable("Positive: Get DIDDoc with metadata query", func(testCase 
 	),
 
 	Entry(
+		"can get DIDDoc metadata with metadata=true query parameter with Chrome Accept header",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?metadata=true",
+				testconstants.TestHostAddress,
+				testconstants.IndyStyleMainnetDid,
+			),
+			ResolutionType:     testconstants.ChromeResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/metadata/diddoc_metadata_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
 		"can get DIDDoc metadata with metadata=false query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(

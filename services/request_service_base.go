@@ -42,10 +42,10 @@ func (dd BaseRequestService) GetDereferencing() bool {
 
 // Basic implementation
 func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
-	// Here we raise errors even they were caught while getting the data from context
-
+	// resourceCheck variable to decide if we need to check if the resource is dereferencing
+	resourceCheck := dd.IsDereferencing && dd.Fragment == ""
 	// Get Accept header
-	dd.RequestedContentType, _ = GetPriorityContentType(c.Request().Header.Get(echo.HeaderAccept), dd.IsDereferencing)
+	dd.RequestedContentType, _ = GetPriorityContentType(c.Request().Header.Get(echo.HeaderAccept), resourceCheck)
 	if !dd.GetContentType().IsSupported() {
 		return types.NewRepresentationNotSupportedError(dd.GetDid(), types.JSON, nil, dd.IsDereferencing)
 	}

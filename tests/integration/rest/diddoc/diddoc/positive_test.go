@@ -101,6 +101,22 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase utils.PositiveTestCa
 	),
 
 	Entry(
+		"can get DIDDoc with an existent UUID style testnet DID with Chrome Accept header",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+			),
+			ResolutionType:       testconstants.ChromeResolutionType,
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/diddoc/diddoc_uuid_testnet_did.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
 		"can get DIDDoc with an existent old 16 characters INDY style testnet DID",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(

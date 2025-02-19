@@ -50,6 +50,22 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 	),
 
 	Entry(
+		"can get DIDDoc with an existent versionId and versionTime query parameters with Chrome Accept header",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?versionId=%s&versionTime=%s",
+				testconstants.TestHostAddress,
+				testconstants.SeveralVersionsDID,
+				"ce298b6f-594b-426e-b431-370d6bc5d3ad",
+				"2023-03-06T09:39:49Z",
+			),
+			ResolutionType:     testconstants.ChromeResolutionType,
+			ExpectedJSONPath:   "../../testdata/query/diddoc_common/version_id/version_time.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
 		"can get DIDDoc with an existent versionId and transformKeys query parameters",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
