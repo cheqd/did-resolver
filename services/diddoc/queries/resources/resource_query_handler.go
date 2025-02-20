@@ -29,17 +29,8 @@ func (d *ResourceQueryHandler) Handle(c services.ResolverContext, service servic
 	// in case of ResourceDereferencing response
 	casted_did_resolution, ok := response.(*types.DidResolution)
 	if !ok {
-		casted_resource_deref, ok := response.(*types.ResourceDereferencing)
-		if !ok {
-			return nil, types.NewInternalError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
-		}
-		content, ok := casted_resource_deref.ContentStream.(*types.ResolutionDidDocMetadata)
-		if !ok {
-			return nil, types.NewInternalError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
-		}
-		// Call the next handler
-		return d.Continue(c, service, content)
+		return nil, types.NewInternalError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 	}
 	// Call the next handler
-	return d.Continue(c, service, casted_did_resolution.Metadata)
+	return d.Continue(c, service, casted_did_resolution)
 }

@@ -18,19 +18,19 @@ func (d *ResourceCollectionIdHandler) Handle(c services.ResolverContext, service
 	}
 
 	// Cast to just list of resources
-	resourceCollection, err := d.CastToContent(service, response)
+	didResolution, err := d.CastToContent(service, response)
 	if err != nil {
 		return nil, err
 	}
 
 	// Filter the list of metadata by the resourceCollectionId
-	resourceCollectionFiltered := resourceCollection.Resources.FilterByCollectionId(resourceCollectionId)
+	resourceCollectionFiltered := didResolution.Metadata.Resources.FilterByCollectionId(resourceCollectionId)
 	if len(resourceCollectionFiltered) == 0 {
 		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 	}
 
-	resourceCollection.Resources = resourceCollectionFiltered
+	didResolution.Metadata.Resources = resourceCollectionFiltered
 
 	// Call the next handler
-	return d.Continue(c, service, resourceCollection)
+	return d.Continue(c, service, didResolution)
 }

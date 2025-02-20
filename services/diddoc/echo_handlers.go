@@ -7,7 +7,6 @@ import (
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
-	"github.com/rs/zerolog/log"
 )
 
 // DidDocEchoHandler godoc
@@ -53,20 +52,14 @@ func DidDocEchoHandler(c echo.Context) error {
 		return types.NewRepresentationNotSupportedError(didParam, requestedContentType, nil, false)
 	}
 
-	log.Debug().Msgf("requestedContentType: %v, profile: %v", requestedContentType, profile)
 	// Detect fragment in DID and the presence of query parameters
 	isFragment := strings.Contains(didParam, "#")
 	isQuery := len(queryParams) > 0
-	isSingleQuery := len(queryParams) == 1
-	resourceQuery := c.QueryParam(types.ResourceMetadata) != ""
 
 	switch {
 	// If Fragment is present, then we call FragmentDIDDocRequestService
 	case isFragment:
 		return services.EchoWrapHandler(&FragmentDIDDocRequestService{})(c)
-	// If there is only one query parameter and that query is 'resourceMetadata'
-	case isSingleQuery && resourceQuery:
-		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: c.QueryParam(types.ResourceMetadata)})(c)
 	// This case is for all other queries
 	case isQuery:
 		return services.EchoWrapHandler(&QueryDIDDocRequestService{})(c)
@@ -75,7 +68,7 @@ func DidDocEchoHandler(c echo.Context) error {
 		return services.EchoWrapHandler(&FullDIDDocRequestService{})(c)
 	// For all other supported contentType, then we call OnlyDIDDocRequestService
 	case requestedContentType.IsSupported():
-		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: "default"})(c)
+		return services.EchoWrapHandler(&OnlyDIDDocRequestService{})(c)
 	default:
 		// ToDo: make it more clearly
 		return types.NewInternalError(c.Param("did"), types.JSON, errors.New("Unknown internal error while getting the type of query"), true)

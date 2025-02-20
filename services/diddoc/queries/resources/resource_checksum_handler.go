@@ -18,19 +18,19 @@ func (d *ResourceChecksumHandler) Handle(c services.ResolverContext, service ser
 	}
 
 	// Cast to just list of resources
-	resourceCollection, err := d.CastToContent(service, response)
+	didResolution, err := d.CastToContent(service, response)
 	if err != nil {
 		return nil, err
 	}
 
 	// Filter the list of metadatas by the resourceCollectionId
-	resourceCollectionFiltered := resourceCollection.Resources.FilterByChecksum(resourceChecksum)
+	resourceCollectionFiltered := didResolution.Metadata.Resources.FilterByChecksum(resourceChecksum)
 	if len(resourceCollectionFiltered) == 0 {
 		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 	}
 
-	resourceCollection.Resources = resourceCollectionFiltered
+	didResolution.Metadata.Resources = resourceCollectionFiltered
 
 	// Call the next handler
-	return d.Continue(c, service, resourceCollection)
+	return d.Continue(c, service, didResolution)
 }

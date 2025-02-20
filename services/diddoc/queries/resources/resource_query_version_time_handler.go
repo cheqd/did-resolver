@@ -18,12 +18,12 @@ func (d *ResourceVersionTimeHandler) Handle(c services.ResolverContext, service 
 	}
 
 	// Cast to just list of resources
-	resourceCollection, err := d.CastToContent(service, response)
+	didResolution, err := d.CastToContent(service, response)
 	if err != nil {
 		return nil, err
 	}
 	// Get resourceId of the resource with the closest time to the requested time
-	resourceList, err := resourceCollection.Resources.FindAllBeforeTime(resourceVersionTime)
+	resourceList, err := didResolution.Metadata.Resources.FindAllBeforeTime(resourceVersionTime)
 	if err != nil {
 		return nil, types.NewRepresentationNotSupportedError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 	}
@@ -31,8 +31,8 @@ func (d *ResourceVersionTimeHandler) Handle(c services.ResolverContext, service 
 		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 	}
 
-	resourceCollection.Resources = resourceList
+	didResolution.Metadata.Resources = resourceList
 
 	// Call the next handler
-	return d.Continue(c, service, resourceCollection)
+	return d.Continue(c, service, didResolution)
 }

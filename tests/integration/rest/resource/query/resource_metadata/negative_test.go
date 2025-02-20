@@ -40,12 +40,12 @@ var _ = DescribeTable("Negative: Get Resource Metadata with resourceMetadata que
 				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
-			ResolutionType: string(types.DIDJSONLD),
+			ResolutionType: string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
-					ResolutionError: "internalError",
+					ContentType:     types.JSONLD,
+					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.UUIDStyleTestnetDid,
 						MethodSpecificId: testconstants.UUIDStyleTestnetId,
@@ -55,7 +55,7 @@ var _ = DescribeTable("Negative: Get Resource Metadata with resourceMetadata que
 				Did:      nil,
 				Metadata: nil,
 			},
-			ExpectedStatusCode: errors.InternalErrorHttpCode,
+			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
 		},
 	),
 )

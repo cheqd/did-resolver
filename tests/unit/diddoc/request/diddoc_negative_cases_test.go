@@ -158,7 +158,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 			didURL:             fmt.Sprintf("/1.0/identifiers/%s?resourceMetadata=xxxx", testconstants.ValidDid),
 			resolutionType:     types.JSONLD,
 			expectedResolution: &types.DidResolution{},
-			expectedError:      types.NewInternalError(testconstants.ValidDid, types.JSONLD, nil, false),
+			expectedError:      types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.JSONLD, nil, false),
 		},
 	),
 	Entry(
@@ -185,7 +185,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 			didURL:             fmt.Sprintf("/1.0/identifiers/%s?resourceMetadata=xxxx", testconstants.ValidDid),
 			resolutionType:     types.JSONLD,
 			expectedResolution: &types.DidResolution{},
-			expectedError:      types.NewInternalError(testconstants.ValidDid, types.JSONLD, nil, false),
+			expectedError:      types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.JSONLD, nil, false),
 		},
 	),
 	Entry(
@@ -212,7 +212,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 			didURL:             fmt.Sprintf("/1.0/identifiers/%s?resourceMetadata=xxxx", testconstants.ValidDid),
 			resolutionType:     types.JSONLD,
 			expectedResolution: &types.DidResolution{},
-			expectedError:      types.NewInternalError(testconstants.ValidDid, types.JSONLD, nil, false),
+			expectedError:      types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.JSONLD, nil, false),
 		},
 	),
 )

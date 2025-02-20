@@ -5,6 +5,7 @@ package resource_metadata_test
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/cheqd/did-resolver/types"
 	"net/http"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
@@ -22,14 +23,14 @@ var _ = DescribeTable("Positive: Get Resource Metadata with resourceMetadata que
 		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
 
-	var receivedDidDereferencing utils.DereferencingResult
-	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
+	var receivedDidResolution types.DidResolution
+	Expect(json.Unmarshal(resp.Body(), &receivedDidResolution)).To(BeNil())
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	var expectedDidDereferencing utils.DereferencingResult
-	Expect(utils.ConvertJsonFileToType(testCase.ExpectedJSONPath, &expectedDidDereferencing)).To(BeNil())
+	var expectedDidResolution types.DidResolution
+	Expect(utils.ConvertJsonFileToType(testCase.ExpectedJSONPath, &expectedDidResolution)).To(BeNil())
 
-	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
+	utils.AssertDidResolution(expectedDidResolution, receivedDidResolution)
 },
 
 	Entry(
@@ -40,7 +41,7 @@ var _ = DescribeTable("Positive: Get Resource Metadata with resourceMetadata que
 				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
-			ResolutionType:     testconstants.DefaultResolutionType,
+			ResolutionType:     string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
 			ExpectedJSONPath:   "../../../testdata/query/resource_metadata/metadata.json",
 			ExpectedStatusCode: http.StatusOK,
 		},
@@ -54,8 +55,8 @@ var _ = DescribeTable("Positive: Get Resource Metadata with resourceMetadata que
 				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
-			ResolutionType:     testconstants.DefaultResolutionType,
-			ExpectedJSONPath:   "../../../testdata/query/resource_metadata/metadata.json",
+			ResolutionType:     string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			ExpectedJSONPath:   "../../../testdata/query/resource_metadata/metadata_false.json",
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
@@ -68,7 +69,7 @@ var _ = DescribeTable("Positive: Get Resource Metadata with resourceMetadata que
 				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 			),
-			ResolutionType:     testconstants.DefaultResolutionType,
+			ResolutionType:     string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
 			ExpectedJSONPath:   "../../../testdata/query/resource_metadata/metadata_32_indy_did.json",
 			ExpectedStatusCode: http.StatusOK,
 		},
