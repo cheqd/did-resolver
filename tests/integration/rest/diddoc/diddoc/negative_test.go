@@ -41,13 +41,17 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 				testconstants.TestHostAddress,
 				testconstants.UUIDStyleMainnetDid,
 			),
-			ResolutionType: string(types.JSON),
+			ResolutionType: string(types.TEXT),
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.JSON,
+					ContentType:     types.TEXT,
 					ResolutionError: "representationNotSupported",
-					DidProperties:   types.DidProperties{},
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.UUIDStyleMainnetDid,
+						MethodSpecificId: "c82f2b02-bdab-4dd7-b833-3e143745d612",
+						Method:           testconstants.ValidMethod,
+					},
 				},
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
@@ -64,13 +68,17 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 				testconstants.TestHostAddress,
 				testconstants.NotExistentMainnetDid,
 			),
-			ResolutionType: string(types.JSON),
+			ResolutionType: string(types.TEXT),
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.JSON,
+					ContentType:     types.TEXT,
 					ResolutionError: "representationNotSupported",
-					DidProperties:   types.DidProperties{},
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.NotExistentMainnetDid,
+						MethodSpecificId: testconstants.NotExistentIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
 				},
 				Did:      nil,
 				Metadata: types.ResolutionDidDocMetadata{},
@@ -91,7 +99,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.NotExistentMainnetDid,
@@ -118,7 +126,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.NotExistentTestnetDid,
@@ -145,7 +153,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.MainnetDidWithInvalidMethod,
@@ -172,7 +180,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.TestnetDidWithInvalidMethod,
@@ -199,7 +207,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "invalidDid",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.DidWithInvalidNamespace,
@@ -226,7 +234,7 @@ var _ = DescribeTable("Negative: Get DIDDoc", func(testCase utils.NegativeTestCa
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.InvalidDid,

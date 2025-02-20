@@ -66,11 +66,7 @@ func AssertResourceDataWithMetadata(expected ResourceDereferencingResult, receiv
 	Expect(expected.DereferencingMetadata.ResolutionError).To(Equal(received.DereferencingMetadata.ResolutionError))
 	Expect(expected.DereferencingMetadata.DidProperties).To(Equal(received.DereferencingMetadata.DidProperties))
 	Expect(expected.ContentStream).To(Equal(received.ContentStream))
-	if expected.Metadata.MediaType != string(types.JSON) && expected.Metadata.MediaType != string(types.TEXT) {
-		Expect(isBase64Encoded(received.ContentStream)).To(BeTrue())
-	} else {
-		Expect(isBase64Encoded(received.ContentStream)).To(BeFalse())
-	}
+	Expect(isBase64Encoded(received.ContentStream)).To(BeFalse())
 	Expect(expected.Metadata.ResourceType).To(Equal(received.Metadata.ResourceType))
 	Expect(expected.Metadata.ResourceId).To(Equal(received.Metadata.ResourceId))
 	Expect(expected.Metadata.Version).To(Equal(received.Metadata.Version))

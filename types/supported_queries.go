@@ -40,6 +40,7 @@ var DidSupportedQueries = SupportedQueriesT{
 	VersionId,
 	VersionTime,
 	TransformKeys,
+	ResourceMetadata,
 	ServiceQ,
 	RelativeRef,
 	Metadata,

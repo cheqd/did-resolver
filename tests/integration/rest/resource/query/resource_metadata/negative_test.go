@@ -44,18 +44,14 @@ var _ = DescribeTable("Negative: Get Resource Metadata with resourceMetadata que
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
-					ResolutionError: "representationNotSupported",
-					DidProperties: types.DidProperties{
-						DidString:        testconstants.UUIDStyleTestnetDid,
-						MethodSpecificId: testconstants.UUIDStyleTestnetId,
-						Method:           testconstants.ValidMethod,
-					},
+					ContentType:     types.JSON,
+					ResolutionError: "internalError",
+					DidProperties:   types.DidProperties{},
 				},
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
+			ExpectedStatusCode: errors.InternalErrorHttpCode,
 		},
 	),
 )

@@ -11,6 +11,7 @@ import (
 
 var (
 	DefaultResolutionType    = "*/*"
+	ChromeResolutionType     = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
 	DefaultEncodingType      = "gzip, deflate, br"
 	NotSupportedEncodingType = "deflate, br"
 )
@@ -168,6 +169,15 @@ var (
 	ValidResourceDereferencing    = types.DereferencedResourceData(ValidResource[0].Resource.Data)
 	ValidDereferencedResourceList = types.NewDereferencedResourceListStruct(ExistentDid, []*resourceTypes.Metadata{ValidResource[0].Metadata})
 	ValidDid                      = ValidDIDDoc.Id
+	ValidDIDDocMetadata           = types.ResolutionDidDocMetadata{
+		Created:           &ValidCreated,
+		Updated:           nil,
+		Deactivated:       false,
+		NextVersionId:     "",
+		PreviousVersionId: "",
+		VersionId:         ValidVersionId,
+		Resources:         ValidDereferencedResourceList.Resources,
+	}
 )
 
 var DIDStructure = "did:%s:%s:%s"

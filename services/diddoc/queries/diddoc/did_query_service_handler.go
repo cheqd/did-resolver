@@ -18,7 +18,6 @@ func (s *ServiceHandler) Handle(c services.ResolverContext, service services.Req
 	if serviceValue == "" {
 		return s.Continue(c, service, response)
 	}
-
 	// We expect here only DidResolution
 	didResolution, ok := response.(*types.DidResolution)
 	if !ok {
@@ -27,13 +26,12 @@ func (s *ServiceHandler) Handle(c services.ResolverContext, service services.Req
 
 	result, err := didResolution.GetServiceByName(serviceValue)
 	if err != nil {
-		return nil, err
+		return nil, types.NewInternalError(service.GetDid(), types.JSONLD, nil, service.GetDereferencing())
 	}
 
 	if result == "" {
-		return nil, types.NewNotFoundError(service.GetDid(), types.DIDJSONLD, nil, service.GetDereferencing())
+		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, service.GetDereferencing())
 	}
-
 	// Call the next handler
 	return s.Continue(c, service, types.NewServiceResult(result))
 }

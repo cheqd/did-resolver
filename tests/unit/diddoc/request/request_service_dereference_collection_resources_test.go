@@ -13,42 +13,34 @@ import (
 	. "github.com/onsi/gomega"
 
 	resourceTypes "github.com/cheqd/cheqd-node/api/v2/cheqd/resource/v2"
-	resourceServices "github.com/cheqd/did-resolver/services/resource"
+	didDocServices "github.com/cheqd/did-resolver/services/diddoc"
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	utils "github.com/cheqd/did-resolver/tests/unit"
 	"github.com/cheqd/did-resolver/types"
 )
 
 type resourceCollectionTestCase struct {
-	didURL                      string
-	resolutionType              types.ContentType
-	expectedDereferencingResult *DereferencingResult
-	expectedError               error
+	didURL             string
+	resolutionType     types.ContentType
+	expectedResolution types.ResolutionResultI
+	expectedError      *types.IdentityError
 }
 
-var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCase resourceCollectionTestCase) {
+var _ = DescribeTable("Test DidDocResourceCollectionEchoHandler function", func(testCase resourceCollectionTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, utils.MockLedger)
+	expectedDIDResolution := testCase.expectedResolution.(*types.DidResolution)
+	expectedContentType := utils.DefineContentType(expectedDIDResolution.ResolutionMetadata.ContentType, testCase.resolutionType)
 
-	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
-		testCase.expectedDereferencingResult.ContentStream.AddContext(types.DIDSchemaJSONLD)
-	} else if testCase.expectedDereferencingResult.ContentStream != nil {
-		testCase.expectedDereferencingResult.ContentStream.RemoveContext()
-	}
-
-	expectedContentType := utils.DefineContentType(testCase.expectedDereferencingResult.DereferencingMetadata.ContentType, testCase.resolutionType)
-
-	err := resourceServices.ResourceCollectionEchoHandler(context)
+	err := didDocServices.DidDocResourceCollectionEchoHandler(context)
 	if testCase.expectedError != nil {
-		Expect(testCase.expectedError.Error(), err.Error())
+		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
 	} else {
-		var dereferencingResult DereferencingResult
+		var resolutionResult types.DidResolution
 		Expect(err).To(BeNil())
-		Expect(json.Unmarshal(rec.Body.Bytes(), &dereferencingResult)).To(BeNil())
-		Expect(testCase.expectedDereferencingResult.ContentStream).To(Equal(dereferencingResult.ContentStream))
-		Expect(testCase.expectedDereferencingResult.Metadata).To(Equal(dereferencingResult.Metadata))
-		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
-		Expect(testCase.expectedDereferencingResult.DereferencingMetadata.DidProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
+		Expect(json.Unmarshal(rec.Body.Bytes(), &resolutionResult)).To(BeNil())
+		Expect(expectedDIDResolution.Metadata).To(Equal(resolutionResult.Metadata))
+		Expect(expectedContentType).To(Equal(resolutionResult.ResolutionMetadata.ContentType))
 		Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
 	}
 },
@@ -57,20 +49,19 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 		"can get collection of resource with an existent DID",
 		resourceCollectionTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.ExistentDid),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			resolutionType: types.JSONLD,
+			expectedResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ExistentDid,
+				Metadata: types.NewResolutionDidDocMetadata(
+					testconstants.ExistentDid, &testconstants.ValidMetadata,
 					[]*resourceTypes.Metadata{testconstants.ValidResource[0].Metadata},
 				),
-				Metadata: nil,
 			},
 			expectedError: nil,
 		},
@@ -81,16 +72,15 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 		resourceCollectionTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.NotExistentTestnetDid),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.NotExistentTestnetDid,
 						MethodSpecificId: testconstants.NotExistentIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      &types.ResolutionDidDocMetadata{},
+				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			expectedError: types.NewNotFoundError(testconstants.NotExistentTestnetDid, types.DIDJSONLD, nil, false),
 		},
@@ -101,16 +91,15 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 		resourceCollectionTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.InvalidDid),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.InvalidDid,
 						MethodSpecificId: testconstants.InvalidIdentifier,
 						Method:           testconstants.InvalidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      &types.ResolutionDidDocMetadata{},
+				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			expectedError: types.NewMethodNotSupportedError(testconstants.InvalidDid, types.DIDJSONLD, nil, false),
 		},
@@ -120,17 +109,16 @@ var _ = DescribeTable("Test ResourceCollectionEchoHandler function", func(testCa
 		"invalid representation",
 		resourceCollectionTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.ExistentDid),
-			resolutionType: types.JSON,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			resolutionType: types.TEXT,
+			expectedResolution: &types.DidResolution{
+				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      &types.ResolutionDidDocMetadata{},
+				Metadata: types.ResolutionDidDocMetadata{},
 			},
 			expectedError: types.NewRepresentationNotSupportedError(testconstants.ExistentDid, types.JSON, nil, false),
 		},
@@ -141,7 +129,7 @@ var _ = DescribeTable("Test redirect DID", func(testCase utils.RedirectDIDTestCa
 	request := httptest.NewRequest(http.MethodGet, testCase.DidURL, nil)
 	context, rec := utils.SetupEmptyContext(request, testCase.ResolutionType, utils.MockLedger)
 
-	err := resourceServices.ResourceCollectionEchoHandler(context)
+	err := didDocServices.DidDocResourceCollectionEchoHandler(context)
 	if err != nil {
 		Expect(testCase.ExpectedError.Error()).To(Equal(err.Error()))
 	} else {

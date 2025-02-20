@@ -118,7 +118,7 @@ var _ = DescribeTable("Test ResourceDataEchoHandler function", func(testCase res
 				testconstants.ExistentDid,
 				testconstants.ExistentResourceId,
 			),
-			resolutionType:   types.JSON,
+			resolutionType:   types.TEXT,
 			expectedResource: nil,
 			expectedError:    types.NewRepresentationNotSupportedError(testconstants.ExistentDid, types.JSON, nil, true),
 		},

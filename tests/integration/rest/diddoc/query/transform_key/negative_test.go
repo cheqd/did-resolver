@@ -51,7 +51,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.NotExistentTestnetDid,
@@ -78,7 +78,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        didWithEd25519VerificationKey2018Key,
@@ -106,7 +106,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        didWithEd25519VerificationKey2018Key,
@@ -135,7 +135,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        didWithEd25519VerificationKey2018Key,
@@ -163,7 +163,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        didWithEd25519VerificationKey2018Key,
@@ -191,7 +191,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        didWithEd25519VerificationKey2018Key,
@@ -219,7 +219,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        didWithEd25519VerificationKey2018Key,
@@ -247,7 +247,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        didWithEd25519VerificationKey2018Key,
@@ -276,7 +276,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        didWithEd25519VerificationKey2018Key,
@@ -304,7 +304,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        didWithEd25519VerificationKey2018Key,

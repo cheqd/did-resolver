@@ -18,6 +18,8 @@ func (cType ContentType) IsSupported() bool {
 		DIDJSON:   true,
 		DIDJSONLD: true,
 		JSONLD:    true,
+		DIDRES:    true,
+		JSON:      true,
 	}
 	return supportedTypes[cType]
 }

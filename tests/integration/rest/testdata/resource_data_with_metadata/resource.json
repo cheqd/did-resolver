@@ -1,7 +1,7 @@
 {
   "@context": "https://w3id.org/did-resolution/v1",
   "dereferencingMetadata": {
-    "contentType": "application/json",
+    "contentType": "application/ld+json",
     "retrieved": "2023-03-27T03:52:40Z",
     "did": {
       "didString": "did:cheqd:testnet:c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0",
@@ -9,9 +9,7 @@
       "method": "cheqd"
     }
   },
-  "contentStream": {
-    "content": "test data"
-  },
+  "contentStream": "eyAKICAgICJjb250ZW50IjogInRlc3QgZGF0YSIKfQ==",
   "contentMetadata": {
     "resourceURI": "did:cheqd:testnet:c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0/resources/9ba3922e-d5f5-4f53-b265-fc0d4e988c77",
     "resourceCollectionId": "c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0",

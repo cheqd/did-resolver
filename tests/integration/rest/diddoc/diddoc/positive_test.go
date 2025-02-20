@@ -101,6 +101,22 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase utils.PositiveTestCa
 	),
 
 	Entry(
+		"can get DIDDoc with an existent UUID style testnet DID with Chrome Accept header",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+			),
+			ResolutionType:       testconstants.ChromeResolutionType,
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/diddoc/diddoc_uuid_testnet_did.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
 		"can get DIDDoc with an existent old 16 characters INDY style testnet DID",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
@@ -149,6 +165,22 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase utils.PositiveTestCa
 	),
 
 	Entry(
+		"can get DIDDoc with an existent DID and supported JSONLD resolution type",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s",
+				testconstants.TestHostAddress,
+				testconstants.IndyStyleMainnetDid,
+			),
+			ResolutionType:       string(types.JSONLD) + ";profile=" + string(types.W3IDDIDRES),
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/diddoc/diddoc_indy_mainnet_did.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
 		"can get DIDDoc with an existent DID and supported DIDJSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
@@ -159,23 +191,7 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase utils.PositiveTestCa
 			ResolutionType:       string(types.DIDJSONLD),
 			EncodingType:         testconstants.DefaultEncodingType,
 			ExpectedEncodingType: "gzip",
-			ExpectedJSONPath:     "../../testdata/diddoc/diddoc_indy_mainnet_did.json",
-			ExpectedStatusCode:   http.StatusOK,
-		},
-	),
-
-	Entry(
-		"can get DIDDoc with an existent DID and supported JSONLD resolution type",
-		utils.PositiveTestCase{
-			DidURL: fmt.Sprintf(
-				"http://%s/1.0/identifiers/%s",
-				testconstants.TestHostAddress,
-				testconstants.IndyStyleMainnetDid,
-			),
-			ResolutionType:       string(types.JSONLD),
-			EncodingType:         testconstants.DefaultEncodingType,
-			ExpectedEncodingType: "gzip",
-			ExpectedJSONPath:     "../../testdata/diddoc/diddoc_indy_mainnet_did.json",
+			ExpectedJSONPath:     "../../testdata/diddoc/diddoc_indy_mainnet_did_ld.json",
 			ExpectedStatusCode:   http.StatusOK,
 		},
 	),

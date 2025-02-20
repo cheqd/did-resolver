@@ -40,12 +40,12 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 				testconstants.TestHostAddress,
 				testconstants.UUIDStyleMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
-			ResolutionType: string(types.JSON),
+			ResolutionType: string(types.TEXT),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.JSON,
-					ResolutionError: "representationNotSupported",
+					ContentType:     "",
+					ResolutionError: "",
 					DidProperties:   types.DidProperties{},
 				},
 				ContentStream: nil,
@@ -63,12 +63,12 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 				testconstants.TestHostAddress,
 				testconstants.NotExistentMainnetDid+url.PathEscape(testconstants.HashTag),
 			),
-			ResolutionType: string(types.JSON),
+			ResolutionType: string(types.TEXT),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.JSON,
-					ResolutionError: "representationNotSupported",
+					ContentType:     "",
+					ResolutionError: "",
 					DidProperties:   types.DidProperties{},
 				},
 				ContentStream: nil,
@@ -90,7 +90,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.NotExistentTestnetDid,
@@ -117,7 +117,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "methodNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.InvalidDid,
@@ -145,7 +145,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.IndyStyleTestnetDid,
@@ -173,7 +173,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.MigratedIndy16CharStyleTestnetDid,
@@ -201,7 +201,7 @@ var _ = DescribeTable("Negative: Get DID#fragment", func(testCase utils.Negative
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.MigratedIndy32CharStyleTestnetDid,

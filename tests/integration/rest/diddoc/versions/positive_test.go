@@ -24,15 +24,15 @@ var _ = DescribeTable("Positive: Get DIDDoc versions", func(testCase utils.Posit
 		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
 
-	var receivedDidDereferencing utils.DereferencingResult
-	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
+	var receivedDidResolution types.DidResolution
+	Expect(json.Unmarshal(resp.Body(), &receivedDidResolution)).To(BeNil())
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	var expectedDidDereferencing utils.DereferencingResult
-	Expect(utils.ConvertJsonFileToType(testCase.ExpectedJSONPath, &expectedDidDereferencing)).To(BeNil())
+	var expectedDidResolution types.DidResolution
+	Expect(utils.ConvertJsonFileToType(testCase.ExpectedJSONPath, &expectedDidResolution)).To(BeNil())
 
 	Expect(testCase.ExpectedEncodingType).To(Equal(resp.Header().Get("Content-Encoding")))
-	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
+	utils.AssertDidResolution(expectedDidResolution, receivedDidResolution)
 },
 
 	Entry(
@@ -44,6 +44,22 @@ var _ = DescribeTable("Positive: Get DIDDoc versions", func(testCase utils.Posit
 				testconstants.IndyStyleTestnetDid,
 			),
 			ResolutionType:       testconstants.DefaultResolutionType,
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/diddoc_versions/diddoc_versions.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get DIDDoc versions with an existent DID with Chrome Accept header",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s/versions",
+				testconstants.TestHostAddress,
+				testconstants.IndyStyleTestnetDid,
+			),
+			ResolutionType:       testconstants.ChromeResolutionType,
 			EncodingType:         testconstants.DefaultEncodingType,
 			ExpectedEncodingType: "gzip",
 			ExpectedJSONPath:     "../../testdata/diddoc_versions/diddoc_versions.json",
@@ -100,14 +116,14 @@ var _ = DescribeTable("Positive: Get DIDDoc versions", func(testCase utils.Posit
 	),
 
 	Entry(
-		"can get DIDDoc version with an existent DID, and supported DIDJSONLD resolution type",
+		"can get DIDDoc version with an existent DID, and supported JSONLD resolution type",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/versions",
 				testconstants.TestHostAddress,
 				testconstants.IndyStyleTestnetDid,
 			),
-			ResolutionType:       string(types.DIDJSONLD),
+			ResolutionType:       string(types.JSONLD),
 			EncodingType:         testconstants.DefaultEncodingType,
 			ExpectedEncodingType: "gzip",
 			ExpectedJSONPath:     "../../testdata/diddoc_versions/diddoc_versions.json",

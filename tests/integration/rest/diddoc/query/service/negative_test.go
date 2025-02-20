@@ -43,7 +43,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with service query", func(testCase u
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -70,7 +70,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with service query", func(testCase u
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -97,7 +97,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with service query", func(testCase u
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -126,7 +126,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with service query", func(testCase u
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -155,7 +155,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with service query", func(testCase u
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,
@@ -186,7 +186,7 @@ var _ = DescribeTable("Negative: Get DIDDoc with service query", func(testCase u
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.DIDJSONLD,
+					ContentType:     types.JSONLD,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.SeveralVersionsDID,

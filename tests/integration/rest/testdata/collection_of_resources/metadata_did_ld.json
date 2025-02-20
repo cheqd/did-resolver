@@ -1,6 +1,6 @@
 {
   "@context": "https://w3id.org/did-resolution/v1",
-  "dereferencingMetadata": {
+  "didResolutionMetadata": {
     "contentType": "application/did+ld+json",
     "retrieved": "2023-03-27T04:52:38Z",
     "did": {
@@ -9,7 +9,7 @@
       "method": "cheqd"
     }
   },
-  "contentStream": {
+  "didDocumentMetadata": {
     "created": "2023-01-25T11:58:10Z",
     "versionId": "e5615fc2-6f13-42b1-989c-49576a574cef",
     "linkedResourceMetadata": [
@@ -40,6 +40,5 @@
         "nextVersionId": null
       }
     ]
-  },
-  "contentMetadata": {}
+  }
 }
