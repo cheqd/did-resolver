@@ -102,4 +102,22 @@ var _ = DescribeTable("Positive: Get resource data with metadata", func(testCase
 			ExpectedStatusCode:   http.StatusOK,
 		},
 	),
+
+	Entry(
+		"can get resource with metadata with base64 content data for image with resource queries",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?resourceName=%s&resourceType=%s",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+				testconstants.ExistentResourceName,
+				testconstants.ExistentResourceType,
+			),
+			ResolutionType:       string(types.JSONLD) + ";profile=" + string(types.W3IDDIDURL),
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/resource_data_with_metadata/resource.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
 )
