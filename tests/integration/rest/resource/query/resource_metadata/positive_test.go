@@ -8,6 +8,8 @@ import (
 	"github.com/cheqd/did-resolver/types"
 	"net/http"
 
+	"github.com/cheqd/did-resolver/types"
+
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	utils "github.com/cheqd/did-resolver/tests/integration/rest"
 	"github.com/go-resty/resty/v2"

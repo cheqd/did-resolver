@@ -327,6 +327,9 @@ func (dd *QueryDIDDocRequestService) IsResourceData(result types.ResolutionResul
 	if !ok {
 		return false
 	}
+	if _result.Metadata != nil {
+		return false // Handle DereferenceResourceWithMetadata
+	}
 	_, ok = _result.ContentStream.(*types.DereferencedResourceData)
 	return ok
 }
