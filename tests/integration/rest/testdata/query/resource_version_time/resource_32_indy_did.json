@@ -10,8 +10,6 @@
         }
     },
     "contentStream": {
-        "created": "2022-10-12T08:57:25Z",
-        "versionId": "1dc202d4-26ee-54a9-b091-8d2e1f609722",
         "linkedResourceMetadata": [
             {
                 "resourceURI": "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu/resources/f31c68e6-61b5-4926-a932-40a13b4c4507",

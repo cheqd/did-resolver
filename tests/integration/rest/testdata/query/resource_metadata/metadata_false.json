@@ -1,0 +1,37 @@
+{
+  "@context": "https://w3id.org/did-resolution/v1",
+  "didResolutionMetadata": {
+    "contentType": "application/ld+json",
+    "retrieved": "2025-02-20T09:59:41Z",
+    "did": {
+      "didString": "did:cheqd:testnet:c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0",
+      "methodSpecificId": "c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0",
+      "method": "cheqd"
+    }
+  },
+  "didDocument": {
+    "@context": [
+      "https://www.w3.org/ns/did/v1",
+      "https://w3id.org/security/suites/ed25519-2020/v1"
+    ],
+    "id": "did:cheqd:testnet:c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0",
+    "controller": [
+      "did:cheqd:testnet:c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0"
+    ],
+    "verificationMethod": [
+      {
+        "id": "did:cheqd:testnet:c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0#key-1",
+        "type": "Ed25519VerificationKey2020",
+        "controller": "did:cheqd:testnet:c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0",
+        "publicKeyMultibase": "z6Mkjhidm3FJxUo4FekqyhXGMqrDLnrw9NtuzfmGQ61UXW1e"
+      }
+    ],
+    "authentication": [
+      "did:cheqd:testnet:c1685ca0-1f5b-439c-8eb8-5c0e85ab7cd0#key-1"
+    ]
+  },
+  "didDocumentMetadata": {
+    "created": "2023-01-25T11:58:10Z",
+    "versionId": "e5615fc2-6f13-42b1-989c-49576a574cef"
+  }
+}

@@ -47,7 +47,7 @@ var (
 	UUIDStyleTestnetDidResourceId                    = "9ba3922e-d5f5-4f53-b265-fc0d4e988c77"
 	UUIDTestnetDidResourceIdForImage                 = "398cee0a-efac-4643-9f4c-74c48c72a14b"
 	OldIndy32CharStyleTestnetDidIdentifierResourceId = "214b8b61-a861-416b-a7e4-45533af40ada"
-	ExistentResourceName                             = "Demo Resource"
+	ExistentResourceName                             = "Demo%20Resource"
 	ExistentResourceType                             = "String"
 	ExistentResourceVersion                          = ""
 	ExistentResourceMediaType                        = "application/json"

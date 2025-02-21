@@ -39,8 +39,8 @@ func (rds ResourceService) DereferenceResourceMetadata(did string, resourceId st
 	return &types.ResourceDereferencing{Context: context, Metadata: metadata, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
-func (rds ResourceService) DereferenceCollectionResources(did string, contentType types.ContentType) (*types.ResourceDereferencing, *types.IdentityError) {
-	dereferenceMetadata := types.NewDereferencingMetadata(did, contentType, "")
+func (rds ResourceService) ResolveMetadataResources(did string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {
+	resolutionMetadata := types.NewResolutionMetadata(did, contentType, "")
 
 	didDoc, err := rds.ledgerService.QueryDIDDoc(did, "")
 	if err != nil {
@@ -58,9 +58,9 @@ func (rds ResourceService) DereferenceCollectionResources(did string, contentTyp
 		context = types.ResolutionSchemaJSONLD
 	}
 
-	contentStream := types.NewResolutionDidDocMetadata(did, didDoc.Metadata, resources)
+	metadata := types.NewResolutionDidDocMetadata(did, didDoc.Metadata, resources)
 
-	return &types.ResourceDereferencing{Context: context, ContentStream: &contentStream, DereferencingMetadata: dereferenceMetadata}, nil
+	return &types.DidResolution{Context: context, Metadata: metadata, ResolutionMetadata: resolutionMetadata}, nil
 }
 
 func (rds ResourceService) ResolveCollectionResources(did string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {

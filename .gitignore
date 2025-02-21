@@ -1,6 +1,9 @@
 ### APP-SPECIFIC EXCLUSIONS ###
 
 # Files to ignore
+config.env
+
+# Folders to ignore
 build/
 
 ### GENERAL EXCLUSIONS ###

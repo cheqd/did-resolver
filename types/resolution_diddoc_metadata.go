@@ -18,7 +18,7 @@ type ResolutionDidDocMetadata struct {
 	Resources         DereferencedResourceList `json:"linkedResourceMetadata,omitempty"`
 }
 
-func NewResolutionDidDocMetadata(did string, metadata *didTypes.Metadata, resources []*resourceTypes.Metadata) ResolutionDidDocMetadata {
+func NewResolutionDidDocMetadata(did string, metadata *didTypes.Metadata, resources []*resourceTypes.Metadata) *ResolutionDidDocMetadata {
 	created := toTime(metadata.Created)
 	updated := toTime(metadata.Updated)
 
@@ -32,11 +32,11 @@ func NewResolutionDidDocMetadata(did string, metadata *didTypes.Metadata, resour
 	}
 
 	if len(resources) == 0 {
-		return newMetadata
+		return &newMetadata
 	}
 
 	newMetadata.Resources = NewDereferencedResourceListStruct(did, resources).Resources
-	return newMetadata
+	return &newMetadata
 }
 
 func TransformToFragmentMetadata(metadata ResolutionDidDocMetadata) ResolutionDidDocMetadata {

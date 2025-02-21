@@ -171,7 +171,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 		},
 	),
 	Entry(
-		"Positive. Metadata = false. Should return all the resources in metadata",
+		"Positive. Metadata = false. Should omit the metadata section",
 		QueriesDIDDocTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s?metadata=false", testconstants.ValidDid),
 			resolutionType: types.DIDJSONLD,
@@ -183,18 +183,8 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				Did: &testconstants.ValidDIDDocResolution,
-				Metadata: types.NewResolutionDidDocMetadata(
-					testconstants.ValidDid, &DidDocMetadata2,
-					[]*resourceTypes.Metadata{
-						ResourceType2.Metadata,
-						ResourceType12.Metadata,
-						ResourceType1.Metadata,
-						ResourceName2.Metadata,
-						ResourceName12.Metadata,
-						ResourceName1.Metadata,
-					},
-				),
+				Did:      &testconstants.ValidDIDDocResolution,
+				Metadata: nil,
 			},
 			expectedError: nil,
 		},

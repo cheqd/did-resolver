@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/labstack/echo/v4"
+
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/services/diddoc/queries"
 	diddocQueries "github.com/cheqd/did-resolver/services/diddoc/queries/diddoc"
@@ -26,7 +28,14 @@ func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext)
 	if dd.AreDidResolutionQueries(c) {
 		dd.IsDereferencing = false
 	} else {
-		dd.IsDereferencing = true
+		// if resource queries are provided and the profile is W3IDDIDRES then dereferencing is false
+		acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
+		_, profile := services.GetPriorityContentType(acceptHeader, true)
+		if profile == types.W3IDDIDRES {
+			dd.IsDereferencing = false
+		} else {
+			dd.IsDereferencing = true
+		}
 	}
 
 	// Register query handlers
@@ -42,11 +51,11 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 
 	diff := types.AllSupportedQueries.DiffWithUrlValues(dd.Queries)
 	if len(diff) > 0 {
-		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	if dd.AreQueryValuesEmpty(c) {
-		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
+		return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	versionId := dd.GetQueryParam(types.VersionId)
@@ -58,7 +67,6 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	resourceVersionTime := dd.GetQueryParam(types.ResourceVersionTime)
 	metadata := dd.GetQueryParam(types.Metadata)
 	resourceMetadata := dd.GetQueryParam(types.ResourceMetadata)
-
 	if string(transformKeys) != "" && (!transformKeys.IsSupported() || !types.IsSupportedWithCombinationTransformKeysQuery(dd.Queries)) {
 		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
@@ -318,6 +326,9 @@ func (dd *QueryDIDDocRequestService) IsResourceData(result types.ResolutionResul
 	_result, ok := result.(*types.ResourceDereferencing)
 	if !ok {
 		return false
+	}
+	if _result.Metadata != nil {
+		return false // Handle DereferenceResourceWithMetadata
 	}
 	_, ok = _result.ContentStream.(*types.DereferencedResourceData)
 	return ok

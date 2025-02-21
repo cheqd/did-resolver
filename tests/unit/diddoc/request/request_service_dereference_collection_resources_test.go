@@ -26,13 +26,13 @@ type resourceCollectionTestCase struct {
 	expectedError      *types.IdentityError
 }
 
-var _ = DescribeTable("Test DidDocResourceCollectionEchoHandler function", func(testCase resourceCollectionTestCase) {
+var _ = DescribeTable("Test DidDocMetadataEchoHandler function", func(testCase resourceCollectionTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, utils.MockLedger)
 	expectedDIDResolution := testCase.expectedResolution.(*types.DidResolution)
 	expectedContentType := utils.DefineContentType(expectedDIDResolution.ResolutionMetadata.ContentType, testCase.resolutionType)
 
-	err := didDocServices.DidDocResourceCollectionEchoHandler(context)
+	err := didDocServices.DidDocMetadataEchoHandler(context)
 	if testCase.expectedError != nil {
 		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
 	} else {
@@ -80,7 +80,7 @@ var _ = DescribeTable("Test DidDocResourceCollectionEchoHandler function", func(
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				Metadata: types.ResolutionDidDocMetadata{},
+				Metadata: &types.ResolutionDidDocMetadata{},
 			},
 			expectedError: types.NewNotFoundError(testconstants.NotExistentTestnetDid, types.DIDJSONLD, nil, false),
 		},
@@ -99,7 +99,7 @@ var _ = DescribeTable("Test DidDocResourceCollectionEchoHandler function", func(
 						Method:           testconstants.InvalidMethod,
 					},
 				},
-				Metadata: types.ResolutionDidDocMetadata{},
+				Metadata: &types.ResolutionDidDocMetadata{},
 			},
 			expectedError: types.NewMethodNotSupportedError(testconstants.InvalidDid, types.DIDJSONLD, nil, false),
 		},
@@ -118,7 +118,7 @@ var _ = DescribeTable("Test DidDocResourceCollectionEchoHandler function", func(
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				Metadata: types.ResolutionDidDocMetadata{},
+				Metadata: &types.ResolutionDidDocMetadata{},
 			},
 			expectedError: types.NewRepresentationNotSupportedError(testconstants.ExistentDid, types.JSON, nil, false),
 		},
@@ -129,7 +129,7 @@ var _ = DescribeTable("Test redirect DID", func(testCase utils.RedirectDIDTestCa
 	request := httptest.NewRequest(http.MethodGet, testCase.DidURL, nil)
 	context, rec := utils.SetupEmptyContext(request, testCase.ResolutionType, utils.MockLedger)
 
-	err := didDocServices.DidDocResourceCollectionEchoHandler(context)
+	err := didDocServices.DidDocMetadataEchoHandler(context)
 	if err != nil {
 		Expect(testCase.ExpectedError.Error()).To(Equal(err.Error()))
 	} else {

@@ -7,7 +7,6 @@ import (
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
-	"github.com/rs/zerolog/log"
 )
 
 // DidDocEchoHandler godoc
@@ -53,24 +52,14 @@ func DidDocEchoHandler(c echo.Context) error {
 		return types.NewRepresentationNotSupportedError(didParam, requestedContentType, nil, false)
 	}
 
-	log.Debug().Msgf("requestedContentType: %v, profile: %v", requestedContentType, profile)
 	// Detect fragment in DID and the presence of query parameters
 	isFragment := strings.Contains(didParam, "#")
 	isQuery := len(queryParams) > 0
-	isSingleQuery := len(queryParams) == 1
-	resourceQuery := c.QueryParam(types.ResourceMetadata) != ""
-	metadataQuery := c.QueryParam(types.Metadata) == "true"
 
 	switch {
 	// If Fragment is present, then we call FragmentDIDDocRequestService
 	case isFragment:
 		return services.EchoWrapHandler(&FragmentDIDDocRequestService{})(c)
-	// If there is only one query parameter and that query is 'metadata'
-	case isSingleQuery && metadataQuery:
-		return services.EchoWrapHandler(&DIDDocResourceDereferencingService{Profile: profile})(c)
-	// If there is only one query parameter and that query is 'resourceMetadata'
-	case isSingleQuery && resourceQuery:
-		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: c.QueryParam(types.ResourceMetadata)})(c)
 	// This case is for all other queries
 	case isQuery:
 		return services.EchoWrapHandler(&QueryDIDDocRequestService{})(c)
@@ -79,7 +68,7 @@ func DidDocEchoHandler(c echo.Context) error {
 		return services.EchoWrapHandler(&FullDIDDocRequestService{})(c)
 	// For all other supported contentType, then we call OnlyDIDDocRequestService
 	case requestedContentType.IsSupported():
-		return services.EchoWrapHandler(&OnlyDIDDocRequestService{ResourceQuery: "default"})(c)
+		return services.EchoWrapHandler(&OnlyDIDDocRequestService{})(c)
 	default:
 		// ToDo: make it more clearly
 		return types.NewInternalError(c.Param("did"), types.JSON, errors.New("Unknown internal error while getting the type of query"), true)
@@ -145,7 +134,7 @@ func DidDocAllVersionMetadataEchoHandler(c echo.Context) error {
 	return services.EchoWrapHandler(&DIDDocAllVersionMetadataRequestService{})(c)
 }
 
-// DidDocResourceCollectionEchoHandler godoc
+// DidDocMetadataEchoHandler godoc
 //
 //	@Summary		Fetch metadata for all Resources
 //	@Description	Get metadata for all Resources within a DID Resource Collection
@@ -160,7 +149,7 @@ func DidDocAllVersionMetadataEchoHandler(c echo.Context) error {
 //	@Failure		500	{object}	types.IdentityError
 //	@Failure		501	{object}	types.IdentityError
 //	@Router			/{did}/metadata [get]
-func DidDocResourceCollectionEchoHandler(c echo.Context) error {
+func DidDocMetadataEchoHandler(c echo.Context) error {
 	// Get Accept header
 	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
 	requestedContentType, profile := services.GetPriorityContentType(acceptHeader, false)
@@ -168,5 +157,5 @@ func DidDocResourceCollectionEchoHandler(c echo.Context) error {
 	if !requestedContentType.IsSupported() {
 		return types.NewRepresentationNotSupportedError(didParam, requestedContentType, nil, false)
 	}
-	return services.EchoWrapHandler(&DIDDocResourceDereferencingService{Profile: profile})(c)
+	return services.EchoWrapHandler(&DIDDocMetadataService{Profile: profile})(c)
 }
