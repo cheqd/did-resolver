@@ -54,10 +54,12 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 					},
 				},
 				ContentStream: &testconstants.ValidResourceDereferencing,
-				Metadata: types.NewDereferencedResource(
-					testconstants.ExistentDid,
-					testconstants.ValidResource[0].Metadata,
-				),
+				Metadata: &types.ResolutionResourceMetadata{
+					ContentMetadata: types.NewDereferencedResource(
+						testconstants.ExistentDid,
+						testconstants.ValidResource[0].Metadata,
+					),
+				},
 			},
 			expectedError: nil,
 		},
@@ -78,10 +80,12 @@ var _ = DescribeTable("Test DereferenceResourceData method", func(testCase deref
 					},
 				},
 				ContentStream: &testconstants.ValidResourceDereferencing,
-				Metadata: types.NewDereferencedResource(
-					testconstants.ExistentDid,
-					testconstants.ValidResource[0].Metadata,
-				),
+				Metadata: &types.ResolutionResourceMetadata{
+					ContentMetadata: types.NewDereferencedResource(
+						testconstants.ExistentDid,
+						testconstants.ValidResource[0].Metadata,
+					),
+				},
 			},
 			expectedError: nil,
 		},

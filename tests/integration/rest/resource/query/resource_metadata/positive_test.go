@@ -5,6 +5,7 @@ package resource_metadata_test
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/cheqd/did-resolver/types"
 	"net/http"
 
 	"github.com/cheqd/did-resolver/types"

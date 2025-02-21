@@ -71,10 +71,12 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				Metadata: types.NewDereferencedResource(
-					testconstants.ExistentDid,
-					testconstants.ValidResource[0].Metadata,
-				),
+				Metadata: types.ResolutionResourceMetadata{
+					ContentMetadata: types.NewDereferencedResource(
+						testconstants.ExistentDid,
+						testconstants.ValidResource[0].Metadata,
+					),
+				},
 			},
 			expectedError: nil,
 		},

@@ -36,8 +36,8 @@ func (d *ResourceMetadataHandler) Handle(c services.ResolverContext, service ser
 	}
 
 	if resourceMetadata == "true" {
-		dereferencingResult := types.NewResourceDereferencingFromContent(
-			service.GetDid(), service.GetContentType(), &types.ResolutionDidDocMetadata{Resources: didResolution.Metadata.Resources},
+		dereferencingResult := types.NewResourceDereferencingFromResources(
+			service.GetDid(), service.GetContentType(), &didResolution.Metadata.Resources,
 		)
 		return d.Continue(c, service, dereferencingResult)
 	}

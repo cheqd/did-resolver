@@ -17,6 +17,7 @@ func (d *ResourceQueryHandler) Handle(c services.ResolverContext, service servic
 		if err != nil {
 			return nil, err
 		}
+
 		// Call the next handler
 		return d.Continue(c, service, resolutionResult)
 	}
