@@ -19,7 +19,14 @@ func (d *ResourceMetadataHandler) Handle(c services.ResolverContext, service ser
 	if err != nil {
 		return nil, err
 	}
+	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
+	contentType, profile := services.GetPriorityContentType(acceptHeader, d.IsDereferencing)
 
+	// special case for single query and resourceMetadata in query, then IsDereferencing is false
+	isSingleQuery := len(c.Request().URL.Query()) == 1 && c.QueryParam(types.ResourceMetadata) != ""
+	if isSingleQuery && profile != types.W3IDDIDURL {
+		d.IsDereferencing = false
+	}
 	// return didResolution result if dereferencing is false
 	if !d.IsDereferencing {
 		if resourceMetadata == "false" {
@@ -38,9 +45,6 @@ func (d *ResourceMetadataHandler) Handle(c services.ResolverContext, service ser
 	// If it's not a metadata query let's just get the latest Resource.
 	// They are sorted in descending order by default
 	resource := didResolution.Metadata.Resources[0]
-
-	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
-	contentType, profile := services.GetPriorityContentType(acceptHeader, true)
 
 	if contentType == types.JSONLD && profile == types.W3IDDIDURL {
 		dereferenceResult, _err := c.ResourceService.DereferenceResourceDataWithMetadata(service.GetDid(), resource.ResourceId, service.GetContentType())

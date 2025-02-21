@@ -4,8 +4,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/labstack/echo/v4"
-
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/services/diddoc/queries"
 	diddocQueries "github.com/cheqd/did-resolver/services/diddoc/queries/diddoc"
@@ -17,6 +15,7 @@ import (
 
 type QueryDIDDocRequestService struct {
 	services.BaseRequestService
+	Profile      string
 	FirstHandler queries.BaseQueryHandlerI
 }
 
@@ -24,24 +23,19 @@ func (dd *QueryDIDDocRequestService) Setup(c services.ResolverContext) error {
 	return nil
 }
 
+// function to prepare the Query DIDDoc Request with specific conditions
 func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext) error {
 	if dd.AreDidResolutionQueries(c) {
 		dd.IsDereferencing = false
 	} else {
-		// if resource queries are provided and the profile is W3IDDIDRES then dereferencing is false
-		acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
-		_, profile := services.GetPriorityContentType(acceptHeader, true)
-		if profile == types.W3IDDIDRES {
-			dd.IsDereferencing = false
-		} else {
-			dd.IsDereferencing = true
-		}
+		dd.IsDereferencing = true
 	}
 
 	// Register query handlers
 	return dd.RegisterQueryHandlers(c)
 }
 
+// function to validate the Query DIDDoc Request with specific conditions
 func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverContext) error {
 	_, err := url.QueryUnescape(dd.GetDid())
 	if err != nil {
@@ -94,6 +88,11 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	// value if resourceMetadata can be only true or false
 	if resourceMetadata != "" && resourceMetadata != "true" && resourceMetadata != "false" {
 		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+
+	// if profile is W3IDDIDURL then metadata should be true
+	if resourceMetadata == "false" && dd.Profile == types.W3IDDIDURL {
+		return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	// Validate time format
@@ -152,6 +151,7 @@ func (dd QueryDIDDocRequestService) AreQueryValuesEmpty(c services.ResolverConte
 	return false
 }
 
+// function to register the all the query handlers
 func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverContext) error {
 	stopHandler := queries.StopHandler{}
 
@@ -186,6 +186,7 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 	return nil
 }
 
+// function to register the DIDDoc query handlers
 func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHandlers(startHandler queries.BaseQueryHandlerI, c services.ResolverContext) (queries.BaseQueryHandlerI, error) {
 	// - didQueryHandler
 	// or
@@ -238,6 +239,7 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHandlers(startHandler qu
 	return &relativeRefHandler, nil
 }
 
+// function to register the Dereferencing or Resource query handlers
 func (dd *QueryDIDDocRequestService) RegisterResourceQueryHandlers(startHandler queries.BaseQueryHandlerI, c services.ResolverContext) (queries.BaseQueryHandlerI, error) {
 	// Resource handlers
 	resourceQueryHandler := resourceQueries.ResourceQueryHandler{}
