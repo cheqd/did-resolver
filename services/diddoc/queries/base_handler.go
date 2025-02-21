@@ -4,6 +4,7 @@ import (
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 )
 
 type BaseQueryHandlerI interface {
@@ -25,6 +26,7 @@ func (b *BaseQueryHandler) SetNext(c services.ResolverContext, next BaseQueryHan
 	if profile == types.W3IDDIDRES {
 		b.IsDereferencing = false
 	} else {
+		log.Info().Msgf("IN QUERY HANDLER??")
 		b.IsDereferencing = true
 	}
 	if next == nil {

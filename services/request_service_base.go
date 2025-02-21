@@ -46,8 +46,9 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 	isDereferencingOrFragment := dd.IsDereferencing && dd.Fragment == ""
 	// Get Accept header
 	dd.RequestedContentType, _ = GetPriorityContentType(c.Request().Header.Get(echo.HeaderAccept), isDereferencingOrFragment)
-	if !dd.GetContentType().IsSupported() {
-		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
+	// Ignore supported type for dereferencing
+	if !isDereferencingOrFragment && !dd.GetContentType().IsSupported() {
+		return types.NewRepresentationNotSupportedError(dd.GetDid(), types.JSON, nil, dd.IsDereferencing)
 	}
 
 	// Get DID from request

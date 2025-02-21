@@ -1,5 +1,5 @@
 {
-    "@context": "https://w3id.org/did-resolution/v1",
+    "@context": "https://w3id.org/did-url-dereferencing",
     "dereferencingMetadata": {
         "contentType": "application/ld+json",
         "retrieved": "2023-03-27T03:52:40Z",

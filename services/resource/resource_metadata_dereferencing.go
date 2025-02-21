@@ -32,6 +32,11 @@ func (dr ResourceMetadataDereferencingService) Redirect(c services.ResolverConte
 }
 
 func (dr *ResourceMetadataDereferencingService) SpecificValidation(c services.ResolverContext) error {
+	// Metadata endpoint should be one of the supported types.
+	if !dr.RequestedContentType.IsSupported() {
+		return types.NewRepresentationNotSupportedError(dr.GetDid(), types.JSON, nil, dr.IsDereferencing)
+	}
+	
 	if !utils.IsValidUUID(dr.ResourceId) {
 		return types.NewInvalidDidUrlError(dr.ResourceId, dr.RequestedContentType, nil, dr.IsDereferencing)
 	}
