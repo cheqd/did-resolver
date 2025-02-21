@@ -24,12 +24,12 @@ var _ = DescribeTable("Negative: Get Resource Metadata with resourceMetadata que
 		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
 
-	var receivedDidResolution types.DidResolution
-	Expect(json.Unmarshal(resp.Body(), &receivedDidResolution)).To(BeNil())
+	var receivedDidDereferencing utils.DereferencingResult
+	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	expectedDidResolution := testCase.ExpectedResult.(types.DidResolution)
-	utils.AssertDidResolution(expectedDidResolution, receivedDidResolution)
+	expectedDidDereferencing := testCase.ExpectedResult.(utils.DereferencingResult)
+	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
 },
 
 	Entry(
@@ -40,10 +40,10 @@ var _ = DescribeTable("Negative: Get Resource Metadata with resourceMetadata que
 				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),
-			ResolutionType: string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
-			ExpectedResult: types.DidResolution{
+			ResolutionType: testconstants.ChromeResolutionType,
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
-				ResolutionMetadata: types.ResolutionMetadata{
+				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
@@ -52,10 +52,36 @@ var _ = DescribeTable("Negative: Get Resource Metadata with resourceMetadata que
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				Did:      nil,
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
+		},
+	),
+	Entry(
+		"cannot get resource metadata with resourceMetadata=false for dereferencing profile",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?resourceMetadata=false",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+			),
+			ResolutionType: string(types.JSONLD) + ";profile=" + types.W3IDDIDURL,
+			ExpectedResult: utils.DereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.JSONLD,
+					ResolutionError: "invalidDidUrl",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.UUIDStyleTestnetDid,
+						MethodSpecificId: testconstants.UUIDStyleTestnetId,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: errors.InvalidDidUrlHttpCode,
 		},
 	),
 )

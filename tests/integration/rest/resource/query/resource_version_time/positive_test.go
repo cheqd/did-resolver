@@ -10,6 +10,7 @@ import (
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	utils "github.com/cheqd/did-resolver/tests/integration/rest"
+	"github.com/cheqd/did-resolver/types"
 
 	"github.com/go-resty/resty/v2"
 	. "github.com/onsi/ginkgo/v2"
@@ -243,6 +244,19 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
 			ExpectedJSONPath:   "../../../testdata/query/resource_version_time/resource.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+	Entry(
+		"can get resource metadata with resourceMetadata=true query parameter and dereferencing profile",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?resourceMetadata=true",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+			),
+			ResolutionType:     string(types.JSONLD) + ";profile=" + types.W3IDDIDURL,
+			ExpectedJSONPath:   "../../../testdata/query/resource_metadata/metadata_did_res.json",
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
