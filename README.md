@@ -211,7 +211,7 @@ You can also directly [execute the Github Actions locally using `nektos/act`](ht
 
 ## 📖 Documentation
 
-Further documentation on [cheqd DID Resolver](https://docs.cheqd.io/identity/advanced/did-resolver) is available on the [cheqd Identity Documentation site](https://docs.cheqd.io/identity/). This includes instructions on how to do custom builds using `Dockerfile` / Docker Compose.
+Further documentation on [cheqd DID Resolver](https://docs.cheqd.io/product/advanced/did-resolver) is available on the [cheqd Identity Documentation site](https://docs.cheqd.io/identity/). This includes instructions on how to do custom builds using `Dockerfile` / Docker Compose.
 
 ## 🐞 Bug reports & 🤔 feature requests
 
