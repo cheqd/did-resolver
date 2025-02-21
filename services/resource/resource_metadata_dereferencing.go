@@ -36,7 +36,7 @@ func (dr *ResourceMetadataDereferencingService) SpecificValidation(c services.Re
 	if !dr.RequestedContentType.IsSupported() {
 		return types.NewRepresentationNotSupportedError(dr.GetDid(), types.JSON, nil, dr.IsDereferencing)
 	}
-	
+
 	if !utils.IsValidUUID(dr.ResourceId) {
 		return types.NewInvalidDidUrlError(dr.ResourceId, dr.RequestedContentType, nil, dr.IsDereferencing)
 	}
