@@ -22,13 +22,13 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 		SetHeader("Accept", testCase.ResolutionType).
 		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
-
-	var receivedDidDereferencing utils.DereferencingResult
-	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	expectedDidDereferencing := testCase.ExpectedResult.(utils.DereferencingResult)
-	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
+	var receivedDidDereferencing types.DidResolution
+	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
+
+	expectedDidDereferencing := testCase.ExpectedResult.(types.DidResolution)
+	utils.AssertDidResolution(expectedDidDereferencing, receivedDidDereferencing)
 },
 
 	Entry(
@@ -41,9 +41,9 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 				testconstants.NotExistentIdentifier,
 			),
 			ResolutionType: string(types.DIDJSONLD),
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
+				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "invalidDidUrl",
 					DidProperties: types.DidProperties{
@@ -52,8 +52,8 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: nil,
 			},
 			ExpectedStatusCode: types.InvalidDidUrlHttpCode,
 		},
@@ -69,9 +69,9 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 				testconstants.InvalidIdentifier,
 			),
 			ResolutionType: string(types.DIDJSONLD),
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
+				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "invalidDidUrl",
 					DidProperties: types.DidProperties{
@@ -80,8 +80,8 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: nil,
 			},
 			ExpectedStatusCode: types.InvalidDidUrlHttpCode, // it should be invalidDidUrl
 		},

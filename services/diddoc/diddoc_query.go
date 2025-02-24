@@ -29,8 +29,11 @@ func (dd *QueryDIDDocRequestService) Setup(c services.ResolverContext) error {
 func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext) error {
 	// if profile is W3IDDIDRES then dereferencing is false
 	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
-	_, profile := services.GetPriorityContentType(acceptHeader, true)
+	contentType, profile := services.GetPriorityContentType(acceptHeader, dd.AreResourceQueriesPlaced(c))
+
 	dd.Profile = profile
+	dd.RequestedContentType = contentType
+
 	if profile == types.W3IDDIDRES {
 		dd.IsDereferencing = false
 	} else {
