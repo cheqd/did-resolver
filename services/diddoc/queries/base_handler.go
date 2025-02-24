@@ -3,7 +3,6 @@ package queries
 import (
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/types"
-	"github.com/labstack/echo/v4"
 )
 
 type BaseQueryHandlerI interface {
@@ -20,13 +19,7 @@ type BaseQueryHandler struct {
 
 func (b *BaseQueryHandler) SetNext(c services.ResolverContext, next BaseQueryHandlerI) error {
 	// All the query handlers are dereferencing by default
-	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
-	_, profile := services.GetPriorityContentType(acceptHeader, true)
-	if profile == types.W3IDDIDRES {
-		b.IsDereferencing = false
-	} else {
-		b.IsDereferencing = true
-	}
+	b.IsDereferencing = true
 	if next == nil {
 		return types.NewInternalError("next handler is nil", types.DIDJSONLD, nil, b.IsDereferencing)
 	}
