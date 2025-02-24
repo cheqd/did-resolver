@@ -110,7 +110,7 @@ func (dd BaseRequestService) Redirect(c ResolverContext) error {
 func (dd *BaseRequestService) Query(c ResolverContext) error {
 	result, err := c.DidDocService.Resolve(dd.GetDid(), dd.Version, dd.GetContentType())
 	if err != nil {
-		err.IsDereferencing = false
+		err.IsDereferencing = dd.GetDereferencing()
 		return err
 	}
 	return dd.SetResponse(result)

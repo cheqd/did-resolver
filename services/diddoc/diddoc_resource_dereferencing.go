@@ -40,7 +40,7 @@ func (dr *DIDDocResourceDereferencingService) SpecificValidation(c services.Reso
 func (dr *DIDDocResourceDereferencingService) Query(c services.ResolverContext) error {
 	resolution, err := c.ResourceService.ResolveCollectionResources(dr.GetDid(), dr.GetContentType())
 	if err != nil {
-		err.IsDereferencing = false
+		err.IsDereferencing = dr.GetDereferencing()
 		return err
 	}
 	return dr.SetResponse(resolution)

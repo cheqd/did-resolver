@@ -19,6 +19,7 @@ import (
 
 var _ = DescribeTable("Test resource negative cases. Data returning case", func(testCase ResourceTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
+	request.Header.Set("Content-Type", string(testCase.resolutionType))
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, MockLedger)
 	expectedContentType := types.ContentType(testconstants.ValidResource[0].Metadata.MediaType)
 
@@ -71,7 +72,7 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 		},
 	),
 	Entry(
-		"Negative. ResourceCollectionId not found",
+		"Negative. Only ResourceCollectionId is ambiguous query",
 		ResourceTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceCollectionId=%s",
@@ -80,7 +81,7 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError:    types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
@@ -110,7 +111,7 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 		},
 	),
 	Entry(
-		"Negative. ResourceVersion is not found",
+		"Negative. Only ResourceVersion is Ambiguous query",
 		ResourceTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceVersion=%s",
@@ -119,7 +120,7 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError:    types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
@@ -137,7 +138,20 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 		},
 	),
 	Entry(
-		"Negative. ResourceVersionTime before the first resource created",
+		"Negative. checksum query returns multiple resources",
+		ResourceTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?checksum=%s",
+				testconstants.ValidDid,
+				fmt.Sprintf("%x", Checksum),
+			),
+			resolutionType:   types.DIDJSONLD,
+			expectedResource: nil,
+			expectedError:    types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+	Entry(
+		"Negative. Only ResourceVersionTime is Ambiguous query",
 		ResourceTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceVersionTime=%s",
@@ -146,7 +160,7 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError:    types.NewRepresentationNotSupportedError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(
@@ -159,7 +173,7 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
-			expectedError:    types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+			expectedError:    types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 	Entry(

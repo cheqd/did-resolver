@@ -34,13 +34,14 @@ var _ = DescribeTable("Positive: Get Collection of Resources with collectionId q
 },
 
 	Entry(
-		"can get collection of resources with an existent collectionId query parameter",
+		"can get collection of resources with an existent collectionId query parameter and resource Name",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://%s/1.0/identifiers/%s?resourceCollectionId=%s",
+				"http://%s/1.0/identifiers/%s?resourceCollectionId=%s&resourceName=%s",
 				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetId,
+				testconstants.ExistentResourceName,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
 			ExpectedJSONPath:   "../../../testdata/query/collection_id/metadata_did.json",
@@ -52,13 +53,14 @@ var _ = DescribeTable("Positive: Get Collection of Resources with collectionId q
 	// and collectionId query parameter.
 
 	Entry(
-		"can get collection of resources with an old 32 characters INDY style DID and an existent collectionId query parameter",
+		"can get collection of resources with an old 32 characters INDY style DID and an existent collectionId query parameter and resourceType",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://%s/1.0/identifiers/%s?resourceCollectionId=%s",
+				"http://%s/1.0/identifiers/%s?resourceCollectionId=%s&resourceType=%s",
 				testconstants.TestHostAddress,
 				testconstants.OldIndy32CharStyleTestnetDid,
 				"3KpiDD6Hxs4i2G7FtpiGhu",
+				"CL-RevRegEntry",
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
 			ExpectedJSONPath:   "../../../testdata/query/collection_id/metadata_32_indy_did.json",

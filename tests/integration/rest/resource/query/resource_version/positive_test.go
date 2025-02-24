@@ -39,9 +39,10 @@ var _ = DescribeTable("Positive: Get Resource with resourceVersion query", func(
 		"can get resource with an existent resourceVersion query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
-				"http://%s/1.0/identifiers/%s?resourceVersion=1.0",
+				"http://%s/1.0/identifiers/%s?resourceVersion=1.0&resourceType=%s",
 				testconstants.TestHostAddress,
 				severalResourcesDID,
+				"JsonSchemaValidator2018",
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
 			ExpectedJSONPath:   "../../../testdata/query/resource_version/resource.json",

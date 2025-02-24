@@ -47,34 +47,34 @@ var _ = DescribeTable("Positive: Get Resource Metadata with resourceMetadata que
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
-	// TODO: Fix ChromeResolution type
-	//Entry(
-	//	"can get resource metadata with resourceMetadata=true query parameter and Chrome Accept header",
-	//	utils.PositiveTestCase{
-	//		DidURL: fmt.Sprintf(
-	//			"http://%s/1.0/identifiers/%s?resourceMetadata=true",
-	//			testconstants.TestHostAddress,
-	//			testconstants.UUIDStyleTestnetDid,
-	//		),
-	//		ResolutionType:     testconstants.ChromeResolutionType,
-	//		ExpectedJSONPath:   "../../../testdata/query/resource_metadata/metadata.json",
-	//		ExpectedStatusCode: http.StatusOK,
-	//	},
-	//),
-	// TODO: Fix ChromeResolution type
-	//Entry(
-	//	"can get resource metadata with resourceMetadata=false query parameter",
-	//	utils.PositiveTestCase{
-	//		DidURL: fmt.Sprintf(
-	//			"http://%s/1.0/identifiers/%s?resourceMetadata=false",
-	//			testconstants.TestHostAddress,
-	//			testconstants.UUIDStyleTestnetDid,
-	//		),
-	//		ResolutionType:     testconstants.ChromeResolutionType,
-	//		ExpectedJSONPath:   "../../../testdata/query/resource_metadata/metadata_false.json",
-	//		ExpectedStatusCode: http.StatusOK,
-	//	},
-	//),
+
+	Entry(
+		"can get resource metadata with resourceMetadata=true query parameter and Chrome Accept header",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?resourceMetadata=true",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+			),
+			ResolutionType:     testconstants.ChromeResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/resource_metadata/metadata.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get resource metadata with resourceMetadata=false query parameter and Chrome Accept header",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?resourceMetadata=false",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+			),
+			ResolutionType:     testconstants.ChromeResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/resource_metadata/metadata_false.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
 	Entry(
 		"can get resource metadata with resourceMetadata=false query parameter and Chrome Accept header",
 		utils.PositiveTestCase{

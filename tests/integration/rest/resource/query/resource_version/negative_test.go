@@ -31,12 +31,37 @@ var _ = DescribeTable("Negative: Get Resource with resourceVersion query", func(
 	expectedDidDereferencing := testCase.ExpectedResult.(utils.DereferencingResult)
 	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
 },
-
 	Entry(
-		"cannot get resource with not existent resourceVersion query parameter",
+		"cannot get resource with only resourceVersion query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://%s/1.0/identifiers/%s?resourceVersion=xyz",
+				"http://%s/1.0/identifiers/%s?resourceVersion=1.0",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+			),
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.JSONLD,
+					ResolutionError: "invalidDidUrl",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.UUIDStyleTestnetDid,
+						MethodSpecificId: testconstants.UUIDStyleTestnetId,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: errors.InvalidDidUrlHttpCode,
+		},
+	),
+	Entry(
+		"cannot get resource with not existent resourceVersion and resourceType query parameter",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?resourceVersion=xyz&resourceType=test",
 				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 			),

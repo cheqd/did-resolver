@@ -86,7 +86,9 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 					testconstants.ValidDid, &DidDocMetadata2,
 					[]*resourceTypes.Metadata{
 						ResourceType2.Metadata,
+						ResourceChecksum.Metadata,
 						ResourceType12.Metadata,
+						ResourceType13.Metadata,
 						ResourceType1.Metadata,
 						ResourceName2.Metadata,
 						ResourceName12.Metadata,
@@ -137,7 +139,9 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 					testconstants.ValidDid, &DidDocMetadata2,
 					[]*resourceTypes.Metadata{
 						ResourceType2.Metadata,
+						ResourceChecksum.Metadata,
 						ResourceType12.Metadata,
+						ResourceType13.Metadata,
 						ResourceType1.Metadata,
 						ResourceName2.Metadata,
 						ResourceName12.Metadata,

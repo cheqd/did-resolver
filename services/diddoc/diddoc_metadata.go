@@ -40,7 +40,7 @@ func (dr *DIDDocMetadataService) SpecificValidation(c services.ResolverContext) 
 func (dr *DIDDocMetadataService) Query(c services.ResolverContext) error {
 	resolution, err := c.ResourceService.ResolveMetadataResources(dr.GetDid(), dr.GetContentType())
 	if err != nil {
-		err.IsDereferencing = false
+		err.IsDereferencing = dr.GetDereferencing()
 		return err
 	}
 	return dr.SetResponse(resolution)
