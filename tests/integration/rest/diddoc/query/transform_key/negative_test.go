@@ -103,9 +103,9 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 				types.Ed25519VerificationKey2020,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: utils.DereferencingResult{
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
+				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.JSONLD,
 					ResolutionError: "representationNotSupported",
 					DidProperties: types.DidProperties{
@@ -114,8 +114,8 @@ var _ = DescribeTable("Negative: Get DIDDoc with transformKeys query parameter",
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: nil,
 			},
 			ExpectedStatusCode: types.RepresentationNotSupportedHttpCode,
 		},

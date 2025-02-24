@@ -15,7 +15,6 @@ import (
 
 var _ = DescribeTable("", func(testCase NegativeTestCase) {
 	client := resty.New()
-	client.SetRedirectPolicy(resty.NoRedirectPolicy())
 
 	resp, err := client.R().
 		SetHeader("Accept", testCase.ResolutionType).
@@ -23,12 +22,11 @@ var _ = DescribeTable("", func(testCase NegativeTestCase) {
 	Expect(err).To(BeNil())
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	var receivedDidDereferencing DereferencingResult
+	var receivedDidDereferencing types.DidResolution
 	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
-	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	expectedDidDereferencing := testCase.ExpectedResult.(DereferencingResult)
-	AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
+	expectedDidDereferencing := testCase.ExpectedResult.(types.DidResolution)
+	AssertDidResolution(expectedDidDereferencing, receivedDidDereferencing)
 },
 
 	Entry(
@@ -40,9 +38,9 @@ var _ = DescribeTable("", func(testCase NegativeTestCase) {
 				testconstants.UUIDStyleTestnetDid,
 			),
 			ResolutionType: testconstants.DefaultResolutionType,
-			ExpectedResult: DereferencingResult{
+			ExpectedResult: types.DidResolution{
 				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
+				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType:     types.JSONLD,
 					ResolutionError: "invalidDidUrl",
 					DidProperties: types.DidProperties{
@@ -51,8 +49,8 @@ var _ = DescribeTable("", func(testCase NegativeTestCase) {
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
+				Did:      nil,
+				Metadata: nil,
 			},
 			ExpectedStatusCode: types.InvalidDidUrlHttpCode,
 		},
