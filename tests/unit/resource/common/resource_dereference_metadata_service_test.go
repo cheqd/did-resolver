@@ -56,10 +56,12 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				Metadata: types.NewDereferencedResource(
-					testconstants.ExistentDid,
-					testconstants.ValidResource[0].Metadata,
-				),
+				Metadata: &types.ResolutionResourceMetadata{
+					ContentMetadata: types.NewDereferencedResource(
+						testconstants.ExistentDid,
+						testconstants.ValidResource[0].Metadata,
+					),
+				},
 			},
 			expectedError: nil,
 		},
@@ -79,10 +81,12 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				Metadata: types.NewDereferencedResource(
-					testconstants.ExistentDid,
-					testconstants.ValidResource[0].Metadata,
-				),
+				Metadata: &types.ResolutionResourceMetadata{
+					ContentMetadata: types.NewDereferencedResource(
+						testconstants.ExistentDid,
+						testconstants.ValidResource[0].Metadata,
+					),
+				},
 			},
 			expectedError: nil,
 		},
@@ -102,10 +106,12 @@ var _ = DescribeTable("Test DereferenceResourceMetadata method", func(testCase d
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				Metadata: types.NewDereferencedResource(
-					testconstants.ExistentDid,
-					testconstants.ValidResource[0].Metadata,
-				),
+				Metadata: &types.ResolutionResourceMetadata{
+					ContentMetadata: types.NewDereferencedResource(
+						testconstants.ExistentDid,
+						testconstants.ValidResource[0].Metadata,
+					),
+				},
 			},
 			expectedError: types.NewNotFoundError(testconstants.NotExistentTestnetDid, types.DIDJSONLD, nil, true),
 		},
