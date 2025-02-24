@@ -5,6 +5,7 @@ import (
 	"github.com/cheqd/did-resolver/services/diddoc/queries"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 )
 
 type ResourceMetadataHandler struct {
@@ -24,6 +25,8 @@ func (d *ResourceMetadataHandler) Handle(c services.ResolverContext, service ser
 
 	// special case for single query and resourceMetadata in query, then IsDereferencing is false
 	isSingleQuery := len(c.Request().URL.Query()) == 1 && c.QueryParam(types.ResourceMetadata) != ""
+	log.Info().Msgf("IsSingleQuery: %v", isSingleQuery)
+	log.Info().Msgf("profile: %v", profile)
 	if isSingleQuery && profile != types.W3IDDIDURL {
 		d.IsDereferencing = false
 	}

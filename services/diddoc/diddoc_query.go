@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/labstack/echo/v4"
+
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/services/diddoc/queries"
 	diddocQueries "github.com/cheqd/did-resolver/services/diddoc/queries/diddoc"
@@ -25,7 +27,11 @@ func (dd *QueryDIDDocRequestService) Setup(c services.ResolverContext) error {
 
 // function to prepare the Query DIDDoc Request with specific conditions
 func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext) error {
-	if dd.AreDidResolutionQueries(c) {
+	// if profile is W3IDDIDRES then dereferencing is false
+	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
+	_, profile := services.GetPriorityContentType(acceptHeader, true)
+	dd.Profile = profile
+	if profile == types.W3IDDIDRES {
 		dd.IsDereferencing = false
 	} else {
 		dd.IsDereferencing = true

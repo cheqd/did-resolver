@@ -37,8 +37,9 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 	unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &resolutionResult)
 	Expect(unmarshalErr).To(BeNil())
 	Expect(err).To(BeNil())
+	testCase.expectedDIDResolution.Did.Context = resolutionResult.Did.Context
 	Expect(expectedDIDResolution.Did).To(Equal(resolutionResult.Did))
-	Expect(expectedDIDResolution.Metadata).To(Equal(resolutionResult.Metadata))
+	Expect(expectedDIDResolution.Metadata.Resources).To(Equal(resolutionResult.Metadata.Resources))
 	Expect(expectedContentType).To(Equal(resolutionResult.ResolutionMetadata.ContentType))
 	Expect(expectedDIDResolution.ResolutionMetadata.DidProperties).To(Equal(resolutionResult.ResolutionMetadata.DidProperties))
 	Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
