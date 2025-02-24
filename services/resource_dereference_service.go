@@ -32,7 +32,7 @@ func (rds ResourceService) DereferenceResourceMetadata(did string, resourceId st
 
 	var context string
 	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
-		context = types.W3IDDIDURL
+		context = types.ResolutionSchemaJSONLD
 	}
 
 	metadata := types.NewDereferencedResource(did, resource.Metadata)
@@ -113,7 +113,7 @@ func (rds ResourceService) DereferenceResourceDataWithMetadata(did string, resou
 
 	var context string
 	if contentType == types.DIDJSONLD || contentType == types.JSONLD {
-		context = types.W3IDDIDURL
+		context = types.ResolutionSchemaJSONLD
 	}
 
 	var result types.ContentStreamI

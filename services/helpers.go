@@ -11,6 +11,10 @@ import (
 
 func GetPriorityContentType(acceptHeader string, resource bool) (types.ContentType, string) {
 	// Parse the Accept header using the go-accept-headers package
+	if acceptHeader == types.DEFAULT_BROWSER_HEADER {
+		acceptHeader = "*/*"
+	}
+
 	acceptedTypes := accept.Parse(acceptHeader)
 	if len(acceptedTypes) == 0 {
 		// default content type
@@ -18,7 +22,6 @@ func GetPriorityContentType(acceptHeader string, resource bool) (types.ContentTy
 	}
 	for _, at := range acceptedTypes {
 		mediaType := types.ContentType(at.Type + "/" + at.Subtype)
-
 		// If the Header contains any media type, return the default content type
 		if mediaType == "*/*" {
 			if resource { // If request is from Resource Handlers
