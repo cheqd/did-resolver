@@ -6,7 +6,7 @@ import (
 )
 
 type BaseQueryHandlerI interface {
-	SetNext(c services.ResolverContext, next BaseQueryHandlerI) error
+	SetNext(c services.ResolverContext, next BaseQueryHandlerI, isDereferencing bool) error
 	// ToDo too many parameters, need to increase
 	Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error)
 	Continue(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error)
@@ -17,9 +17,9 @@ type BaseQueryHandler struct {
 	next            BaseQueryHandlerI
 }
 
-func (b *BaseQueryHandler) SetNext(c services.ResolverContext, next BaseQueryHandlerI) error {
+func (b *BaseQueryHandler) SetNext(c services.ResolverContext, next BaseQueryHandlerI, isDereferencing bool) error {
 	// All the query handlers are dereferencing by default
-	b.IsDereferencing = true
+	b.IsDereferencing = isDereferencing
 	if next == nil {
 		return types.NewInternalError("next handler is nil", types.DIDJSONLD, nil, b.IsDereferencing)
 	}
