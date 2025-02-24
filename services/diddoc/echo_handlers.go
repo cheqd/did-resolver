@@ -62,7 +62,7 @@ func DidDocEchoHandler(c echo.Context) error {
 		return services.EchoWrapHandler(&FragmentDIDDocRequestService{})(c)
 	// This case is for all other queries
 	case isQuery:
-		return services.EchoWrapHandler(&QueryDIDDocRequestService{Profile: profile})(c)
+		return services.EchoWrapHandler(&QueryDIDDocRequestService{})(c)
 	// If there are no query parameters, and contentType matches JSON or JSONLD, then we call FullDIDDocRequestService
 	case requestedContentType == types.JSON || (requestedContentType == types.JSONLD && profile == types.W3IDDIDRES):
 		return services.EchoWrapHandler(&FullDIDDocRequestService{})(c)
@@ -152,10 +152,10 @@ func DidDocAllVersionMetadataEchoHandler(c echo.Context) error {
 func DidDocMetadataEchoHandler(c echo.Context) error {
 	// Get Accept header
 	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
-	requestedContentType, profile := services.GetPriorityContentType(acceptHeader, false)
+	requestedContentType, _ := services.GetPriorityContentType(acceptHeader, false)
 	didParam := c.Param("did")
 	if !requestedContentType.IsSupported() {
 		return types.NewRepresentationNotSupportedError(didParam, requestedContentType, nil, false)
 	}
-	return services.EchoWrapHandler(&DIDDocMetadataService{Profile: profile})(c)
+	return services.EchoWrapHandler(&DIDDocMetadataService{})(c)
 }

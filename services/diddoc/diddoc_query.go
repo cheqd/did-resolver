@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/labstack/echo/v4"
+
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/services/diddoc/queries"
 	diddocQueries "github.com/cheqd/did-resolver/services/diddoc/queries/diddoc"
@@ -25,7 +27,14 @@ func (dd *QueryDIDDocRequestService) Setup(c services.ResolverContext) error {
 
 // function to prepare the Query DIDDoc Request with specific conditions
 func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext) error {
-	if dd.AreDidResolutionQueries(c) {
+	// if profile is W3IDDIDRES then dereferencing is false
+	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
+	contentType, profile := services.GetPriorityContentType(acceptHeader, dd.AreResourceQueriesPlaced(c))
+
+	dd.Profile = profile
+	dd.RequestedContentType = contentType
+
+	if profile == types.W3IDDIDRES {
 		dd.IsDereferencing = false
 	} else {
 		dd.IsDereferencing = true
@@ -160,6 +169,7 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 
 	// DidDoc handlers
 	startHandler := diddocQueries.DidQueryAllVersionsHandler{}
+	startHandler.IsDereferencing = dd.IsDereferencing
 	lastHandler, err := dd.RegisterDidDocQueryHandlers(&startHandler, c)
 	if err != nil {
 		return err
@@ -170,12 +180,12 @@ func (dd *QueryDIDDocRequestService) RegisterQueryHandlers(c services.ResolverCo
 		if err != nil {
 			return err
 		}
-		err = lastHandler.SetNext(c, &stopHandler)
+		err = lastHandler.SetNext(c, &stopHandler, dd.IsDereferencing)
 		if err != nil {
 			return err
 		}
 	} else {
-		err = lastHandler.SetNext(c, &stopHandler)
+		err = lastHandler.SetNext(c, &stopHandler, dd.IsDereferencing)
 		if err != nil {
 			return err
 		}
@@ -201,37 +211,37 @@ func (dd *QueryDIDDocRequestService) RegisterDidDocQueryHandlers(startHandler qu
 	transformKeysHandler := diddocQueries.TransformKeysHandler{}
 	didDocMetadataHandler := diddocQueries.DidDocMetadataHandler{}
 
-	err := startHandler.SetNext(c, &versionIdHandler)
+	err := startHandler.SetNext(c, &versionIdHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
 
-	err = versionIdHandler.SetNext(c, &versionTimeHandler)
+	err = versionIdHandler.SetNext(c, &versionTimeHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
 
-	err = versionTimeHandler.SetNext(c, &didDocResolveHandler)
+	err = versionTimeHandler.SetNext(c, &didDocResolveHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
 
-	err = didDocResolveHandler.SetNext(c, &transformKeysHandler)
+	err = didDocResolveHandler.SetNext(c, &transformKeysHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
 
-	err = transformKeysHandler.SetNext(c, &didDocMetadataHandler)
+	err = transformKeysHandler.SetNext(c, &didDocMetadataHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
 
-	err = didDocMetadataHandler.SetNext(c, &serviceHandler)
+	err = didDocMetadataHandler.SetNext(c, &serviceHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
 
-	err = serviceHandler.SetNext(c, &relativeRefHandler)
+	err = serviceHandler.SetNext(c, &relativeRefHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
@@ -253,13 +263,13 @@ func (dd *QueryDIDDocRequestService) RegisterResourceQueryHandlers(startHandler 
 	resourceValidationHandler := resourceQueries.ResourceValidationHandler{}
 	resourceChecksumHandler := resourceQueries.ResourceChecksumHandler{}
 
-	err := startHandler.SetNext(c, &resourceQueryHandler)
+	err := startHandler.SetNext(c, &resourceQueryHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
 
 	// It's a resource query to fetch the collection of resources
-	err = resourceQueryHandler.SetNext(c, &resourceIdHandler)
+	err = resourceQueryHandler.SetNext(c, &resourceIdHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
@@ -269,42 +279,42 @@ func (dd *QueryDIDDocRequestService) RegisterResourceQueryHandlers(startHandler 
 	// resourceQueryHandler -> resourceIdHandler -> resourceCollectionIdHandler ->
 	// -> resourceNameHandler -> resourceTypeHandler -> resourceVersionHandler ->
 	// -> resourceVersionTimeHandler -> resourceChecksumHandler -> resourceValidationHandler -> resourceMetadataHandler -> stopHandler
-	err = resourceIdHandler.SetNext(c, &resourceCollectionIdHandler)
+	err = resourceIdHandler.SetNext(c, &resourceCollectionIdHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
 
-	err = resourceCollectionIdHandler.SetNext(c, &resourceNameHandler)
+	err = resourceCollectionIdHandler.SetNext(c, &resourceNameHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
 
-	err = resourceNameHandler.SetNext(c, &resourceTypeHandler)
+	err = resourceNameHandler.SetNext(c, &resourceTypeHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
 
-	err = resourceTypeHandler.SetNext(c, &resourceVersionHandler)
+	err = resourceTypeHandler.SetNext(c, &resourceVersionHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
 
-	err = resourceVersionHandler.SetNext(c, &resourceChecksumHandler)
+	err = resourceVersionHandler.SetNext(c, &resourceChecksumHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
 
-	err = resourceChecksumHandler.SetNext(c, &resourceVersionTimeHandler)
+	err = resourceChecksumHandler.SetNext(c, &resourceVersionTimeHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
 
-	err = resourceVersionTimeHandler.SetNext(c, &resourceValidationHandler)
+	err = resourceVersionTimeHandler.SetNext(c, &resourceValidationHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}
 
-	err = resourceValidationHandler.SetNext(c, &resourceMetadataHandler)
+	err = resourceValidationHandler.SetNext(c, &resourceMetadataHandler, dd.IsDereferencing)
 	if err != nil {
 		return nil, err
 	}

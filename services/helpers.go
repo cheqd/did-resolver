@@ -34,6 +34,10 @@ func GetPriorityContentType(acceptHeader string, resource bool) (types.ContentTy
 		if resource || mediaType.IsSupported() {
 			profile := at.Extensions["profile"]
 			profile = strings.Trim(profile, "\"") // Remove surrounding quotes if present
+
+			if !resource && profile == "" {
+				profile = types.W3IDDIDRES
+			}
 			return mediaType, profile
 		}
 	}
