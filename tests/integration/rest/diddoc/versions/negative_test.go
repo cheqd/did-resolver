@@ -43,7 +43,7 @@ var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.Negat
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.TEXT,
+					ContentType:     types.JSON,
 					ResolutionError: "representationNotSupported",
 					DidProperties:   types.DidProperties{},
 				},
@@ -66,7 +66,7 @@ var _ = DescribeTable("Negative: Get DIDDoc versions", func(testCase utils.Negat
 			ExpectedResult: types.DidResolution{
 				Context: "",
 				ResolutionMetadata: types.ResolutionMetadata{
-					ContentType:     types.TEXT,
+					ContentType:     types.JSON,
 					ResolutionError: "representationNotSupported",
 					DidProperties:   types.DidProperties{},
 				},

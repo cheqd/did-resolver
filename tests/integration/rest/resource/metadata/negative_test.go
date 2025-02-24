@@ -44,9 +44,13 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.TEXT,
+					ContentType:     types.JSON,
 					ResolutionError: "representationNotSupported",
-					DidProperties:   types.DidProperties{},
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.UUIDStyleMainnetDid,
+						MethodSpecificId: testconstants.UUIDStyleMainnetId,
+						Method:           testconstants.ValidMethod,
+					},
 				},
 				ContentStream: nil,
 				Metadata:      &types.DereferencedResource{},
@@ -68,9 +72,13 @@ var _ = DescribeTable("Negative: get resource metadata", func(testCase utils.Neg
 			ExpectedResult: utils.ResourceDereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.TEXT,
+					ContentType:     types.JSON,
 					ResolutionError: "representationNotSupported",
-					DidProperties:   types.DidProperties{},
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.NotExistentMainnetDid,
+						MethodSpecificId: testconstants.NotExistentIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
 				},
 				ContentStream: nil,
 				Metadata:      &types.DereferencedResource{},

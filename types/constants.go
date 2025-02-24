@@ -3,14 +3,15 @@ package types
 type ContentType string
 
 const (
-	DIDJSON    ContentType = "application/did+json"
-	DIDJSONLD  ContentType = "application/did+ld+json"
-	JSONLD     ContentType = "application/ld+json"
-	JSON       ContentType = "application/json"
-	DIDRES     ContentType = "application/did"
-	W3IDDIDRES string      = "https://w3id.org/did-resolution"
-	TEXT       ContentType = "text/plain"
-	W3IDDIDURL string      = "https://w3id.org/did-url-dereferencing"
+	DIDJSON                ContentType = "application/did+json"
+	DIDJSONLD              ContentType = "application/did+ld+json"
+	JSONLD                 ContentType = "application/ld+json"
+	JSON                   ContentType = "application/json"
+	DIDRES                 ContentType = "application/did"
+	W3IDDIDRES             string      = "https://w3id.org/did-resolution"
+	TEXT                   ContentType = "text/plain"
+	W3IDDIDURL             string      = "https://w3id.org/did-url-dereferencing"
+	DEFAULT_BROWSER_HEADER string      = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
 )
 
 func (cType ContentType) IsSupported() bool {
