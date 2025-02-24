@@ -131,7 +131,9 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 					testconstants.ValidDid,
 					[]*resourceTypes.Metadata{
 						ResourceType2.Metadata,
+						ResourceChecksum.Metadata,
 						ResourceType12.Metadata,
+						ResourceType13.Metadata,
 						ResourceType1.Metadata,
 						ResourceName2.Metadata,
 						ResourceName12.Metadata,
@@ -294,7 +296,33 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 		},
 	),
 	Entry(
-		"Positive. ResourceVersionTime return resources something between",
+		"Positive. ResourceVersion + ResourceMetadata=true",
+		ResourceMetadataTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?resourceVersion=%s&resourceMetadata=true",
+				testconstants.ValidDid,
+				ResourceName1.Metadata.Version,
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &DereferencingResult{
+				DereferencingMetadata: &types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ExistentDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: types.NewDereferencedResourceListStruct(
+					testconstants.ValidDid,
+					[]*resourceTypes.Metadata{ResourceName1.Metadata},
+				),
+				Metadata: nil,
+			},
+			expectedError: nil,
+		},
+	),
+	Entry(
+		"Positive. ResourceVersionTime and resourceMetadata=true return resources something between",
 		ResourceMetadataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
@@ -358,7 +386,7 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceType=%s&resourceMetadata=true",
 				testconstants.ValidDid,
-				ResourceType1.Metadata.ResourceType,
+				ResourceType2.Metadata.ResourceType,
 			),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
@@ -372,8 +400,8 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 				ContentStream: types.NewDereferencedResourceListStruct(
 					testconstants.ValidDid,
 					[]*resourceTypes.Metadata{
-						ResourceType12.Metadata,
-						ResourceType1.Metadata,
+						ResourceType2.Metadata,
+						ResourceType13.Metadata,
 					},
 				),
 				Metadata: nil,

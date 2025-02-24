@@ -65,6 +65,12 @@ var ResourceSupportedQueries = SupportedQueriesT{
 	ResourceChecksum,
 }
 
+var ResourceAmbiguousQueries = SupportedQueriesT{
+	ResourceCollectionId,
+	ResourceVersion,
+	ResourceVersionTime,
+}
+
 var AllSupportedQueries = DidSupportedQueries.Plus(ResourceSupportedQueries)
 
 var SupportedQueriesWithTransformKeys = []string{
