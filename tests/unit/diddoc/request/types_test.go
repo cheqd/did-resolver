@@ -114,6 +114,7 @@ func generateResource(resourceId, name, rtype, version string, created *timestam
 		},
 	}
 }
+
 func generateUniqueResource(resourceId, name, rtype, version string, created *timestamppb.Timestamp) resourceTypes.ResourceWithMetadata {
 	return resourceTypes.ResourceWithMetadata{
 		Resource: &resourceTypes.Resource{
