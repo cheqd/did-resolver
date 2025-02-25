@@ -203,6 +203,29 @@ var _ = DescribeTable("Test resource negative cases with Metadata field", func(t
 		},
 	),
 	Entry(
+		"Negative. ResourceVersion + ResourceMetadata=false",
+		ResourceMetadataTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?resourceVersion=%s&resourceMetadata=false",
+				testconstants.ValidDid,
+				ResourceType1.Metadata.Version,
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ExistentDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      nil,
+			},
+			expectedError: types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+	Entry(
 		"Negative. checksum wrong",
 		ResourceMetadataTestCase{
 			didURL: fmt.Sprintf(
@@ -247,6 +270,75 @@ var _ = DescribeTable("Test resource negative cases with Metadata field", func(t
 				Metadata:      nil,
 			},
 			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+	Entry(
+		"Megative. ResourceVersionTime and resourceMetadata=false",
+		ResourceMetadataTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=false",
+				testconstants.ValidDid,
+				Resource2Created.Format(time.RFC3339),
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ExistentDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      nil,
+			},
+			expectedError: types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+	Entry(
+		"Negative. resourceCollectionId and resourceMetadata=false",
+		ResourceMetadataTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?resourceCollectionId=%s&resourceMetadata=false",
+				testconstants.ValidDid,
+				ResourceName1.Metadata.CollectionId,
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ExistentDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      nil,
+			},
+			expectedError: types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
+		},
+	),
+	Entry(
+		"Negative. resourceType and resourceMetadata=false",
+		ResourceMetadataTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?resourceType=%s&resourceMetadata=false",
+				testconstants.ValidDid,
+				ResourceType12.Metadata.ResourceType,
+			),
+			resolutionType: types.DIDJSONLD,
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ExistentDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      nil,
+			},
+			expectedError: types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
 	),
 )

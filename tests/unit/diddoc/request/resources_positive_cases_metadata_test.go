@@ -18,12 +18,6 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-type DereferencingResult struct {
-	DereferencingMetadata *types.DereferencingMetadata          `json:"dereferencingMetadata"`
-	ContentStream         *types.DereferencedResourceListStruct `json:"contentStream"`
-	Metadata              *types.ResolutionDidDocMetadata       `json:"contentMetadata"`
-}
-
 type ResourceMetadataTestCase struct {
 	didURL                      string
 	resolutionType              types.ContentType
@@ -134,8 +128,10 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 						testconstants.ValidDid,
 						[]*resourceTypes.Metadata{
 							ResourceType2.Metadata,
+							ResourceChecksum.Metadata,
 							ResourceType12.Metadata,
 							ResourceType1.Metadata,
+							ResourceType13.Metadata,
 							ResourceName2.Metadata,
 							ResourceName12.Metadata,
 							ResourceName1.Metadata,
@@ -307,7 +303,35 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 		},
 	),
 	Entry(
-		"Positive. ResourceVersionTime return resources something between",
+		"Positive. ResourceVersion + ResourceMetadata=true",
+		ResourceMetadataTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?resourceVersion=%s&resourceMetadata=true",
+				testconstants.ValidDid,
+				ResourceName1.Metadata.Version,
+			),
+			resolutionType: types.JSONLD,
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.ExistentDid,
+						MethodSpecificId: testconstants.ValidIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
+			},
+			expectedError: nil,
+		},
+	),
+	Entry(
+		"Positive. ResourceVersionTime and resourceMetadata=true return resources something between",
 		ResourceMetadataTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
@@ -375,7 +399,7 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceType=%s&resourceMetadata=true",
 				testconstants.ValidDid,
-				ResourceType1.Metadata.ResourceType,
+				ResourceType2.Metadata.ResourceType,
 			),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &types.ResourceDereferencing{
@@ -391,8 +415,8 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 					Resources: &types.NewDereferencedResourceListStruct(
 						testconstants.ValidDid,
 						[]*resourceTypes.Metadata{
-							ResourceType12.Metadata,
-							ResourceType1.Metadata,
+							ResourceType2.Metadata,
+							ResourceType13.Metadata,
 						},
 					).Resources,
 				},

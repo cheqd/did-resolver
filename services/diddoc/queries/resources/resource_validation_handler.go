@@ -13,7 +13,6 @@ type ResourceValidationHandler struct {
 
 func (d *ResourceValidationHandler) Handle(c services.ResolverContext, service services.RequestServiceI, response types.ResolutionResultI) (types.ResolutionResultI, error) {
 	resourceName := service.GetQueryParam(types.ResourceName)
-	resourceType := service.GetQueryParam(types.ResourceType)
 	resourceMetadata := service.GetQueryParam(types.ResourceMetadata)
 
 	// Cast to just list of resources
@@ -24,17 +23,6 @@ func (d *ResourceValidationHandler) Handle(c services.ResolverContext, service s
 
 	if resourceMetadata == "true" {
 		return d.Continue(c, service, didResolution)
-	}
-
-	if resourceType != "" {
-		// If we have 2 or more resources we need to check resource names.
-		// If resource names are the same we need to return the latest.
-		// If resource names are different we need to return an error.
-		if !didResolution.Metadata.Resources.AreResourceNamesTheSame() {
-			return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
-		}
-		// They are sorted in descending order by default
-		didResolution.Metadata.Resources = types.DereferencedResourceList{didResolution.Metadata.Resources[0]}
 	}
 
 	if resourceName != "" {

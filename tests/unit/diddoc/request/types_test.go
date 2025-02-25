@@ -34,6 +34,8 @@ type ResourceTestCase struct {
 var (
 	Data                   = []byte("{\"attr\":[\"name\",\"age\"]}")
 	Checksum               = sha256.New().Sum(Data)
+	Data1                  = []byte("{\"attr\":[\"name\",\"age\",\"address\"]}")
+	Checksum1              = sha256.New().Sum(Data1)
 	VersionId1             = uuid.New().String()
 	VersionId2             = uuid.New().String()
 	ResourceIdName1        = uuid.New().String()
@@ -41,6 +43,7 @@ var (
 	ResourceIdName2        = uuid.New().String()
 	ResourceIdType1        = uuid.New().String()
 	ResourceIdType12       = uuid.New().String()
+	ResourceIdType13       = uuid.New().String()
 	ResourceIdType2        = uuid.New().String()
 	DidDocBeforeCreated, _ = time.Parse(time.RFC3339, "2021-08-23T08:59:00Z")
 	DidDocCreated, _       = time.Parse(time.RFC3339, "2021-08-23T09:00:00Z")
@@ -56,13 +59,15 @@ var (
 )
 
 var (
-	ResourceName1   = generateResource(ResourceIdName1, "Name1", "string", "1", timestamppb.New(Resource1Created))
-	ResourceName12  = generateResource(ResourceIdName12, "Name1", "string", "12", timestamppb.New(Resource12Created))
-	ResourceName2   = generateResource(ResourceIdName2, "Name2", "string2", "2", timestamppb.New(Resource2Created))
-	ResourceType1   = generateResource(ResourceIdType1, "Name", "Type1", "3", timestamppb.New(Resource3Created))
-	ResourceType12  = generateResource(ResourceIdType12, "Name2", "Type1", "34", timestamppb.New(Resource34Created))
-	ResourceType2   = generateResource(ResourceIdType2, "Name2", "Type2", "4", timestamppb.New(Resource4Created))
-	DidDocMetadata1 = generateMetadata(
+	ResourceName1    = generateResource(ResourceIdName1, "Name1", "string", "1", timestamppb.New(Resource1Created))
+	ResourceName12   = generateResource(ResourceIdName12, "Name1", "string", "12", timestamppb.New(Resource12Created))
+	ResourceName2    = generateResource(ResourceIdName2, "Name2", "string2", "2", timestamppb.New(Resource2Created))
+	ResourceType1    = generateResource(ResourceIdType1, "Name", "Type1", "36", timestamppb.New(Resource3Created))
+	ResourceType13   = generateResource(ResourceIdType13, "Name2", "Type2", "36", timestamppb.New(Resource3Created))
+	ResourceType12   = generateResource(ResourceIdType12, "Name2", "Type1", "34", timestamppb.New(Resource34Created))
+	ResourceType2    = generateResource(ResourceIdType2, "Name2", "Type2", "4", timestamppb.New(Resource4Created))
+	ResourceChecksum = generateUniqueResource(ResourceIdType2, "UniqueName", "UniqueType", "5", timestamppb.New(Resource4Created))
+	DidDocMetadata1  = generateMetadata(
 		VersionId1,
 		timestamppb.New(DidDocCreated),
 		nil,
@@ -87,6 +92,8 @@ var MockLedger = utils.NewMockLedgerService(
 		ResourceType1,
 		ResourceType12,
 		ResourceType2,
+		ResourceType13,
+		ResourceChecksum,
 	},
 )
 
@@ -102,6 +109,24 @@ func generateResource(resourceId, name, rtype, version string, created *timestam
 			ResourceType: rtype,
 			MediaType:    "application/json",
 			Checksum:     fmt.Sprintf("%x", Checksum),
+			Created:      created,
+			Version:      version,
+		},
+	}
+}
+
+func generateUniqueResource(resourceId, name, rtype, version string, created *timestamppb.Timestamp) resourceTypes.ResourceWithMetadata {
+	return resourceTypes.ResourceWithMetadata{
+		Resource: &resourceTypes.Resource{
+			Data: Data1,
+		},
+		Metadata: &resourceTypes.Metadata{
+			CollectionId: testconstants.ValidIdentifier,
+			Id:           resourceId,
+			Name:         name,
+			ResourceType: rtype,
+			MediaType:    "application/json",
+			Checksum:     fmt.Sprintf("%x", Checksum1),
 			Created:      created,
 			Version:      version,
 		},

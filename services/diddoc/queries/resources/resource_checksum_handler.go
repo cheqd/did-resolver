@@ -26,7 +26,12 @@ func (d *ResourceChecksumHandler) Handle(c services.ResolverContext, service ser
 	// Filter the list of metadatas by the resourceCollectionId
 	resourceCollectionFiltered := didResolution.Metadata.Resources.FilterByChecksum(resourceChecksum)
 	if len(resourceCollectionFiltered) == 0 {
+		// Notfound error if no resource found
 		return nil, types.NewNotFoundError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
+	}
+	if len(resourceCollectionFiltered) > 1 {
+		// InvalidDidUrl error if multiple resources found with same checksum
+		return nil, types.NewInvalidDidUrlError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 	}
 
 	didResolution.Metadata.Resources = resourceCollectionFiltered

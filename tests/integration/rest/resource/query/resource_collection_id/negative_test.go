@@ -24,26 +24,52 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 	Expect(err).To(BeNil())
 	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
 
-	var receivedDidDereferencing types.DidResolution
+	var receivedDidDereferencing utils.DereferencingResult
 	Expect(json.Unmarshal(resp.Body(), &receivedDidDereferencing)).To(BeNil())
 
-	expectedDidDereferencing := testCase.ExpectedResult.(types.DidResolution)
-	utils.AssertDidResolution(expectedDidDereferencing, receivedDidDereferencing)
+	expectedDidDereferencing := testCase.ExpectedResult.(utils.DereferencingResult)
+	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
 },
-
+	Entry(
+		"cannot get collection of resources with only collectionId query parameter",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?resourceCollectionId=%s",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+				testconstants.UUIDStyleTestnetId,
+			),
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.JSONLD,
+					ResolutionError: "invalidDidUrl",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.UUIDStyleTestnetDid,
+						MethodSpecificId: testconstants.UUIDStyleTestnetId,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: types.InvalidDidUrlHttpCode,
+		},
+	),
 	Entry(
 		"cannot get collection of resources with not existent collectionId query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://%s/1.0/identifiers/%s?collectionId=%s",
+				"http://%s/1.0/identifiers/%s?resourceCollectionId=%s",
 				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.NotExistentIdentifier,
 			),
 			ResolutionType: string(types.DIDJSONLD),
-			ExpectedResult: types.DidResolution{
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
-				ResolutionMetadata: types.ResolutionMetadata{
+				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "invalidDidUrl",
 					DidProperties: types.DidProperties{
@@ -52,8 +78,8 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				Did:      nil,
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: types.InvalidDidUrlHttpCode,
 		},
@@ -63,15 +89,15 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 		"cannot get collection of resources with an invalid collectionId query parameter",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
-				"http://%s/1.0/identifiers/%s?collectionId=%s",
+				"http://%s/1.0/identifiers/%s?resourceCollectionId=%s",
 				testconstants.TestHostAddress,
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.InvalidIdentifier,
 			),
 			ResolutionType: string(types.DIDJSONLD),
-			ExpectedResult: types.DidResolution{
+			ExpectedResult: utils.DereferencingResult{
 				Context: "",
-				ResolutionMetadata: types.ResolutionMetadata{
+				DereferencingMetadata: types.DereferencingMetadata{
 					ContentType:     types.DIDJSONLD,
 					ResolutionError: "invalidDidUrl",
 					DidProperties: types.DidProperties{
@@ -80,10 +106,38 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				Did:      nil,
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
 			},
 			ExpectedStatusCode: types.InvalidDidUrlHttpCode, // it should be invalidDidUrl
+		},
+	),
+	Entry(
+		"cannot get resource with and existent versionId and resourceCollectionId which has different resourceName",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?versionId=%s&resourceCollectionId=%s",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+				testconstants.UUIDStyleTestnetVersionId,
+				testconstants.UUIDStyleTestnetId,
+			),
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.JSONLD,
+					ResolutionError: "invalidDidUrl",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.UUIDStyleTestnetDid,
+						MethodSpecificId: testconstants.UUIDStyleTestnetId,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: types.InvalidDidUrlHttpCode,
 		},
 	),
 )

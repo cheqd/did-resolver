@@ -23,9 +23,13 @@ func (d *ResourceMetadataHandler) Handle(c services.ResolverContext, service ser
 	contentType, profile := services.GetPriorityContentType(acceptHeader, d.IsDereferencing)
 
 	// special case for single query and resourceMetadata in query, then IsDereferencing is false
-	isSingleQuery := len(c.Request().URL.Query()) == 1 && c.QueryParam(types.ResourceMetadata) != ""
-	if isSingleQuery && profile != types.W3IDDIDURL {
+	isOnlyMetadataQuery := len(c.Request().URL.Query()) == 1 && c.QueryParam(types.ResourceMetadata) != ""
+	if isOnlyMetadataQuery && profile != types.W3IDDIDURL {
 		d.IsDereferencing = false
+	}
+	// If its not OnlyMetadataQuery and ResourceMetadata!=true and Invalid List of resources, return an error
+	if !isOnlyMetadataQuery && c.QueryParam(types.ResourceMetadata) != "true" && IsInvalidResourceCollection(didResolution.Metadata.Resources) {
+		return nil, types.NewInvalidDidUrlError(service.GetDid(), service.GetContentType(), nil, d.IsDereferencing)
 	}
 	// return didResolution result if dereferencing is false
 	if !d.IsDereferencing {
@@ -63,4 +67,9 @@ func (d *ResourceMetadataHandler) Handle(c services.ResolverContext, service ser
 
 	// Call the next handler
 	return d.Continue(c, service, dereferenceResult)
+}
+
+// IsInvalidResourceCollection validates resourceCollectionFiltered based on naming consistency and metadata query parameter.
+func IsInvalidResourceCollection(resources types.DereferencedResourceList) bool {
+	return len(resources) > 1 && !resources.AreResourceNamesTheSame()
 }

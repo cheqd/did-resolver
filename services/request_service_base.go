@@ -46,8 +46,7 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 	isDereferencingOrFragment := dd.IsDereferencing && dd.Fragment == ""
 	// Get Accept header
 	dd.RequestedContentType, _ = GetPriorityContentType(c.Request().Header.Get(echo.HeaderAccept), isDereferencingOrFragment)
-	// Ignore supported type for dereferencing
-	if !isDereferencingOrFragment && !dd.GetContentType().IsSupported() {
+	if !dd.GetContentType().IsSupported() {
 		return types.NewRepresentationNotSupportedError(dd.GetDid(), types.JSON, nil, dd.IsDereferencing)
 	}
 
@@ -111,7 +110,7 @@ func (dd BaseRequestService) Redirect(c ResolverContext) error {
 func (dd *BaseRequestService) Query(c ResolverContext) error {
 	result, err := c.DidDocService.Resolve(dd.GetDid(), dd.Version, dd.GetContentType())
 	if err != nil {
-		err.IsDereferencing = false
+		err.IsDereferencing = dd.GetDereferencing()
 		return err
 	}
 	return dd.SetResponse(result)

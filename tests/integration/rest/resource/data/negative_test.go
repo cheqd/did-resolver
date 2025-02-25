@@ -39,11 +39,11 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
-			ResolutionType: string(types.TEXT),
+			ResolutionType: string(types.JSON),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.TEXT,
+					ContentType:     types.JSON,
 					ResolutionError: "notFound",
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.NotExistentMainnetDid,

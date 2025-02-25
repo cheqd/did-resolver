@@ -4,14 +4,13 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/labstack/echo/v4"
-
 	"github.com/cheqd/did-resolver/services"
 	"github.com/cheqd/did-resolver/services/diddoc/queries"
 	diddocQueries "github.com/cheqd/did-resolver/services/diddoc/queries/diddoc"
 	resourceQueries "github.com/cheqd/did-resolver/services/diddoc/queries/resources"
 	"github.com/cheqd/did-resolver/types"
 	"github.com/cheqd/did-resolver/utils"
+	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 )
 
@@ -32,7 +31,11 @@ func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext)
 	contentType, profile := services.GetPriorityContentType(acceptHeader, dd.AreResourceQueriesPlaced(c))
 
 	dd.Profile = profile
-	dd.RequestedContentType = contentType
+	// if there is not metadata query only then overwrite the content type
+	isMetadataQuery := c.QueryParam(types.ResourceMetadata) != "" || c.QueryParam(types.Metadata) != ""
+	if !isMetadataQuery {
+		dd.RequestedContentType = contentType
+	}
 
 	if profile == types.W3IDDIDRES {
 		dd.IsDereferencing = false
@@ -58,6 +61,9 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	}
 
 	if dd.AreQueryValuesEmpty(c) {
+		return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
+	}
+	if dd.IsAmbiguousQuery(c) {
 		return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
@@ -132,12 +138,6 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 		return types.NewInvalidDidUrlError(dd.GetDid(), dd.RequestedContentType, nil, dd.IsDereferencing)
 	}
 
-	// If there is only 1 query parameter and it's resourceVersionTime,
-	// then we need to return RepresentationNotSupported error
-	if len(dd.Queries) == 1 && resourceVersionTime != "" {
-		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
-	}
-
 	return nil
 }
 
@@ -156,6 +156,18 @@ func (dd QueryDIDDocRequestService) AreQueryValuesEmpty(c services.ResolverConte
 		if len(v) == 1 && v[0] == "" {
 			return true
 		}
+	}
+	return false
+}
+
+func (dd QueryDIDDocRequestService) IsAmbiguousQuery(c services.ResolverContext) bool {
+	// If there is only 1 query parameter and its in AmbiguousQuery, then we need to return InvalidDidUrlError error
+	if len(dd.Queries) == 1 && len(types.ResourceAmbiguousQueries.IntersectWithUrlValues(dd.Queries)) == 1 {
+		return true
+	}
+	// if one query param resouceMetadata is false and its in AmbiguousQuery, then we need to return InvalidDidUrlError error
+	if dd.Queries.Get(types.ResourceMetadata) == "false" && len(types.ResourceAmbiguousQueries.IntersectWithUrlValues(dd.Queries)) == 1 {
+		return true
 	}
 	return false
 }

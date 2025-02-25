@@ -18,6 +18,7 @@ import (
 
 var _ = DescribeTable("Test Query handlers with resource params. Returns Resource", func(testCase ResourceTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
+	request.Header.Set("Content-Type", string(testCase.resolutionType))
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, MockLedger)
 	expectedContentType := types.ContentType(testconstants.ValidResource[0].Metadata.MediaType)
 
@@ -131,11 +132,23 @@ var _ = DescribeTable("Test Query handlers with resource params. Returns Resourc
 		},
 	),
 	Entry(
+		"Positive. Unique Checksum case.",
+		ResourceTestCase{
+			didURL: fmt.Sprintf(
+				"/1.0/identifiers/%s?checksum=%s",
+				testconstants.ValidDid,
+				ResourceChecksum.Metadata.Checksum),
+			resolutionType:   types.DIDJSONLD,
+			expectedResource: types.NewDereferencedResourceData(ResourceChecksum.Resource.Data),
+			expectedError:    nil,
+		},
+	),
+	Entry(
 		"Positive. ResourceType case. Get the latest with the same resource type",
 		ResourceTestCase{
 			didURL:           fmt.Sprintf("/1.0/identifiers/%s?resourceType=%s", testconstants.ValidDid, ResourceName1.Metadata.ResourceType),
 			resolutionType:   types.DIDJSONLD,
-			expectedResource: types.NewDereferencedResourceData(ResourceName12.Resource.Data),
+			expectedResource: types.NewDereferencedResourceData(ResourceName1.Resource.Data),
 			expectedError:    nil,
 		},
 	),

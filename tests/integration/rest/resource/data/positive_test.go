@@ -189,4 +189,20 @@ var _ = DescribeTable("Positive: Get resource data", func(testCase utils.Positiv
 			ExpectedStatusCode:   http.StatusOK,
 		},
 	),
+	Entry(
+		"can get resource with an existent DID, with Chrome Accept header",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s/resources/%s",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+				testconstants.UUIDStyleTestnetDidResourceId,
+			),
+			ResolutionType:       testconstants.ChromeResolutionType,
+			EncodingType:         testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
+			ExpectedJSONPath:     "../../testdata/resource_data/resource.json",
+			ExpectedStatusCode:   http.StatusOK,
+		},
+	),
 )

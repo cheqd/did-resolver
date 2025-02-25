@@ -26,6 +26,7 @@ type resourceDataTestCase struct {
 
 var _ = DescribeTable("Test ResourceDataEchoHandler function", func(testCase resourceDataTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
+	request.Header.Set("Content-Type", string(testCase.resolutionType))
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, utils.MockLedger)
 
 	expectedContentType := types.ContentType(testconstants.ValidResource[0].Metadata.MediaType)
@@ -119,8 +120,8 @@ var _ = DescribeTable("Test ResourceDataEchoHandler function", func(testCase res
 				testconstants.ExistentResourceId,
 			),
 			resolutionType:   types.TEXT,
-			expectedResource: &testconstants.ValidResourceDereferencing,
-			expectedError:    nil,
+			expectedResource: nil,
+			expectedError:    types.NewRepresentationNotSupportedError(testconstants.ExistentDid, types.JSON, nil, false),
 		},
 	),
 )

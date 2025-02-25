@@ -18,12 +18,6 @@ import (
 	"github.com/cheqd/did-resolver/types"
 )
 
-type DereferencingResult struct {
-	DereferencingMetadata *types.DereferencingMetadata          `json:"dereferencingMetadata"`
-	ContentStream         *types.DereferencedResourceListStruct `json:"contentStream"`
-	Metadata              *types.ResolutionDidDocMetadata       `json:"contentMetadata"`
-}
-
 type resourceMetadataTestCase struct {
 	didURL                      string
 	resolutionType              types.ContentType
@@ -33,6 +27,7 @@ type resourceMetadataTestCase struct {
 
 var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase resourceMetadataTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
+	request.Header.Set("Content-Type", string(testCase.resolutionType))
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, utils.MockLedger)
 
 	if testCase.expectedDereferencingResult.ContentStream != nil {
@@ -65,6 +60,7 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 			resolutionType: types.JSONLD,
 			expectedDereferencingResult: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType: types.JSONLD,
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
