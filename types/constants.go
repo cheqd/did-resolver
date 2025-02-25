@@ -3,15 +3,14 @@ package types
 type ContentType string
 
 const (
-	DIDJSON                ContentType = "application/did+json"
-	DIDJSONLD              ContentType = "application/did+ld+json"
-	JSONLD                 ContentType = "application/ld+json"
-	JSON                   ContentType = "application/json"
-	DIDRES                 ContentType = "application/did"
-	W3IDDIDRES             string      = "https://w3id.org/did-resolution"
-	TEXT                   ContentType = "text/plain"
-	W3IDDIDURL             string      = "https://w3id.org/did-url-dereferencing"
-	DEFAULT_BROWSER_HEADER string      = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+	DIDJSON    ContentType = "application/did+json"
+	DIDJSONLD  ContentType = "application/did+ld+json"
+	JSONLD     ContentType = "application/ld+json"
+	JSON       ContentType = "application/json"
+	DIDRES     ContentType = "application/did"
+	W3IDDIDRES string      = "https://w3id.org/did-resolution"
+	TEXT       ContentType = "text/plain"
+	W3IDDIDURL string      = "https://w3id.org/did-url-dereferencing"
 )
 
 func (cType ContentType) IsSupported() bool {
@@ -52,13 +51,14 @@ const (
 )
 
 const (
-	DID_METHOD        = "cheqd"
-	RESOLVER_PATH     = "/1.0/identifiers/"
-	DID_VERSION_PATH  = "/version/"
-	DID_VERSIONS_PATH = "/versions"
-	DID_METADATA      = "/metadata"
-	RESOURCE_PATH     = "/resources/"
-	SWAGGER_PATH      = "/swagger/*"
+	DID_METHOD              = "cheqd"
+	RESOLVER_PATH           = "/1.0/identifiers/"
+	DID_VERSION_PATH        = "/version/"
+	DID_VERSIONS_PATH       = "/versions"
+	DID_METADATA            = "/metadata"
+	RESOURCE_PATH           = "/resources/"
+	SWAGGER_PATH            = "/swagger/*"
+	DEFAULT_RESOLUTION_TYPE = "*/*"
 )
 
 const (
