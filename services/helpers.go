@@ -9,19 +9,6 @@ import (
 	"github.com/timewasted/go-accept-headers"
 )
 
-func IsBrowser(userAgent string) bool {
-	userAgent = strings.ToLower(userAgent)
-
-	return strings.Contains(userAgent, "chrome") ||
-		strings.Contains(userAgent, "firefox") ||
-		(strings.Contains(userAgent, "safari") && !strings.Contains(userAgent, "chrome")) ||
-		strings.Contains(userAgent, "opera") ||
-		strings.Contains(userAgent, "opr") ||
-		strings.Contains(userAgent, "edg") ||
-		strings.Contains(userAgent, "msie") ||
-		strings.Contains(userAgent, "trident")
-}
-
 func GetPriorityContentType(acceptHeader string, resource bool) (types.ContentType, string) {
 	// Parse the Accept header using the go-accept-headers package
 	acceptedTypes := accept.Parse(acceptHeader)

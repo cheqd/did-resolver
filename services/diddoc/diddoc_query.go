@@ -29,11 +29,6 @@ func (dd *QueryDIDDocRequestService) Setup(c services.ResolverContext) error {
 func (dd *QueryDIDDocRequestService) SpecificPrepare(c services.ResolverContext) error {
 	// if profile is W3IDDIDRES then dereferencing is false
 	acceptHeader := c.Request().Header.Get(echo.HeaderAccept)
-	userAgent := c.Request().UserAgent()
-	// TODO: Remove this when an alternate fix is created for browsers
-	if services.IsBrowser(userAgent) {
-		acceptHeader = types.DEFAULT_RESOLUTION_TYPE
-	}
 	contentType, profile := services.GetPriorityContentType(acceptHeader, dd.AreResourceQueriesPlaced(c))
 
 	dd.Profile = profile
