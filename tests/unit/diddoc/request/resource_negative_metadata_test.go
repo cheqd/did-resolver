@@ -22,9 +22,7 @@ var _ = DescribeTable("Test resource negative cases with Metadata field", func(t
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, MockLedger)
 
-	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
-		testCase.expectedDereferencingResult.ContentStream.AddContext(types.DIDSchemaJSONLD)
-	} else if testCase.expectedDereferencingResult.ContentStream != nil {
+	if testCase.expectedDereferencingResult.ContentStream != nil {
 		testCase.expectedDereferencingResult.ContentStream.RemoveContext()
 	}
 	expectedContentType := utils.DefineContentType(testCase.expectedDereferencingResult.DereferencingMetadata.ContentType, testCase.resolutionType)
@@ -34,10 +32,9 @@ var _ = DescribeTable("Test resource negative cases with Metadata field", func(t
 	if testCase.expectedError != nil {
 		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
 	} else {
-		var dereferencingResult DereferencingResult
+		var dereferencingResult *types.ResourceDereferencing
 		Expect(err).To(BeNil())
 		Expect(json.Unmarshal(rec.Body.Bytes(), &dereferencingResult)).To(BeNil())
-		Expect(testCase.expectedDereferencingResult.ContentStream).To(Equal(dereferencingResult.ContentStream))
 		Expect(testCase.expectedDereferencingResult.Metadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
 		Expect(testCase.expectedDereferencingResult.DereferencingMetadata.DidProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
@@ -53,16 +50,16 @@ var _ = DescribeTable("Test resource negative cases with Metadata field", func(t
 				uuid.New().String(),
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: &types.DereferencedResourceListStruct{},
-				Metadata:      &types.ResolutionDidDocMetadata{},
+				ContentStream: nil,
+				Metadata:      nil,
 			},
 			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
@@ -76,16 +73,16 @@ var _ = DescribeTable("Test resource negative cases with Metadata field", func(t
 				"SomeNotUUID",
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: &types.DereferencedResourceListStruct{},
-				Metadata:      &types.ResolutionDidDocMetadata{},
+				ContentStream: nil,
+				Metadata:      nil,
 			},
 			expectedError: types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
@@ -99,16 +96,16 @@ var _ = DescribeTable("Test resource negative cases with Metadata field", func(t
 				"SomeNotUUID",
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: &types.DereferencedResourceListStruct{},
-				Metadata:      &types.ResolutionDidDocMetadata{},
+				ContentStream: nil,
+				Metadata:      nil,
 			},
 			expectedError: types.NewInvalidDidUrlError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
@@ -122,16 +119,16 @@ var _ = DescribeTable("Test resource negative cases with Metadata field", func(t
 				uuid.New().String(),
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: &types.DereferencedResourceListStruct{},
-				Metadata:      &types.ResolutionDidDocMetadata{},
+				ContentStream: nil,
+				Metadata:      nil,
 			},
 			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
@@ -145,16 +142,16 @@ var _ = DescribeTable("Test resource negative cases with Metadata field", func(t
 				"NotExistentType",
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: &types.DereferencedResourceListStruct{},
-				Metadata:      &types.ResolutionDidDocMetadata{},
+				ContentStream: nil,
+				Metadata:      nil,
 			},
 			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
@@ -168,16 +165,16 @@ var _ = DescribeTable("Test resource negative cases with Metadata field", func(t
 				"NotExistentName",
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: &types.DereferencedResourceListStruct{},
-				Metadata:      &types.ResolutionDidDocMetadata{},
+				ContentStream: nil,
+				Metadata:      nil,
 			},
 			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
@@ -191,16 +188,16 @@ var _ = DescribeTable("Test resource negative cases with Metadata field", func(t
 				"NotExistentVersion",
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: &types.DereferencedResourceListStruct{},
-				Metadata:      &types.ResolutionDidDocMetadata{},
+				ContentStream: nil,
+				Metadata:      nil,
 			},
 			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
@@ -215,16 +212,16 @@ var _ = DescribeTable("Test resource negative cases with Metadata field", func(t
 				"wrongChecksum",
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: &types.DereferencedResourceListStruct{},
-				Metadata:      &types.ResolutionDidDocMetadata{},
+				ContentStream: nil,
+				Metadata:      nil,
 			},
 			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
@@ -238,16 +235,16 @@ var _ = DescribeTable("Test resource negative cases with Metadata field", func(t
 				DidDocBeforeCreated.Format(time.RFC3339),
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: &types.DereferencedResourceListStruct{},
-				Metadata:      &types.ResolutionDidDocMetadata{},
+				ContentStream: nil,
+				Metadata:      nil,
 			},
 			expectedError: types.NewNotFoundError(testconstants.ValidDid, types.DIDJSONLD, nil, true),
 		},
