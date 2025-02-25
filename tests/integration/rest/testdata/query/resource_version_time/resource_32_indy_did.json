@@ -9,7 +9,7 @@
             "method": "cheqd"
         }
     },
-    "contentStream": {
+    "contentMetadata": {
         "linkedResourceMetadata": [
             {
                 "resourceURI": "did:cheqd:testnet:3KpiDD6Hxs4i2G7FtpiGhu/resources/f31c68e6-61b5-4926-a932-40a13b4c4507",
@@ -26,5 +26,5 @@
             }
         ]
     },
-    "contentMetadata": {}
+    "contentStream": null
 }

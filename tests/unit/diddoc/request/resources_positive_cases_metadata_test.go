@@ -18,16 +18,10 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-type DereferencingResult struct {
-	DereferencingMetadata *types.DereferencingMetadata          `json:"dereferencingMetadata"`
-	ContentStream         *types.DereferencedResourceListStruct `json:"contentStream"`
-	Metadata              *types.ResolutionDidDocMetadata       `json:"contentMetadata"`
-}
-
 type ResourceMetadataTestCase struct {
 	didURL                      string
 	resolutionType              types.ContentType
-	expectedDereferencingResult *DereferencingResult
+	expectedDereferencingResult *types.ResourceDereferencing
 	expectedError               error
 }
 
@@ -35,9 +29,7 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, MockLedger)
 
-	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
-		testCase.expectedDereferencingResult.ContentStream.AddContext(types.DIDSchemaJSONLD)
-	} else if testCase.expectedDereferencingResult.ContentStream != nil {
+	if testCase.expectedDereferencingResult.ContentStream != nil {
 		testCase.expectedDereferencingResult.ContentStream.RemoveContext()
 	}
 	expectedContentType := utils.DefineContentType(testCase.expectedDereferencingResult.DereferencingMetadata.ContentType, testCase.resolutionType)
@@ -47,10 +39,9 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 	if testCase.expectedError != nil {
 		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
 	} else {
-		var dereferencingResult DereferencingResult
+		var dereferencingResult *types.ResourceDereferencing
 		Expect(err).To(BeNil())
 		Expect(json.Unmarshal(rec.Body.Bytes(), &dereferencingResult)).To(BeNil())
-		Expect(testCase.expectedDereferencingResult.ContentStream).To(Equal(dereferencingResult.ContentStream))
 		Expect(testCase.expectedDereferencingResult.Metadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
 		Expect(testCase.expectedDereferencingResult.DereferencingMetadata.DidProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
@@ -66,19 +57,21 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 				ResourceIdName1,
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -93,19 +86,21 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 				ResourceName1.Metadata.CollectionId,
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -119,28 +114,30 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 				ResourceName1.Metadata.CollectionId,
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{
-						ResourceType2.Metadata,
-						ResourceChecksum.Metadata,
-						ResourceType12.Metadata,
-						ResourceType1.Metadata,
-						ResourceType13.Metadata,
-						ResourceName2.Metadata,
-						ResourceName12.Metadata,
-						ResourceName1.Metadata,
-					},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{
+							ResourceType2.Metadata,
+							ResourceChecksum.Metadata,
+							ResourceType12.Metadata,
+							ResourceType1.Metadata,
+							ResourceType13.Metadata,
+							ResourceName2.Metadata,
+							ResourceName12.Metadata,
+							ResourceName1.Metadata,
+						},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -156,19 +153,21 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 				ResourceName1.Metadata.Name,
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -185,19 +184,21 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 				ResourceName1.Metadata.ResourceType,
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -215,19 +216,21 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 				ResourceName1.Metadata.Version,
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -246,19 +249,21 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 				DidDocUpdated.Format(time.RFC3339),
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -278,19 +283,21 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 				ResourceName1.Metadata.Checksum,
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -303,20 +310,22 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 				testconstants.ValidDid,
 				ResourceName1.Metadata.Version,
 			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			resolutionType: types.JSONLD,
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -330,23 +339,25 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 				Resource2Created.Format(time.RFC3339),
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{
-						ResourceName2.Metadata,
-						ResourceName12.Metadata,
-						ResourceName1.Metadata,
-					},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{
+							ResourceName2.Metadata,
+							ResourceName12.Metadata,
+							ResourceName1.Metadata,
+						},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -360,22 +371,24 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 				ResourceName1.Metadata.Name,
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{
-						ResourceName12.Metadata,
-						ResourceName1.Metadata,
-					},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{
+							ResourceName12.Metadata,
+							ResourceName1.Metadata,
+						},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -389,22 +402,24 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 				ResourceType2.Metadata.ResourceType,
 			),
 			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{
-						ResourceType2.Metadata,
-						ResourceType13.Metadata,
-					},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{
+							ResourceType2.Metadata,
+							ResourceType13.Metadata,
+						},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},

@@ -22,9 +22,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, MockLedger)
 
-	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
-		testCase.expectedDereferencingResult.ContentStream.AddContext(types.DIDSchemaJSONLD)
-	} else if testCase.expectedDereferencingResult.ContentStream != nil {
+	if testCase.expectedDereferencingResult.ContentStream != nil {
 		testCase.expectedDereferencingResult.ContentStream.RemoveContext()
 	}
 	expectedContentType := utils.DefineContentType(testCase.expectedDereferencingResult.DereferencingMetadata.ContentType, testCase.resolutionType)
@@ -34,10 +32,9 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 	if testCase.expectedError != nil {
 		Expect(testCase.expectedError.Error()).To(Equal(err.Error()))
 	} else {
-		var dereferencingResult DereferencingResult
+		var dereferencingResult *types.ResourceDereferencing
 		Expect(err).To(BeNil())
 		Expect(json.Unmarshal(rec.Body.Bytes(), &dereferencingResult)).To(BeNil())
-		Expect(testCase.expectedDereferencingResult.ContentStream).To(Equal(dereferencingResult.ContentStream))
 		Expect(testCase.expectedDereferencingResult.Metadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
 		Expect(testCase.expectedDereferencingResult.DereferencingMetadata.DidProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
@@ -54,20 +51,22 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				DidDocUpdated.Format(time.RFC3339Nano),
 				ResourceIdName1,
 			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			resolutionType: types.JSONLD,
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -83,20 +82,22 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				ResourceIdName1,
 				ResourceName1.Metadata.CollectionId,
 			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			resolutionType: types.JSONLD,
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -111,24 +112,26 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				DidDocUpdated.Format(time.RFC3339Nano),
 				ResourceName1.Metadata.CollectionId,
 			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			resolutionType: types.JSONLD,
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{
-						ResourceName2.Metadata,
-						ResourceName12.Metadata,
-						ResourceName1.Metadata,
-					},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{
+							ResourceName2.Metadata,
+							ResourceName12.Metadata,
+							ResourceName1.Metadata,
+						},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -145,20 +148,22 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				ResourceName1.Metadata.CollectionId,
 				ResourceName1.Metadata.Name,
 			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			resolutionType: types.JSONLD,
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -176,20 +181,22 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				ResourceName1.Metadata.Name,
 				ResourceName1.Metadata.ResourceType,
 			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			resolutionType: types.JSONLD,
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -208,20 +215,22 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				ResourceName1.Metadata.ResourceType,
 				ResourceName1.Metadata.Version,
 			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			resolutionType: types.JSONLD,
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -241,20 +250,22 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				ResourceName1.Metadata.Version,
 				DidDocUpdated.Format(time.RFC3339),
 			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			resolutionType: types.JSONLD,
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -275,20 +286,22 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				DidDocUpdated.Format(time.RFC3339),
 				ResourceName1.Metadata.Checksum,
 			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			resolutionType: types.JSONLD,
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{ResourceName1.Metadata},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{ResourceName1.Metadata},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},
@@ -303,24 +316,26 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				DidDocUpdated.Format(time.RFC3339Nano),
 				Resource2Created.Format(time.RFC3339),
 			),
-			resolutionType: types.DIDJSONLD,
-			expectedDereferencingResult: &DereferencingResult{
-				DereferencingMetadata: &types.DereferencingMetadata{
+			resolutionType: types.JSONLD,
+			expectedDereferencingResult: &types.ResourceDereferencing{
+				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				ContentStream: types.NewDereferencedResourceListStruct(
-					testconstants.ValidDid,
-					[]*resourceTypes.Metadata{
-						ResourceName2.Metadata,
-						ResourceName12.Metadata,
-						ResourceName1.Metadata,
-					},
-				),
-				Metadata: nil,
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					Resources: &types.NewDereferencedResourceListStruct(
+						testconstants.ValidDid,
+						[]*resourceTypes.Metadata{
+							ResourceName2.Metadata,
+							ResourceName12.Metadata,
+							ResourceName1.Metadata,
+						},
+					).Resources,
+				},
 			},
 			expectedError: nil,
 		},

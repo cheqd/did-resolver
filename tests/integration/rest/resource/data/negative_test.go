@@ -30,33 +30,8 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 	expectedDidDereferencing := testCase.ExpectedResult.(utils.DereferencingResult)
 	utils.AssertDidDereferencing(expectedDidDereferencing, receivedDidDereferencing)
 },
-
 	Entry(
-		"cannot get resource data with an existent DID, but not supported ResolutionType",
-		utils.NegativeTestCase{
-			DidURL: fmt.Sprintf(
-				"http://%s/1.0/identifiers/%s/resources/%s",
-				testconstants.TestHostAddress,
-				testconstants.UUIDStyleMainnetDid,
-				testconstants.ValidIdentifier,
-			),
-			ResolutionType: string(types.TEXT),
-			ExpectedResult: utils.DereferencingResult{
-				Context: "",
-				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.TEXT,
-					ResolutionError: "representationNotSupported",
-					DidProperties:   types.DidProperties{},
-				},
-				ContentStream: nil,
-				Metadata:      types.ResolutionDidDocMetadata{},
-			},
-			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
-		},
-	),
-
-	Entry(
-		"cannot get resource data with not existent DID and not supported ResolutionType",
+		"cannot get resource data with not existent DID",
 		utils.NegativeTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s/resources/%s",
@@ -64,18 +39,22 @@ var _ = DescribeTable("Negative: Get resource data", func(testCase utils.Negativ
 				testconstants.NotExistentMainnetDid,
 				testconstants.ValidIdentifier,
 			),
-			ResolutionType: string(types.TEXT),
+			ResolutionType: string(types.JSON),
 			ExpectedResult: utils.DereferencingResult{
 				Context: "",
 				DereferencingMetadata: types.DereferencingMetadata{
-					ContentType:     types.TEXT,
-					ResolutionError: "representationNotSupported",
-					DidProperties:   types.DidProperties{},
+					ContentType:     types.JSON,
+					ResolutionError: "notFound",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.NotExistentMainnetDid,
+						MethodSpecificId: testconstants.NotExistentIdentifier,
+						Method:           testconstants.ValidMethod,
+					},
 				},
 				ContentStream: nil,
 				Metadata:      types.ResolutionDidDocMetadata{},
 			},
-			ExpectedStatusCode: errors.RepresentationNotSupportedHttpCode,
+			ExpectedStatusCode: errors.NotFoundHttpCode,
 		},
 	),
 

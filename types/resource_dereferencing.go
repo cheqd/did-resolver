@@ -1,10 +1,10 @@
 package types
 
 type ResourceDereferencing struct {
-	Context               string                `json:"@context,omitempty" example:"https://w3id.org/did-resolution/v1"`
-	DereferencingMetadata DereferencingMetadata `json:"dereferencingMetadata"`
-	ContentStream         ContentStreamI        `json:"contentStream"`
-	Metadata              *DereferencedResource `json:"contentMetadata"`
+	Context               string                      `json:"@context,omitempty" example:"https://w3id.org/did-resolution/v1"`
+	DereferencingMetadata DereferencingMetadata       `json:"dereferencingMetadata"`
+	ContentStream         ContentStreamI              `json:"contentStream"`
+	Metadata              *ResolutionResourceMetadata `json:"contentMetadata"`
 }
 
 func NewResourceDereferencingFromContent(did string, contentType ContentType, contentStream ContentStreamI) *ResourceDereferencing {
@@ -16,6 +16,17 @@ func NewResourceDereferencingFromContent(did string, contentType ContentType, co
 	}
 
 	return &ResourceDereferencing{Context: context, ContentStream: contentStream, DereferencingMetadata: dereferenceMetadata}
+}
+
+func NewResourceDereferencingFromResources(did string, contentType ContentType, resources *DereferencedResourceList) *ResourceDereferencing {
+	dereferenceMetadata := NewDereferencingMetadata(did, contentType, "")
+
+	var context string
+	if contentType == DIDJSONLD || contentType == JSONLD {
+		context = ResolutionSchemaJSONLD
+	}
+
+	return &ResourceDereferencing{Context: context, Metadata: &ResolutionResourceMetadata{Resources: resources}, DereferencingMetadata: dereferenceMetadata}
 }
 
 // Interface implementation
