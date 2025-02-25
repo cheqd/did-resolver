@@ -16,29 +16,49 @@ func GetPriorityContentType(acceptHeader string, resource bool) (types.ContentTy
 		// default content type
 		return types.JSONLD, ""
 	}
-	for _, at := range acceptedTypes {
-		mediaType := types.ContentType(at.Type + "/" + at.Subtype)
+	var wildcardFound bool
+	var highestPriorityType types.ContentType
+	var profile string
 
-		// If the Header contains any media type, return the default content type
+	for _, at := range acceptedTypes {
+		mediaType, localProfile := extractMediaTypeAndProfile(at)
+
+		// Keep track of the highest priority type in case nothing else matches
+		if highestPriorityType == "" {
+			highestPriorityType, profile = mediaType, localProfile
+		}
+		// Detect wildcard "*/*"
 		if mediaType == "*/*" {
-			if resource { // If request is from Resource Handlers
-				return types.JSONLD, ""
-			} else { // If request is from DIDDoc Handlers
-				return types.JSONLD, types.W3IDDIDRES
-			}
+			wildcardFound = true
+			continue // Continue checking other types before making a decision
 		}
 
-		if resource || mediaType.IsSupported() {
-			profile := at.Extensions["profile"]
-			profile = strings.Trim(profile, "\"") // Remove surrounding quotes if present
-
-			if !resource && profile == "" {
+		// for non-resource query, Check if the media type is supported
+		if !resource && mediaType.IsSupported() {
+			if profile == "" {
 				profile = types.W3IDDIDRES
 			}
 			return mediaType, profile
 		}
 	}
-	return types.ContentType(acceptedTypes[0].Type + "/" + acceptedTypes[0].Subtype), ""
+	// If the Header contains any media type, return the default content type
+	if wildcardFound {
+		if resource && profile != types.W3IDDIDURL {
+			// If request is from Resource Handlers
+			return types.JSONLD, ""
+		}
+		if !resource { // If request is from DIDDoc Handlers
+			return types.JSONLD, types.W3IDDIDRES
+		}
+	}
+	return highestPriorityType, profile
+}
+
+// Extracts media type and profile from an accept header entry
+func extractMediaTypeAndProfile(at accept.Accept) (types.ContentType, string) {
+	mediaType := types.ContentType(at.Type + "/" + at.Subtype)
+	profile := strings.Trim(at.Extensions["profile"], "\"") // Remove surrounding quotes if present
+	return mediaType, profile
 }
 
 func PrepareQueries(c echo.Context) (rawQuery string, flag *string) {

@@ -155,4 +155,18 @@ var _ = DescribeTable("Positive: get resource metadata", func(testCase utils.Pos
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
+	Entry(
+		"can get resource metadata with an existent DID, and Chrome Accept header",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s/resources/%s/metadata",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+				testconstants.UUIDStyleTestnetDidResourceId,
+			),
+			ResolutionType:     testconstants.ChromeResolutionType,
+			ExpectedJSONPath:   "../../testdata/resource_metadata/metadata.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
 )

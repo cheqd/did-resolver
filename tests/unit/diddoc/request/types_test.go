@@ -62,9 +62,9 @@ var (
 	ResourceName1    = generateResource(ResourceIdName1, "Name1", "string", "1", timestamppb.New(Resource1Created))
 	ResourceName12   = generateResource(ResourceIdName12, "Name1", "string", "12", timestamppb.New(Resource12Created))
 	ResourceName2    = generateResource(ResourceIdName2, "Name2", "string2", "2", timestamppb.New(Resource2Created))
-	ResourceType1    = generateResource(ResourceIdType1, "Name", "Type1", "3", timestamppb.New(Resource3Created))
+	ResourceType1    = generateResource(ResourceIdType1, "Name", "Type1", "36", timestamppb.New(Resource3Created))
+	ResourceType13   = generateResource(ResourceIdType13, "Name2", "Type2", "36", timestamppb.New(Resource3Created))
 	ResourceType12   = generateResource(ResourceIdType12, "Name2", "Type1", "34", timestamppb.New(Resource34Created))
-	ResourceType13   = generateResource(ResourceIdType13, "Name2", "Type2", "36", timestamppb.New(Resource34Created))
 	ResourceType2    = generateResource(ResourceIdType2, "Name2", "Type2", "4", timestamppb.New(Resource4Created))
 	ResourceChecksum = generateUniqueResource(ResourceIdType2, "UniqueName", "UniqueType", "5", timestamppb.New(Resource4Created))
 	DidDocMetadata1  = generateMetadata(

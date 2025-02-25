@@ -64,7 +64,6 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 		return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 	if dd.IsAmbiguousQuery(c) {
-		log.Debug().Msgf("Ambiguous query: %t", dd.IsDereferencing)
 		return types.NewInvalidDidUrlError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
@@ -137,12 +136,6 @@ func (dd *QueryDIDDocRequestService) SpecificValidation(c services.ResolverConte
 	// Validate that resourceId is UUID
 	if resourceId != "" && !utils.IsValidUUID(resourceId) {
 		return types.NewInvalidDidUrlError(dd.GetDid(), dd.RequestedContentType, nil, dd.IsDereferencing)
-	}
-
-	// If there is only 1 query parameter and it's resourceVersionTime,
-	// then we need to return RepresentationNotSupported error
-	if len(dd.Queries) == 1 && resourceVersionTime != "" {
-		return types.NewRepresentationNotSupportedError(dd.GetDid(), dd.GetContentType(), nil, dd.IsDereferencing)
 	}
 
 	return nil

@@ -33,6 +33,7 @@ type resourceMetadataTestCase struct {
 
 var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase resourceMetadataTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
+	request.Header.Set("Content-Type", string(testCase.resolutionType))
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, utils.MockLedger)
 
 	if testCase.expectedDereferencingResult.ContentStream != nil {
@@ -65,6 +66,7 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType: types.DIDJSONLD,
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,

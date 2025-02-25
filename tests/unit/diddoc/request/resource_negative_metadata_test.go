@@ -211,7 +211,7 @@ var _ = DescribeTable("Test resource negative cases with Metadata field", func(t
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceVersion=%s&resourceMetadata=false",
 				testconstants.ValidDid,
-				ResourceName1.Metadata.Version,
+				ResourceType1.Metadata.Version,
 			),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{
@@ -327,7 +327,7 @@ var _ = DescribeTable("Test resource negative cases with Metadata field", func(t
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceType=%s&resourceMetadata=false",
 				testconstants.ValidDid,
-				ResourceName12.Metadata.ResourceType,
+				ResourceType12.Metadata.ResourceType,
 			),
 			resolutionType: types.DIDJSONLD,
 			expectedDereferencingResult: &DereferencingResult{

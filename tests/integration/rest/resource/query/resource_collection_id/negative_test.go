@@ -112,4 +112,32 @@ var _ = DescribeTable("Negative: Get Collection of Resources with collectionId q
 			ExpectedStatusCode: types.InvalidDidUrlHttpCode, // it should be invalidDidUrl
 		},
 	),
+	Entry(
+		"cannot get resource with and existent versionId and resourceCollectionId which has different resourceName",
+		utils.NegativeTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?versionId=%s&resourceCollectionId=%s",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+				testconstants.UUIDStyleTestnetVersionId,
+				testconstants.UUIDStyleTestnetId,
+			),
+			ResolutionType: testconstants.DefaultResolutionType,
+			ExpectedResult: utils.DereferencingResult{
+				Context: "",
+				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType:     types.JSONLD,
+					ResolutionError: "invalidDidUrl",
+					DidProperties: types.DidProperties{
+						DidString:        testconstants.UUIDStyleTestnetDid,
+						MethodSpecificId: testconstants.UUIDStyleTestnetId,
+						Method:           testconstants.ValidMethod,
+					},
+				},
+				ContentStream: nil,
+				Metadata:      types.ResolutionDidDocMetadata{},
+			},
+			ExpectedStatusCode: types.InvalidDidUrlHttpCode,
+		},
+	),
 )

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"time"
 
 	didDocService "github.com/cheqd/did-resolver/services/diddoc"
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
@@ -72,12 +71,12 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 		},
 	),
 	Entry(
-		"Negative. Only ResourceCollectionId is ambiguous query",
+		"Negative. ResourceCollectionId returning many resources is ambiguous query",
 		ResourceTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceCollectionId=%s",
 				testconstants.ValidDid,
-				uuid.New().String(),
+				testconstants.ValidIdentifier,
 			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
@@ -111,12 +110,12 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 		},
 	),
 	Entry(
-		"Negative. Only ResourceVersion is Ambiguous query",
+		"Negative. ResourceVersion returning multiple resource is Ambiguous query",
 		ResourceTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceVersion=%s",
 				testconstants.ValidDid,
-				"NotExistentVersion",
+				"36",
 			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,
@@ -151,12 +150,12 @@ var _ = DescribeTable("Test resource negative cases. Data returning case", func(
 		},
 	),
 	Entry(
-		"Negative. Only ResourceVersionTime is Ambiguous query",
+		"Negative. ResourceVersionTime returning multiple response is Ambiguous query",
 		ResourceTestCase{
 			didURL: fmt.Sprintf(
 				"/1.0/identifiers/%s?resourceVersionTime=%s",
 				testconstants.ValidDid,
-				DidDocBeforeCreated.Format(time.RFC3339),
+				"2021-08-23T09:03:00Z",
 			),
 			resolutionType:   types.DIDJSONLD,
 			expectedResource: nil,

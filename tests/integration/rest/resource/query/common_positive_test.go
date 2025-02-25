@@ -33,22 +33,6 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 },
 
 	Entry(
-		"can get resource with and existent versionId and resourceCollectionId",
-		utils.PositiveTestCase{
-			DidURL: fmt.Sprintf(
-				"http://%s/1.0/identifiers/%s?versionId=%s&resourceCollectionId=%s",
-				testconstants.TestHostAddress,
-				testconstants.UUIDStyleTestnetDid,
-				testconstants.UUIDStyleTestnetVersionId,
-				testconstants.UUIDStyleTestnetId,
-			),
-			ResolutionType:     testconstants.DefaultResolutionType,
-			ExpectedJSONPath:   "../../testdata/query/resource_common/resource_combination_of_queries_1.json",
-			ExpectedStatusCode: http.StatusOK,
-		},
-	),
-
-	Entry(
 		"can get resource with an existent versionId and resourceId",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
@@ -57,22 +41,6 @@ var _ = DescribeTable("Positive: request with common query parameters", func(tes
 				testconstants.UUIDStyleTestnetDid,
 				testconstants.UUIDStyleTestnetVersionId,
 				testconstants.UUIDStyleTestnetDidResourceId,
-			),
-			ResolutionType:     testconstants.DefaultResolutionType,
-			ExpectedJSONPath:   "../../testdata/query/resource_common/resource_combination_of_queries_1.json",
-			ExpectedStatusCode: http.StatusOK,
-		},
-	),
-
-	Entry(
-		"can get resource with and existent versionTime and resourceCollectionId",
-		utils.PositiveTestCase{
-			DidURL: fmt.Sprintf(
-				"http://%s/1.0/identifiers/%s?versionTime=%s&resourceCollectionId=%s",
-				testconstants.TestHostAddress,
-				testconstants.UUIDStyleTestnetDid,
-				"2023-01-25T11:58:11Z",
-				testconstants.UUIDStyleTestnetId,
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
 			ExpectedJSONPath:   "../../testdata/query/resource_common/resource_combination_of_queries_1.json",
