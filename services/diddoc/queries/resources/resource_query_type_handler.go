@@ -38,11 +38,14 @@ func (d *ResourceTypeHandler) Handle(c services.ResolverContext, service service
 }
 
 func HasUniformName(resources types.DereferencedResourceList) bool {
-	// Get the name of the first resource
+	length := len(resources)
+	if length <= 1 {
+		return true // Empty or single-element list is considered uniform
+	}
+
 	firstName := resources[0].Name
-	// Compare all other names with the first one
-	for _, resource := range resources[1:] {
-		if resource.Name != firstName {
+	for i := 1; i < length; i++ {
+		if resources[i].Name != firstName {
 			return false
 		}
 	}
