@@ -18,9 +18,8 @@ func GetPriorityContentType(acceptHeader string, resource bool) (types.ContentTy
 	}
 	for _, at := range acceptedTypes {
 		mediaType := types.ContentType(at.Type + "/" + at.Subtype)
-
 		// If the Header contains any media type, return the default content type
-		if mediaType == "*/*" {
+		if mediaType == types.DEFAULT_RESOLUTION_TYPE {
 			if resource { // If request is from Resource Handlers
 				return types.JSONLD, ""
 			} else { // If request is from DIDDoc Handlers

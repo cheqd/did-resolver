@@ -62,7 +62,7 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 				testconstants.ExistentDid,
 				testconstants.ExistentResourceId,
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType: types.JSONLD,
 			expectedDereferencingResult: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
@@ -71,10 +71,13 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 						Method:           testconstants.ValidMethod,
 					},
 				},
-				Metadata: types.NewDereferencedResource(
-					testconstants.ExistentDid,
-					testconstants.ValidResource[0].Metadata,
-				),
+				ContentStream: nil,
+				Metadata: &types.ResolutionResourceMetadata{
+					ContentMetadata: types.NewDereferencedResource(
+						testconstants.ExistentDid,
+						testconstants.ValidResource[0].Metadata,
+					),
+				},
 			},
 			expectedError: nil,
 		},
@@ -88,7 +91,7 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 				testconstants.NotExistentTestnetDid,
 				testconstants.ExistentResourceId,
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType: types.JSONLD,
 			expectedDereferencingResult: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
@@ -112,7 +115,7 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 				testconstants.InvalidDid,
 				testconstants.ExistentResourceId,
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType: types.JSONLD,
 			expectedDereferencingResult: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
@@ -136,7 +139,7 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 				testconstants.ExistentDid,
 				testconstants.NotExistentIdentifier,
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType: types.JSONLD,
 			expectedDereferencingResult: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{
@@ -160,7 +163,7 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 				testconstants.ExistentDid,
 				testconstants.InvalidIdentifier,
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType: types.JSONLD,
 			expectedDereferencingResult: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
 					DidProperties: types.DidProperties{

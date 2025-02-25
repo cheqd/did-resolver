@@ -36,7 +36,7 @@ func (rds ResourceService) DereferenceResourceMetadata(did string, resourceId st
 	}
 
 	metadata := types.NewDereferencedResource(did, resource.Metadata)
-	return &types.ResourceDereferencing{Context: context, Metadata: metadata, DereferencingMetadata: dereferenceMetadata}, nil
+	return &types.ResourceDereferencing{Context: context, Metadata: &types.ResolutionResourceMetadata{ContentMetadata: metadata}, DereferencingMetadata: dereferenceMetadata}, nil
 }
 
 func (rds ResourceService) ResolveMetadataResources(did string, contentType types.ContentType) (*types.DidResolution, *types.IdentityError) {
@@ -125,5 +125,5 @@ func (rds ResourceService) DereferenceResourceDataWithMetadata(did string, resou
 		}
 	}
 
-	return &types.ResourceDereferencing{Context: context, ContentStream: result, Metadata: metadata, DereferencingMetadata: dereferenceMetadata}, nil
+	return &types.ResourceDereferencing{Context: context, ContentStream: result, Metadata: &types.ResolutionResourceMetadata{ContentMetadata: metadata}, DereferencingMetadata: dereferenceMetadata}, nil
 }
