@@ -209,13 +209,22 @@ definitions:
         example: "2021-09-01T12:00:00Z"
         type: string
     type: object
+  types.ResolutionResourceMetadata:
+    properties:
+      linkedResourceMetadata:
+        items:
+          $ref: '#/definitions/types.DereferencedResource'
+        type: array
+      metadata:
+        $ref: '#/definitions/types.DereferencedResource'
+    type: object
   types.ResourceDereferencing:
     properties:
       '@context':
         example: https://w3id.org/did-resolution/v1
         type: string
       contentMetadata:
-        $ref: '#/definitions/types.DereferencedResource'
+        $ref: '#/definitions/types.ResolutionResourceMetadata'
       contentStream: {}
       dereferencingMetadata:
         $ref: '#/definitions/types.DereferencingMetadata'

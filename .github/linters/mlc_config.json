@@ -23,6 +23,9 @@
         },
         {
             "pattern": "^https://twitter.com/"
+        },
+        {
+            "pattern": "^https://dev.uniresolver.io"
         }
     ],
     "retryOn429": true
