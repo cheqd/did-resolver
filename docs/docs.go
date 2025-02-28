@@ -934,6 +934,20 @@ const docTemplate = `{
                 }
             }
         },
+        "types.ResolutionResourceMetadata": {
+            "type": "object",
+            "properties": {
+                "linkedResourceMetadata": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.DereferencedResource"
+                    }
+                },
+                "metadata": {
+                    "$ref": "#/definitions/types.DereferencedResource"
+                }
+            }
+        },
         "types.ResourceDereferencing": {
             "type": "object",
             "properties": {
@@ -942,7 +956,7 @@ const docTemplate = `{
                     "example": "https://w3id.org/did-resolution/v1"
                 },
                 "contentMetadata": {
-                    "$ref": "#/definitions/types.DereferencedResource"
+                    "$ref": "#/definitions/types.ResolutionResourceMetadata"
                 },
                 "contentStream": {},
                 "dereferencingMetadata": {
