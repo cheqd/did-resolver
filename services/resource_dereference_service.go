@@ -119,7 +119,7 @@ func (rds ResourceService) DereferenceResourceDataWithMetadata(did string, resou
 	var result types.ContentStreamI
 	result = types.NewDereferencedResourceData(resource.Resource.Data)
 	metadata := types.NewDereferencedResource(did, resource.Metadata)
-	if dereferenceMetadata.ContentType == types.JSON || dereferenceMetadata.ContentType == types.TEXT {
+	if metadata.MediaType == string(types.JSON) || metadata.MediaType == string(types.TEXT) {
 		if res, err := types.NewResourceData(resource.Resource.Data); err == nil {
 			result = res
 		}
