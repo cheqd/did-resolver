@@ -1,12 +1,6 @@
 {
     "didResolutionMetadata": {
-        "contentType": "application/did+json",
-        "retrieved": "2023-04-04T07:19:55Z",
-        "did": {
-            "didString": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN",
-            "methodSpecificId": "Ps1ysXP2Ae6GBfxNhNQNKN",
-            "method": "cheqd"
-        }
+        "did": {}
     },
     "didDocument": {
         "id": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN",

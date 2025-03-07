@@ -39,6 +39,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 	}
 
 	expectedContentType := utils.DefineContentType(testCase.expectedDIDResolution.ResolutionMetadata.ContentType, testCase.resolutionType)
+	responseContentType := utils.ResponseContentType(testCase.acceptHeader, false)
 
 	err := didDocServices.DidDocEchoHandler(context)
 	if testCase.expectedError != nil {
@@ -51,7 +52,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 		Expect(testCase.expectedDIDResolution.Metadata).To(Equal(resolutionResult.Metadata))
 		Expect(expectedContentType).To(Equal(resolutionResult.ResolutionMetadata.ContentType))
 		Expect(testCase.expectedDIDResolution.ResolutionMetadata.DidProperties).To(Equal(resolutionResult.ResolutionMetadata.DidProperties))
-		Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
+		Expect(responseContentType).To(Equal(rec.Header().Get("Content-Type")))
 	}
 },
 
@@ -63,6 +64,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType: types.DIDRES,
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,

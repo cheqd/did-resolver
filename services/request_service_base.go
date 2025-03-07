@@ -20,6 +20,7 @@ type (
 		Queries              url.Values
 		Result               types.ResolutionResultI
 		RequestedContentType types.ContentType
+		Profile              string
 	}
 )
 
@@ -45,7 +46,7 @@ func (dd *BaseRequestService) BasicPrepare(c ResolverContext) error {
 	// isDereferencingOrFragment variable to decide if we need to check if the resource is dereferencing or fragment
 	isDereferencingOrFragment := dd.IsDereferencing && dd.Fragment == ""
 	// Get Accept header
-	dd.RequestedContentType, _ = GetPriorityContentType(c.Request().Header.Get(echo.HeaderAccept), isDereferencingOrFragment)
+	dd.RequestedContentType, dd.Profile = GetPriorityContentType(c.Request().Header.Get(echo.HeaderAccept), isDereferencingOrFragment)
 	if !dd.GetContentType().IsSupported() {
 		return types.NewRepresentationNotSupportedError(dd.GetDid(), types.JSON, nil, dd.IsDereferencing)
 	}
@@ -117,7 +118,11 @@ func (dd *BaseRequestService) Query(c ResolverContext) error {
 }
 
 func (dd BaseRequestService) SetupResponse(c ResolverContext) error {
-	c.Response().Header().Set(echo.HeaderContentType, dd.Result.GetContentType())
+	responseHeader := dd.Result.GetContentType()
+	if dd.Profile != "" && responseHeader == string(types.JSONLD) {
+		responseHeader = dd.Result.GetContentType() + ";profile=" + dd.Profile
+	}
+	c.Response().Header().Set(echo.HeaderContentType, responseHeader)
 	if utils.IsGzipAccepted(c) {
 		c.Response().Header().Set(echo.HeaderContentEncoding, "gzip")
 	}
@@ -125,11 +130,28 @@ func (dd BaseRequestService) SetupResponse(c ResolverContext) error {
 }
 
 func (dd BaseRequestService) Respond(c ResolverContext) error {
-	return c.JSONPretty(http.StatusOK, dd.Result, "  ")
+	result := dd.FormatMetadataContentType(c)
+	return c.JSONPretty(http.StatusOK, result, "  ")
+}
+
+// FormatMetadataContentType sets the ContentType of the result based on the profile and content type
+func (dd BaseRequestService) FormatMetadataContentType(c ResolverContext) types.ResolutionResultI {
+	switch result := dd.Result.(type) {
+	case *types.DidResolution:
+		// Set ContentType to DIDRES if profile is W3IDDIDRES and ContentType is JSONLD
+		if dd.GetContentType() == types.JSONLD && dd.Profile == types.W3IDDIDRES {
+			result.ResolutionMetadata.ContentType = types.DIDRES
+			return result
+		}
+	default:
+		return result
+	}
+	return dd.Result
 }
 
 // Setters
 
+// SetResponse sets the response result
 func (dd *BaseRequestService) SetResponse(response types.ResolutionResultI) error {
 	dd.Result = response
 	return nil
@@ -137,6 +159,7 @@ func (dd *BaseRequestService) SetResponse(response types.ResolutionResultI) erro
 
 // Helpers
 
+// RespondWithResourceData responds with the resource data
 func (dd *BaseRequestService) RespondWithResourceData(c ResolverContext) error {
 	c.Response().Header().Set(echo.HeaderContentType, dd.Result.GetContentType())
 

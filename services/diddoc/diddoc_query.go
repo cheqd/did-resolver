@@ -16,7 +16,6 @@ import (
 
 type QueryDIDDocRequestService struct {
 	services.BaseRequestService
-	Profile      string
 	FirstHandler queries.BaseQueryHandlerI
 }
 
@@ -365,5 +364,7 @@ func (dd QueryDIDDocRequestService) Respond(c services.ResolverContext) error {
 	if dd.IsResourceData(dd.Result) {
 		return dd.RespondWithResourceData(c)
 	}
-	return c.JSONPretty(http.StatusOK, dd.Result, "  ")
+	// Get ContentType Formatted for response body
+	result := dd.FormatMetadataContentType(c)
+	return c.JSONPretty(http.StatusOK, result, "  ")
 }

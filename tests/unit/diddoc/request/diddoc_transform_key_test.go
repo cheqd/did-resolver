@@ -29,6 +29,7 @@ var _ = DescribeTable("Test Query handler with transformKeys params", func(testC
 	}
 
 	expectedContentType := utils.DefineContentType(expectedDIDResolution.ResolutionMetadata.ContentType, testCase.resolutionType)
+	responseContentType := utils.ResponseContentType(request.Header.Get("accept"), true)
 
 	err := didDocService.DidDocEchoHandler(context)
 	if testCase.expectedError != nil {
@@ -41,7 +42,7 @@ var _ = DescribeTable("Test Query handler with transformKeys params", func(testC
 		Expect(expectedDIDResolution.Metadata).To(Equal(resolutionResult.Metadata))
 		Expect(expectedContentType).To(Equal(resolutionResult.ResolutionMetadata.ContentType))
 		Expect(expectedDIDResolution.ResolutionMetadata.DidProperties).To(Equal(resolutionResult.ResolutionMetadata.DidProperties))
-		Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
+		Expect(responseContentType).To(Equal(rec.Header().Get("Content-Type")))
 	}
 },
 

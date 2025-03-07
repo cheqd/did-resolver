@@ -31,6 +31,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 	}
 
 	expectedContentType := utils.DefineContentType(expectedDIDResolution.ResolutionMetadata.ContentType, testCase.resolutionType)
+	responseContentType := utils.ResponseContentType(testCase.acceptHeader, false)
 
 	err := didDocService.DidDocEchoHandler(context)
 	var resolutionResult types.DidResolution
@@ -42,7 +43,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 	Expect(expectedDIDResolution.Metadata.Resources).To(Equal(resolutionResult.Metadata.Resources))
 	Expect(expectedContentType).To(Equal(resolutionResult.ResolutionMetadata.ContentType))
 	Expect(expectedDIDResolution.ResolutionMetadata.DidProperties).To(Equal(resolutionResult.ResolutionMetadata.DidProperties))
-	Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
+	Expect(responseContentType).To(Equal(rec.Header().Get("Content-Type")))
 },
 	Entry(
 		"Positive. VersionId + VersionTime + ResourceId",
@@ -58,6 +59,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType: types.DIDRES,
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
@@ -89,6 +91,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType: types.DIDRES,
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
@@ -119,6 +122,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType: types.DIDRES,
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
@@ -155,6 +159,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType: types.DIDRES,
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
@@ -188,6 +193,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType: types.DIDRES,
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
@@ -222,6 +228,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType: types.DIDRES,
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ValidDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
@@ -257,6 +264,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType: types.DIDRES,
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ValidDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
@@ -293,6 +301,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType: types.DIDRES,
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ValidDid,
 						MethodSpecificId: testconstants.ValidIdentifier,
@@ -323,6 +332,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
+					ContentType: types.DIDRES,
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,

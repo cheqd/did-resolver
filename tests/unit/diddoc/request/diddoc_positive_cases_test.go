@@ -32,7 +32,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 	}
 
 	expectedContentType := utils.DefineContentType(expectedDIDResolution.ResolutionMetadata.ContentType, testCase.resolutionType)
-
+	responseContentType := utils.ResponseContentType(request.Header.Get("accept"), true)
 	err := didDocService.DidDocEchoHandler(context)
 	var resolutionResult types.DidResolution
 	unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &resolutionResult)
@@ -42,7 +42,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 	Expect(expectedDIDResolution.Metadata).To(Equal(resolutionResult.Metadata))
 	Expect(expectedContentType).To(Equal(resolutionResult.ResolutionMetadata.ContentType))
 	Expect(expectedDIDResolution.ResolutionMetadata.DidProperties).To(Equal(resolutionResult.ResolutionMetadata.DidProperties))
-	Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
+	Expect(responseContentType).To(Equal(rec.Header().Get("Content-Type")))
 },
 
 	// Positive cases

@@ -27,13 +27,14 @@ type resourceMetadataTestCase struct {
 
 var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase resourceMetadataTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
-	request.Header.Set("Content-Type", string(testCase.resolutionType))
+	request.Header.Set("Accept", string(testCase.resolutionType))
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, utils.MockLedger)
 
 	if testCase.expectedDereferencingResult.ContentStream != nil {
 		testCase.expectedDereferencingResult.ContentStream.RemoveContext()
 	}
 	expectedContentType := utils.DefineContentType(testCase.expectedDereferencingResult.DereferencingMetadata.ContentType, testCase.resolutionType)
+	requestedContentType := utils.ResponseContentType(request.Header.Get("accept"), true)
 
 	err := resourceServices.ResourceMetadataEchoHandler(context)
 
@@ -46,7 +47,7 @@ var _ = DescribeTable("Test ResourceMetadataEchoHandler function", func(testCase
 		Expect(testCase.expectedDereferencingResult.Metadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
 		Expect(testCase.expectedDereferencingResult.DereferencingMetadata.DidProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
-		Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
+		Expect(requestedContentType).To(Equal(rec.Header().Get("Content-Type")))
 	}
 },
 	Entry(
