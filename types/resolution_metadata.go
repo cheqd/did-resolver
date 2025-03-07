@@ -22,8 +22,8 @@ type DidProperties struct {
 
 type DidResolution struct {
 	Context            string                    `json:"@context,omitempty"`
-	ResolutionMetadata ResolutionMetadata        `json:"didResolutionMetadata"`
 	Did                *DidDoc                   `json:"didDocument,omitempty"`
+	ResolutionMetadata ResolutionMetadata        `json:"didResolutionMetadata,omitempty"`
 	Metadata           *ResolutionDidDocMetadata `json:"didDocumentMetadata,omitempty"`
 }
 

@@ -28,9 +28,11 @@ type resourceCollectionTestCase struct {
 
 var _ = DescribeTable("Test DidDocMetadataEchoHandler function", func(testCase resourceCollectionTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
+	request.Header.Set("Accept", string(testCase.resolutionType))
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, utils.MockLedger)
 	expectedDIDResolution := testCase.expectedResolution.(*types.DidResolution)
 	expectedContentType := utils.DefineContentType(expectedDIDResolution.ResolutionMetadata.ContentType, testCase.resolutionType)
+	responseContentType := utils.ResponseContentType(request.Header.Get("accept"), true)
 
 	err := didDocServices.DidDocMetadataEchoHandler(context)
 	if testCase.expectedError != nil {
@@ -41,7 +43,7 @@ var _ = DescribeTable("Test DidDocMetadataEchoHandler function", func(testCase r
 		Expect(json.Unmarshal(rec.Body.Bytes(), &resolutionResult)).To(BeNil())
 		Expect(expectedDIDResolution.Metadata).To(Equal(resolutionResult.Metadata))
 		Expect(expectedContentType).To(Equal(resolutionResult.ResolutionMetadata.ContentType))
-		Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
+		Expect(responseContentType).To(Equal(rec.Header().Get("Content-Type")))
 	}
 },
 
@@ -49,7 +51,7 @@ var _ = DescribeTable("Test DidDocMetadataEchoHandler function", func(testCase r
 		"can get collection of resource with an existent DID",
 		resourceCollectionTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s/metadata", testconstants.ExistentDid),
-			resolutionType: types.JSONLD,
+			resolutionType: types.DIDRES,
 			expectedResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{

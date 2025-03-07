@@ -26,6 +26,14 @@ func DefineContentType(expectedContentType types.ContentType, resolutionType typ
 	return expectedContentType
 }
 
+func ResponseContentType(acceptHeader string, resource bool) string {
+	contentType, profile := services.GetPriorityContentType(acceptHeader, resource)
+	if profile != "" {
+		return string(contentType) + ";profile=" + profile
+	}
+	return string(contentType)
+}
+
 func SetupEmptyContext(request *http.Request, resolutionType types.ContentType, ledgerService services.LedgerServiceI) (echo.Context, *httptest.ResponseRecorder) {
 	e := echo.New()
 	didDocServices.SetRoutes(e)

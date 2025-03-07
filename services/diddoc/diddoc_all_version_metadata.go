@@ -13,7 +13,7 @@ type DIDDocAllVersionMetadataRequestService struct {
 }
 
 func (dd *DIDDocAllVersionMetadataRequestService) Setup(c services.ResolverContext) error {
-	dd.IsDereferencing = false
+	dd.IsDereferencing = true // /versions path is dereferencing
 	return nil
 }
 

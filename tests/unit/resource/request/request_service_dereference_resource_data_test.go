@@ -26,7 +26,7 @@ type resourceDataTestCase struct {
 
 var _ = DescribeTable("Test ResourceDataEchoHandler function", func(testCase resourceDataTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
-	request.Header.Set("Content-Type", string(testCase.resolutionType))
+	request.Header.Set("Accept", string(testCase.resolutionType))
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, utils.MockLedger)
 
 	expectedContentType := types.ContentType(testconstants.ValidResource[0].Metadata.MediaType)

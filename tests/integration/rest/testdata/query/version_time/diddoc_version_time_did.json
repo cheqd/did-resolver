@@ -1,7 +1,7 @@
 {
   "@context": "https://w3id.org/did-resolution/v1",
   "didResolutionMetadata": {
-    "contentType": "application/ld+json",
+    "contentType": "application/did",
     "retrieved": "2023-04-24T10:48:50Z",
     "did": {
       "didString": "did:cheqd:testnet:b5d70adf-31ca-4662-aa10-d3a54cd8f06c",

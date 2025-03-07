@@ -33,7 +33,7 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 		testCase.expectedDereferencingResult.ContentStream.RemoveContext()
 	}
 	expectedContentType := utils.DefineContentType(testCase.expectedDereferencingResult.DereferencingMetadata.ContentType, testCase.resolutionType)
-
+	requestedContentType := utils.ResponseContentType(request.Header.Get("accept"), true)
 	err := didDocService.DidDocEchoHandler(context)
 
 	if testCase.expectedError != nil {
@@ -45,7 +45,7 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 		Expect(testCase.expectedDereferencingResult.Metadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
 		Expect(testCase.expectedDereferencingResult.DereferencingMetadata.DidProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
-		Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
+		Expect(requestedContentType).To(Equal(rec.Header().Get("Content-Type")))
 	}
 },
 	Entry(
@@ -313,6 +313,7 @@ var _ = DescribeTable("Test resource positive cases with Metadata field", func(t
 			resolutionType: types.JSONLD,
 			expectedDereferencingResult: &types.ResourceDereferencing{
 				DereferencingMetadata: types.DereferencingMetadata{
+					ContentType: types.JSONLD,
 					DidProperties: types.DidProperties{
 						DidString:        testconstants.ExistentDid,
 						MethodSpecificId: testconstants.ValidIdentifier,

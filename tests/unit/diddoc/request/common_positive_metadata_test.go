@@ -26,6 +26,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 		testCase.expectedDereferencingResult.ContentStream.RemoveContext()
 	}
 	expectedContentType := utils.DefineContentType(testCase.expectedDereferencingResult.DereferencingMetadata.ContentType, testCase.resolutionType)
+	responseContentType := utils.ResponseContentType(request.Header.Get("accept"), true)
 
 	err := didDocService.DidDocEchoHandler(context)
 
@@ -38,7 +39,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 		Expect(testCase.expectedDereferencingResult.Metadata).To(Equal(dereferencingResult.Metadata))
 		Expect(expectedContentType).To(Equal(dereferencingResult.DereferencingMetadata.ContentType))
 		Expect(testCase.expectedDereferencingResult.DereferencingMetadata.DidProperties).To(Equal(dereferencingResult.DereferencingMetadata.DidProperties))
-		Expect(expectedContentType).To(Equal(types.ContentType(rec.Header().Get("Content-Type"))))
+		Expect(responseContentType).To(Equal(rec.Header().Get("Content-Type")))
 	}
 },
 	Entry(

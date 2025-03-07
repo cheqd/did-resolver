@@ -18,7 +18,7 @@ import (
 
 var _ = DescribeTable("Test Query handlers with resource params. Returns Resource", func(testCase ResourceTestCase) {
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
-	request.Header.Set("Content-Type", string(testCase.resolutionType))
+	request.Header.Set("Accept", string(testCase.resolutionType))
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, MockLedger)
 	expectedContentType := types.ContentType(testconstants.ValidResource[0].Metadata.MediaType)
 
