@@ -120,7 +120,7 @@ func (dd *BaseRequestService) Query(c ResolverContext) error {
 func (dd BaseRequestService) SetupResponse(c ResolverContext) error {
 	responseHeader := dd.Result.GetContentType()
 	if dd.Profile != "" && responseHeader == string(types.JSONLD) {
-		responseHeader = dd.Result.GetContentType() + ";profile=" + dd.Profile
+		responseHeader = dd.Result.GetContentType() + ";profile=\"" + dd.Profile + "\""
 	}
 	c.Response().Header().Set(echo.HeaderContentType, responseHeader)
 	if utils.IsGzipAccepted(c) {

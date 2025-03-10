@@ -79,7 +79,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				DidDocUpdated.Format(time.RFC3339Nano),
 				ResourceIdName1,
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -111,7 +111,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				ResourceIdName1,
 				ResourceName1.Metadata.CollectionId,
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -142,7 +142,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				DidDocUpdated.Format(time.RFC3339Nano),
 				ResourceName1.Metadata.CollectionId,
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -179,7 +179,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				ResourceName1.Metadata.CollectionId,
 				ResourceName1.Metadata.Name,
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -213,7 +213,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				ResourceName1.Metadata.Name,
 				ResourceName1.Metadata.ResourceType,
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -248,7 +248,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				ResourceName1.Metadata.ResourceType,
 				ResourceName1.Metadata.Version,
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -284,7 +284,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				ResourceName1.Metadata.Version,
 				DidDocUpdated.Format(time.RFC3339),
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -321,7 +321,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				DidDocUpdated.Format(time.RFC3339),
 				ResourceName1.Metadata.Checksum,
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -352,7 +352,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				DidDocUpdated.Format(time.RFC3339Nano),
 				Resource2Created.Format(time.RFC3339),
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{

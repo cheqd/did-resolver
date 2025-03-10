@@ -232,4 +232,18 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase utils.PositiveTestCa
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
+	Entry(
+		"can get DIDDoc with versionId query parameter and did+ld+json accept header",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?versionId=%s",
+				testconstants.TestHostAddress,
+				testconstants.SeveralVersionsDID,
+				"0ce23d04-5b67-4ea6-a315-788588e53f4e",
+			),
+			ResolutionType:     string(types.DIDJSONLD),
+			ExpectedJSONPath:   "../../testdata/diddoc/diddoc_version_did_ld.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
 )

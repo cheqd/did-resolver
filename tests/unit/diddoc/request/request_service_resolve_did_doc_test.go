@@ -86,7 +86,7 @@ var _ = DescribeTable("Test DIDDocEchoHandler function", func(testCase resolveDI
 		resolveDIDDocTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s", testconstants.ExistentDid),
 			resolutionType: types.JSONLD,
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					ContentType: types.DIDRES,
