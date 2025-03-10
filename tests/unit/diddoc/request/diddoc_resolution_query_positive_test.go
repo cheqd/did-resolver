@@ -22,27 +22,51 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 	request := httptest.NewRequest(http.MethodGet, testCase.didURL, nil)
 	request.Header.Set("Accept", testCase.acceptHeader) // Set Accept header dynamically
 	context, rec := utils.SetupEmptyContext(request, testCase.resolutionType, MockLedger)
-	expectedDIDResolution := testCase.expectedDIDResolution
+	var didDoc *types.DidDoc
+	var didResolution *types.DidResolution
 
-	if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
-		expectedDIDResolution.Did.Context = []string{types.DIDSchemaJSONLD, types.LinkedDomainsJSONLD, types.JsonWebKey2020JSONLD}
-	} else if expectedDIDResolution.Did != nil {
-		expectedDIDResolution.Did.Context = nil
+	switch v := testCase.expectedDIDResolution.(type) {
+	case *types.DidDoc:
+		didDoc = v
+	case *types.DidResolution:
+		didResolution = v
+	}
+	if didResolution != nil {
+		if (testCase.resolutionType == "" || testCase.resolutionType == types.DIDJSONLD) && testCase.expectedError == nil {
+			didResolution.Did.Context = []string{types.DIDSchemaJSONLD, types.LinkedDomainsJSONLD, types.JsonWebKey2020JSONLD}
+		}
+	} else if didDoc != nil {
+		didDoc.Context = nil
 	}
 
-	expectedContentType := utils.DefineContentType(expectedDIDResolution.ResolutionMetadata.ContentType, testCase.resolutionType)
+	expectedContentType := utils.DefineContentType(
+		func() types.ContentType {
+			if didResolution != nil {
+				return didResolution.ResolutionMetadata.ContentType
+			}
+			return ""
+		}(),
+		testCase.resolutionType,
+	)
 	responseContentType := utils.ResponseContentType(testCase.acceptHeader, false)
 
 	err := didDocService.DidDocEchoHandler(context)
-	var resolutionResult types.DidResolution
-	unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &resolutionResult)
-	Expect(unmarshalErr).To(BeNil())
 	Expect(err).To(BeNil())
-	testCase.expectedDIDResolution.Did.Context = resolutionResult.Did.Context
-	Expect(expectedDIDResolution.Did).To(Equal(resolutionResult.Did))
-	Expect(expectedDIDResolution.Metadata.Resources).To(Equal(resolutionResult.Metadata.Resources))
-	Expect(expectedContentType).To(Equal(resolutionResult.ResolutionMetadata.ContentType))
-	Expect(expectedDIDResolution.ResolutionMetadata.DidProperties).To(Equal(resolutionResult.ResolutionMetadata.DidProperties))
+	if didDoc != nil {
+		var resolutionResult types.DidDoc
+		unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &resolutionResult)
+		Expect(unmarshalErr).To(BeNil())
+		Expect(didDoc).To(Equal(resolutionResult))
+	} else if didResolution != nil {
+		var resolutionResult types.DidResolution
+		unmarshalErr := json.Unmarshal(rec.Body.Bytes(), &resolutionResult)
+		Expect(unmarshalErr).To(BeNil())
+		didResolution.Did.Context = resolutionResult.Did.Context
+		Expect(didResolution.Did).To(Equal(resolutionResult.Did))
+		Expect(didResolution.Metadata.Resources).To(Equal(resolutionResult.Metadata.Resources))
+		Expect(expectedContentType).To(Equal(resolutionResult.ResolutionMetadata.ContentType))
+		Expect(didResolution.ResolutionMetadata.DidProperties).To(Equal(resolutionResult.ResolutionMetadata.DidProperties))
+	}
 	Expect(responseContentType).To(Equal(rec.Header().Get("Content-Type")))
 },
 	Entry(
@@ -55,7 +79,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				DidDocUpdated.Format(time.RFC3339Nano),
 				ResourceIdName1,
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -87,7 +111,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				ResourceIdName1,
 				ResourceName1.Metadata.CollectionId,
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -118,7 +142,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				DidDocUpdated.Format(time.RFC3339Nano),
 				ResourceName1.Metadata.CollectionId,
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -155,7 +179,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				ResourceName1.Metadata.CollectionId,
 				ResourceName1.Metadata.Name,
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -189,7 +213,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				ResourceName1.Metadata.Name,
 				ResourceName1.Metadata.ResourceType,
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -224,7 +248,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				ResourceName1.Metadata.ResourceType,
 				ResourceName1.Metadata.Version,
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -260,7 +284,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				ResourceName1.Metadata.Version,
 				DidDocUpdated.Format(time.RFC3339),
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -297,7 +321,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				DidDocUpdated.Format(time.RFC3339),
 				ResourceName1.Metadata.Checksum,
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
@@ -328,7 +352,7 @@ var _ = DescribeTable("Tests for mixed DidDoc and resource cases", func(testCase
 				DidDocUpdated.Format(time.RFC3339Nano),
 				Resource2Created.Format(time.RFC3339),
 			),
-			acceptHeader:   string(types.JSONLD) + ";profile=" + types.W3IDDIDRES,
+			acceptHeader:   string(types.JSONLD) + ";profile=\"" + types.W3IDDIDRES + "\"",
 			resolutionType: types.JSONLD,
 			expectedDIDResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{

@@ -366,5 +366,9 @@ func (dd QueryDIDDocRequestService) Respond(c services.ResolverContext) error {
 	}
 	// Get ContentType Formatted for response body
 	result := dd.FormatMetadataContentType(c)
+	if !dd.IsDereferencing && (dd.RequestedContentType == types.DIDJSON || dd.RequestedContentType == types.DIDJSONLD || dd.RequestedContentType == types.DIDRES) {
+		_result := result.(*types.DidResolution)
+		return c.JSONPretty(http.StatusOK, _result.Did, "  ")
+	}
 	return c.JSONPretty(http.StatusOK, result, "  ")
 }

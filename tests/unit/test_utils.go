@@ -29,7 +29,7 @@ func DefineContentType(expectedContentType types.ContentType, resolutionType typ
 func ResponseContentType(acceptHeader string, resource bool) string {
 	contentType, profile := services.GetPriorityContentType(acceptHeader, resource)
 	if profile != "" {
-		return string(contentType) + ";profile=" + profile
+		return string(contentType) + ";profile=\"" + profile + "\""
 	}
 	return string(contentType)
 }
