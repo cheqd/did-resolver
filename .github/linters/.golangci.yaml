@@ -42,7 +42,7 @@ linters-settings:
       - badCall # Remove this after CI workflow PR
 
   gofumpt:
-    lang-version: "1.23"
+    lang-version: "1.24"
     
   misspell:
     ignore-words:
