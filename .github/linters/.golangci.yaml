@@ -5,10 +5,10 @@ run:
 linters:
   enable:
     - bodyclose
+    - copyloopvar
     - depguard
     - dogsled
     - errcheck
-    - exportloopref
     - goconst
     - gocritic
     - gofumpt
