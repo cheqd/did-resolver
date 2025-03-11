@@ -54,7 +54,7 @@ var _ = DescribeTable("Test Query handler with transformKeys params", func(testC
 				testconstants.ValidDid,
 				types.Ed25519VerificationKey2018,
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType: types.JSON,
 			expectedResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
@@ -91,7 +91,7 @@ var _ = DescribeTable("Test Query handler with transformKeys params", func(testC
 				testconstants.ValidDid,
 				types.Ed25519VerificationKey2020,
 			),
-			resolutionType: types.DIDJSONLD,
+			resolutionType: types.JSON,
 			expectedResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{

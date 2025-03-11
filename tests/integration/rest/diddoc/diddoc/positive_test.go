@@ -24,16 +24,22 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase utils.PositiveTestCa
 		SetHeader("Accept-Encoding", testCase.EncodingType).
 		Get(testCase.DidURL)
 	Expect(err).To(BeNil())
+	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
+	Expect(testCase.ExpectedEncodingType).To(Equal(resp.Header().Get("Content-Encoding")))
 
 	var receivedDidResolution types.DidResolution
-	Expect(json.Unmarshal(resp.Body(), &receivedDidResolution)).To(BeNil())
-	Expect(testCase.ExpectedStatusCode).To(Equal(resp.StatusCode()))
-
-	var expectedDidResolution types.DidResolution
-	Expect(utils.ConvertJsonFileToType(testCase.ExpectedJSONPath, &expectedDidResolution)).To(BeNil())
-
-	Expect(testCase.ExpectedEncodingType).To(Equal(resp.Header().Get("Content-Encoding")))
-	utils.AssertDidResolution(expectedDidResolution, receivedDidResolution)
+	unmarshalErr := json.Unmarshal(resp.Body(), &receivedDidResolution)
+	if unmarshalErr != nil {
+		var resolutionResult types.DidDoc
+		var expectedResult types.DidDoc
+		Expect(utils.ConvertJsonFileToType(testCase.ExpectedJSONPath, &expectedResult)).To(BeNil())
+		Expect(json.Unmarshal(resp.Body(), &resolutionResult)).To(BeNil())
+		utils.AssertDidResolution(types.DidResolution{Did: &expectedResult}, types.DidResolution{Did: &resolutionResult})
+	} else {
+		var expectedDidResolution types.DidResolution
+		Expect(utils.ConvertJsonFileToType(testCase.ExpectedJSONPath, &expectedDidResolution)).To(BeNil())
+		utils.AssertDidResolution(expectedDidResolution, receivedDidResolution)
+	}
 },
 
 	Entry(
@@ -223,6 +229,20 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase utils.PositiveTestCa
 			ResolutionType:     testconstants.DefaultResolutionType,
 			EncodingType:       testconstants.NotSupportedEncodingType,
 			ExpectedJSONPath:   "../../testdata/diddoc/diddoc_uuid_testnet_did.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+	Entry(
+		"can get DIDDoc with versionId query parameter and did+ld+json accept header",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?versionId=%s",
+				testconstants.TestHostAddress,
+				testconstants.SeveralVersionsDID,
+				"0ce23d04-5b67-4ea6-a315-788588e53f4e",
+			),
+			ResolutionType:     string(types.DIDJSONLD),
+			ExpectedJSONPath:   "../../testdata/diddoc/diddoc_version_did_ld.json",
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),

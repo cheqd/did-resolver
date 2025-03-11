@@ -50,7 +50,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 		"Positive. VersionId case. The first item",
 		QueriesDIDDocTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s?versionId=%s", testconstants.ValidDid, VersionId1),
-			resolutionType: types.DIDJSONLD,
+			resolutionType: types.JSON,
 			expectedResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
@@ -72,7 +72,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 		"Positive. VersionId case. The second item. All the resources should be returned",
 		QueriesDIDDocTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s?versionId=%s", testconstants.ValidDid, VersionId2),
-			resolutionType: types.DIDJSONLD,
+			resolutionType: types.JSON,
 			expectedResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
@@ -103,7 +103,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 		"Positive. VersionTime case. Case after creation but before update",
 		QueriesDIDDocTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s?versionTime=%s", testconstants.ValidDid, DidDocAfterCreated.Format(time.RFC3339Nano)),
-			resolutionType: types.DIDJSONLD,
+			resolutionType: types.JSON,
 			expectedResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
@@ -125,7 +125,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 		"Positive. VersionTime case. Case after updating",
 		QueriesDIDDocTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s?versionTime=%s", testconstants.ValidDid, DidDocAfterUpdated.Format(time.RFC3339Nano)),
-			resolutionType: types.DIDJSONLD,
+			resolutionType: types.JSON,
 			expectedResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
@@ -156,7 +156,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 		"Positive. VersionTime and VersionId case. Case after creation but before update",
 		QueriesDIDDocTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s?versionTime=%s&versionId=%s", testconstants.ValidDid, DidDocAfterCreated.Format(time.RFC3339Nano), VersionId1),
-			resolutionType: types.DIDJSONLD,
+			resolutionType: types.JSON,
 			expectedResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
@@ -178,7 +178,7 @@ var _ = DescribeTable("Test Query handlers with versionId and versionTime params
 		"Positive. Metadata = false. Should omit the metadata section",
 		QueriesDIDDocTestCase{
 			didURL:         fmt.Sprintf("/1.0/identifiers/%s?metadata=false", testconstants.ValidDid),
-			resolutionType: types.DIDJSONLD,
+			resolutionType: types.JSON,
 			expectedResolution: &types.DidResolution{
 				ResolutionMetadata: types.ResolutionMetadata{
 					DidProperties: types.DidProperties{
