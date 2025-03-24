@@ -46,7 +46,7 @@ type AssertionMethod struct {
 	AssertionMethodJSON *VerificationMethod `json:"assertionMethodJSON,omitempty"`
 }
 
-///implement encoding.JSON.Marshaler interface
+// / implement encoding.JSON.Marshaler interface
 func (e *AssertionMethod) MarshalJSON() ([]byte, error) {
 	// If Id is present, use it
 	if e.Id != nil {
@@ -87,6 +87,7 @@ func (e *AssertionMethod) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
 ///
 
 func NewDidDoc(protoDidDoc *did.DidDoc) DidDoc {
