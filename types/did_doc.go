@@ -98,9 +98,14 @@ func NewDidDoc(protoDidDoc *did.DidDoc) DidDoc {
 		services = append(services, *NewService(s))
 	}
 
-	assertionMethods := []AssertionMethod{}
-	for _, am := range protoDidDoc.AssertionMethod {
-		assertionMethods = append(assertionMethods, *NewAssertionMethod(am))
+	var assertionMethods []AssertionMethod
+	if len(protoDidDoc.AssertionMethod) == 0 {
+		assertionMethods = nil
+	} else {
+		assertionMethods = []AssertionMethod{}
+		for _, am := range protoDidDoc.AssertionMethod {
+			assertionMethods = append(assertionMethods, *NewAssertionMethod(am))
+		}
 	}
 
 	return DidDoc{

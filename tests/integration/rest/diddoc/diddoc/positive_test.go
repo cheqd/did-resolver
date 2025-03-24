@@ -252,9 +252,11 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase utils.PositiveTestCa
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s",
 				testconstants.TestHostAddress,
-				testconstants.EscapedJSONAssertionMethodDid
+				testconstants.EscapedJSONAssertionMethodDid,
 			),
-			ResolutionType:     string(types.DIDJSONLD),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			EncodingType:       testconstants.DefaultEncodingType,
+			ExpectedEncodingType: "gzip",
 			ExpectedJSONPath:   "../../testdata/diddoc/diddoc_escaped_am.json",
 			ExpectedStatusCode: http.StatusOK,
 		},
