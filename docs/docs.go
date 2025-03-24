@@ -628,6 +628,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "types.AssertionMethod": {
+            "type": "object",
+            "properties": {
+                "assertionMethodJSON": {
+                    "$ref": "#/definitions/types.VerificationMethod"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
         "types.ContentType": {
             "type": "string",
             "enum": [
@@ -767,7 +778,7 @@ const docTemplate = `{
                 "assertionMethod": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/types.AssertionMethod"
                     }
                 },
                 "authentication": {

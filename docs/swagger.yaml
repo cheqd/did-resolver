@@ -1,5 +1,12 @@
 basePath: /1.0/identifiers
 definitions:
+  types.AssertionMethod:
+    properties:
+      assertionMethodJSON:
+        $ref: '#/definitions/types.VerificationMethod'
+      id:
+        type: string
+    type: object
   types.ContentType:
     enum:
     - application/did+json
@@ -98,7 +105,7 @@ definitions:
         type: array
       assertionMethod:
         items:
-          type: string
+          $ref: '#/definitions/types.AssertionMethod'
         type: array
       authentication:
         example:
