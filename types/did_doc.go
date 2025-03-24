@@ -14,7 +14,7 @@ type DidDoc struct {
 	Controller           []string             `json:"controller,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47"`
 	VerificationMethod   []VerificationMethod `json:"verificationMethod,omitempty"`
 	Authentication       []string             `json:"authentication,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#key-1"`
-	AssertionMethod      []AssertionMethod    `json:"assertionMethod,omitempty"`
+	AssertionMethod      []AssertionMethod    `json:"assertionMethod,omitempty" swaggertype:"array,string"`
 	CapabilityInvocation []string             `json:"capabilityInvocation,omitempty"`
 	CapabilityDelegation []string             `json:"capability_delegation,omitempty"`
 	KeyAgreement         []string             `json:"keyAgreement,omitempty"`
@@ -46,6 +46,7 @@ type AssertionMethod struct {
 	AssertionMethodJSON *VerificationMethod `json:"assertionMethodJSON,omitempty"`
 }
 
+///implement encoding.JSON.Marshaler interface
 func (e *AssertionMethod) MarshalJSON() ([]byte, error) {
 	// If Id is present, use it
 	if e.Id != nil {
@@ -86,6 +87,7 @@ func (e *AssertionMethod) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+///
 
 func NewDidDoc(protoDidDoc *did.DidDoc) DidDoc {
 	verificationMethods := []VerificationMethod{}
