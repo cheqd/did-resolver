@@ -26,6 +26,8 @@ var (
 	UUIDStyleTestnetDid      = "did:cheqd:testnet:" + UUIDStyleTestnetId
 	UUIDTestnetDidIdForImage = "did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47"
 
+	EscapedJSONAssertionMethodDid = "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9"
+
 	OldIndy16CharStyleTestnetDid      = "did:cheqd:testnet:zHqbcXb3irKRCMst"
 	MigratedIndy16CharStyleTestnetDid = "did:cheqd:testnet:CpeMubv5yw63jXyrgRRsxR"
 
