@@ -246,4 +246,17 @@ var _ = DescribeTable("Positive: Get DIDDoc", func(testCase utils.PositiveTestCa
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
+	Entry(
+		"can get DIDDoc with escaped json assertionMethod",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s",
+				testconstants.TestHostAddress,
+				testconstants.EscapedJSONAssertionMethodDid
+			),
+			ResolutionType:     string(types.DIDJSONLD),
+			ExpectedJSONPath:   "../../testdata/diddoc/diddoc_escaped_am.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
 )

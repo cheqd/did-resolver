@@ -1,0 +1,91 @@
+{
+    "@context": "https://w3id.org/did-resolution/v1",
+    "didDocument": {
+      "@context": [
+        "https://www.w3.org/ns/did/v1",
+        "https://w3id.org/security/suites/ed25519-2018/v1"
+      ],
+      "id": "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9",
+      "controller": [
+        "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9"
+      ],
+      "verificationMethod": [
+        {
+          "id": "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9#auth",
+          "type": "Ed25519VerificationKey2018",
+          "controller": "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9",
+          "publicKeyBase58": "AyBW3mFr5uHNkxrwW191nNBySWRTY1e6vDnzrQ3JfbpY"
+        }
+      ],
+      "authentication": [
+        "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9#auth"
+      ],
+      "assertionMethod": [
+        {
+          "id": "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9#key-1",
+          "type": "Bls12381G2Key2020",
+          "controller": "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9",
+          "publicKeyBase58": "248ZvAYDLDjwSVkRZ562R7FBcwZYJj8noBHk5Ny3Vs3SyoY48YgVZYY3KLhyUpD6BLE57eRmFzesVZ5kaDXdEG7HzZsCA5PWkDgZj39ExoZPLDnDr2UstJ6PhZmXocQUaTZr"
+        }
+      ]
+    },
+    "didResolutionMetadata": {
+      "contentType": "application/did",
+      "retrieved": "2025-03-24T07:07:43Z",
+      "did": {
+        "didString": "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9",
+        "methodSpecificId": "8667d3ad-427d-4061-b547-6a1cd2f781b9",
+        "method": "cheqd"
+      }
+    },
+    "didDocumentMetadata": {
+      "created": "2025-03-16T23:20:04Z",
+      "versionId": "a5c52420-b606-47f9-9cd9-3c6b6c0d572a"
+    }
+  }
+{
+  "@context": "https://w3id.org/did-resolution/v1",
+  "didDocument": {
+    "@context": [
+      "https://www.w3.org/ns/did/v1",
+      "https://w3id.org/security/suites/ed25519-2018/v1"
+    ],
+    "id": "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9",
+    "controller": [
+      "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9"
+    ],
+    "verificationMethod": [
+      {
+        "id": "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9#auth",
+        "type": "Ed25519VerificationKey2018",
+        "controller": "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9",
+        "publicKeyBase58": "AyBW3mFr5uHNkxrwW191nNBySWRTY1e6vDnzrQ3JfbpY"
+      }
+    ],
+    "authentication": [
+      "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9#auth"
+    ],
+    "assertionMethod": [
+      {
+        "id": "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9#key-1",
+        "type": "Bls12381G2Key2020",
+        "controller": "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9",
+        "publicKeyBase58": "248ZvAYDLDjwSVkRZ562R7FBcwZYJj8noBHk5Ny3Vs3SyoY48YgVZYY3KLhyUpD6BLE57eRmFzesVZ5kaDXdEG7HzZsCA5PWkDgZj39ExoZPLDnDr2UstJ6PhZmXocQUaTZr"
+      }
+    ]
+  },
+  "didResolutionMetadata": {
+    "contentType": "application/did",
+    "retrieved": "2025-03-24T07:07:43Z",
+    "did": {
+      "didString": "did:cheqd:testnet:8667d3ad-427d-4061-b547-6a1cd2f781b9",
+      "methodSpecificId": "8667d3ad-427d-4061-b547-6a1cd2f781b9",
+      "method": "cheqd"
+    }
+  },
+  "didDocumentMetadata": {
+    "created": "2025-03-16T23:20:04Z",
+    "versionId": "a5c52420-b606-47f9-9cd9-3c6b6c0d572a"
+  }
+}
+  
