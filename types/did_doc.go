@@ -42,49 +42,49 @@ type Service struct {
 }
 
 type AssertionMethod struct {
-	Id                 *string      `json:"id,omitempty"`
+	Id                  *string             `json:"id,omitempty"`
 	AssertionMethodJSON *VerificationMethod `json:"assertionMethodJSON,omitempty"`
 }
 
 func (e *AssertionMethod) MarshalJSON() ([]byte, error) {
-    // If Id is present, use it
-    if e.Id != nil {
-        return json.Marshal(e.Id)
-    } else {
-        // Otherwise use the VerificationMethod
-        return json.Marshal(e.AssertionMethodJSON)
-    }
+	// If Id is present, use it
+	if e.Id != nil {
+		return json.Marshal(e.Id)
+	} else {
+		// Otherwise use the VerificationMethod
+		return json.Marshal(e.AssertionMethodJSON)
+	}
 }
 
 func (e *AssertionMethod) UnmarshalJSON(data []byte) error {
-    // Check for null or empty value
-    if string(data) == "null" || len(data) == 0 {
-        e.Id = nil
-        e.AssertionMethodJSON = nil
-        return nil
-    }
+	// Check for null or empty value
+	if string(data) == "null" || len(data) == 0 {
+		e.Id = nil
+		e.AssertionMethodJSON = nil
+		return nil
+	}
 
-    // First attempt: Try to unmarshal as a string
-    var strValue string
-    if err := json.Unmarshal(data, &strValue); err == nil {
-        // If successfully parsed as string and it starts with "did:cheqd"
-        if strings.HasPrefix(strValue, "did:cheqd") {
-            e.Id = &strValue
-            e.AssertionMethodJSON = nil
-            return nil
-        }
-        
-        // If it's a string but not a "did:cheqd" string, it might be escaped JSON
-        // Try to parse the string as VerificationMethod
-        var verMethod VerificationMethod
-        if jsonErr := json.Unmarshal([]byte(strValue), &verMethod); jsonErr == nil {
-            e.Id = nil
-            e.AssertionMethodJSON = &verMethod
-            return nil
-        }
-    }
+	// First attempt: Try to unmarshal as a string
+	var strValue string
+	if err := json.Unmarshal(data, &strValue); err == nil {
+		// If successfully parsed as string and it starts with "did:cheqd"
+		if strings.HasPrefix(strValue, "did:cheqd") {
+			e.Id = &strValue
+			e.AssertionMethodJSON = nil
+			return nil
+		}
 
-    return nil
+		// If it's a string but not a "did:cheqd" string, it might be escaped JSON
+		// Try to parse the string as VerificationMethod
+		var verMethod VerificationMethod
+		if jsonErr := json.Unmarshal([]byte(strValue), &verMethod); jsonErr == nil {
+			e.Id = nil
+			e.AssertionMethodJSON = &verMethod
+			return nil
+		}
+	}
+
+	return nil
 }
 
 func NewDidDoc(protoDidDoc *did.DidDoc) DidDoc {
@@ -151,34 +151,40 @@ func NewService(protoService *did.Service) *Service {
 }
 
 func NewAssertionMethod(protoAssertionMethod string) *AssertionMethod {
-    // Check if the string starts with "did:cheqd"
-    if strings.HasPrefix(protoAssertionMethod, "did:cheqd") {
-        return &AssertionMethod{
-            Id:                 &protoAssertionMethod,
-            AssertionMethodJSON: nil,
-        }
-    } else {
-        // Try to parse it as VerificationMethod
-        var verMethodString string
-        err := json.Unmarshal([]byte(protoAssertionMethod), &verMethodString)
+	// Check if the string starts with "did:cheqd"
+	if strings.HasPrefix(protoAssertionMethod, "did:cheqd") {
+		return &AssertionMethod{
+			Id:                  &protoAssertionMethod,
+			AssertionMethodJSON: nil,
+		}
+	} else {
+		// Try to parse it as VerificationMethod
+		var verMethodString string
+		err := json.Unmarshal([]byte(protoAssertionMethod), &verMethodString)
+		// If parsing failed, return nil
+		if err != nil {
+			return &AssertionMethod{
+				Id:                  nil,
+				AssertionMethodJSON: nil,
+			}
+		}
 
 		var verMethod VerificationMethod
-        err = json.Unmarshal([]byte(verMethodString), &verMethod)
-        
-        // If parsing failed, return nil
-        if err != nil {
-            return &AssertionMethod{
-                Id:                 nil,
-                AssertionMethodJSON: nil,
-            }
-        }
-        
-        // Successfully parsed as VerificationMethod
-        return &AssertionMethod{
-            Id:                 nil,
-            AssertionMethodJSON: &verMethod,
-        }
-    }
+		err = json.Unmarshal([]byte(verMethodString), &verMethod)
+		// If parsing failed, return nil
+		if err != nil {
+			return &AssertionMethod{
+				Id:                  nil,
+				AssertionMethodJSON: nil,
+			}
+		}
+
+		// Successfully parsed as VerificationMethod
+		return &AssertionMethod{
+			Id:                  nil,
+			AssertionMethodJSON: &verMethod,
+		}
+	}
 }
 
 func (e *DidDoc) AddContext(newProtocol string) { e.Context = AddElemToSet(e.Context, newProtocol) }
