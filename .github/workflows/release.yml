@@ -94,9 +94,53 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  release-docker:
-    name: "Release Docker image"
+  build-docker:
+    name: Build Docker image
     needs: release-guard
+    runs-on: ${{ matrix.runs-on }}
+    if: ${{ github.ref_name == 'main' }}
+    env:
+      IMAGE_NAME: ${{ github.repository }}
+    environment:
+      name: production
+      url: https://resolver.cheqd.net
+
+    strategy:
+      matrix:
+        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            runs-on: ubuntu-24.04
+          - arch: arm64
+            runs-on: ubuntu-24.04-arm
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        id: buildx
+        with:
+          install: true
+          version: latest
+
+      - name: Build and cache image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          file: docker/Dockerfile
+          platforms: linux/${{ matrix.arch }}
+          cache-from: type=gha,scope=docker-release-${{ matrix.arch }}
+          cache-to: type=gha,scope=docker-release-${{ matrix.arch }},mode=max
+
+  release-docker:
+    name: Release Docker image
+    needs:
+      - release-guard
+      - build-docker
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'main' }}
     env:
@@ -153,20 +197,15 @@ jobs:
             org.opencontainers.image.created={{date 'dddd, MMMM Do YYYY, h:mm:ss a'}}
             org.opencontainers.image.documentation="https://docs.cheqd.io/identity"
 
-      - name: Build image with labels
+      - name: Build and push image
         uses: docker/build-push-action@v6
         with:
           context: .
+          push: true
           file: docker/Dockerfile
-          platforms: linux/amd64
-          load: true
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
-
-      - name: Push image to GitHub Container Registry
-        run: docker image push --all-tags ghcr.io/${{ github.repository}}
-
-      - name: Push image to DigitalOcean Container Registry
-        run: docker image push --all-tags registry.digitalocean.com/${{ github.repository }}
+          cache-from: |
+            type=gha,scope=docker-release-amd64
+            type=gha,scope=docker-release-arm64

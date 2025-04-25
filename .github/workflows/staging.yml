@@ -6,16 +6,16 @@ defaults:
     shell: bash
 
 jobs:
-  
+
   deploy-staging:
     name: "Staging Deploy"
     runs-on: ubuntu-latest
-    env: 
+    env:
       IMAGE_NAME: ${{ github.repository }}
-    environment: 
+    environment:
       name: staging
       url: https://resolver-staging.cheqd.net
-    
+
     steps:
       - name: Install DigitalOcean CLI
         uses: digitalocean/action-doctl@v2
@@ -40,9 +40,9 @@ jobs:
     name: "Release Staging Docker image"
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'develop' }}
-    env: 
+    env:
       IMAGE_NAME: ${{ github.repository }}
-    
+
     steps:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3

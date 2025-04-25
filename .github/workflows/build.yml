@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-go@v5
         with:
           go-version-file: ./go.mod
@@ -44,11 +44,10 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        id: buildx
         with:
           install: true
           version: latest
-      
+
       - name: Configure Docker image metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -61,7 +60,7 @@ jobs:
             type=ref,event=branch
             type=raw,value=staging-latest
             type=sha,format=long
-      
+
       - name: Build image
         uses: docker/build-push-action@v6
         with:
@@ -71,9 +70,9 @@ jobs:
           load: true
           tags: ${{ steps.meta.outputs.tags }}
           outputs: type=docker,dest=did-resolver-staging.tar
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
-      
+          cache-from: type=gha,scope=docker-build-amd64
+          cache-to: type=gha,scope=docker-build-amd64,mode=max
+
       - name: Upload staging image as an artifact
         uses: actions/upload-artifact@v4
         with:
