@@ -201,7 +201,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: true
+          push: false # Todo: Test setting to `true` to replace `docker image push`
           file: docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
@@ -209,3 +209,9 @@ jobs:
           cache-from: |
             type=gha,scope=docker-release-amd64
             type=gha,scope=docker-release-arm64
+
+      - name: Push image to GitHub Container Registry
+        run: docker image push --all-tags ghcr.io/${{ github.repository}}
+
+      - name: Push image to DigitalOcean Container Registry
+        run: docker image push --all-tags registry.digitalocean.com/${{ github.repository }}
