@@ -1,6 +1,8 @@
+version: 2
+
 run:
   timeout: 10m
-
+  go: "1.24"
 
 linters:
   enable:
@@ -18,10 +20,13 @@ linters:
     - nestif
     - nolintlint
     - staticcheck
-    # - stylecheck # Disable stylecheck until refactor
-    - typecheck
     - unconvert
     - unused
+  exclusions:
+    rules:
+      - path: "_test\\.go$" # Rule to ignore test files for goconst
+        linters:
+          - goconst
 
 formatters:
   enable:
@@ -42,18 +47,13 @@ linters-settings:
       - regexpMust
       - badCall # Remove this after CI workflow PR
 
-  gofumpt:
-    lang-version: "1.24"
-    
   misspell:
     ignore-words:
       - cheqd
       - cheq
       - ncheq
-
+  
   stylecheck:
-    # Select the Go version to target.
-    go: "1.23"
     # STxxxx checks in https://staticcheck.io/docs/configuration/options/#checks
     # Default: ["*"]
     checks: ["all"]
@@ -70,9 +70,8 @@ linters-settings:
         files:
           - $all
         list-mode: lax
-        allow: "*"
-  
+        allow: ["*"]
+
   goconst:
     min-occurrences: 5
-    ignore-tests: true
     ignore-strings: "echo '"
