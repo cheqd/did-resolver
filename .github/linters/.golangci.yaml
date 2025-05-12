@@ -1,5 +1,3 @@
-version: 2
-
 run:
   timeout: 10m
 
@@ -13,9 +11,6 @@ linters:
     - errcheck
     - goconst
     - gocritic
-    - gofumpt
-    - goimports
-    - gosimple
     - govet
     - ineffassign
     - misspell
@@ -28,6 +23,10 @@ linters:
     - unconvert
     - unused
 
+formatters:
+  enable:
+    - gofumpt
+    - goimports
 
 linters-settings:
   dogsled:
