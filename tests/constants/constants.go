@@ -97,8 +97,9 @@ var (
 )
 
 var (
-	ExistentDid        = fmt.Sprintf(DIDStructure, ValidMethod, ValidMainnetNamespace, ValidIdentifier)
-	ExistentResourceId = "a09abea0-22e0-4b35-8f70-9cc3a6d0b5fd"
+	ExistentDid             = fmt.Sprintf(DIDStructure, ValidMethod, ValidMainnetNamespace, ValidIdentifier)
+	ExistentResourceId      = "a09abea0-22e0-4b35-8f70-9cc3a6d0b5fd"
+	ArrayServiceEndpointDid = "did:cheqd:testnet:fbe4fe88-69e2-44f1-8f97-3f7634eccfae"
 )
 
 var (
