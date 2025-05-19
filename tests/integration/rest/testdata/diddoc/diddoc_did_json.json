@@ -15,16 +15,12 @@
         {
             "id": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN#website",
             "type": "LinkedDomains",
-            "serviceEndpoint": [
-                "https://www.cheqd.io"
-            ]
+            "serviceEndpoint": "https://www.cheqd.io"
         },
         {
             "id": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN#non-fungible-image",
             "type": "LinkedDomains",
-            "serviceEndpoint": [
-                "https://gateway.ipfs.io/ipfs/bafybeihetj2ng3d74k7t754atv2s5dk76pcqtvxls6dntef3xa6rax25xe"
-            ]
+            "serviceEndpoint": "https://gateway.ipfs.io/ipfs/bafybeihetj2ng3d74k7t754atv2s5dk76pcqtvxls6dntef3xa6rax25xe"
         },
         {
             "id": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN#twitter",
