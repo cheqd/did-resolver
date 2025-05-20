@@ -31,7 +31,7 @@
       {
         "id": "did:cheqd:testnet:b5d70adf-31ca-4662-aa10-d3a54cd8f06c#bar",
         "type": "LinkedDomains",
-        "serviceEndpoint": ["https://bar.example.com"]
+        "serviceEndpoint": "https://bar.example.com"
       }
     ]
   },

@@ -29,7 +29,7 @@
       {
         "id": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN#website",
         "type": "LinkedDomains",
-        "serviceEndpoint": ["https://www.cheqd.io"]
+        "serviceEndpoint": "https://www.cheqd.io"
       },
       {
         "id": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN#non-fungible-image",
@@ -41,12 +41,12 @@
       {
         "id": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN#twitter",
         "type": "LinkedDomains",
-        "serviceEndpoint": ["https://twitter.com/cheqd_io"]
+        "serviceEndpoint": "https://twitter.com/cheqd_io"
       },
       {
         "id": "did:cheqd:mainnet:Ps1ysXP2Ae6GBfxNhNQNKN#linkedin",
         "type": "LinkedDomains",
-        "serviceEndpoint": ["https://www.linkedin.com/company/cheqd-identity/"]
+        "serviceEndpoint": "https://www.linkedin.com/company/cheqd-identity/"
       }
     ]
   },

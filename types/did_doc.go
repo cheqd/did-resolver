@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -34,11 +35,42 @@ type VerificationMethod struct {
 
 type VerificationMaterial interface{}
 
+type StringOrStringArray []string
+
+func (s StringOrStringArray) MarshalJSON() ([]byte, error) {
+	if len(s) == 1 {
+		return json.Marshal(s[0]) // single string
+	}
+	return json.Marshal([]string(s)) // array of strings
+}
+
+func (s *StringOrStringArray) UnmarshalJSON(data []byte) error {
+	// Check if data is a string
+	var single string
+	if err := json.Unmarshal(data, &single); err == nil {
+		*s = []string{single}
+		return nil
+	}
+
+	// Check if data is a []string
+	var multiple []string
+	if err := json.Unmarshal(data, &multiple); err == nil {
+		*s = multiple
+		return nil
+	}
+
+	return fmt.Errorf("Must be a string or an array of strings")
+}
+
 type Service struct {
-	Context         []string `json:"@context,omitempty"`
-	Id              string   `json:"id,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#service-1"`
-	Type            string   `json:"type,omitempty" example:"did-communication"`
-	ServiceEndpoint []string `json:"serviceEndpoint,omitempty" example:"https://example.com/endpoint/8377464"`
+	Context         []string            `json:"@context,omitempty"`
+	Id              string              `json:"id,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#service-1"`
+	Type            string              `json:"type,omitempty" example:"did-communication"`
+	ServiceEndpoint StringOrStringArray `json:"serviceEndpoint,omitempty" example:"https://example.com/endpoint/8377464"`
+	RecipientKeys   []string            `json:"recipientKeys,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#key-1"`
+	RoutingKeys     []string            `json:"routingKeys,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#key-2"`
+	Accept          []string            `json:"accept,omitempty" example:"didcomm/aip2;env=rfc19"`
+	Priority        int                 `json:"priority,omitempty" example:"1"`
 }
 
 type AssertionMethod struct {
