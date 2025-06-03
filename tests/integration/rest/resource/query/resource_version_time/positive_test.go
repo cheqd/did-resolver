@@ -260,4 +260,18 @@ var _ = DescribeTable("Positive: Get Collection of Resources with resourceVersio
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
+	Entry(
+		"returns resources sorted in descending order by creation time with resourceVersionTime query",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?resourceVersionTime=%s&resourceMetadata=true",
+				testconstants.TestHostAddress,
+				"did:cheqd:testnet:4bfaac0c-4cfc-44af-8aa7-577e05a630b5",
+				"2025-06-02T23:59:59Z",
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/resource_version_time/resource_sorted_desc.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
 )
