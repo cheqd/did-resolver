@@ -19,10 +19,10 @@
   "devDependencies": {
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/git": "^10.0.1",
-    "conventional-changelog-conventionalcommits": "^8.0.0",
-    "semantic-release": "^24.2.3"
+    "conventional-changelog-conventionalcommits": "^9.0.0",
+    "semantic-release": "^24.2.5"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   }
 }
