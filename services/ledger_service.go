@@ -4,7 +4,9 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
+	"fmt"
 	"strings"
+	"time"
 
 	"google.golang.org/grpc/credentials"
 
@@ -30,29 +32,79 @@ type LedgerServiceI interface {
 }
 
 type LedgerService struct {
-	ledgers map[string]types.Network // namespace -> endpoint with configs
+	ledgers         map[string]types.Network // namespace -> endpoint with configs
+	endpointManager *EndpointManager
 }
 
-func NewLedgerService() LedgerService {
+func NewLedgerService(endpointManager *EndpointManager) LedgerService {
 	ls := LedgerService{}
 	ls.ledgers = make(map[string]types.Network)
+	ls.endpointManager = endpointManager
 
 	return ls
 }
 
+// GetHealthyConnection handles endpoint selection, connection, and automatic fallback
+func (ls LedgerService) GetHealthyConnection(namespace string, did string) (*grpc.ClientConn, *types.IdentityError) {
+	// Get healthy network from endpoint manager
+	network, err := ls.endpointManager.GetHealthyEndpoint(namespace)
+	if err != nil {
+		return nil, types.NewInternalError(did, types.JSON, err, false)
+	}
+
+	// The EndpointManager returns a Network with only the healthy endpoint in the slice
+	if len(network.Endpoints) == 0 {
+		return nil, types.NewInternalError(did, types.JSON, fmt.Errorf("no healthy endpoints available"), false)
+	}
+	
+	// Use the healthy endpoint returned by EndpointManager
+	healthyEndpoint := network.Endpoints[0]
+
+	conn, err := ls.openGRPCConnection(*network)
+	if err != nil {
+		log.Error().Err(err).Msgf("Failed connection to %s", healthyEndpoint.URL)
+		
+		// Mark current endpoint as unhealthy
+		ls.endpointManager.MarkEndpointUnhealthy(*network)
+		
+		// Try the other endpoint if available (only for connection failures)
+		if fallbackNetwork := ls.getOtherEndpoint(namespace, network); fallbackNetwork != nil {
+			fallbackEndpoint := fallbackNetwork.Endpoints[0]
+			log.Info().Msgf("Trying other endpoint %s for namespace %s", fallbackEndpoint.URL, namespace)
+			
+			// Try to connect to other endpoint
+			fallbackConn, fallbackErr := ls.openGRPCConnection(*fallbackNetwork)
+			if fallbackErr == nil {
+				// Other endpoint succeeded, use it
+				log.Info().Msgf("Successfully connected to other endpoint %s", fallbackEndpoint.URL)
+				return fallbackConn, nil
+			} else {
+				// Other endpoint also failed
+				log.Error().Err(fallbackErr).Msgf("Other endpoint %s also failed", fallbackEndpoint.URL)
+				ls.endpointManager.MarkEndpointUnhealthy(*fallbackNetwork)
+				fallbackConn.Close()
+			}
+		}
+		
+		// Both attempts failed
+		return nil, types.NewInternalError(did, types.JSON, err, false)
+	}
+
+	return conn, nil
+}
+
 func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
 	method, namespace, _, _ := utils.TrySplitDID(did)
-	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
+	_, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDidError(did, types.JSON, nil, false)
 	}
 
-	conn, err := ls.openGRPCConnection(serverAddr)
+	// Get healthy connection with automatic fallback
+	conn, err := ls.GetHealthyConnection(namespace, did)
 	if err != nil {
-		log.Error().Err(err).Msg("QueryDIDDoc: failed connection")
-		return nil, types.NewInternalError(did, types.JSON, err, false)
+		return nil, err
 	}
-
 	defer mustCloseGRPCConnection(conn)
 
 	log.Info().Msgf("Querying DIDDoc: %s", did)
@@ -77,40 +129,41 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 
 func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError) {
 	method, namespace, _, _ := utils.TrySplitDID(did)
-	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
+	_, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDidError(did, types.JSON, nil, false)
 	}
 
-	conn, err := ls.openGRPCConnection(serverAddr)
+	// Get healthy connection with automatic fallback
+	conn, err := ls.GetHealthyConnection(namespace, did)
 	if err != nil {
-		log.Error().Err(err).Msg("QueryAllDidDocVersionsMetadata: failed connection")
-		return nil, types.NewInternalError(did, types.JSON, err, false)
+		return nil, err
 	}
+	
 	defer mustCloseGRPCConnection(conn)
 
 	log.Info().Msgf("Querying all DIDDoc versions metadata: %s", did)
 	client := didTypes.NewQueryClient(conn)
 
-	response, err := client.AllDidDocVersionsMetadata(context.Background(), &didTypes.QueryAllDidDocVersionsMetadataRequest{Id: did})
-	if err != nil {
-		return nil, types.NewNotFoundError(did, types.JSON, err, false)
+	didDocResponse, grpcErr := client.AllDidDocVersionsMetadata(context.Background(), &didTypes.QueryAllDidDocVersionsMetadataRequest{Id: did})
+	if grpcErr != nil {
+		return nil, types.NewNotFoundError(did, types.JSON, grpcErr, false)
 	}
 
-	return response.Versions, nil
+	return didDocResponse.Versions, nil
 }
 
 func (ls LedgerService) QueryResource(did string, resourceId string) (*resourceTypes.ResourceWithMetadata, *types.IdentityError) {
 	method, namespace, collectionId, _ := utils.TrySplitDID(did)
-	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
+	_, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDidError(did, types.JSON, nil, true)
 	}
 
-	conn, err := ls.openGRPCConnection(serverAddr)
+	// Get healthy connection with automatic fallback
+	conn, err := ls.GetHealthyConnection(namespace, did)
 	if err != nil {
-		log.Error().Err(err).Msg("QueryResource: failed connection")
-		return nil, types.NewInternalError(did, types.JSON, err, true)
+		return nil, types.NewInternalError(did, types.JSON, err, false)
 	}
 
 	defer mustCloseGRPCConnection(conn)
@@ -118,10 +171,10 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resourceT
 	log.Info().Msgf("Querying DID resource: %s, %s", collectionId, resourceId)
 
 	client := resourceTypes.NewQueryClient(conn)
-	resourceResponse, err := client.Resource(context.Background(), &resourceTypes.QueryResourceRequest{CollectionId: collectionId, Id: resourceId})
-	if err != nil {
-		log.Info().Msgf("Resource not found %s", err.Error())
-		return nil, types.NewNotFoundError(did, types.JSON, err, true)
+	resourceResponse, grpcErr := client.Resource(context.Background(), &resourceTypes.QueryResourceRequest{CollectionId: collectionId, Id: resourceId})
+	if grpcErr != nil {
+		log.Error().Msgf("Resource not found %s", grpcErr.Error())
+		return nil, types.NewNotFoundError(did, types.JSON, grpcErr, true)
 	}
 
 	return resourceResponse.Resource, nil
@@ -129,23 +182,25 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resourceT
 
 func (ls LedgerService) QueryCollectionResources(did string) ([]*resourceTypes.Metadata, *types.IdentityError) {
 	method, namespace, collectionId, _ := utils.TrySplitDID(did)
-	serverAddr, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
+	_, namespaceFound := ls.ledgers[method+DELIMITER+namespace]
 	if !namespaceFound {
 		return nil, types.NewInvalidDidError(did, types.JSON, nil, false)
 	}
 
-	conn, err := ls.openGRPCConnection(serverAddr)
+	// Get healthy connection with automatic fallback
+	conn, err := ls.GetHealthyConnection(namespace, did)
 	if err != nil {
-		log.Error().Err(err).Msg("QueryResource: failed connection")
-		return nil, types.NewInternalError(did, types.JSON, err, false)
+		return nil, err
 	}
+
+	defer mustCloseGRPCConnection(conn)
 
 	log.Info().Msgf("Querying DID resources: %s", did)
 
 	client := resourceTypes.NewQueryClient(conn)
-	resourceResponse, err := client.CollectionResources(context.Background(), &resourceTypes.QueryCollectionResourcesRequest{CollectionId: collectionId})
-	if err != nil {
-		return nil, types.NewNotFoundError(did, types.JSON, err, false)
+	resourceResponse, grpcErr := client.CollectionResources(context.Background(), &resourceTypes.QueryCollectionResourcesRequest{CollectionId: collectionId})
+	if grpcErr != nil {
+		return nil, types.NewNotFoundError(did, types.JSON, grpcErr, false)
 	}
 
 	return resourceResponse.Resources, nil
@@ -158,8 +213,8 @@ func (ls *LedgerService) RegisterLedger(method string, endpoint types.Network) e
 		return err
 	}
 
-	if endpoint.Endpoint == "" {
-		return errors.New("ledger node URL cannot be empty")
+	if len(endpoint.Endpoints) == 0 {
+		return errors.New("ledger node must have at least one endpoint configured")
 	}
 
 	ls.ledgers[method+DELIMITER+endpoint.Namespace] = endpoint
@@ -168,25 +223,13 @@ func (ls *LedgerService) RegisterLedger(method string, endpoint types.Network) e
 }
 
 func (ls LedgerService) openGRPCConnection(endpoint types.Network) (conn *grpc.ClientConn, err error) {
-	opts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	// Use the first endpoint in the slice (guaranteed to be primary)
+	if len(endpoint.Endpoints) == 0 {
+		return nil, fmt.Errorf("no endpoints configured for network")
 	}
-
-	if endpoint.UseTls {
-		opts = append(opts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})))
-	} else {
-		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	}
-
-	conn, err = grpc.NewClient(endpoint.Endpoint, opts...)
-	if err != nil {
-		log.Error().Err(err).Msgf("openGRPCConnection: context failed")
-		return nil, err
-	}
-
-	log.Info().Msg("openGRPCConnection: opened")
-
-	return conn, nil
+	
+	// Use shared utility function to eliminate code duplication
+	return openGRPCConnectionWithTimeout(endpoint.Endpoints[0].URL, endpoint.Endpoints[0].UseTls, 5*time.Second)
 }
 
 func mustCloseGRPCConnection(conn *grpc.ClientConn) {
@@ -208,4 +251,51 @@ func (ls LedgerService) GetNamespaces() []string {
 	}
 
 	return keys
+}
+
+// getOtherEndpoint gets the other endpoint for the namespace (simple fallback)
+func (ls LedgerService) getOtherEndpoint(namespace string, currentNetwork *types.Network) *types.Network {
+	if ls.endpointManager == nil {
+		return nil
+	}
+	
+	// Simple approach: get any healthy endpoint that's not the current one
+	healthyNetwork, err := ls.endpointManager.GetHealthyEndpoint(namespace)
+	if err != nil {
+		return nil
+	}
+	
+	// If it's the same endpoint, no fallback available
+	if len(healthyNetwork.Endpoints) > 0 && len(currentNetwork.Endpoints) > 0 {
+		if healthyNetwork.Endpoints[0].URL == currentNetwork.Endpoints[0].URL {
+			return nil
+		}
+	}
+	
+	return healthyNetwork
+}
+
+// openGRPCConnectionWithTimeout creates a gRPC connection with timeout
+func openGRPCConnectionWithTimeout(endpoint string, useTls bool, timeout time.Duration) (*grpc.ClientConn, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+	
+	opts := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
+
+	if useTls {
+		opts = append(opts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})))
+	} else {
+		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	}
+
+	conn, err := grpc.DialContext(ctx, endpoint, opts...)
+	if err != nil {
+		log.Error().Err(err).Msgf("openGRPCConnection: connection failed")
+		return nil, err
+	}
+
+	log.Info().Msg("openGRPCConnection: opened")
+	return conn, nil
 }

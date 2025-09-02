@@ -33,25 +33,24 @@ func SetupLogger(config Config) {
 	zerolog.SetGlobalLevel(level)
 }
 
-func ParseGRPCEndpoint(configEndpoint string, networkName string) (*Network, error) {
+func ParseGRPCEndpoint(configEndpoint string) (*Endpoint, error) {
 	config := strings.Split(configEndpoint, ",")
 	if len(config) != 3 {
-		return nil, fmt.Errorf("endpoint config for %s is invalid: %s", networkName, configEndpoint)
+		return nil, fmt.Errorf("endpoint config is invalid: %s", configEndpoint)
 	}
 	useTls, err := strconv.ParseBool(config[1])
 	if err != nil {
-		return nil, fmt.Errorf("useTls value %s for %s endpoint is invalid", configEndpoint, networkName)
+		return nil, fmt.Errorf("useTls value %s is invalid", configEndpoint)
 	}
 	timeout, err := time.ParseDuration(config[2])
 	if err != nil {
-		return nil, fmt.Errorf("timeout value %s for %s endpoint is invalid", configEndpoint, networkName)
+		return nil, fmt.Errorf("timeout value %s is invalid", configEndpoint)
 	}
 
-	return &Network{
-		Namespace: networkName,
-		Endpoint:  config[0],
-		UseTls:    useTls,
-		Timeout:   timeout,
+	return &Endpoint{
+		URL:     config[0],
+		UseTls:  useTls,
+		Timeout: timeout,
 	}, nil
 }
 
@@ -67,6 +66,9 @@ func LoadConfig() (Config, error) {
 	}
 	viper.SetDefault("MAINNET_ENDPOINT", "")
 	viper.SetDefault("TESTNET_ENDPOINT", "")
+	viper.SetDefault("MAINNET_ENDPOINT_FALLBACK", "")
+	viper.SetDefault("TESTNET_ENDPOINT_FALLBACK", "")
+	viper.SetDefault("ENABLE_FALLBACK_ENDPOINTS", false)
 	viper.SetDefault("LOG_LEVEL", "")
 	viper.SetDefault("RESOLVER_LISTENER", "")
 	viper.AutomaticEnv()
@@ -93,19 +95,130 @@ func MustLoadConfig() Config {
 }
 
 func NewConfig(rawConfig RawConfig) (Config, error) {
-	mainnetEndpoint, err := ParseGRPCEndpoint(rawConfig.MainnetEndpoint, "mainnet")
+	// Parse primary endpoints
+	mainnetPrimary, err := ParseGRPCEndpoint(rawConfig.MainnetEndpoint)
 	if err != nil {
 		return Config{}, err
 	}
-	testnetEndpoint, err := ParseGRPCEndpoint(rawConfig.TestnetEndpoint, "testnet")
+	testnetPrimary, err := ParseGRPCEndpoint(rawConfig.TestnetEndpoint)
 	if err != nil {
 		return Config{}, err
 	}
+
+	// Create networks with primary endpoints
+	networks := []Network{
+		{
+			Namespace: "mainnet",
+			Endpoints: []Endpoint{
+				{
+					URL:     mainnetPrimary.URL,
+					UseTls:  mainnetPrimary.UseTls,
+					Timeout: mainnetPrimary.Timeout,
+					Role:    EndpointRolePrimary,
+				},
+			},
+			UseTls:   mainnetPrimary.UseTls,
+			Timeout:  mainnetPrimary.Timeout,
+		},
+		{
+			Namespace: "testnet",
+			Endpoints: []Endpoint{
+				{
+					URL:     testnetPrimary.URL,
+					UseTls:  testnetPrimary.UseTls,
+					Timeout: testnetPrimary.Timeout,
+					Role:    EndpointRolePrimary,
+				},
+			},
+			UseTls:   testnetPrimary.UseTls,
+			Timeout:  testnetPrimary.Timeout,
+		},
+	}
+
+	// Handle fallback endpoints if enabled
+	if rawConfig.EnableFallbackEndpoints {
+		// When fallbacks are enabled, ALL namespaces must have fallback endpoints
+		if rawConfig.MainnetEndpointFallback == "" {
+			return Config{}, fmt.Errorf("ENABLE_FALLBACK_ENDPOINTS=true but MAINNET_ENDPOINT_FALLBACK is not configured")
+		}
+		if rawConfig.TestnetEndpointFallback == "" {
+			return Config{}, fmt.Errorf("ENABLE_FALLBACK_ENDPOINTS=true but TESTNET_ENDPOINT_FALLBACK is not configured")
+		}
+		
+		// Parse fallback endpoints
+		mainnetFallback, err := ParseGRPCEndpoint(rawConfig.MainnetEndpointFallback)
+		if err != nil {
+			return Config{}, fmt.Errorf("invalid mainnet fallback endpoint: %v", err)
+		}
+		testnetFallback, err := ParseGRPCEndpoint(rawConfig.TestnetEndpointFallback)
+		if err != nil {
+			return Config{}, fmt.Errorf("invalid testnet fallback endpoint: %v", err)
+		}
+		
+		// Add fallback endpoints to existing networks by namespace
+		for i, network := range networks {
+			if network.Namespace == "mainnet" {
+				networks[i].Endpoints = append(networks[i].Endpoints, Endpoint{
+					URL:     mainnetFallback.URL,
+					UseTls:  mainnetFallback.UseTls,
+					Timeout: mainnetFallback.Timeout,
+					Role:    EndpointRoleFallback,
+				})
+			} else if network.Namespace == "testnet" {
+				networks[i].Endpoints = append(networks[i].Endpoints, Endpoint{
+					URL:     testnetFallback.URL,
+					UseTls:  testnetFallback.UseTls,
+					Timeout: testnetFallback.Timeout,
+					Role:    EndpointRoleFallback,
+				})
+			}
+		}
+		
+		// Validate that each namespace has at least 2 endpoints (primary + fallback)
+		if err := validateFallbackEndpoints(networks); err != nil {
+			return Config{}, err
+		}
+	}
+
 	return Config{
-		Networks:         []Network{*mainnetEndpoint, *testnetEndpoint},
-		ResolverListener: rawConfig.ResolverListener,
-		LogLevel:         rawConfig.LogLevel,
+		Networks:                networks,
+		EnableFallbackEndpoints: rawConfig.EnableFallbackEndpoints,
+		ResolverListener:        rawConfig.ResolverListener,
+		LogLevel:                rawConfig.LogLevel,
 	}, nil
+}
+
+// validateFallbackEndpoints ensures that when fallbacks are enabled, each namespace has at least 2 endpoints
+func validateFallbackEndpoints(networks []Network) error {
+	if len(networks) == 0 {
+		return fmt.Errorf("ENABLE_FALLBACK_ENDPOINTS=true but no fallback endpoints configured")
+	}
+	
+	for _, network := range networks {
+		if len(network.Endpoints) < 2 {
+			return fmt.Errorf("ENABLE_FALLBACK_ENDPOINTS=true but namespace %s only has %d endpoint(s) (need at least 2: primary + fallback)", network.Namespace, len(network.Endpoints))
+		}
+		
+		// Ensure both primary and fallback endpoints exist
+		primaryFound := false
+		fallbackFound := false
+		for _, endpoint := range network.Endpoints {
+			if endpoint.Role == EndpointRolePrimary {
+				primaryFound = true
+			}
+			if endpoint.Role == EndpointRoleFallback {
+				fallbackFound = true
+			}
+		}
+		if !primaryFound {
+			return fmt.Errorf("ENABLE_FALLBACK_ENDPOINTS=true but namespace %s missing primary endpoint", network.Namespace)
+		}
+		if !fallbackFound {
+			return fmt.Errorf("ENABLE_FALLBACK_ENDPOINTS=true but namespace %s missing fallback endpoint", network.Namespace)
+		}
+	}
+	
+	return nil
 }
 
 func PrintConfig() error {
