@@ -277,21 +277,13 @@ func (ls LedgerService) getOtherEndpoint(namespace string, currentNetwork *types
 
 // openGRPCConnectionWithTimeout creates a gRPC connection with timeout
 func openGRPCConnectionWithTimeout(endpoint string, useTls bool, timeout time.Duration) (*grpc.ClientConn, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-
-	opts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	}
-
+	// Dial options (credentials only). Connection readiness is verified by the subsequent RPC's context timeout.
+	cred := grpc.WithTransportCredentials(insecure.NewCredentials())
 	if useTls {
-		opts = append(opts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})))
-	} else {
-		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		cred = grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{}))
 	}
 
-	//nolint:staticcheck // SA1019: grpc.DialContext is deprecated; retained for compatibility with current stack (supported throughout 1.x)
-	conn, err := grpc.DialContext(ctx, endpoint, opts...)
+	conn, err := grpc.NewClient(endpoint, cred)
 	if err != nil {
 		log.Error().Err(err).Msgf("openGRPCConnection: connection failed")
 		return nil, err
