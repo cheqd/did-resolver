@@ -9,16 +9,16 @@ import (
 type EndpointRole string
 
 const (
-	EndpointRolePrimary   EndpointRole = "primary"
-	EndpointRoleFallback  EndpointRole = "fallback"
+	EndpointRolePrimary  EndpointRole = "primary"
+	EndpointRoleFallback EndpointRole = "fallback"
 )
 
 // Endpoint represents a gRPC endpoint with its configuration
 type Endpoint struct {
-	URL      string
-	UseTls   bool
-	Timeout  time.Duration
-	Role     EndpointRole
+	URL     string
+	UseTls  bool
+	Timeout time.Duration
+	Role    EndpointRole
 }
 
 // Network represents a blockchain network with endpoint configuration
@@ -30,20 +30,20 @@ type Network struct {
 }
 
 type RawConfig struct {
-	MainnetEndpoint           string `mapstructure:"MAINNET_ENDPOINT"`
-	TestnetEndpoint           string `mapstructure:"TESTNET_ENDPOINT"`
-	MainnetEndpointFallback   string `mapstructure:"MAINNET_ENDPOINT_FALLBACK"`
-	TestnetEndpointFallback   string `mapstructure:"TESTNET_ENDPOINT_FALLBACK"`
-	EnableFallbackEndpoints   bool   `mapstructure:"ENABLE_FALLBACK_ENDPOINTS"`
-	ResolverListener          string `mapstructure:"RESOLVER_LISTENER"`
-	LogLevel                  string `mapstructure:"LOG_LEVEL"`
+	MainnetEndpoint         string `mapstructure:"MAINNET_ENDPOINT"`
+	TestnetEndpoint         string `mapstructure:"TESTNET_ENDPOINT"`
+	MainnetEndpointFallback string `mapstructure:"MAINNET_ENDPOINT_FALLBACK"`
+	TestnetEndpointFallback string `mapstructure:"TESTNET_ENDPOINT_FALLBACK"`
+	EnableFallbackEndpoints bool   `mapstructure:"ENABLE_FALLBACK_ENDPOINTS"`
+	ResolverListener        string `mapstructure:"RESOLVER_LISTENER"`
+	LogLevel                string `mapstructure:"LOG_LEVEL"`
 }
 
 type Config struct {
 	Networks                []Network
 	EnableFallbackEndpoints bool
 	ResolverListener        string
-	LogLevel               	string
+	LogLevel                string
 }
 
 func (c *Config) MarshalJson() (string, error) {

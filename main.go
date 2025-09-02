@@ -21,10 +21,10 @@ func serve() {
 	config := types.GetConfig()
 	// Setup logger
 	types.SetupLogger(config)
-	
+
 	// Initialize endpoint manager
 	endpointManager := services.NewEndpointManager(config)
-	
+
 	// Services
 	ledgerService := services.NewLedgerService(endpointManager)
 	didService := services.NewDIDDocService(types.DID_METHOD, ledgerService)

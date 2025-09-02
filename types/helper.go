@@ -117,8 +117,8 @@ func NewConfig(rawConfig RawConfig) (Config, error) {
 					Role:    EndpointRolePrimary,
 				},
 			},
-			UseTls:   mainnetPrimary.UseTls,
-			Timeout:  mainnetPrimary.Timeout,
+			UseTls:  mainnetPrimary.UseTls,
+			Timeout: mainnetPrimary.Timeout,
 		},
 		{
 			Namespace: "testnet",
@@ -130,54 +130,61 @@ func NewConfig(rawConfig RawConfig) (Config, error) {
 					Role:    EndpointRolePrimary,
 				},
 			},
-			UseTls:   testnetPrimary.UseTls,
-			Timeout:  testnetPrimary.Timeout,
+			UseTls:  testnetPrimary.UseTls,
+			Timeout: testnetPrimary.Timeout,
 		},
 	}
 
 	// Handle fallback endpoints if enabled
-	if rawConfig.EnableFallbackEndpoints {
-		// When fallbacks are enabled, ALL namespaces must have fallback endpoints
-		if rawConfig.MainnetEndpointFallback == "" {
-			return Config{}, fmt.Errorf("ENABLE_FALLBACK_ENDPOINTS=true but MAINNET_ENDPOINT_FALLBACK is not configured")
+	if !rawConfig.EnableFallbackEndpoints {
+		return Config{
+			Networks:                networks,
+			EnableFallbackEndpoints: rawConfig.EnableFallbackEndpoints,
+			ResolverListener:        rawConfig.ResolverListener,
+			LogLevel:                rawConfig.LogLevel,
+		}, nil
+	}
+
+	// When fallbacks are enabled, ALL namespaces must have fallback endpoints
+	if rawConfig.MainnetEndpointFallback == "" {
+		return Config{}, fmt.Errorf("ENABLE_FALLBACK_ENDPOINTS=true but MAINNET_ENDPOINT_FALLBACK is not configured")
+	}
+	if rawConfig.TestnetEndpointFallback == "" {
+		return Config{}, fmt.Errorf("ENABLE_FALLBACK_ENDPOINTS=true but TESTNET_ENDPOINT_FALLBACK is not configured")
+	}
+
+	// Parse fallback endpoints
+	mainnetFallback, err := ParseGRPCEndpoint(rawConfig.MainnetEndpointFallback)
+	if err != nil {
+		return Config{}, fmt.Errorf("invalid mainnet fallback endpoint: %v", err)
+	}
+	testnetFallback, err := ParseGRPCEndpoint(rawConfig.TestnetEndpointFallback)
+	if err != nil {
+		return Config{}, fmt.Errorf("invalid testnet fallback endpoint: %v", err)
+	}
+
+	// Add fallback endpoints to existing networks by namespace
+	for i, network := range networks {
+		if network.Namespace == "mainnet" {
+			networks[i].Endpoints = append(networks[i].Endpoints, Endpoint{
+				URL:     mainnetFallback.URL,
+				UseTls:  mainnetFallback.UseTls,
+				Timeout: mainnetFallback.Timeout,
+				Role:    EndpointRoleFallback,
+			})
+		} else if network.Namespace == "testnet" {
+			networks[i].Endpoints = append(networks[i].Endpoints, Endpoint{
+				URL:     testnetFallback.URL,
+				UseTls:  testnetFallback.UseTls,
+				Timeout: testnetFallback.Timeout,
+				Role:    EndpointRoleFallback,
+			})
 		}
-		if rawConfig.TestnetEndpointFallback == "" {
-			return Config{}, fmt.Errorf("ENABLE_FALLBACK_ENDPOINTS=true but TESTNET_ENDPOINT_FALLBACK is not configured")
-		}
-		
-		// Parse fallback endpoints
-		mainnetFallback, err := ParseGRPCEndpoint(rawConfig.MainnetEndpointFallback)
-		if err != nil {
-			return Config{}, fmt.Errorf("invalid mainnet fallback endpoint: %v", err)
-		}
-		testnetFallback, err := ParseGRPCEndpoint(rawConfig.TestnetEndpointFallback)
-		if err != nil {
-			return Config{}, fmt.Errorf("invalid testnet fallback endpoint: %v", err)
-		}
-		
-		// Add fallback endpoints to existing networks by namespace
-		for i, network := range networks {
-			if network.Namespace == "mainnet" {
-				networks[i].Endpoints = append(networks[i].Endpoints, Endpoint{
-					URL:     mainnetFallback.URL,
-					UseTls:  mainnetFallback.UseTls,
-					Timeout: mainnetFallback.Timeout,
-					Role:    EndpointRoleFallback,
-				})
-			} else if network.Namespace == "testnet" {
-				networks[i].Endpoints = append(networks[i].Endpoints, Endpoint{
-					URL:     testnetFallback.URL,
-					UseTls:  testnetFallback.UseTls,
-					Timeout: testnetFallback.Timeout,
-					Role:    EndpointRoleFallback,
-				})
-			}
-		}
-		
-		// Validate that each namespace has at least 2 endpoints (primary + fallback)
-		if err := validateFallbackEndpoints(networks); err != nil {
-			return Config{}, err
-		}
+	}
+
+	// Validate that each namespace has at least 2 endpoints (primary + fallback)
+	if err := validateFallbackEndpoints(networks); err != nil {
+		return Config{}, err
 	}
 
 	return Config{
@@ -193,12 +200,12 @@ func validateFallbackEndpoints(networks []Network) error {
 	if len(networks) == 0 {
 		return fmt.Errorf("ENABLE_FALLBACK_ENDPOINTS=true but no fallback endpoints configured")
 	}
-	
+
 	for _, network := range networks {
 		if len(network.Endpoints) < 2 {
 			return fmt.Errorf("ENABLE_FALLBACK_ENDPOINTS=true but namespace %s only has %d endpoint(s) (need at least 2: primary + fallback)", network.Namespace, len(network.Endpoints))
 		}
-		
+
 		// Ensure both primary and fallback endpoints exist
 		primaryFound := false
 		fallbackFound := false
@@ -217,7 +224,7 @@ func validateFallbackEndpoints(networks []Network) error {
 			return fmt.Errorf("ENABLE_FALLBACK_ENDPOINTS=true but namespace %s missing fallback endpoint", network.Namespace)
 		}
 	}
-	
+
 	return nil
 }
 

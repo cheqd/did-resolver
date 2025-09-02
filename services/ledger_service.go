@@ -56,22 +56,22 @@ func (ls LedgerService) GetHealthyConnection(namespace string, did string) (*grp
 	if len(network.Endpoints) == 0 {
 		return nil, types.NewInternalError(did, types.JSON, fmt.Errorf("no healthy endpoints available"), false)
 	}
-	
+
 	// Use the healthy endpoint returned by EndpointManager
 	healthyEndpoint := network.Endpoints[0]
 
 	conn, err := ls.openGRPCConnection(*network)
 	if err != nil {
 		log.Error().Err(err).Msgf("Failed connection to %s", healthyEndpoint.URL)
-		
+
 		// Mark current endpoint as unhealthy
 		ls.endpointManager.MarkEndpointUnhealthy(*network)
-		
+
 		// Try the other endpoint if available (only for connection failures)
 		if fallbackNetwork := ls.getOtherEndpoint(namespace, network); fallbackNetwork != nil {
 			fallbackEndpoint := fallbackNetwork.Endpoints[0]
 			log.Info().Msgf("Trying other endpoint %s for namespace %s", fallbackEndpoint.URL, namespace)
-			
+
 			// Try to connect to other endpoint
 			fallbackConn, fallbackErr := ls.openGRPCConnection(*fallbackNetwork)
 			if fallbackErr == nil {
@@ -85,7 +85,7 @@ func (ls LedgerService) GetHealthyConnection(namespace string, did string) (*grp
 				fallbackConn.Close()
 			}
 		}
-		
+
 		// Both attempts failed
 		return nil, types.NewInternalError(did, types.JSON, err, false)
 	}
@@ -139,7 +139,7 @@ func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.
 	if err != nil {
 		return nil, err
 	}
-	
+
 	defer mustCloseGRPCConnection(conn)
 
 	log.Info().Msgf("Querying all DIDDoc versions metadata: %s", did)
@@ -227,7 +227,7 @@ func (ls LedgerService) openGRPCConnection(endpoint types.Network) (conn *grpc.C
 	if len(endpoint.Endpoints) == 0 {
 		return nil, fmt.Errorf("no endpoints configured for network")
 	}
-	
+
 	// Use shared utility function to eliminate code duplication
 	return openGRPCConnectionWithTimeout(endpoint.Endpoints[0].URL, endpoint.Endpoints[0].UseTls, 5*time.Second)
 }
@@ -258,20 +258,20 @@ func (ls LedgerService) getOtherEndpoint(namespace string, currentNetwork *types
 	if ls.endpointManager == nil {
 		return nil
 	}
-	
+
 	// Simple approach: get any healthy endpoint that's not the current one
 	healthyNetwork, err := ls.endpointManager.GetHealthyEndpoint(namespace)
 	if err != nil {
 		return nil
 	}
-	
+
 	// If it's the same endpoint, no fallback available
 	if len(healthyNetwork.Endpoints) > 0 && len(currentNetwork.Endpoints) > 0 {
 		if healthyNetwork.Endpoints[0].URL == currentNetwork.Endpoints[0].URL {
 			return nil
 		}
 	}
-	
+
 	return healthyNetwork
 }
 
@@ -279,7 +279,7 @@ func (ls LedgerService) getOtherEndpoint(namespace string, currentNetwork *types
 func openGRPCConnectionWithTimeout(endpoint string, useTls bool, timeout time.Duration) (*grpc.ClientConn, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
-	
+
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
@@ -290,6 +290,7 @@ func openGRPCConnectionWithTimeout(endpoint string, useTls bool, timeout time.Du
 		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	}
 
+	//nolint:staticcheck // SA1019: grpc.DialContext is deprecated; retained for compatibility with current stack (supported throughout 1.x)
 	conn, err := grpc.DialContext(ctx, endpoint, opts...)
 	if err != nil {
 		log.Error().Err(err).Msgf("openGRPCConnection: connection failed")

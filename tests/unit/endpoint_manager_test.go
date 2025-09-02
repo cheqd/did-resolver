@@ -23,8 +23,8 @@ func TestEndpointManager_BasicCreation(t *testing.T) {
 						Role:    types.EndpointRolePrimary,
 					},
 				},
-				UseTls:   true,
-				Timeout:  5 * time.Second,
+				UseTls:  true,
+				Timeout: 5 * time.Second,
 			},
 		},
 	}
@@ -56,8 +56,8 @@ func TestEndpointManager_FallbackEnabled(t *testing.T) {
 						Role:    types.EndpointRoleFallback,
 					},
 				},
-				UseTls:   true,
-				Timeout:  5 * time.Second,
+				UseTls:  true,
+				Timeout: 5 * time.Second,
 			},
 		},
 	}
@@ -83,8 +83,8 @@ func TestEndpointManager_GetHealthyEndpoint_ValidEndpoint(t *testing.T) {
 						Role:    types.EndpointRolePrimary,
 					},
 				},
-				UseTls:   true,
-				Timeout:  5 * time.Second,
+				UseTls:  true,
+				Timeout: 5 * time.Second,
 			},
 		},
 	}
@@ -93,22 +93,22 @@ func TestEndpointManager_GetHealthyEndpoint_ValidEndpoint(t *testing.T) {
 	if em == nil {
 		t.Error("expected EndpointManager to be created, got nil")
 	}
-	
+
 	// Wait for initial health check to complete
 	time.Sleep(3 * time.Second)
-	
-	// Test that we can get a healthy endpoint
+
+	// Test that we can get a healthy endpoint initially
 	network, err := em.GetHealthyEndpoint("mainnet")
 	if err != nil {
-		t.Errorf("unexpected error: %v", err)
+		t.Fatalf("unexpected error: %v", err)
 	}
 	if network == nil {
-		t.Error("expected healthy endpoint, got nil")
+		t.Fatal("expected healthy endpoint, got nil")
 	}
-	
+
 	t.Logf("Got healthy endpoint: %s", network.Endpoints[0].URL)
 	if network.Endpoints[0].URL != "grpc.cheqd.network:443" {
-		t.Errorf("expected endpoint %s, got %s", "grpc.cheqd.network:443", network.Endpoints[0].URL)
+		t.Fatalf("expected endpoint %s, got %s", "grpc.cheqd.network:443", network.Endpoints[0].URL)
 	}
 }
 
@@ -127,8 +127,8 @@ func TestEndpointManager_HealthCheckInvalidURL(t *testing.T) {
 						Role:    types.EndpointRolePrimary,
 					},
 				},
-				UseTls:   true,
-				Timeout:  5 * time.Second,
+				UseTls:  true,
+				Timeout: 5 * time.Second,
 			},
 			{
 				Namespace: "testnet",
@@ -140,8 +140,8 @@ func TestEndpointManager_HealthCheckInvalidURL(t *testing.T) {
 						Role:    types.EndpointRolePrimary,
 					},
 				},
-				UseTls:   true,
-				Timeout:  5 * time.Second,
+				UseTls:  true,
+				Timeout: 5 * time.Second,
 			},
 		},
 	}
@@ -182,20 +182,20 @@ func TestEndpointManager_GetHealthyEndpoint_NonExistentNamespace(t *testing.T) {
 						Role:    types.EndpointRolePrimary,
 					},
 				},
-				UseTls:   true,
-				Timeout:  5 * time.Second,
+				UseTls:  true,
+				Timeout: 5 * time.Second,
 			},
 		},
 	}
 
 	em := services.NewEndpointManager(config)
-	
+
 	// Test getting endpoint for non-existent namespace
 	_, err := em.GetHealthyEndpoint("nonexistent")
 	if err == nil {
 		t.Error("expected error for non-existent namespace, got nil")
 	}
-	
+
 	// Verify it's the correct error type
 	if err.Error() != "no healthy endpoints available" {
 		t.Errorf("expected 'no healthy endpoints available' error, got: %v", err)
@@ -223,30 +223,30 @@ func TestEndpointManager_FallbackBehavior(t *testing.T) {
 						Role:    types.EndpointRoleFallback,
 					},
 				},
-				UseTls:   true,
-				Timeout:  5 * time.Second,
+				UseTls:  true,
+				Timeout: 5 * time.Second,
 			},
 		},
 	}
 
 	em := services.NewEndpointManager(config)
-	
+
 	// Wait for initial health check to complete
 	time.Sleep(3 * time.Second)
-	
+
 	// Test that we get a healthy endpoint (should be fallback)
 	network, err := em.GetHealthyEndpoint("mainnet")
 	if err != nil {
-		t.Errorf("expected healthy endpoint, got error: %v", err)
+		t.Fatalf("expected healthy endpoint, got error: %v", err)
 	}
 	if network == nil {
-		t.Error("expected healthy endpoint, got nil")
+		t.Fatal("expected healthy endpoint, got nil")
 	}
-	
+
 	// Verify it's using the fallback endpoint
 	if network.Endpoints[0].URL != "grpc.cheqd.network:443" {
-		t.Errorf("expected fallback endpoint 'grpc.cheqd.network:443', got '%s'", network.Endpoints[0].URL)
+		t.Fatalf("expected fallback endpoint 'grpc.cheqd.network:443', got '%s'", network.Endpoints[0].URL)
 	}
-	
+
 	t.Logf("Successfully using fallback endpoint: %s", network.Endpoints[0].URL)
-} 
+}

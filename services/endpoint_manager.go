@@ -17,9 +17,9 @@ import (
 
 // Custom error types for better error handling
 var (
-	ErrNoHealthyEndpoints = fmt.Errorf("no healthy endpoints available")
-	ErrEndpointUnavailable = fmt.Errorf("endpoint is currently unavailable")
-	ErrEndpointTimeout = fmt.Errorf("endpoint health check timeout")
+	ErrNoHealthyEndpoints       = fmt.Errorf("no healthy endpoints available")
+	ErrEndpointUnavailable      = fmt.Errorf("endpoint is currently unavailable")
+	ErrEndpointTimeout          = fmt.Errorf("endpoint health check timeout")
 	ErrEndpointConnectionFailed = fmt.Errorf("failed to establish connection to endpoint")
 )
 
@@ -39,10 +39,10 @@ type EndpointManager struct {
 	endpoints           map[string]*EndpointHealth
 	mutex               sync.RWMutex
 	healthCheckInterval time.Duration
-	healthDataTTL      time.Duration
+	healthDataTTL       time.Duration
 	healthTimeout       time.Duration
-	stopChan           chan struct{}
-	wg                 sync.WaitGroup
+	stopChan            chan struct{}
+	wg                  sync.WaitGroup
 }
 
 // NewEndpointManager creates a new endpoint manager
@@ -70,7 +70,7 @@ func (em *EndpointManager) initializeEndpoints() {
 
 	for _, network := range em.config.Networks {
 		namespace := network.Namespace
-		
+
 		// Initialize endpoints using their role-based keys
 		for _, endpoint := range network.Endpoints {
 			key := fmt.Sprintf("%s-%s", namespace, endpoint.Role)
@@ -89,12 +89,12 @@ func (em *EndpointManager) initializeEndpoints() {
 func (em *EndpointManager) performStartupHealthCheck() {
 	log.Info().Msg("Performing initial health check on all endpoints...")
 	em.performInitialHealthCheck()
-	
+
 	// Verify at least one endpoint is healthy before allowing server to start
 	if !em.hasAnyHealthyEndpoints() {
 		log.Fatal().Msg("No healthy endpoints available - server cannot start. Check endpoint configuration and network connectivity.")
 	}
-	
+
 	log.Info().Msg("Initial health check completed - server can start")
 }
 
@@ -110,11 +110,11 @@ func (em *EndpointManager) GetHealthyEndpoint(namespace string) (*types.Network,
 	// Find healthy endpoints by role
 	primaryKey := fmt.Sprintf("%s-%s", namespace, types.EndpointRolePrimary)
 	fallbackKey := fmt.Sprintf("%s-%s", namespace, types.EndpointRoleFallback)
-	
+
 	if endpointHealth, exists := em.endpoints[primaryKey]; exists && em.isEndpointHealthy(endpointHealth) {
 		healthyPrimary = endpointHealth
 	}
-	
+
 	if endpointHealth, exists := em.endpoints[fallbackKey]; exists && em.isEndpointHealthy(endpointHealth) {
 		healthyFallback = endpointHealth
 	}
@@ -228,7 +228,7 @@ func (em *EndpointManager) performHealthChecks(logMessage string) {
 	for _, namespace := range namespaces {
 		em.checkAllEndpointsHealth(namespace)
 	}
-	
+
 	log.Info().Msg(logMessage)
 }
 
@@ -250,9 +250,9 @@ func (em *EndpointManager) checkAllEndpointsHealth(namespace string) {
 	// Find endpoints by role-based keys
 	primaryKey := fmt.Sprintf("%s-%s", namespace, types.EndpointRolePrimary)
 	fallbackKey := fmt.Sprintf("%s-%s", namespace, types.EndpointRoleFallback)
-	
-	primaryEndpoint, _ := em.endpoints[primaryKey]
-	fallbackEndpoint, _ := em.endpoints[fallbackKey]
+
+	primaryEndpoint := em.endpoints[primaryKey]
+	fallbackEndpoint := em.endpoints[fallbackKey]
 
 	// Check primary endpoint first (priority order)
 	if primaryEndpoint != nil {
@@ -309,12 +309,10 @@ func (em *EndpointManager) performSingleHealthCheck(endpoint *types.Endpoint) bo
 	defer cancel()
 
 	client := didTypes.NewQueryClient(conn)
-	
 	// Try to query metadata for a non-existent DID - this should return NotFound, not connection error
 	_, err = client.AllDidDocVersionsMetadata(ctx, &didTypes.QueryAllDidDocVersionsMetadataRequest{
 		Id: "did:cheqd:testnet:healthcheck",
 	})
-	
 	if err != nil {
 		// Check if it's a gRPC status error (like NotFound) vs connection error
 		if grpcStatus, ok := status.FromError(err); ok {
@@ -325,11 +323,9 @@ func (em *EndpointManager) performSingleHealthCheck(endpoint *types.Endpoint) bo
 				return true
 			}
 		}
-		
 		log.Debug().Err(err).Msgf("Health check failed for endpoint %s: service error", endpoint.URL)
 		return false
 	}
-	
 	log.Debug().Msgf("Health check passed for endpoint %s: service responded successfully", endpoint.URL)
 	return true
 }
@@ -346,4 +342,3 @@ func (em *EndpointManager) hasAnyHealthyEndpoints() bool {
 	}
 	return false
 }
- 
