@@ -82,7 +82,9 @@ func (ls LedgerService) GetHealthyConnection(namespace string, did string) (*grp
 				// Other endpoint also failed
 				log.Error().Err(fallbackErr).Msgf("Other endpoint %s also failed", fallbackEndpoint.URL)
 				ls.endpointManager.MarkEndpointUnhealthy(*fallbackNetwork)
-				fallbackConn.Close()
+				if fallbackConn != nil {
+					fallbackConn.Close()
+				}
 			}
 		}
 
@@ -111,16 +113,16 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 	client := didTypes.NewQueryClient(conn)
 
 	if version == "" {
-		didDocResponse, err := client.DidDoc(context.Background(), &didTypes.QueryDidDocRequest{Id: did})
-		if err != nil {
-			return nil, types.NewNotFoundError(did, types.JSON, err, false)
+		didDocResponse, grpcErr := client.DidDoc(context.Background(), &didTypes.QueryDidDocRequest{Id: did})
+		if grpcErr != nil {
+			return nil, types.NewNotFoundError(did, types.JSON, grpcErr, false)
 		}
 
 		return didDocResponse.Value, nil
 	} else {
-		didDocResponse, err := client.DidDocVersion(context.Background(), &didTypes.QueryDidDocVersionRequest{Id: did, Version: version})
-		if err != nil {
-			return nil, types.NewNotFoundError(did, types.JSON, err, false)
+		didDocResponse, grpcErr := client.DidDocVersion(context.Background(), &didTypes.QueryDidDocVersionRequest{Id: did, Version: version})
+		if grpcErr != nil {
+			return nil, types.NewNotFoundError(did, types.JSON, grpcErr, false)
 		}
 
 		return didDocResponse.Value, nil
@@ -229,7 +231,7 @@ func (ls LedgerService) openGRPCConnection(endpoint types.Network) (conn *grpc.C
 	}
 
 	// Use shared utility function to eliminate code duplication
-	return openGRPCConnectionWithTimeout(endpoint.Endpoints[0].URL, endpoint.Endpoints[0].UseTls, 5*time.Second)
+	return openGRPCConnectionWithTimeout(endpoint.Endpoints[0].URL, endpoint.Endpoints[0].UseTls, endpoint.Endpoints[0].Timeout)
 }
 
 func mustCloseGRPCConnection(conn *grpc.ClientConn) {

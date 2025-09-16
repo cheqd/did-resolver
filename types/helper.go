@@ -163,22 +163,24 @@ func NewConfig(rawConfig RawConfig) (Config, error) {
 		return Config{}, fmt.Errorf("invalid testnet fallback endpoint: %v", err)
 	}
 
-	// Add fallback endpoints to existing networks by namespace
+	// Add fallback endpoints to existing networks by namespace using a map
+	namespaceFallbacks := map[string]Endpoint{
+		"mainnet": {
+			URL:     mainnetFallback.URL,
+			UseTls:  mainnetFallback.UseTls,
+			Timeout: mainnetFallback.Timeout,
+			Role:    EndpointRoleFallback,
+		},
+		"testnet": {
+			URL:     testnetFallback.URL,
+			UseTls:  testnetFallback.UseTls,
+			Timeout: testnetFallback.Timeout,
+			Role:    EndpointRoleFallback,
+		},
+	}
 	for i, network := range networks {
-		if network.Namespace == "mainnet" {
-			networks[i].Endpoints = append(networks[i].Endpoints, Endpoint{
-				URL:     mainnetFallback.URL,
-				UseTls:  mainnetFallback.UseTls,
-				Timeout: mainnetFallback.Timeout,
-				Role:    EndpointRoleFallback,
-			})
-		} else if network.Namespace == "testnet" {
-			networks[i].Endpoints = append(networks[i].Endpoints, Endpoint{
-				URL:     testnetFallback.URL,
-				UseTls:  testnetFallback.UseTls,
-				Timeout: testnetFallback.Timeout,
-				Role:    EndpointRoleFallback,
-			})
+		if fallback, ok := namespaceFallbacks[network.Namespace]; ok {
+			networks[i].Endpoints = append(networks[i].Endpoints, fallback)
 		}
 	}
 

@@ -71,9 +71,9 @@ func (em *EndpointManager) initializeEndpoints() {
 	for _, network := range em.config.Networks {
 		namespace := network.Namespace
 
-		// Initialize endpoints using their role-based keys
+		// Initialize endpoints using unique keys (namespace-role-URL)
 		for _, endpoint := range network.Endpoints {
-			key := fmt.Sprintf("%s-%s", namespace, endpoint.Role)
+			key := fmt.Sprintf("%s-%s-%s", namespace, endpoint.Role, endpoint.URL)
 			em.endpoints[key] = &EndpointHealth{
 				Network:      network,
 				Endpoint:     endpoint,
@@ -107,16 +107,24 @@ func (em *EndpointManager) GetHealthyEndpoint(namespace string) (*types.Network,
 	var healthyPrimary *EndpointHealth
 	var healthyFallback *EndpointHealth
 
-	// Find healthy endpoints by role
-	primaryKey := fmt.Sprintf("%s-%s", namespace, types.EndpointRolePrimary)
-	fallbackKey := fmt.Sprintf("%s-%s", namespace, types.EndpointRoleFallback)
-
-	if endpointHealth, exists := em.endpoints[primaryKey]; exists && em.isEndpointHealthy(endpointHealth) {
-		healthyPrimary = endpointHealth
-	}
-
-	if endpointHealth, exists := em.endpoints[fallbackKey]; exists && em.isEndpointHealthy(endpointHealth) {
-		healthyFallback = endpointHealth
+	// Iterate to find healthy endpoints by namespace and role, supporting multiple per role
+	for _, endpointHealth := range em.endpoints {
+		if endpointHealth.Network.Namespace != namespace {
+			continue
+		}
+		if !em.isEndpointHealthy(endpointHealth) {
+			continue
+		}
+		switch endpointHealth.Endpoint.Role {
+		case types.EndpointRolePrimary:
+			if healthyPrimary == nil {
+				healthyPrimary = endpointHealth
+			}
+		case types.EndpointRoleFallback:
+			if healthyFallback == nil {
+				healthyFallback = endpointHealth
+			}
+		}
 	}
 
 	// Priority 1: Use primary endpoint if healthy
@@ -177,7 +185,7 @@ func (em *EndpointManager) updateEndpointHealth(network types.Network, isHealthy
 
 	// Update health for each endpoint in the network using role-based keys
 	for _, endpoint := range network.Endpoints {
-		key := fmt.Sprintf("%s-%s", network.Namespace, endpoint.Role)
+		key := fmt.Sprintf("%s-%s-%s", network.Namespace, endpoint.Role, endpoint.URL)
 		if endpointHealth, exists := em.endpoints[key]; exists {
 			endpointHealth.Mutex.Lock()
 			if isHealthy {
@@ -218,14 +226,14 @@ func (em *EndpointManager) startBackgroundHealthChecker() {
 // performHealthChecks performs health checks on all endpoints
 func (em *EndpointManager) performHealthChecks(logMessage string) {
 	em.mutex.RLock()
-	namespaces := make([]string, 0, len(em.endpoints))
+	uniqueNamespaces := make(map[string]struct{})
 	for key := range em.endpoints {
 		namespace := strings.Split(key, "-")[0]
-		namespaces = append(namespaces, namespace)
+		uniqueNamespaces[namespace] = struct{}{}
 	}
 	em.mutex.RUnlock()
 
-	for _, namespace := range namespaces {
+	for namespace := range uniqueNamespaces {
 		em.checkAllEndpointsHealth(namespace)
 	}
 
@@ -247,25 +255,30 @@ func (em *EndpointManager) checkAllEndpointsHealth(namespace string) {
 	em.mutex.RLock()
 	defer em.mutex.RUnlock()
 
-	// Find endpoints by role-based keys
-	primaryKey := fmt.Sprintf("%s-%s", namespace, types.EndpointRolePrimary)
-	fallbackKey := fmt.Sprintf("%s-%s", namespace, types.EndpointRoleFallback)
-
-	primaryEndpoint := em.endpoints[primaryKey]
-	fallbackEndpoint := em.endpoints[fallbackKey]
-
-	// Check primary endpoint first (priority order)
-	if primaryEndpoint != nil {
-		log.Debug().Msgf("Checking health for endpoint primary: %s", primaryEndpoint.Endpoint.URL)
-		em.checkEndpointHealth(primaryEndpoint)
-		time.Sleep(100 * time.Millisecond) // Small delay between checks
+	// Collect endpoints for this namespace by role
+	primaries := make([]*EndpointHealth, 0, 2)
+	fallbacks := make([]*EndpointHealth, 0, 2)
+	for _, endpointHealth := range em.endpoints {
+		if endpointHealth.Network.Namespace != namespace {
+			continue
+		}
+		if endpointHealth.Endpoint.Role == types.EndpointRolePrimary {
+			primaries = append(primaries, endpointHealth)
+		} else if endpointHealth.Endpoint.Role == types.EndpointRoleFallback {
+			fallbacks = append(fallbacks, endpointHealth)
+		}
 	}
 
-	// Then check fallback endpoint
-	if fallbackEndpoint != nil {
-		log.Debug().Msgf("Checking health for endpoint fallback: %s", fallbackEndpoint.Endpoint.URL)
-		em.checkEndpointHealth(fallbackEndpoint)
-		time.Sleep(100 * time.Millisecond) // Small delay between checks
+	// Check primary endpoints first (priority order)
+	for _, eh := range primaries {
+		log.Debug().Msgf("Checking health for endpoint primary: %s", eh.Endpoint.URL)
+		em.checkEndpointHealth(eh)
+	}
+
+	// Then check fallback endpoints
+	for _, eh := range fallbacks {
+		log.Debug().Msgf("Checking health for endpoint fallback: %s", eh.Endpoint.URL)
+		em.checkEndpointHealth(eh)
 	}
 }
 
