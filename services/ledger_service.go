@@ -61,38 +61,33 @@ func (ls LedgerService) GetHealthyConnection(namespace string, did string) (*grp
 	healthyEndpoint := network.Endpoints[0]
 
 	conn, err := ls.openGRPCConnection(*network)
-	if err != nil {
-		log.Error().Err(err).Msgf("Failed connection to %s", healthyEndpoint.URL)
-
-		// Mark current endpoint as unhealthy
-		ls.endpointManager.MarkEndpointUnhealthy(*network)
-
-		// Try the other endpoint if available (only for connection failures)
-		if fallbackNetwork := ls.getOtherEndpoint(namespace, network); fallbackNetwork != nil {
-			fallbackEndpoint := fallbackNetwork.Endpoints[0]
-			log.Info().Msgf("Trying other endpoint %s for namespace %s", fallbackEndpoint.URL, namespace)
-
-			// Try to connect to other endpoint
-			fallbackConn, fallbackErr := ls.openGRPCConnection(*fallbackNetwork)
-			if fallbackErr == nil {
-				// Other endpoint succeeded, use it
-				log.Info().Msgf("Successfully connected to other endpoint %s", fallbackEndpoint.URL)
-				return fallbackConn, nil
-			} else {
-				// Other endpoint also failed
-				log.Error().Err(fallbackErr).Msgf("Other endpoint %s also failed", fallbackEndpoint.URL)
-				ls.endpointManager.MarkEndpointUnhealthy(*fallbackNetwork)
-				if fallbackConn != nil {
-					fallbackConn.Close()
-				}
-			}
-		}
-
-		// Both attempts failed
-		return nil, types.NewInternalError(did, types.JSON, err, false)
+	if err == nil {
+		return conn, nil
 	}
 
-	return conn, nil
+	log.Error().Err(err).Msgf("Failed connection to %s", healthyEndpoint.URL)
+	ls.endpointManager.MarkEndpointUnhealthy(*network)
+
+	// Try the other endpoint if available (only for connection failures)
+	if fallbackNetwork := ls.getOtherEndpoint(namespace, network); fallbackNetwork != nil {
+		fallbackEndpoint := fallbackNetwork.Endpoints[0]
+		log.Info().Msgf("Trying other endpoint %s for namespace %s", fallbackEndpoint.URL, namespace)
+
+		fallbackConn, fallbackErr := ls.openGRPCConnection(*fallbackNetwork)
+		if fallbackErr == nil {
+			log.Info().Msgf("Successfully connected to other endpoint %s", fallbackEndpoint.URL)
+			return fallbackConn, nil
+		}
+
+		log.Error().Err(fallbackErr).Msgf("Other endpoint %s also failed", fallbackEndpoint.URL)
+		ls.endpointManager.MarkEndpointUnhealthy(*fallbackNetwork)
+		if fallbackConn != nil {
+			fallbackConn.Close()
+		}
+	}
+
+	// Both attempts failed
+	return nil, types.NewInternalError(did, types.JSON, err, false)
 }
 
 func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDocWithMetadata, *types.IdentityError) {
@@ -119,14 +114,14 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 		}
 
 		return didDocResponse.Value, nil
-	} else {
-		didDocResponse, grpcErr := client.DidDocVersion(context.Background(), &didTypes.QueryDidDocVersionRequest{Id: did, Version: version})
-		if grpcErr != nil {
-			return nil, types.NewNotFoundError(did, types.JSON, grpcErr, false)
-		}
-
-		return didDocResponse.Value, nil
 	}
+
+	didDocResponse, grpcErr := client.DidDocVersion(context.Background(), &didTypes.QueryDidDocVersionRequest{Id: did, Version: version})
+	if grpcErr != nil {
+		return nil, types.NewNotFoundError(did, types.JSON, grpcErr, false)
+	}
+
+	return didDocResponse.Value, nil
 }
 
 func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.Metadata, *types.IdentityError) {
