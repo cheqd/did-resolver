@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Run Markdown link check
         uses: tcort/github-action-markdown-link-check@v1
@@ -28,9 +28,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: ./go.mod
           # cache = false cause there is an open issue related to "File exists" error.
@@ -48,12 +48,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       with:
         fetch-depth: 0 # Required to fetch version
 
     - name: Run Super Linter
-      uses: super-linter/super-linter/slim@v7
+      uses: super-linter/super-linter/slim@v8
       env:
         IGNORE_GITIGNORED_FILES: true
         DEFAULT_BRANCH: main

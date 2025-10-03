@@ -1,6 +1,7 @@
 package types
 
 import (
+	"net/url"
 	"sort"
 	"time"
 
@@ -105,7 +106,7 @@ func (e DereferencedResourceList) FilterByResourceType(resourceType string) Dere
 func (e DereferencedResourceList) FilterByResourceName(resourceName string) DereferencedResourceList {
 	filteredResources := DereferencedResourceList{}
 	for _, r := range e {
-		if r.Name == resourceName {
+		if r.Name == resourceName || r.Name == url.PathEscape(resourceName) {
 			filteredResources = append(filteredResources, r)
 		}
 	}
