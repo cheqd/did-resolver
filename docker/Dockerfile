@@ -41,6 +41,7 @@ RUN addgroup --system $USER \
 # Set environment variables with default values
 ENV MAINNET_ENDPOINT="grpc.cheqd.net:443,true,5s"
 ENV TESTNET_ENDPOINT="grpc.cheqd.network:443,true,5s"
+ENV ENABLE_FALLBACK_ENDPOINTS="false"
 ENV LOG_LEVEL="warn"
 ENV RESOLVER_LISTENER="0.0.0.0:8080"
 
