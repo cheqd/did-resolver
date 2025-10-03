@@ -28,6 +28,11 @@ services:
       MAINNET_ENDPOINT: "grpc.cheqd.net:443,true,5s"
       TESTNET_ENDPOINT: "grpc.cheqd.network:443,true,5s"
 
+      # Fallback endpoints (optional)
+      ENABLE_FALLBACK_ENDPOINTS: "false"
+      MAINNET_ENDPOINT_FALLBACK: "grpc-fallback.cheqd.net:443,true,5s"
+      TESTNET_ENDPOINT_FALLBACK: "grpc-fallback.cheqd.network:443,true,5s"
+
       # Logging level
       LOG_LEVEL: "warn"
 
