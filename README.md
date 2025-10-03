@@ -41,8 +41,11 @@ To configure the resolver, modify the values under the `environment` section of 
    2. `useTls`: Specify whether gRPC connection to ledger should use secure or insecure pulls. Default is `true` since gRPC uses HTTP/2 with TLS as the transport mechanism.
    3. `timeout`: Timeout (in seconds) to wait for before any ledger requests are considered to have time out.
 2. **`TESTNET_ENDPOINT`** : Testnet Network endpoint as string with the following format" `<networks>,<useTls>,<timeout>`. Example: `grpc.cheqd.network:443,true,5s`
-3. **`RESOLVER_LISTENER`**`: A string with address and port where the resolver listens for requests from clients.
-4. **`LOG_LEVEL`**: `debug`/`warn`/`info`/`error` - to define the application log level.
+3. **`ENABLE_FALLBACK_ENDPOINTS`** : Enable/disable fallback functionalities. Default is `false`.
+4. **`MAINNET_ENDPOINT_FALLBACK`** : Fallback mainnet endpoint with the same format as `MAINNET_ENDPOINT`. Used when primary endpoint is unavailable.
+5. **`TESTNET_ENDPOINT_FALLBACK`** : Fallback testnet endpoint with the same format as `TESTNET_ENDPOINT`. Used when primary endpoint is unavailable.
+6. **`RESOLVER_LISTENER`**`: A string with address and port where the resolver listens for requests from clients.
+7. **`LOG_LEVEL`**: `debug`/`warn`/`info`/`error` - to define the application log level.
 
 #### gRPC Endpoints used by DID Resolver
 
@@ -61,6 +64,28 @@ address = "0.0.0.0:9090"
 ```
 
 **Note**: If you're pointing a DID Resolver to your own node instance, by default `cheqd-node` instance gRPC endpoints are _not_ served up with a TLS certificate. This means the `useTls` property would need to be set to `false`, unless you're otherwise using a load balancer that provides TLS connections to the gRPC port.
+
+#### Fallback Endpoint Feature
+
+The DID Resolver supports automatic fallback to backup gRPC endpoints when the primary endpoints are unavailable. This feature provides high availability and fault tolerance.
+
+**How it works:**
+
+- When `ENABLE_FALLBACK_ENDPOINTS=true`, the resolver will automatically try fallback endpoints if the primary endpoint fails
+- Health checks are performed on startup and periodically (each 60s), to ensue the most accurate endpoints status
+- If a request fails on the primary endpoint between periodic health checks, it will automatically retry request on fallback endpoint
+- When the primary endpoint becomes healthy again, it will be used for new requests
+- The fallback feature works independently for mainnet and testnet endpoints and both fallback endpoints are required when `ENABLE_FALLBACK_ENDPOINTS` is enabled
+
+**Example configuration:**
+
+```yaml
+  ENABLE_FALLBACK_ENDPOINTS: "true"
+  MAINNET_ENDPOINT: "grpc.cheqd.net:443,true,5s"
+  MAINNET_ENDPOINT_FALLBACK: "grpc-fallback.cheqd.net:443,true,5s"
+  TESTNET_ENDPOINT: "grpc.cheqd.network:443,true,5s"
+  TESTNET_ENDPOINT_FALLBACK: "grpc-fallback.cheqd.network:443,true,5s"
+```
 
 ## 🧑‍💻 Building your own Docker image
 

@@ -25,6 +25,10 @@ func generateService() didTypes.Service {
 		Id:              ExistentDid + "#" + ValidServiceId,
 		ServiceType:     types.LinkedDomains,
 		ServiceEndpoint: []string{"http://example.com"},
+		Priority:        1,
+		RecipientKeys:   []string{ExistentDid + "#key-1"},
+		RoutingKeys:     []string{ExistentDid + "#key-1"},
+		Accept:          []string{"didcomm/v2"},
 	}
 }
 

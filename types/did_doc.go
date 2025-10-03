@@ -70,7 +70,7 @@ type Service struct {
 	RecipientKeys   []string            `json:"recipientKeys,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#key-1"`
 	RoutingKeys     []string            `json:"routingKeys,omitempty" example:"did:cheqd:testnet:55dbc8bf-fba3-4117-855c-1e0dc1d3bb47#key-2"`
 	Accept          []string            `json:"accept,omitempty" example:"didcomm/aip2;env=rfc19"`
-	Priority        int                 `json:"priority,omitempty" example:"1"`
+	Priority        uint32              `json:"priority,omitempty" example:"1"`
 }
 
 type AssertionMethod struct {
@@ -187,6 +187,10 @@ func NewService(protoService *did.Service) *Service {
 		Id:              protoService.Id,
 		Type:            protoService.ServiceType,
 		ServiceEndpoint: protoService.ServiceEndpoint,
+		RecipientKeys:   protoService.RecipientKeys,
+		RoutingKeys:     protoService.RoutingKeys,
+		Accept:          protoService.Accept,
+		Priority:        protoService.Priority,
 	}
 }
 
