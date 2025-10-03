@@ -48,6 +48,21 @@ var _ = DescribeTable("Positive: Get Resource with resourceName query", func(tes
 		},
 	),
 
+	Entry(
+		"can get resource with an URL encoded resourceName query parameter",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?resourceName=%s",
+				testconstants.TestHostAddress,
+				"did:cheqd:testnet:a2fb42df-c092-4c15-8a36-685445c6ce9a",
+				"Another%20Ecosystem%20Name",
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/resource_name/encoded_resource.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
 	// TODO: add unit test for testing get resource with an old 16 characters INDY style DID
 	// and resourceName query parameter.
 
