@@ -1,8 +1,6 @@
 module github.com/cheqd/did-resolver
 
-go 1.23.8
-
-toolchain go1.24.0
+go 1.24.0
 
 require (
 	github.com/cheqd/cheqd-node/api/v2 v2.4.0
@@ -19,7 +17,7 @@ require (
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.4
 	github.com/timewasted/go-accept-headers v0.0.0-20130320203746-c78f304b1b09
-	google.golang.org/grpc v1.74.1
+	google.golang.org/grpc v1.76.0
 	google.golang.org/protobuf v1.36.7
 )
 
@@ -76,8 +74,8 @@ require (
 	golang.org/x/text v0.28.0 // indirect
 	golang.org/x/time v0.11.0 // indirect
 	golang.org/x/tools v0.36.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20250528174236-200df99c418a // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250528174236-200df99c418a // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20250804133106-a7a43d27e69b // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250804133106-a7a43d27e69b // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
