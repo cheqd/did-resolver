@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	testconstants "github.com/cheqd/did-resolver/tests/constants"
 	utils "github.com/cheqd/did-resolver/tests/integration/rest"
@@ -44,6 +45,36 @@ var _ = DescribeTable("Positive: Get Resource with resourceName query", func(tes
 			),
 			ResolutionType:     testconstants.DefaultResolutionType,
 			ExpectedJSONPath:   "../../../testdata/query/resource_name/resource.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get resource with a space in resourceName",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?resourceName=%s",
+				testconstants.TestHostAddress,
+				testconstants.UUIDStyleTestnetDid,
+				url.QueryEscape("Demo Resource"),
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/resource_name/unencoded_resource.json",
+			ExpectedStatusCode: http.StatusOK,
+		},
+	),
+
+	Entry(
+		"can get resource with a URL-encoded resourceName query parameter",
+		utils.PositiveTestCase{
+			DidURL: fmt.Sprintf(
+				"http://%s/1.0/identifiers/%s?resourceName=%s",
+				testconstants.TestHostAddress,
+				"did:cheqd:testnet:a2fb42df-c092-4c15-8a36-685445c6ce9a",
+				"Another%20Ecosystem%20Name",
+			),
+			ResolutionType:     testconstants.DefaultResolutionType,
+			ExpectedJSONPath:   "../../../testdata/query/resource_name/encoded_resource.json",
 			ExpectedStatusCode: http.StatusOK,
 		},
 	),
