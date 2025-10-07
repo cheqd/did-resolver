@@ -65,7 +65,7 @@ var _ = DescribeTable("Positive: Get Resource with resourceName query", func(tes
 	),
 
 	Entry(
-		"can get resource with an URL encoded resourceName query parameter",
+		"can get resource with a URL-encoded resourceName query parameter",
 		utils.PositiveTestCase{
 			DidURL: fmt.Sprintf(
 				"http://%s/1.0/identifiers/%s?resourceName=%s",
