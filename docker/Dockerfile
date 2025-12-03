@@ -2,7 +2,7 @@
 ###    STAGE 1: Build cheqd did-resolver binary pre-requisites    ###
 #####################################################################
 
-FROM golang:1.23-alpine AS builder
+FROM golang:1.24-alpine AS builder
 
 # Install minimum necessary dependencies
 ENV PACKAGES="make git bash linux-headers findutils"
