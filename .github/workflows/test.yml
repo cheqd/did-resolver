@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-go@v6
         with:
@@ -34,10 +34,10 @@ jobs:
       IMAGE_NAME: ${{ github.repository }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Download Docker image
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: did-resolver-staging
 
@@ -67,7 +67,7 @@ jobs:
         run: docker compose -f tests/docker-compose-testing.yml logs --tail --follow
 
       - name: Upload integration tests result
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: report-integration.xml
           path: tests/integration/rest/report-integration.xml
