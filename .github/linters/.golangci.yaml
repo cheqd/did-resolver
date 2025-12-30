@@ -13,9 +13,7 @@ linters:
     - errcheck
     - goconst
     - gocritic
-    - gofumpt
-    - goimports
-    - gosimple
+    # - gosimple # Merged into staticcheck in v2
     - govet
     - ineffassign
     - misspell
@@ -23,10 +21,15 @@ linters:
     - nestif
     - nolintlint
     - staticcheck
-    # - stylecheck # Disable stylecheck until refactor
+    # - stylecheck # Merged into staticcheck in v2
     # - typecheck # Removed in v2
     - unconvert
     - unused
+
+formatters:
+  enable:
+    - gofumpt
+    - goimports
 
 
 linters-settings:
@@ -42,9 +45,6 @@ linters-settings:
     disabled-checks:
       - regexpMust
       - badCall # Remove this after CI workflow PR
-
-  gofumpt:
-    lang-version: "1.24"
     
   misspell:
     ignore-words:
@@ -52,7 +52,7 @@ linters-settings:
       - cheq
       - ncheq
 
-  stylecheck:
+  staticcheck:
     # Select the Go version to target.
     go: "1.24"
     # STxxxx checks in https://staticcheck.io/docs/configuration/options/#checks
