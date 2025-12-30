@@ -1,4 +1,4 @@
-version: 2
+version: "2"
 
 run:
   timeout: 10m
@@ -24,7 +24,7 @@ linters:
     - nolintlint
     - staticcheck
     # - stylecheck # Disable stylecheck until refactor
-    - typecheck
+    # - typecheck # Removed in v2
     - unconvert
     - unused
 
