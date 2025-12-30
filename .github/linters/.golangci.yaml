@@ -8,7 +8,7 @@ linters:
   enable:
     - bodyclose
     - copyloopvar
-    - depguard
+    # - depguard # Disabled - no import restrictions previously
     - dogsled
     - errcheck
     - goconst
@@ -65,9 +65,6 @@ linters-settings:
     # https://staticcheck.io/docs/configuration/options/#initialisms
     initialisms: ["ACL", "API", "ASCII", "CPU", "CSS", "DNS", "EOF", "GUID", "HTML", "HTTP", "HTTPS", "ID", "IP", "JSON", "QPS", "RAM", "RPC", "SLA", "SMTP", "SQL", "SSH", "TCP", "TLS", "TTL", "UDP", "UI", "GID", "UID", "UUID", "URI", "URL", "UTF8", "VM", "XML", "XMPP", "XSRF", "XSS", "SIP", "RTP", "AMQP", "DB", "TS"]
 
-  depguard:
-    # No rules configured - depguard will allow all dependencies by default
-  
   goconst:
     min-occurrences: 5
     ignore-tests: true
