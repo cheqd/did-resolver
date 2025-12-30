@@ -71,7 +71,7 @@ linters-settings:
         files:
           - $all
         list-mode: lax
-        allow: "*"
+        # With list-mode: lax, packages are allowed unless explicitly denied
   
   goconst:
     min-occurrences: 5
