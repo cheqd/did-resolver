@@ -66,12 +66,7 @@ linters-settings:
     initialisms: ["ACL", "API", "ASCII", "CPU", "CSS", "DNS", "EOF", "GUID", "HTML", "HTTP", "HTTPS", "ID", "IP", "JSON", "QPS", "RAM", "RPC", "SLA", "SMTP", "SQL", "SSH", "TCP", "TLS", "TTL", "UDP", "UI", "GID", "UID", "UUID", "URI", "URL", "UTF8", "VM", "XML", "XMPP", "XSRF", "XSS", "SIP", "RTP", "AMQP", "DB", "TS"]
 
   depguard:
-    rules:
-      main:
-        files:
-          - $all
-        list-mode: lax
-        # With list-mode: lax, packages are allowed unless explicitly denied
+    # No rules configured - depguard will allow all dependencies by default
   
   goconst:
     min-occurrences: 5
