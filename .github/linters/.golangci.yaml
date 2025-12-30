@@ -8,7 +8,7 @@ linters:
   enable:
     - bodyclose
     - copyloopvar
-    # - depguard # Disabled - no import restrictions previously
+    # - depguard # Disabled - no import restrictions applied earlier
     - dogsled
     - errcheck
     - goconst
