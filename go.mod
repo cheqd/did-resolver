@@ -18,7 +18,7 @@ require (
 	github.com/swaggo/swag v1.16.6
 	github.com/timewasted/go-accept-headers v0.0.0-20130320203746-c78f304b1b09
 	google.golang.org/grpc v1.79.1
-	google.golang.org/protobuf v1.36.10
+	google.golang.org/protobuf v1.36.11
 )
 
 require (
