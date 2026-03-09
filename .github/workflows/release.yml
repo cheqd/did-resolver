@@ -176,7 +176,7 @@ jobs:
 
       - name: Configure Docker image metadata
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: |
             ghcr.io/${{ env.IMAGE_NAME }}
