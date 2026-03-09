@@ -126,7 +126,7 @@ jobs:
           version: latest
 
       - name: Build and cache image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: false
@@ -196,7 +196,7 @@ jobs:
             org.opencontainers.image.documentation="https://docs.cheqd.io/identity"
 
       - name: Build and push image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: true
