@@ -311,7 +311,7 @@ func (em *EndpointManager) markEndpointUnhealthy(endpointHealth *EndpointHealth)
 
 // performSingleHealthCheck performs a simple, fast health check
 func (em *EndpointManager) performSingleHealthCheck(endpoint *types.Endpoint) bool {
-	conn, err := openGRPCConnectionWithTimeout(endpoint.URL, endpoint.UseTls, em.healthTimeout)
+	conn, err := openGRPCConnectionWithTimeout(endpoint.URL, endpoint.UseTls, em.healthTimeout, em.config.GRPCMaxRecvMsgSize)
 	if err != nil {
 		log.Debug().Err(err).Msgf("Health check failed for endpoint %s: connection failed", endpoint.URL)
 		return false

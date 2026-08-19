@@ -16,7 +16,9 @@ import (
 	"github.com/cheqd/did-resolver/utils"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -34,12 +36,14 @@ type LedgerServiceI interface {
 type LedgerService struct {
 	ledgers         map[string]types.Network // namespace -> endpoint with configs
 	endpointManager *EndpointManager
+	maxRecvMsgSize  int
 }
 
-func NewLedgerService(endpointManager *EndpointManager) LedgerService {
+func NewLedgerService(endpointManager *EndpointManager, maxRecvMsgSize int) LedgerService {
 	ls := LedgerService{}
 	ls.ledgers = make(map[string]types.Network)
 	ls.endpointManager = endpointManager
+	ls.maxRecvMsgSize = maxRecvMsgSize
 
 	return ls
 }
@@ -110,7 +114,7 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 	if version == "" {
 		didDocResponse, grpcErr := client.DidDoc(context.Background(), &didTypes.QueryDidDocRequest{Id: did})
 		if grpcErr != nil {
-			return nil, types.NewNotFoundError(did, types.JSON, grpcErr, false)
+			return nil, mapGrpcError(did, grpcErr, false)
 		}
 
 		return didDocResponse.Value, nil
@@ -118,7 +122,7 @@ func (ls LedgerService) QueryDIDDoc(did string, version string) (*didTypes.DidDo
 
 	didDocResponse, grpcErr := client.DidDocVersion(context.Background(), &didTypes.QueryDidDocVersionRequest{Id: did, Version: version})
 	if grpcErr != nil {
-		return nil, types.NewNotFoundError(did, types.JSON, grpcErr, false)
+		return nil, mapGrpcError(did, grpcErr, false)
 	}
 
 	return didDocResponse.Value, nil
@@ -144,7 +148,7 @@ func (ls LedgerService) QueryAllDidDocVersionsMetadata(did string) ([]*didTypes.
 
 	didDocResponse, grpcErr := client.AllDidDocVersionsMetadata(context.Background(), &didTypes.QueryAllDidDocVersionsMetadataRequest{Id: did})
 	if grpcErr != nil {
-		return nil, types.NewNotFoundError(did, types.JSON, grpcErr, false)
+		return nil, mapGrpcError(did, grpcErr, false)
 	}
 
 	return didDocResponse.Versions, nil
@@ -171,7 +175,7 @@ func (ls LedgerService) QueryResource(did string, resourceId string) (*resourceT
 	resourceResponse, grpcErr := client.Resource(context.Background(), &resourceTypes.QueryResourceRequest{CollectionId: collectionId, Id: resourceId})
 	if grpcErr != nil {
 		log.Error().Msgf("Resource not found %s", grpcErr.Error())
-		return nil, types.NewNotFoundError(did, types.JSON, grpcErr, true)
+		return nil, mapGrpcError(did, grpcErr, true)
 	}
 
 	return resourceResponse.Resource, nil
@@ -197,7 +201,7 @@ func (ls LedgerService) QueryCollectionResources(did string) ([]*resourceTypes.M
 	client := resourceTypes.NewQueryClient(conn)
 	resourceResponse, grpcErr := client.CollectionResources(context.Background(), &resourceTypes.QueryCollectionResourcesRequest{CollectionId: collectionId})
 	if grpcErr != nil {
-		return nil, types.NewNotFoundError(did, types.JSON, grpcErr, false)
+		return nil, mapGrpcError(did, grpcErr, false)
 	}
 
 	return resourceResponse.Resources, nil
@@ -226,7 +230,7 @@ func (ls LedgerService) openGRPCConnection(endpoint types.Network) (conn *grpc.C
 	}
 
 	// Use shared utility function to eliminate code duplication
-	return openGRPCConnectionWithTimeout(endpoint.Endpoints[0].URL, endpoint.Endpoints[0].UseTls, endpoint.Endpoints[0].Timeout)
+	return openGRPCConnectionWithTimeout(endpoint.Endpoints[0].URL, endpoint.Endpoints[0].UseTls, endpoint.Endpoints[0].Timeout, ls.maxRecvMsgSize)
 }
 
 func mustCloseGRPCConnection(conn *grpc.ClientConn) {
@@ -273,14 +277,16 @@ func (ls LedgerService) getOtherEndpoint(namespace string, currentNetwork *types
 }
 
 // openGRPCConnectionWithTimeout creates a gRPC connection with timeout
-func openGRPCConnectionWithTimeout(endpoint string, useTls bool, timeout time.Duration) (*grpc.ClientConn, error) {
+func openGRPCConnectionWithTimeout(endpoint string, useTls bool, timeout time.Duration, maxRecvMsgSize int) (*grpc.ClientConn, error) {
 	// Dial options (credentials only). Connection readiness is verified by the subsequent RPC's context timeout.
 	cred := grpc.WithTransportCredentials(insecure.NewCredentials())
 	if useTls {
 		cred = grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{}))
 	}
 
-	conn, err := grpc.NewClient(endpoint, cred)
+	maxRecv := grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(maxRecvMsgSize))
+
+	conn, err := grpc.NewClient(endpoint, cred, maxRecv)
 	if err != nil {
 		log.Error().Err(err).Msgf("openGRPCConnection: connection failed")
 		return nil, err
@@ -288,4 +294,15 @@ func openGRPCConnectionWithTimeout(endpoint string, useTls bool, timeout time.Du
 
 	log.Info().Msg("openGRPCConnection: opened")
 	return conn, nil
+}
+
+// mapGrpcError distinguishes a client-side message-size overflow (ResourceExhausted) —
+// which can only mean "the ledger response didn't fit," never "the DID doesn't exist" —
+// from every other gRPC error, which keeps existing notFound behaviour unchanged.
+func mapGrpcError(did string, grpcErr error, isDereferencing bool) *types.IdentityError {
+	if grpcStatus, ok := status.FromError(grpcErr); ok && grpcStatus.Code() == codes.ResourceExhausted {
+		log.Error().Err(grpcErr).Msgf("gRPC response exceeded max message size for DID: %s", did)
+		return types.NewInternalError(did, types.JSON, grpcErr, isDereferencing)
+	}
+	return types.NewNotFoundError(did, types.JSON, grpcErr, isDereferencing)
 }

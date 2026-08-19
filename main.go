@@ -26,7 +26,7 @@ func serve() {
 	endpointManager := services.NewEndpointManager(config)
 
 	// Services
-	ledgerService := services.NewLedgerService(endpointManager)
+	ledgerService := services.NewLedgerService(endpointManager, config.GRPCMaxRecvMsgSize)
 	didService := services.NewDIDDocService(types.DID_METHOD, ledgerService)
 	resourceService := services.NewResourceService(types.DID_METHOD, ledgerService)
 
