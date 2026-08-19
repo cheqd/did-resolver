@@ -50,7 +50,7 @@ To configure the resolver, modify the values under the `environment` section of 
 
 #### gRPC Endpoints used by DID Resolver
 
-Our DID Resolver uses the [Cosmos gRPC endpoint](https://docs.cosmos.network/main/core/grpc_rest) from `cheqd-node` to fetch data. Typically, this would be running on port `9090` on a `cheqd-node` instance.
+Our DID Resolver uses the [Cosmos gRPC endpoint](https://docs.cosmos.network/sdk/latest/learn/concepts/cli-grpc-rest) from `cheqd-node` to fetch data. Typically, this would be running on port `9090` on a `cheqd-node` instance.
 
 You can either use [public gRPC endpoints for the cheqd network](https://cosmos.directory/cheqd/nodes) (such as the default ones mentioned above), or point it to your own `cheqd-node` instance by enabling gRPC in the `app.toml` configuration file on a node:
 
