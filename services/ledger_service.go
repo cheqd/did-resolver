@@ -296,12 +296,11 @@ func openGRPCConnectionWithTimeout(endpoint string, useTls bool, timeout time.Du
 	return conn, nil
 }
 
-// mapGrpcError distinguishes a client-side message-size overflow (ResourceExhausted) —
-// which can only mean "the ledger response didn't fit," never "the DID doesn't exist" —
-// from every other gRPC error, which keeps existing notFound behaviour unchanged.
+// mapGrpcError maps resource exhaustion to internalError because it does not indicate that the DID is absent.
+// ResourceExhausted may come from a local receive limit or server-side resource/quota exhaustion.
 func mapGrpcError(did string, grpcErr error, isDereferencing bool) *types.IdentityError {
 	if grpcStatus, ok := status.FromError(grpcErr); ok && grpcStatus.Code() == codes.ResourceExhausted {
-		log.Error().Err(grpcErr).Msgf("gRPC response exceeded max message size for DID: %s", did)
+		log.Error().Err(grpcErr).Msgf("gRPC resource exhausted while querying DID: %s", did)
 		return types.NewInternalError(did, types.JSON, grpcErr, isDereferencing)
 	}
 	return types.NewNotFoundError(did, types.JSON, grpcErr, isDereferencing)
