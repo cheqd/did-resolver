@@ -21,7 +21,7 @@ jobs:
 
       - name: Install ginkgo
         run: |
-          go install github.com/onsi/ginkgo/v2/ginkgo@latest
+          go install github.com/onsi/ginkgo/v2/ginkgo
 
       - name: Run Golang unit tests
         working-directory: ./tests/unit/
@@ -53,8 +53,7 @@ jobs:
           cache: true
 
       - name: Install ginkgo
-        working-directory: ./..
-        run: go install github.com/onsi/ginkgo/v2/ginkgo@latest
+        run: go install github.com/onsi/ginkgo/v2/ginkgo
 
       - name: Run Ginkgo integration tests
         working-directory: ./tests/integration/rest
@@ -63,7 +62,6 @@ jobs:
 
       - name: Show logs
         if: failure()
-        working-directory: ./docker/localnet
         run: docker compose -f tests/docker-compose-testing.yml logs --tail --follow
 
       - name: Upload integration tests result
