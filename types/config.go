@@ -37,6 +37,7 @@ type RawConfig struct {
 	EnableFallbackEndpoints bool   `mapstructure:"ENABLE_FALLBACK_ENDPOINTS"`
 	ResolverListener        string `mapstructure:"RESOLVER_LISTENER"`
 	LogLevel                string `mapstructure:"LOG_LEVEL"`
+	GRPCMaxRecvMsgSize      int    `mapstructure:"GRPC_MAX_RECV_MSG_SIZE"`
 }
 
 type Config struct {
@@ -44,6 +45,7 @@ type Config struct {
 	EnableFallbackEndpoints bool
 	ResolverListener        string
 	LogLevel                string
+	GRPCMaxRecvMsgSize      int
 }
 
 func (c *Config) MarshalJson() (string, error) {

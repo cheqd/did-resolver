@@ -71,6 +71,7 @@ func LoadConfig() (Config, error) {
 	viper.SetDefault("ENABLE_FALLBACK_ENDPOINTS", false)
 	viper.SetDefault("LOG_LEVEL", "")
 	viper.SetDefault("RESOLVER_LISTENER", "")
+	viper.SetDefault("GRPC_MAX_RECV_MSG_SIZE", 16*1024*1024) // 16MB
 	viper.AutomaticEnv()
 
 	rawConf := &RawConfig{}
@@ -95,6 +96,10 @@ func MustLoadConfig() Config {
 }
 
 func NewConfig(rawConfig RawConfig) (Config, error) {
+	if rawConfig.GRPCMaxRecvMsgSize <= 0 {
+		return Config{}, fmt.Errorf("GRPC_MAX_RECV_MSG_SIZE must be positive, got %d", rawConfig.GRPCMaxRecvMsgSize)
+	}
+
 	// Parse primary endpoints
 	mainnetPrimary, err := ParseGRPCEndpoint(rawConfig.MainnetEndpoint)
 	if err != nil {
@@ -142,6 +147,7 @@ func NewConfig(rawConfig RawConfig) (Config, error) {
 			EnableFallbackEndpoints: rawConfig.EnableFallbackEndpoints,
 			ResolverListener:        rawConfig.ResolverListener,
 			LogLevel:                rawConfig.LogLevel,
+			GRPCMaxRecvMsgSize:      rawConfig.GRPCMaxRecvMsgSize,
 		}, nil
 	}
 
@@ -194,6 +200,7 @@ func NewConfig(rawConfig RawConfig) (Config, error) {
 		EnableFallbackEndpoints: rawConfig.EnableFallbackEndpoints,
 		ResolverListener:        rawConfig.ResolverListener,
 		LogLevel:                rawConfig.LogLevel,
+		GRPCMaxRecvMsgSize:      rawConfig.GRPCMaxRecvMsgSize,
 	}, nil
 }
 

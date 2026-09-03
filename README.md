@@ -46,6 +46,7 @@ To configure the resolver, modify the values under the `environment` section of 
 5. **`TESTNET_ENDPOINT_FALLBACK`** : Fallback testnet endpoint with the same format as `TESTNET_ENDPOINT`. Used when primary endpoint is unavailable.
 6. **`RESOLVER_LISTENER`**`: A string with address and port where the resolver listens for requests from clients.
 7. **`LOG_LEVEL`**: `debug`/`warn`/`info`/`error` - to define the application log level.
+8. **`GRPC_MAX_RECV_MSG_SIZE`**: Maximum gRPC response size (in bytes) the resolver will accept from a ledger node. Default is `16777216` (16MB). Raise this if a DID's resource collection grows large enough to exceed the default.
 
 #### gRPC Endpoints used by DID Resolver
 
