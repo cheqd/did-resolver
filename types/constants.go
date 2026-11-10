@@ -10,7 +10,11 @@ const (
 	DIDRES     ContentType = "application/did"
 	W3IDDIDRES string      = "https://w3id.org/did-resolution"
 	TEXT       ContentType = "text/plain"
-	W3IDDIDURL string      = "https://w3id.org/did-url-dereferencing"
+	// Media types of Token Status List tokens (draft-ietf-oauth-status-list). The ledger sniffs a media type
+	// from the content, so these cannot be recorded on chain and are derived from the resource type.
+	StatusListJWT ContentType = "application/statuslist+jwt"
+	StatusListCWT ContentType = "application/statuslist+cwt"
+	W3IDDIDURL    string      = "https://w3id.org/did-url-dereferencing"
 )
 
 func (cType ContentType) IsSupported() bool {
@@ -78,3 +82,22 @@ const (
 	ResourceVersion      string = "resourceVersion"
 	ResourceChecksum     string = "checksum"
 )
+
+// Resource types that carry a Token Status List token, as written by the cheqd SDKs.
+const (
+	ResourceTypeTokenStatusListJWT = "TokenStatusListJwt"
+	ResourceTypeTokenStatusListCWT = "TokenStatusListCwt"
+)
+
+// ResourceContentType returns the content type to serve a resource with: the Token Status List media type for
+// status list resources, and the media type recorded on the ledger for everything else.
+func ResourceContentType(resourceType string, ledgerMediaType string) ContentType {
+	switch resourceType {
+	case ResourceTypeTokenStatusListJWT:
+		return StatusListJWT
+	case ResourceTypeTokenStatusListCWT:
+		return StatusListCWT
+	default:
+		return ContentType(ledgerMediaType)
+	}
+}
