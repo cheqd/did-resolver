@@ -1,5 +1,10 @@
 package types
 
+import (
+	"bytes"
+	"regexp"
+)
+
 type ContentType string
 
 const (
@@ -83,21 +88,36 @@ const (
 	ResourceChecksum     string = "checksum"
 )
 
-// Resource types that carry a Token Status List token, as written by the cheqd SDKs.
-const (
-	ResourceTypeTokenStatusListJWT = "TokenStatusListJwt"
-	ResourceTypeTokenStatusListCWT = "TokenStatusListCwt"
-)
+// ResourceTypeTokenStatusList is the resource type cheqd Studio documents for Token Status Lists. A resource of this
+// type holds either a JWT or a CWT, so the token format is recognised from the content.
+const ResourceTypeTokenStatusList = "TokenStatusList"
 
-// ResourceContentType returns the content type to serve a resource with: the Token Status List media type for
-// status list resources, and the media type recorded on the ledger for everything else.
-func ResourceContentType(resourceType string, ledgerMediaType string) ContentType {
-	switch resourceType {
-	case ResourceTypeTokenStatusListJWT:
-		return StatusListJWT
-	case ResourceTypeTokenStatusListCWT:
-		return StatusListCWT
-	default:
+var jwtPattern = regexp.MustCompile(`^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*$`)
+
+// ResourceContentType returns the content type to serve a resource with: the Token Status List media type for a
+// status list token, and the media type recorded on the ledger for everything else. The ledger sniffs a media type from
+// the content, so it records a status list as text/plain or application/octet-stream. Content that is not recognised as
+// a JWT or CWT keeps the ledger media type, so nothing is mislabelled.
+func ResourceContentType(resourceType string, ledgerMediaType string, data []byte) ContentType {
+	if resourceType != ResourceTypeTokenStatusList {
 		return ContentType(ledgerMediaType)
 	}
+
+	if isCoseSign1(data) {
+		return StatusListCWT
+	}
+	if jwtPattern.Match(bytes.TrimSpace(data)) {
+		return StatusListJWT
+	}
+	return ContentType(ledgerMediaType)
+}
+
+// isCoseSign1 reports whether data starts like a COSE_Sign1: the four element CBOR array 0x84, optionally preceded by
+// tag 18 (0xD2), followed by the protected header as a byte string (major type 2, 0x40 to 0x5F).
+func isCoseSign1(data []byte) bool {
+	i := 0
+	if len(data) > 0 && data[0] == 0xD2 {
+		i = 1
+	}
+	return len(data) > i+1 && data[i] == 0x84 && data[i+1] >= 0x40 && data[i+1] <= 0x5F
 }
