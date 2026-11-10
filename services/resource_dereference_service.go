@@ -97,7 +97,7 @@ func (rds ResourceService) DereferenceResourceData(did string, resourceId string
 	}
 
 	result := types.DereferencedResourceData(resource.Resource.Data)
-	dereferenceMetadata.ContentType = types.ContentType(resource.Metadata.MediaType)
+	dereferenceMetadata.ContentType = types.ResourceContentType(resource.Metadata.ResourceType, resource.Metadata.MediaType)
 
 	return &types.ResourceDereferencing{ContentStream: &result, DereferencingMetadata: dereferenceMetadata}, nil
 }
